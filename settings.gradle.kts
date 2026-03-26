@@ -36,7 +36,7 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "ElementX"
+rootProject.name = "NexusTalk"
 include(":app")
 include(":appnav")
 include(":appconfig")

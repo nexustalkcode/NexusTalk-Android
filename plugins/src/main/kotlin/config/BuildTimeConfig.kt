@@ -19,9 +19,9 @@ object BuildTimeConfig {
     val URL_WEBSITE: String? = "https://nexustalk.space"
     val URL_LOGO: String? = "https://nexustalk.space/static/img/mobile-icon.png"
     val URL_COPYRIGHT: String? = "https://element.io/copyright"
-    val URL_ACCEPTABLE_USE: String? = "https://nexustalk.space/acceptable-use-policy-terms"
-    val URL_PRIVACY: String? = "https://nexustalk.space/privacy"
-    val URL_POLICY: String? = "https://nexustalk.space/privacy"
+    val URL_ACCEPTABLE_USE: String? = "https://nexustalk.space/item/user-agreement.html"
+    val URL_PRIVACY: String? = "https://nexustalk.space/item/privacy.html"
+    val URL_POLICY: String? = "https://nexustalk.space/item/privacy.html"
 
 
 //    val URL_WEBSITE: String? = "https://element.io"
