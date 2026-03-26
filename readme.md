@@ -18,7 +18,11 @@ Translations that concern upstream Element code are best contributed directly to
 
 ## Screenshots
 
-<img src="metadata/en-US/images/phoneScreenshots/1_en-US.png" height="500"/> <img src="metadata/en-US/images/phoneScreenshots/2_en-US.png" height="500"/><img src="metadata/en-US/images/phoneScreenshots/3_en-US.png" height="500"/>
+Screenshots shown below are stored in the `screenshots/` directory (WebP format).  
+When updating screenshots, please replace/add files there and update the image links in this section accordingly.
+
+<img src="screenshots/1A0318E038BCB480BF879CABC1AE9E5A.webp" height="500"/> <img src="screenshots/5B293261E21A8343DCB35A23B765B254.webp" height="500"/> <img src="screenshots/87E9192826D339EE3DD1A5AB21A80CC2.webp" height="500"/>
+<img src="screenshots/87680CA09404440BF817D8028F92637D.webp" height="500"/> <img src="screenshots/BFC0A6C1ACC01A04B44A241F0579F1D6.webp" height="500"/>
 
 
 ## Building
