@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+
+msgfile="$1"
+
+# Remove Cursor trailer if present (exact line or trailer-style line).
+# Keep it idempotent and avoid rewriting other trailers.
+if [ -f "$msgfile" ]; then
+  # Prefer POSIX-safe editing via temp file (Windows Git Bash compatible).
+  tmp="${msgfile}.tmp"
+  # Drop lines that are exactly "Made-with: Cursor" (optionally surrounded by spaces).
+  # Also drop "Made-with: Cursor" when it appears as a trailer line.
+  awk '
+    {
+      line=$0
+      gsub(/^[ \t]+|[ \t]+$/, "", line)
+      if (line == "Made-with: Cursor") next
+      print $0
+    }
+  ' "$msgfile" > "$tmp"
+  mv "$tmp" "$msgfile"
+fi
+
+exit 0
