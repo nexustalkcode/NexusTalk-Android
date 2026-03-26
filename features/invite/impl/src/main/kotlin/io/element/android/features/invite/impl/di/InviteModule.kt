@@ -22,11 +22,30 @@ import io.element.android.libraries.matrix.api.MatrixClient
 
 @ContributesTo(SessionScope::class)
 @BindingContainer
+/**
+ * 邀请模块
+ *
+ * 定义了邀请功能的依赖注入绑定。
+ * 提供接受/拒绝邀请 Presenter 和已查看邀请存储的依赖注入。
+ */
 interface InviteModule {
+    /**
+     * 绑定接受/拒绝邀请 Presenter
+     *
+     * @param presenter 接受/拒绝邀请 Presenter 实例
+     * @return Presenter 实例
+     */
     @Binds
     fun bindAcceptDeclinePresenter(presenter: AcceptDeclineInvitePresenter): Presenter<AcceptDeclineInviteState>
 
     companion object {
+        /**
+         * 提供已查看邀请存储
+         *
+         * @param factory 已查看邀请存储工厂
+         * @param matrixClient Matrix 客户端
+         * @return SeenInvitesStore 实例
+         */
         @Provides
         fun providesSeenInvitesStore(
             factory: SeenInvitesStoreFactory,

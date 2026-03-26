@@ -15,6 +15,14 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.home.api.HomeEntryPoint
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * 默认首页入口点实现
+ *
+ * 实现 HomeEntryPoint 接口，负责创建首页流程节点。
+ * 使用 Hilt 依赖注入框架进行绑定。
+ *
+ * @see HomeEntryPoint 首页入口点接口
+ */
 @ContributesBinding(AppScope::class)
 class DefaultHomeEntryPoint : HomeEntryPoint {
     override fun createNode(

@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Postavke možete promijeniti poslije."</string>
   <string name="screen_notification_optin_title">"Omogućite obavijesti i nikada ne propustite poruku"</string>
   <string name="screen_session_verification_enter_recovery_key">"Unesi ključ za oporavak"</string>
+  <string name="screen_welcome_agreement">"Dodirivši Prihvati i nastavi, prihvaćaš naše %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Pravila o privatnosti"</string>
+  <string name="screen_welcome_title">"Dobrodošli u %s"</string>
+  <string name="screen_welcome_privacy_notice">"Pročitaj naša Pravila o privatnosti"</string>
+  <string name="screen_welcome_agree">"Prihvati"</string>
 </resources>

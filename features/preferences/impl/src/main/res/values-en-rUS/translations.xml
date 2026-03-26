@@ -4,4 +4,8 @@
   <string name="screen_advanced_settings_optimise_image_upload_quality_description">"Automatically optimize images for faster uploads and smaller file sizes."</string>
   <string name="screen_advanced_settings_optimise_image_upload_quality_title">"Optimize image upload quality"</string>
   <string name="screen_labs_header_description">"Try out our latest ideas in development. These features are not finalized; they may be unstable, may change."</string>
+  <string name="screen_edit_profile_change_avatar">"Change avatar"</string>
+  <string name="screen_edit_profile_username">"Username"</string>
+  <string name="screen_preferences_section_customization">"Customization"</string>
+  <string name="screen_preferences_section_security">"Security"</string>
 </resources>

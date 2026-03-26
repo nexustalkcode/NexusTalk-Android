@@ -17,6 +17,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
@@ -35,6 +36,7 @@ import io.element.android.libraries.designsystem.preview.PreviewGroup
 @Composable
 fun ListSectionHeader(
     title: String,
+    titleColor: Color = ElementTheme.colors.textPrimary.copy(alpha = 0.5f),
     modifier: Modifier = Modifier,
     hasDivider: Boolean = true,
     description: @Composable () -> Unit = {},
@@ -50,7 +52,7 @@ fun ListSectionHeader(
             Text(
                 text = title,
                 style = ElementTheme.typography.fontBodyLgMedium,
-                color = ElementTheme.colors.textPrimary,
+                color = titleColor
             )
             CompositionLocalProvider(
                 LocalTextStyle provides ElementTheme.typography.fontBodySmRegular,

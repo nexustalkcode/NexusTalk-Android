@@ -13,7 +13,20 @@ import io.element.android.features.leaveroom.api.LeaveRoomEvent
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.core.RoomId
 
+/**
+ * 离开房间内部状态预览参数提供者
+ *
+ * 提供 InternalLeaveRoomState 的示例值，用于在 Android Studio 预览中展示 UI 效果。
+ * 包含多种状态场景：未初始化、各种确认场景、加载中、失败等。
+ *
+ * @see InternalLeaveRoomState 离开房间内部状态
+ */
 class InternalLeaveRoomStateProvider : PreviewParameterProvider<InternalLeaveRoomState> {
+    /**
+     * 获取预览状态序列
+     *
+     * @return 包含不同场景的 InternalLeaveRoomState 序列
+     */
     override val values: Sequence<InternalLeaveRoomState>
         get() = sequenceOf(
             aLeaveRoomState(),
@@ -41,8 +54,16 @@ class InternalLeaveRoomStateProvider : PreviewParameterProvider<InternalLeaveRoo
         )
 }
 
+/** 预览用的示例房间 ID */
 private val A_ROOM_ID = RoomId("!aRoomId:aDomain")
 
+/**
+ * 创建示例离开房间状态
+ *
+ * @param leaveAction 离开操作状态，默认为未初始化
+ * @param eventSink 事件处理函数，默认为空函数
+ * @return 示例 InternalLeaveRoomState 实例
+ */
 fun aLeaveRoomState(
     leaveAction: AsyncAction<Unit> = AsyncAction.Uninitialized,
     eventSink: (LeaveRoomEvent) -> Unit = {},

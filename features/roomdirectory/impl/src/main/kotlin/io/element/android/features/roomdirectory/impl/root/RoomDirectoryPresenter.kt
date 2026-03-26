@@ -29,13 +29,28 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
+/** 搜索批次大小 */
 private const val SEARCH_BATCH_SIZE = 20
 
+/**
+ * 房间目录 Presenter
+ *
+ * 负责处理房间目录界面的业务逻辑和状态管理。
+ * 管理房间搜索、加载更多和列表展示。
+ *
+ * @property dispatchers 协程调度器
+ * @property roomDirectoryService 房间目录服务
+ */
 @Inject
 class RoomDirectoryPresenter(
     private val dispatchers: CoroutineDispatchers,
     private val roomDirectoryService: RoomDirectoryService,
 ) : Presenter<RoomDirectoryState> {
+    /**
+     * 生成界面状态
+     *
+     * @return RoomDirectoryState 房间目录状态
+     */
     @Composable
     override fun present(): RoomDirectoryState {
         var loadingMore by remember {
@@ -51,9 +66,9 @@ class RoomDirectoryPresenter(
         val listState by roomDirectoryList.collectState()
         LaunchedEffect(searchQuery) {
             if (searchQuery == null) return@LaunchedEffect
-            // cancel load more right away
+            // 立即取消加载更多
             loadingMore = false
-            // debounce search query
+            // 防抖搜索查询
             delay(300)
             roomDirectoryList.filter(filter = searchQuery, batchSize = SEARCH_BATCH_SIZE, viaServerName = null)
         }
@@ -63,6 +78,11 @@ class RoomDirectoryPresenter(
                 loadingMore = false
             }
         }
+        /**
+         * 处理用户事件
+         *
+         * @param event 房间目录事件
+         */
         fun handleEvent(event: RoomDirectoryEvents) {
             when (event) {
                 RoomDirectoryEvents.LoadMore -> {
@@ -82,6 +102,11 @@ class RoomDirectoryPresenter(
         )
     }
 
+    /**
+     * 收集房间目录列表状态
+     *
+     * @return Compose 状态收集器
+     */
     @Composable
     private fun RoomDirectoryList.collectState() = remember {
         state.map {

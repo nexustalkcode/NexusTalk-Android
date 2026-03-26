@@ -26,17 +26,49 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 
+/**
+ * 文件保存接口
+ *
+ * 定义文件保存到设备存储的功能接口。
+ *
+ * @see DefaultFileSave 默认实现
+ */
 interface FileSave {
+    /**
+     * 保存文件到磁盘
+     *
+     * @param path 要保存的文件路径
+     */
     suspend fun save(
         path: String,
     )
 }
 
+/**
+ * FileSave 的默认实现
+ *
+ * 提供实际的文件保存功能，支持 Android 10+ 的 MediaStore API
+ * 和旧版本的外部存储 API。
+ * 根据设备系统版本自动选择合适的保存方式。
+ *
+ * @property context 应用上下文
+ * @property dispatchers 协程调度器
+ * @see FileSave 文件保存接口
+ */
 @ContributesBinding(AppScope::class)
 class DefaultFileSave(
     @ApplicationContext private val context: Context,
     private val dispatchers: CoroutineDispatchers,
 ) : FileSave {
+    /**
+     * 保存文件到磁盘
+     *
+     * 根据系统版本选择保存方式：
+     * - Android 10+ 使用 MediaStore API
+     * - 旧版本使用外部存储 API
+     *
+     * @param path 要保存的文件路径
+     */
     override suspend fun save(
         path: String,
     ) {
@@ -58,6 +90,11 @@ class DefaultFileSave(
         }
     }
 
+    /**
+     * 使用 MediaStore API 保存文件（Android 10+）
+     *
+     * @param path 源文件路径
+     */
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun saveOnDiskUsingMediaStore(path: String) {
         val file = File(path)
@@ -77,6 +114,11 @@ class DefaultFileSave(
         }
     }
 
+    /**
+     * 使用外部存储 API 保存文件（Android 10 以下）
+     *
+     * @param path 源文件路径
+     */
     private fun saveOnDiskUsingExternalStorageApi(path: String) {
         val file = File(path)
         val target = File(

@@ -12,6 +12,15 @@ import io.element.android.features.licenses.impl.model.DependencyLicenseItem
 import io.element.android.libraries.architecture.AsyncData
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 依赖项许可证列表状态数据类
+ *
+ * 表示依赖项许可证列表界面的当前状态。
+ *
+ * @property licenses 许可证列表的异步数据状态
+ * @property filter 当前过滤文本
+ * @property eventSink 事件处理函数
+ */
 data class DependencyLicensesListState(
     val licenses: AsyncData<ImmutableList<DependencyLicenseItem>>,
     val filter: String,

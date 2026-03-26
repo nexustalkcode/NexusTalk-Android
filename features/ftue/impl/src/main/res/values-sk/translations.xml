@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Svoje nastavenia môžete neskôr zmeniť."</string>
   <string name="screen_notification_optin_title">"Povoľte oznámenia a nikdy nezmeškajte žiadnu správu"</string>
   <string name="screen_session_verification_enter_recovery_key">"Zadajte kľúč na obnovenie"</string>
+  <string name="screen_welcome_agreement">"Klepnutím na Súhlasím a pokračovať prijímate naše %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Zásady ochrany osobných údajov"</string>
+  <string name="screen_welcome_title">"Vitajte v %s"</string>
+  <string name="screen_welcome_privacy_notice">"Prečítajte si naše Zásady ochrany osobných údajov"</string>
+  <string name="screen_welcome_agree">"Súhlasím"</string>
 </resources>

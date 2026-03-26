@@ -58,8 +58,10 @@ fun EnterNumberView(
         buttons = {
             Button(
                 text = stringResource(CommonStrings.action_continue),
+                // 点击继续，触发发送校验码
                 onClick = { state.eventSink(EnterNumberEvent.Continue) },
                 enabled = state.isContinueButtonEnabled,
+                // 发送中显示进度
                 showProgress = state.sendingCode.isLoading(),
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -79,13 +81,16 @@ fun EnterNumberView(
             Spacer(modifier = Modifier.height(8.dp))
             NumberTextField(
                 number = state.numberEntry,
+                // 输入变化时同步到状态
                 onValueChange = { state.eventSink(EnterNumberEvent.UpdateNumber(it)) },
                 onDone = {
+                    // 键盘完成时触发继续
                     if (state.isContinueButtonEnabled) {
                         state.eventSink(EnterNumberEvent.Continue)
                     }
                 },
             )
+            // 发送失败时展示错误提示
             val failure = state.sendingCode.errorOrNull()
             if (failure != null) {
                 Spacer(modifier = Modifier.height(4.dp))
@@ -100,6 +105,7 @@ fun EnterNumberView(
                         tint = ElementTheme.colors.iconCriticalPrimary,
                     )
                     val errorMessage = when (failure) {
+                        // 两位数字不匹配
                         is ErrorType.InvalidCheckCode -> stringResource(R.string.screen_link_new_device_enter_number_error_numbers_do_not_match)
                         else -> failure.message ?: stringResource(CommonStrings.error_unknown)
                     }

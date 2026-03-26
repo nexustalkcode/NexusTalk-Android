@@ -24,22 +24,57 @@ import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.voiceplayer.api.VoiceMessagePresenterFactory
 import io.element.android.libraries.voiceplayer.api.VoiceMessageState
 
+/**
+ * 语音消息 Presenter 模块绑定接口
+ *
+ * 用于将语音消息 Presenter 工厂绑定到时间线项事件内容映射中。
+ * 通过@TimelineItemEventContentKey注解，将TimelineItemVoiceContent类型
+ * 映射到对应的VoiceMessagePresenterFactory。
+ *
+ * @see VoiceMessagePresenter 语音消息Presenter
+ * @see TimelineItemVoiceContent 语音消息内容
+ * @see TimelineItemPresenterFactory 时间线项Presenter工厂
+ */
 @BindingContainer
 @ContributesTo(RoomScope::class)
 interface VoiceMessagePresenterModule {
+    /**
+     * 绑定语音消息 Presenter 工厂
+     *
+     * @param factory 语音消息 Presenter 工厂
+     * @return TimelineItemPresenterFactory
+     */
     @Binds
     @IntoMap
     @TimelineItemEventContentKey(TimelineItemVoiceContent::class)
     fun bindVoiceMessagePresenterFactory(factory: VoiceMessagePresenter.Factory): TimelineItemPresenterFactory<*, *>
 }
 
+/**
+ * 语音消息时间线Presenter
+ *
+ * 负责处理时间线中语音消息播放的业务逻辑和状态管理。
+ * 封装语音消息播放器，提供语音消息的播放状态。
+ *
+ * @property voiceMessagePresenterFactory 语音消息Presenter工厂
+ * @property content 语音消息内容
+ */
 @AssistedInject
 class VoiceMessagePresenter(
     voiceMessagePresenterFactory: VoiceMessagePresenterFactory,
     @Assisted private val content: TimelineItemVoiceContent,
 ) : Presenter<VoiceMessageState> {
+    /**
+     * 工厂接口
+     */
     @AssistedFactory
     fun interface Factory : TimelineItemPresenterFactory<TimelineItemVoiceContent, VoiceMessageState> {
+        /**
+         * 创建 Presenter 实例
+         *
+         * @param content 语音消息内容
+         * @return VoiceMessagePresenter 实例
+         */
         override fun create(content: TimelineItemVoiceContent): VoiceMessagePresenter
     }
 
@@ -51,6 +86,11 @@ class VoiceMessagePresenter(
         duration = content.duration,
     )
 
+    /**
+     * 生成界面状态
+     *
+     * @return VoiceMessageState 语音消息状态
+     */
     @Composable
     override fun present(): VoiceMessageState {
         return presenter.present()

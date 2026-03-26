@@ -47,7 +47,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.biometric)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.cryptography.test)
     testImplementation(projects.libraries.cryptography.impl)

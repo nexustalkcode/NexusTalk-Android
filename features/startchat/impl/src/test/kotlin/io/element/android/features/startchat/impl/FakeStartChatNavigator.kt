@@ -10,6 +10,8 @@ package io.element.android.features.startchat.impl
 
 import io.element.android.features.startchat.StartChatNavigator
 import io.element.android.libraries.matrix.api.core.RoomIdOrAlias
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class FakeStartChatNavigator(
     private val openRoomLambda: (roomIdOrAlias: RoomIdOrAlias, serverNames: List<String>) -> Unit = { _, _ -> },
@@ -17,7 +19,10 @@ class FakeStartChatNavigator(
     private val showJoinRoomByAddressLambda: () -> Unit = {},
     private val dismissJoinRoomByAddressLambda: () -> Unit = {},
     private val openRoomDirectoryLambda: () -> Unit = {},
+    private val showScanUserQrCodeLambda: () -> Unit = {},
 ) : StartChatNavigator {
+    override val isStartChatVisible: StateFlow<Boolean> = MutableStateFlow(true)
+
     override fun onRoomCreated(roomIdOrAlias: RoomIdOrAlias, serverNames: List<String>) {
         openRoomLambda(roomIdOrAlias, serverNames)
     }
@@ -37,4 +42,10 @@ class FakeStartChatNavigator(
     override fun onOpenRoomDirectory() {
         openRoomDirectoryLambda()
     }
+
+    override fun onShowScanUserQrCode() {
+        showScanUserQrCodeLambda()
+    }
+
+    override fun hideStartChat() = Unit
 }

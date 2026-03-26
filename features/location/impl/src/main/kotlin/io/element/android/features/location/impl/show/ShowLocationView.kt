@@ -50,6 +50,15 @@ import kotlinx.collections.immutable.toImmutableMap
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
 
+/**
+ * 显示位置视图
+ *
+ * 负责渲染显示位置功能的界面，包含地图、位置描述和分享按钮。
+ *
+ * @param state 显示位置状态
+ * @param onBackClick 返回按钮点击回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowLocationView(
@@ -176,4 +185,5 @@ internal fun ShowLocationViewPreview(@PreviewParameter(ShowLocationStateProvider
     )
 }
 
+/** 地图图钉图标的标识符 */
 private const val PIN_ID = "pin"

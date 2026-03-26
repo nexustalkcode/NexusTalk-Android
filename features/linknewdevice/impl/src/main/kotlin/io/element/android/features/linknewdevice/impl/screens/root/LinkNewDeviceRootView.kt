@@ -44,6 +44,7 @@ fun LinkNewDeviceRootView(
     onLinkDesktopDeviceClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // 根据是否支持该功能决定页面标题与图标
     val (title, subtitle, iconStyle) = if (state.isSupported.dataOrNull() == false) {
         Triple(
             stringResource(R.string.screen_link_new_device_error_not_supported_title),
@@ -66,9 +67,11 @@ fun LinkNewDeviceRootView(
             when (state.isSupported) {
                 is AsyncData.Uninitialized,
                 is AsyncData.Loading -> {
+                    // 读取支持能力中，展示加载按钮
                     LoadingButtonAtom()
                 }
                 is AsyncData.Failure -> {
+                    // 查询失败时提示错误，并提供返回入口
                     Text(
                         text = stringResource(id = CommonStrings.error_unknown),
                         color = ElementTheme.colors.textCriticalPrimary,
@@ -86,6 +89,7 @@ fun LinkNewDeviceRootView(
                         when (state.qrCodeData) {
                             AsyncData.Uninitialized,
                             is AsyncData.Failure -> {
+                                // 二维码未加载完成，可选择移动设备或桌面设备
                                 Button(
                                     onClick = { state.eventSink(LinkNewDeviceRootEvent.LinkMobileDevice) },
                                     text = stringResource(id = R.string.screen_link_new_device_root_mobile_device),
@@ -101,6 +105,7 @@ fun LinkNewDeviceRootView(
                             }
                             is AsyncData.Loading,
                             is AsyncData.Success -> {
+                                // 二维码生成中，禁用交互
                                 Button(
                                     onClick = { state.eventSink(LinkNewDeviceRootEvent.LinkMobileDevice) },
                                     text = stringResource(id = R.string.screen_link_new_device_root_loading_qr_code),
@@ -118,6 +123,7 @@ fun LinkNewDeviceRootView(
                             }
                         }
                     } else {
+                        // 不支持此功能时仅提供关闭
                         Button(
                             onClick = onBackClick,
                             text = stringResource(CommonStrings.action_dismiss),
@@ -130,6 +136,7 @@ fun LinkNewDeviceRootView(
         modifier = modifier,
     )
 
+    // 二维码加载失败时弹出错误对话框
     val failure = state.qrCodeData.errorOrNull()
     if (failure != null) {
         ErrorDialog(

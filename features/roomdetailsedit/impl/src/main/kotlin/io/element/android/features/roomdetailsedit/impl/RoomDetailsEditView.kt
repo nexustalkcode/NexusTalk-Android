@@ -51,6 +51,21 @@ import io.element.android.libraries.matrix.ui.components.AvatarPickerView
 import io.element.android.libraries.permissions.api.PermissionsView
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 房间详情编辑页面视图
+ *
+ * 负责渲染房间详情编辑的用户界面，包括：
+ * - 房间头像显示和编辑
+ * - 房间名称输入
+ * - 房间主题输入
+ * - 保存/返回操作
+ * - 头像操作底部Sheet
+ * - 权限请求视图
+ *
+ * @param state 房间详情编辑状态
+ * @param onDone 完成编辑后的回调，通常用于导航返回
+ * @param modifier 视图修饰符
+ */
 @Composable
 fun RoomDetailsEditView(
     state: RoomDetailsEditState,

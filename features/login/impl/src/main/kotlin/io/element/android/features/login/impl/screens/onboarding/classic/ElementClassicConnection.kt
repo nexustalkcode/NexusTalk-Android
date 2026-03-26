@@ -20,8 +20,9 @@ import android.os.Messenger
 import android.os.RemoteException
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
-import io.element.android.features.login.impl.BuildConfig
 import io.element.android.libraries.core.log.logger.LoggerTag
+import io.element.android.libraries.core.meta.BuildMeta
+import io.element.android.libraries.core.meta.BuildType
 import io.element.android.libraries.di.annotations.AppCoroutineScope
 import io.element.android.libraries.di.annotations.ApplicationContext
 import io.element.android.libraries.matrix.api.core.UserId
@@ -43,11 +44,7 @@ sealed interface ElementClassicConnectionState {
     object Idle : ElementClassicConnectionState
     object ElementClassicNotFound : ElementClassicConnectionState
     object ElementClassicReadyNoSession : ElementClassicConnectionState
-    data class ElementClassicReady(
-        val userId: UserId,
-        val secrets: String,
-    ) : ElementClassicConnectionState
-
+    data class ElementClassicReady(val userId: UserId) : ElementClassicConnectionState
     data class Error(val error: String) : ElementClassicConnectionState
 }
 
@@ -59,6 +56,7 @@ class DefaultElementClassicConnection(
     private val context: Context,
     @AppCoroutineScope
     private val coroutineScope: CoroutineScope,
+    private val buildMeta: BuildMeta,
 ) : ElementClassicConnection {
     // Messenger for communicating with the service.
     private var messenger: Messenger? = null
@@ -97,14 +95,13 @@ class DefaultElementClassicConnection(
 
     override fun start() {
         Timber.tag(loggerTag.value).w("start()")
-        /* SC disabled
         coroutineScope.launch {
             // Establish a connection with the service. We use an explicit
             // class name because there is no reason to be able to let other
             // applications replace our component.
             try {
                 val intentService = Intent()
-                intentService.setComponent(getElementClassicComponent())
+                intentService.setComponent(getElementClassicComponent(buildMeta))
                 if (context.bindService(intentService, serviceConnection, BIND_AUTO_CREATE)) {
                     Timber.tag(loggerTag.value).d("Binding returned true")
                 } else {
@@ -117,7 +114,6 @@ class DefaultElementClassicConnection(
                 mutableStateFlow.emit(ElementClassicConnectionState.Error(e.localizedMessage.orEmpty()))
             }
         }
-         */
     }
 
     override fun stop() {
@@ -202,12 +198,19 @@ class DefaultElementClassicConnection(
         }
     }
 
-    /* SC disabled
-    private fun getElementClassicComponent() = ComponentName(
-        BuildConfig.elementClassicPackage,
+    private fun getElementClassicComponent(buildMeta: BuildMeta) = ComponentName(
+        buildString {
+            append(ELEMENT_CLASSIC_APP_ID)
+            append(
+                when (buildMeta.buildType) {
+                    BuildType.DEBUG -> ELEMENT_CLASSIC_APP_ID_DEBUG_SUFFIX
+                    BuildType.NIGHTLY -> ELEMENT_CLASSIC_APP_ID_NIGHTLY_SUFFIX
+                    BuildType.RELEASE -> ELEMENT_CLASSIC_APP_ID_RELEASE_SUFFIX
+                }
+            )
+        },
         ELEMENT_CLASSIC_SERVICE_FULL_CLASS_NAME,
     )
-     */
 
     private fun Bundle?.toElementClassicConnectionState(): ElementClassicConnectionState {
         return if (this == null) {
@@ -217,14 +220,9 @@ class DefaultElementClassicConnection(
             if (error != null) {
                 ElementClassicConnectionState.Error(error)
             } else {
-                val userId = getString(KEY_USER_ID_STR)?.takeIf { it.isNotEmpty() }?.let(::UserId)
+                val userId = getString(KEY_USER_ID_STR)?.let(::UserId)
                 if (userId != null) {
-                    val secrets = getString(KEY_SECRETS_STR)?.takeIf { it.isNotEmpty() }
-                    if (secrets == null) {
-                        ElementClassicConnectionState.Error("No secrets received from Element Classic")
-                    } else {
-                        ElementClassicConnectionState.ElementClassicReady(userId, secrets)
-                    }
+                    ElementClassicConnectionState.ElementClassicReady(userId)
                 } else {
                     ElementClassicConnectionState.ElementClassicReadyNoSession
                 }
@@ -234,31 +232,18 @@ class DefaultElementClassicConnection(
 
     // Everything in this companion object must match what is defined in Element Classic
     private companion object {
-        const val ELEMENT_CLASSIC_SERVICE_FULL_CLASS_NAME = "im.vector.app.features.importer.ImporterService"
-
         // Command to the service to get the data.
         const val MSG_GET_DATA = 1
+
+        const val ELEMENT_CLASSIC_APP_ID = "im.vector.app"
+        const val ELEMENT_CLASSIC_APP_ID_DEBUG_SUFFIX = ".debug"
+        const val ELEMENT_CLASSIC_APP_ID_NIGHTLY_SUFFIX = ".nightly"
+        const val ELEMENT_CLASSIC_APP_ID_RELEASE_SUFFIX = ""
+
+        const val ELEMENT_CLASSIC_SERVICE_FULL_CLASS_NAME = "im.vector.app.features.importer.ImporterService"
 
         // Keys for the bundle returned from the service
         const val KEY_ERROR_STR = "error"
         const val KEY_USER_ID_STR = "userId"
-
-        /**
-         * Key to extract the secrets from the bundle, as a Json string.
-         * Json will have this format:
-         * {
-         *   "cross_signing" : {
-         *     "master_key" : "z8RUxnaAGu___REDACTED___k+BQL9o",
-         *     "user_signing_key" : "baJHzA___REDACTED___xMLbSUAXw9QUzqms",
-         *     "self_signing_key" : "DU0CvLtR2G/___REDACTED___dV/MONNq4nsQhM"
-         *   },
-         *   "backup" : {
-         *     "algorithm" : "m.megolm_backup.v1.curve25519-aes-sha2",
-         *     "key" : "VzncmQ+UOV___REDACTED___patxDz7m0Nc",
-         *     "backup_version" : "1"
-         *   }
-         * }
-         */
-        const val KEY_SECRETS_STR = "secrets"
     }
 }

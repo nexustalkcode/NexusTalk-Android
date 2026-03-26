@@ -12,6 +12,13 @@ import io.element.android.features.messages.impl.timeline.model.ReadReceiptData
 import io.element.android.libraries.matrix.api.timeline.item.event.LocalEventSendState
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 已读回执视图状态数据类
+ *
+ * @property sendState 消息发送状态
+ * @property isLastOutgoingMessage 是否为最后一条发出的消息
+ * @property receipts 已读回执数据列表
+ */
 data class ReadReceiptViewState(
     val sendState: LocalEventSendState?,
     val isLastOutgoingMessage: Boolean,

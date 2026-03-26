@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Anda dapat mengubah pengaturan Anda nanti."</string>
   <string name="screen_notification_optin_title">"Izinkan pemberitahuan dan jangan pernah melewatkan pesan"</string>
   <string name="screen_session_verification_enter_recovery_key">"Masukkan kunci pemulihan"</string>
+  <string name="screen_welcome_agreement">"Dengan menyentuh Setuju dan Lanjutkan, Anda menerima %s kami"</string>
+  <string name="screen_welcome_privacy_policy_link">"Kebijakan Privasi"</string>
+  <string name="screen_welcome_title">"Selamat datang di %s"</string>
+  <string name="screen_welcome_privacy_notice">"Silakan baca Kebijakan Privasi kami"</string>
+  <string name="screen_welcome_agree">"Setuju"</string>
 </resources>

@@ -15,6 +15,7 @@
   <string name="full_screen_intent_banner_message">"Kako biste bili sigurni da nikada nećete propustiti važan poziv, promijenite postavke kako biste omogućili obavijesti preko cijelog zaslona kada je telefon zaključan."</string>
   <string name="full_screen_intent_banner_title">"Poboljšajte svoje iskustvo poziva"</string>
   <string name="screen_home_tab_chats">"Razgovori"</string>
+  <string name="screen_home_tab_community">"Zajednica"</string>
   <string name="screen_home_tab_spaces">"Prostori"</string>
   <string name="screen_invites_decline_chat_message">"Jeste li sigurni da želite odbiti poziv za pridruživanje %1$s?"</string>
   <string name="screen_invites_decline_chat_title">"Odbij poziv"</string>
@@ -52,4 +53,9 @@ Nemate nepročitanih poruka!"</string>
   <string name="screen_roomlist_tombstoned_room_description">"Ova je soba nadograđena"</string>
   <string name="session_verification_banner_message">"Izgleda da koristite novi uređaj. Izvršite provjeru drugim uređajem da biste pristupili svojim šifriranim porukama."</string>
   <string name="session_verification_banner_title">"Potvrdi identitet"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Zajednice okupljaju članove u tematske grupe. Ovdje će se pojaviti sve zajednice kojima se pridružite."</string>
+  <string name="screen_community_list_header_count">"%1$d zajednica"</string>
+  <string name="screen_community_list_header_description">"Zajednice koje stvorite ili im se pridružite"</string>
+  <string name="screen_roomlist_empty_message_new">"Ovo mjesto će pripadati samo vama i vama najbližim ljudima"</string>
 </resources>

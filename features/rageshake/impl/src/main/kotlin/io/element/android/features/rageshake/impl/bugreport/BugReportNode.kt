@@ -23,6 +23,16 @@ import io.element.android.libraries.androidutils.system.toast
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 问题报告节点
+ *
+ * 问题报告功能的主节点，负责显示问题报告表单和处理用户交互。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenter 问题报告 Presenter
+ * @property bugReporter 问题报告器
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class BugReportNode(
@@ -31,8 +41,26 @@ class BugReportNode(
     private val presenter: BugReportPresenter,
     private val bugReporter: BugReporter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 问题报告节点回调接口
+     *
+     * 定义节点生命周期中的回调方法。
+     */
     interface Callback : Plugin {
+        /**
+         * 报告完成
+         *
+         * 当问题报告成功提交或用户取消时调用。
+         */
         fun onDone()
+
+        /**
+         * 导航到日志查看
+         *
+         * 当用户需要查看日志时调用。
+         *
+         * @param basePath 日志目录的基础路径
+         */
         fun navigateToViewLogs(basePath: String)
     }
 

@@ -26,25 +26,24 @@ android {
     defaultConfig {
         buildConfigFieldStr(
             name = "CLIENT_URI",
-            value = BuildTimeConfig.URL_WEBSITE ?: "https://schildi.chat"
+            value = BuildTimeConfig.URL_WEBSITE ?: "https://app.nexustalk.space"
         )
         buildConfigFieldStr(
             name = "LOGO_URI",
-            value = BuildTimeConfig.URL_LOGO ?: "https://schildi.chat/img/icon-next.png"
+            value = BuildTimeConfig.URL_LOGO ?: "https://app.nexustalk.space/mobile-icon.png"
         )
         buildConfigFieldStr(
             name = "TOS_URI",
-            value = BuildTimeConfig.URL_ACCEPTABLE_USE ?: "https://schildi.chat/next/privacy//"
+            value = BuildTimeConfig.URL_ACCEPTABLE_USE ?: "https://app.nexustalk.space/acceptable-use-policy-terms"
         )
         buildConfigFieldStr(
             name = "POLICY_URI",
-            value = BuildTimeConfig.URL_POLICY ?: "https://schildi.chat/next/privacy//"
+            value = BuildTimeConfig.URL_POLICY ?: "https://app.nexustalk.space/privacy"
         )
     }
 }
 
 dependencies {
-    api(projects.schildi.matrixcore)
     implementation(projects.libraries.di)
     implementation(projects.libraries.androidutils)
     implementation(projects.libraries.core)
@@ -54,6 +53,6 @@ dependencies {
     implementation(libs.coroutines.core)
     api(projects.libraries.architecture)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
 }

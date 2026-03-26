@@ -20,6 +20,16 @@ import io.element.android.features.roomdirectory.api.RoomDirectoryEntryPoint
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 房间目录节点
+ *
+ * 房间目录功能的主要界面节点，负责展示房间目录搜索界面。
+ * 继承自 Appyx 框架的 Node 类，用于管理界面的生命周期和导航。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenter 房间目录 Presenter，负责业务逻辑处理
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class RoomDirectoryNode(

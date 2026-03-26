@@ -8,6 +8,11 @@
 
 package io.element.android.features.messages.impl.timeline.model.virtual
 
+/**
+ * 打字通知虚拟项目模型
+ *
+ * 用于在时间线中显示"用户正在输入..."的通知。
+ */
 data object TimelineItemTypingNotificationModel : TimelineItemVirtualModel {
     override val type: String = "TimelineItemTypingNotificationModel"
 }

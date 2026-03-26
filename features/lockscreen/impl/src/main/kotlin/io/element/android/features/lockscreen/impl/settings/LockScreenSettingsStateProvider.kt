@@ -10,6 +10,11 @@ package io.element.android.features.lockscreen.impl.settings
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
+/**
+ * 锁屏设置状态预览参数提供者
+ *
+ * 用于在预览中提供不同状态的锁屏设置。
+ */
 open class LockScreenSettingsStateProvider : PreviewParameterProvider<LockScreenSettingsState> {
     override val values: Sequence<LockScreenSettingsState>
         get() = sequenceOf(
@@ -19,6 +24,9 @@ open class LockScreenSettingsStateProvider : PreviewParameterProvider<LockScreen
         )
 }
 
+/**
+ * 创建锁屏设置状态的辅助函数
+ */
 fun aLockScreenSettingsState(
     isLockMandatory: Boolean = false,
     isBiometricEnabled: Boolean = false,

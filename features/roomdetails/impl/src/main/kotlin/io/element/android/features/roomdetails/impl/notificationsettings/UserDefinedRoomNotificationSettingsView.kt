@@ -31,6 +31,17 @@ import io.element.android.libraries.designsystem.theme.components.Scaffold
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 
+/**
+ * 用户定义房间通知设置视图
+ *
+ * Composable 函数，用于渲染用户定义的通知设置页面。
+ * 这是一个替代的 UI 样式，以房间名称作为标题。
+ *
+ * @param state 通知设置状态
+ * @param onBackClick 返回按钮回调
+ * @param modifier 视图修饰符
+ * @see RoomNotificationSettingsState 通知设置状态
+ */
 @Composable
 fun UserDefinedRoomNotificationSettingsView(
     state: RoomNotificationSettingsState,
@@ -60,7 +71,7 @@ fun UserDefinedRoomNotificationSettingsView(
                     enabled = !state.displayIsDefault.orTrue(),
                     displayMentionsOnlyDisclaimer = state.displayMentionsOnlyDisclaimer,
                     onSelectOption = {
-                        state.eventSink(RoomNotificationSettingsEvent.ChangeRoomNotificationMode(it.mode))
+                        state.eventSink(RoomNotificationSettingsEvents.ChangeRoomNotificationMode(it.mode))
                     },
                 )
             }
@@ -69,7 +80,7 @@ fun UserDefinedRoomNotificationSettingsView(
                 headlineContent = { Text(stringResource(R.string.screen_room_notification_settings_edit_remove_setting)) },
                 style = ListItemStyle.Destructive,
                 onClick = {
-                    state.eventSink(RoomNotificationSettingsEvent.DeleteCustomNotification)
+                    state.eventSink(RoomNotificationSettingsEvents.DeleteCustomNotification)
                 }
             )
 
@@ -77,19 +88,29 @@ fun UserDefinedRoomNotificationSettingsView(
                 async = state.setNotificationSettingAction,
                 onSuccess = {},
                 errorMessage = { stringResource(R.string.screen_notification_settings_edit_failed_updating_default_mode) },
-                onErrorDismiss = { state.eventSink(RoomNotificationSettingsEvent.ClearSetNotificationError) },
+                onErrorDismiss = { state.eventSink(RoomNotificationSettingsEvents.ClearSetNotificationError) },
             )
 
             AsyncActionView(
                 async = state.restoreDefaultAction,
                 onSuccess = { onBackClick() },
                 errorMessage = { stringResource(R.string.screen_notification_settings_edit_failed_updating_default_mode) },
-                onErrorDismiss = { state.eventSink(RoomNotificationSettingsEvent.ClearRestoreDefaultError) },
+                onErrorDismiss = { state.eventSink(RoomNotificationSettingsEvents.ClearRestoreDefaultError) },
             )
         }
     }
 }
 
+/**
+ * 用户定义通知设置顶部导航栏
+ *
+ * Composable 函数，用于渲染用户定义通知设置页面的顶部导航栏。
+ * 标题显示房间名称。
+ *
+ * @param roomName 房间名称
+ * @param onBackClick 返回按钮点击回调
+ * @see ExperimentalMaterial3Api 实验性 Material3 API
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun UserDefinedRoomNotificationSettingsTopBar(

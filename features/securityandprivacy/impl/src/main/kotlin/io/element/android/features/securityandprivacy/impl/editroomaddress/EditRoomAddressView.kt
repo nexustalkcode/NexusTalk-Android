@@ -33,6 +33,20 @@ import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.matrix.ui.room.address.RoomAddressField
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 编辑房间地址视图
+ *
+ * 负责渲染编辑房间地址的界面，包含：
+ * - 顶部导航栏（返回按钮和保存按钮）
+ * - 房间地址输入字段
+ * - 地址有效性验证提示
+ * - 保存操作的加载和错误处理对话框
+ *
+ * @param state 页面状态
+ * @param onBackClick 返回按钮点击事件处理
+ * @param modifier 样式修饰符
+ * @see EditRoomAddressState 页面状态数据类
+ */
 @Composable
 fun EditRoomAddressView(
     state: EditRoomAddressState,
@@ -87,6 +101,16 @@ fun EditRoomAddressView(
     }
 }
 
+/**
+ * 编辑房间地址页面顶部导航栏
+ *
+ * 包含页面标题、返回按钮和保存按钮。
+ *
+ * @param isSaveActionEnabled 保存按钮是否可用
+ * @param onBackClick 返回按钮点击事件处理
+ * @param onSaveClick 保存按钮点击事件处理
+ * @param modifier 样式修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditRoomAddressTopBar(

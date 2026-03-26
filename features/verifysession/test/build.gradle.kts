@@ -17,5 +17,5 @@ android {
 dependencies {
     implementation(projects.features.verifysession.api)
     implementation(projects.libraries.architecture)
-    implementation(projects.tests.testutils)
+    
 }

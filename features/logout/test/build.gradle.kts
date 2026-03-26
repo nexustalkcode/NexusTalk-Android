@@ -17,6 +17,6 @@ android {
 dependencies {
     implementation(libs.coroutines.core)
     implementation(projects.libraries.architecture)
-    implementation(projects.tests.testutils)
+    
     api(projects.features.logout.api)
 }

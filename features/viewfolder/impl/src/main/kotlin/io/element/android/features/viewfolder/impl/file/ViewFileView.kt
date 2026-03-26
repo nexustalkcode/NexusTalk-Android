@@ -30,6 +30,16 @@ import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 文件查看视图组件
+ *
+ * 使用 Jetpack Compose 实现文件查看的用户界面。
+ * 展示文本文件内容，支持保存和分享操作。
+ *
+ * @param state 当前视图状态
+ * @param onBackClick 返回按钮点击回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewFileView(
@@ -90,6 +100,13 @@ fun ViewFileView(
     )
 }
 
+/**
+ * 文件查看视图预览组件
+ *
+ * 用于在 Android Studio 预览中展示文件查看视图 UI。
+ *
+ * @param state 预览状态
+ */
 @PreviewsDayNight
 @Composable
 internal fun ViewFileViewPreview(@PreviewParameter(ViewFileStateProvider::class) state: ViewFileState) = ElementPreview {

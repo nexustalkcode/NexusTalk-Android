@@ -48,10 +48,6 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import chat.schildi.lib.preferences.ScPrefs.FLOATING_DATE
-import chat.schildi.lib.preferences.value
-import chat.schildi.timeline.FloatingDateHeader
-import com.google.common.primitives.Ints.min
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.messages.impl.crypto.sendfailure.resolve.ResolveVerifiedUserSendFailureView
@@ -91,6 +87,28 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * 时间线视图
+ *
+ * 渲染消息时间线的用户界面，支持滚动、跳转到底部、新事件提示、焦点事件聚焦等功能。
+ *
+ * @param state 时间线状态
+ * @param timelineProtectionState 时间线保护状态
+ * @param onUserDataClick 用户数据点击事件
+ * @param onLinkClick 链接点击事件
+ * @param onContentClick 内容点击事件
+ * @param onMessageLongClick 消息长按事件
+ * @param onSwipeToReply 左滑回复事件
+ * @param onReactionClick 反应点击事件
+ * @param onReactionLongClick 反应长按事件
+ * @param onMoreReactionsClick 更多反应点击事件
+ * @param onReadReceiptClick 已读回执点击事件
+ * @param onJoinCallClick 加入通话点击事件
+ * @param modifier 修饰符
+ * @param lazyListState LazyList 状态
+ * @param forceJumpToBottomVisibility 强制显示跳转到底部按钮
+ * @param nestedScrollConnection 嵌套滚动连接
+ */
 @Composable
 fun TimelineView(
     state: TimelineState,
@@ -104,45 +122,62 @@ fun TimelineView(
     onReactionLongClick: (emoji: String, TimelineItem.Event) -> Unit,
     onMoreReactionsClick: (TimelineItem.Event) -> Unit,
     onReadReceiptClick: (TimelineItem.Event) -> Unit,
-    onJoinCallClick: (isAudioCall: Boolean) -> Unit,
+    onJoinCallClick: () -> Unit,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     forceJumpToBottomVisibility: Boolean = false,
     nestedScrollConnection: NestedScrollConnection = rememberNestedScrollInteropConnection(),
 ) {
+    /**
+     * 清除焦点请求状态
+     */
     fun clearFocusRequestState() {
-        state.eventSink(TimelineEvent.ClearFocusRequestState)
+        state.eventSink(TimelineEvents.ClearFocusRequestState)
     }
 
-    fun onScrollFinishAt(firstVisibleIndex: Int, visibleItemCount: Int) {
-        state.eventSink(TimelineEvent.OnScrollFinished(firstVisibleIndex))
-        val timeline = state.timelineItems
-        val firstVisibleTimelineIndex = effectiveVisibleTimelineItemIndex(firstVisibleIndex)
-        if (firstVisibleTimelineIndex < timeline.size &&
-            timeline.subList(firstVisibleTimelineIndex, min(timeline.size-1, firstVisibleTimelineIndex+visibleItemCount))
-                .any { it.contentType() == "TimelineItemReadMarkerModel" }) {
-            state.eventSink(TimelineEvent.OnUnreadLineVisible)
-        }
+    /**
+     * 滚动完成处理
+     *
+     * @param firstVisibleIndex 第一个可见项索引
+     */
+    fun onScrollFinishAt(firstVisibleIndex: Int) {
+        state.eventSink(TimelineEvents.OnScrollFinished(firstVisibleIndex))
     }
 
+    /**
+     * 事件聚焦渲染完成处理
+     */
     fun onFocusEventRender() {
-        state.eventSink(TimelineEvent.OnFocusEventRender)
+        state.eventSink(TimelineEvents.OnFocusEventRender)
     }
 
+    /**
+     * 跳转到实时处理
+     */
     fun onJumpToLive() {
-        state.eventSink(TimelineEvent.JumpToLive)
+        state.eventSink(TimelineEvents.JumpToLive)
     }
 
     val context = LocalContext.current
     val toastMessage = stringResource(CommonStrings.common_copied_to_clipboard)
     val view = LocalView.current
-    // Disable reverse layout when TalkBack is enabled to avoid incorrect ordering issues seen in the current Compose UI version
+    // 当 TalkBack 启用时禁用反向布局，以避免当前 Compose UI 版本中出现错误的排序问题
     val useReverseLayout = !isTalkbackActive()
 
+    /**
+     * 回复点击处理
+     *
+     * @param eventId 事件 ID
+     */
     fun inReplyToClick(eventId: EventId) {
-        state.eventSink(TimelineEvent.FocusOnEvent(eventId))
+        state.eventSink(TimelineEvents.FocusOnEvent(eventId))
     }
 
+    /**
+     * 链接长按处理
+     *
+     * @param link 链接
+     */
     fun onLinkLongClick(link: Link) {
         view.performHapticFeedback(
             HapticFeedbackConstants.LONG_PRESS
@@ -153,11 +188,14 @@ fun TimelineView(
         )
     }
 
+    /**
+     * 预取更多项目
+     */
     fun prefetchMoreItems() {
-        state.eventSink(TimelineEvent.LoadMore(Timeline.PaginationDirection.BACKWARDS))
+        state.eventSink(TimelineEvents.LoadMore(Timeline.PaginationDirection.BACKWARDS))
     }
 
-    // Animate alpha when timeline is first displayed, to avoid flashes or glitching when viewing rooms
+    // 首次显示时间线时为避免闪烁或故障而设置淡入动画
     AnimatedVisibility(visible = true, enter = fadeIn()) {
         Box(modifier) {
             LazyColumn(
@@ -178,6 +216,7 @@ fun TimelineView(
                         timelineItem = timelineItem,
                         timelineMode = state.timelineMode,
                         timelineRoomInfo = state.timelineRoomInfo,
+                        isLatestCallNotify = state.isLatestCallNotify((timelineItem as? TimelineItem.Event)?.eventId),
                         timelineProtectionState = timelineProtectionState,
                         renderReadReceipts = state.renderReadReceipts,
                         isLastOutgoingMessage = state.isLastOutgoingMessage(timelineItem.identifier()),
@@ -200,16 +239,25 @@ fun TimelineView(
                 }
             }
 
+            /**
+             * 焦点请求状态视图
+             */
             FocusRequestStateView(
                 focusRequestState = state.focusRequestState,
                 onClearFocusRequestState = ::clearFocusRequestState
             )
 
+            /**
+             * 时间线预取助手
+             */
             TimelinePrefetchingHelper(
                 lazyListState = lazyListState,
                 prefetch = ::prefetchMoreItems
             )
 
+            /**
+             * 时间线滚动助手
+             */
             TimelineScrollHelper(
                 hasAnyEvent = state.hasAnyEvent,
                 lazyListState = lazyListState,
@@ -221,26 +269,42 @@ fun TimelineView(
                 onJumpToLive = ::onJumpToLive,
                 onFocusEventRender = ::onFocusEventRender,
             )
-            if (FLOATING_DATE.value()) {
-                FloatingDateHeader(lazyListState, state.timelineItems)
-            }
         }
     }
 
+    /**
+     * 解决验证用户发送失败视图
+     */
     ResolveVerifiedUserSendFailureView(state = state.resolveVerifiedUserSendFailureState)
 
+    /**
+     * 消息盾牌对话框
+     */
     MessageShieldDialog(state)
 }
 
+/**
+ * 消息盾牌对话框
+ *
+ * @param state 时间线状态
+ */
 @Composable
 private fun MessageShieldDialog(state: TimelineState) {
     val messageShield = state.messageShieldDialogData ?: return
     AlertDialog(
         content = messageShield.toText(),
-        onDismiss = { state.eventSink.invoke(TimelineEvent.HideShieldDialog) },
+        onDismiss = { state.eventSink.invoke(TimelineEvents.HideShieldDialog) },
     )
 }
 
+/**
+ * 时间线预取助手
+ *
+ * 在用户滚动时预取更多时间线项目以提高性能。
+ *
+ * @param lazyListState LazyList 状态
+ * @param prefetch 预取函数
+ */
 @Composable
 private fun TimelinePrefetchingHelper(
     lazyListState: LazyListState,
@@ -249,11 +313,11 @@ private fun TimelinePrefetchingHelper(
     val latestPrefetch by rememberUpdatedState(prefetch)
 
     LaunchedEffect(Unit) {
-        // We're using snapshot flows for these because using `LaunchedEffect` with `derivedState` doesn't seem to be responsive enough
+        // 我们对这些使用快照流，因为使用 `LaunchedEffect` 配合 `derivedState` 响应不够及时
         val firstVisibleItemIndexFlow = snapshotFlow { lazyListState.firstVisibleItemIndex }
         val layoutInfoFlow = snapshotFlow { lazyListState.layoutInfo }
         val isScrollingFlow = snapshotFlow { lazyListState.isScrollInProgress }
-            // This value changes too frequently, so we debounce it to avoid unnecessary prefetching. It's the equivalent of a conditional 'throttleLatest'
+            // 此值变化太频繁，因此我们对其进行防抖以避免不必要的预取。这相当于条件性的 'throttleLatest'
             .conflate()
             .transform { isScrolling ->
                 emit(isScrolling)
@@ -280,6 +344,21 @@ private fun TimelinePrefetchingHelper(
     }
 }
 
+/**
+ * 时间线滚动助手
+ *
+ * 辅助组件，处理滚动到底部、跳转到实时、焦点事件聚焦等逻辑。
+ *
+ * @param hasAnyEvent 是否有任何事件
+ * @param lazyListState LazyList 状态
+ * @param newEventState 新事件状态
+ * @param isLive 是否为实时模式
+ * @param forceJumpToBottomVisibility 强制显示跳转到底部按钮
+ * @param focusRequestState 焦点请求状态
+ * @param onScrollFinishAt 滚动完成回调
+ * @param onJumpToLive 跳转到实时回调
+ * @param onFocusEventRender 焦点事件渲染完成回调
+ */
 @Composable
 private fun BoxScope.TimelineScrollHelper(
     hasAnyEvent: Boolean,
@@ -288,7 +367,7 @@ private fun BoxScope.TimelineScrollHelper(
     isLive: Boolean,
     forceJumpToBottomVisibility: Boolean,
     focusRequestState: FocusRequestState,
-    onScrollFinishAt: (Int, Int) -> Unit,
+    onScrollFinishAt: (Int) -> Unit,
     onJumpToLive: () -> Unit,
     onFocusEventRender: () -> Unit,
 ) {
@@ -302,9 +381,10 @@ private fun BoxScope.TimelineScrollHelper(
     var jumpToLiveHandled by remember { mutableStateOf(true) }
 
     /**
-     * @param force If true, scroll to the bottom even if the user is already seeing the most recent item.
-     * This fixes the issue where the user is seeing typing notification and so the read receipt is not sent
-     * when a new message comes in.
+     * 滚动到底部
+     *
+     * @param force 如果为 true，即使用户已在查看最新项目也滚动到底部。
+     * 这修复了用户正在查看打字通知因此新消息到来时未发送已读回执的问题。
      */
     fun scrollToBottom(force: Boolean) {
         coroutineScope.launch {
@@ -316,6 +396,9 @@ private fun BoxScope.TimelineScrollHelper(
         }
     }
 
+    /**
+     * 跳转到底部
+     */
     fun jumpToBottom() {
         if (isLive) {
             scrollToBottom(force = false)
@@ -348,17 +431,19 @@ private fun BoxScope.TimelineScrollHelper(
         }
     }
 
-    //val latestOnScrollFinishAt by rememberUpdatedState(onScrollFinishAt)
+    val latestOnScrollFinishAt by rememberUpdatedState(onScrollFinishAt)
     LaunchedEffect(isScrollFinished, hasAnyEvent) {
         if (isScrollFinished && hasAnyEvent) {
-            // Notify the parent composable about the first visible item index when scrolling finishes
-            //latestOnScrollFinishAt(lazyListState.firstVisibleItemIndex)
-            onScrollFinishAt(lazyListState.firstVisibleItemIndex, lazyListState.layoutInfo.visibleItemsInfo.size)
+            // 滚动完成时通知父Composable第一个可见项索引
+            latestOnScrollFinishAt(lazyListState.firstVisibleItemIndex)
         }
     }
 
+    /**
+     * 跳转到底部按钮
+     */
     JumpToBottomButton(
-        // Use inverse of canAutoScroll otherwise we might briefly see the before the scroll animation is triggered
+        // 使用 canAutoScroll 的逆值，否则我们可能会在滚动动画触发前短暂看到
         isVisible = !canAutoScroll || forceJumpToBottomVisibility || !isLive,
         modifier = Modifier
             .align(Alignment.BottomEnd)
@@ -367,6 +452,13 @@ private fun BoxScope.TimelineScrollHelper(
     )
 }
 
+/**
+ * 跳转到底部按钮
+ *
+ * @param isVisible 是否可见
+ * @param onClick 点击事件
+ * @param modifier 修饰符
+ */
 @Composable
 private fun JumpToBottomButton(
     isVisible: Boolean,

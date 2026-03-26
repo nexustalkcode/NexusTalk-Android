@@ -32,7 +32,6 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import chat.schildi.theme.ScTheme
 import io.element.android.appconfig.TimelineConfig
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
@@ -76,8 +75,6 @@ fun TimelineItemReadReceiptView(
                 )
             }
         }
-    } else if (ScTheme.scTimeline) {
-        // Nothing
     } else {
         when (state.sendState) {
             is LocalEventSendState.Sending -> {
@@ -119,8 +116,8 @@ private fun ReadReceiptsRow(
         modifier = modifier
             .fillMaxWidth()
             .height(AvatarSize.TimelineReadReceipt.dp + 8.dp)
-            .padding(horizontal = if (ScTheme.scTimeline) 12.dp else 18.dp),
-        horizontalArrangement = if (ScTheme.scTimeline) Arrangement.Start else Arrangement.End,
+            .padding(horizontal = 18.dp),
+        horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(

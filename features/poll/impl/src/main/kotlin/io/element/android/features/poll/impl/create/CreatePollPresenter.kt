@@ -37,6 +37,23 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 创建投票 Presenter
+ *
+ * 负责处理创建投票页面的业务逻辑，包括：
+ * - 管理投票表单状态
+ * - 验证表单数据
+ * - 保存或删除投票
+ * - 跟踪分析事件
+ *
+ * @property repositoryFactory 投票存储库工厂
+ * @property analyticsService 分析服务
+ * @property messageComposerContext 消息撰写器上下文
+ * @property navigateUp 导航返回函数
+ * @property mode 创建投票模式（新建或编辑）
+ * @property timelineMode 时间线模式
+ * @see CreatePollState 创建投票状态
+ */
 @AssistedInject
 class CreatePollPresenter(
     repositoryFactory: PollRepository.Factory,
@@ -50,7 +67,7 @@ class CreatePollPresenter(
     fun interface Factory {
         fun create(
             timelineMode: Timeline.Mode,
-            navigateUp: () -> Unit,
+            backNavigator: () -> Unit,
             mode: CreatePollMode
         ): CreatePollPresenter
     }

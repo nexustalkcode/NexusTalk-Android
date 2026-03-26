@@ -8,14 +8,15 @@
 
 package io.element.android.libraries.push.impl.notifications.channels
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ContentResolver
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioAttributes.USAGE_NOTIFICATION
-import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
@@ -23,9 +24,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import io.element.android.appconfig.NotificationConfig
-import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.libraries.di.annotations.ApplicationContext
-import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.push.impl.R
 import io.element.android.services.toolbox.api.strings.StringProvider
 
@@ -33,10 +32,9 @@ import io.element.android.services.toolbox.api.strings.StringProvider
  * IDs for channels
  * ========================================================================================== */
 internal const val SILENT_NOTIFICATION_CHANNEL_ID = "DEFAULT_SILENT_NOTIFICATION_CHANNEL_ID_V2"
-//internal const val NOISY_NOTIFICATION_CHANNEL_ID = "DEFAULT_NOISY_NOTIFICATION_CHANNEL_ID_V2" // SC: stick to V1, we don't want Element sounds
-internal const val NOISY_NOTIFICATION_CHANNEL_ID = "DEFAULT_NOISY_NOTIFICATION_CHANNEL_ID"
+internal const val NOISY_NOTIFICATION_CHANNEL_ID = "DEFAULT_NOISY_NOTIFICATION_CHANNEL_ID_V3"
 internal const val CALL_NOTIFICATION_CHANNEL_ID = "CALL_NOTIFICATION_CHANNEL_ID_V3"
-internal const val RINGING_CALL_NOTIFICATION_CHANNEL_ID = "RINGING_CALL_NOTIFICATION_CHANNEL_ID"
+internal const val RINGING_CALL_NOTIFICATION_CHANNEL_ID = "RINGING_CALL_NOTIFICATION_CHANNEL_ID_V3"
 
 /**
  * on devices >= android O, we need to define a channel for each notifications.
@@ -50,10 +48,9 @@ interface NotificationChannels {
 
     /**
      * Get the channel for messages.
-     * @param sessionId the session the message belongs to.
      * @param noisy true if the notification should have sound and vibration.
      */
-    fun getChannelIdForMessage(sessionId: SessionId, noisy: Boolean): String
+    fun getChannelIdForMessage(noisy: Boolean): String
 
     /**
      * Get the channel for test notifications.
@@ -64,6 +61,14 @@ interface NotificationChannels {
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
 private fun supportNotificationChannels() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
+private fun Context.rawResourceUri(resourceId: Int): Uri {
+    return Uri.Builder()
+        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+        // Strangely we have to provide a "//" before the package name
+        .path("//$packageName/$resourceId")
+        .build()
+}
+
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultNotificationChannels(
@@ -71,8 +76,11 @@ class DefaultNotificationChannels(
     private val stringProvider: StringProvider,
     @ApplicationContext
     private val context: Context,
-    private val enterpriseService: EnterpriseService,
 ) : NotificationChannels {
+    private val systemNotificationManager by lazy {
+        context.getSystemService(NotificationManager::class.java)
+    }
+
     init {
         createNotificationChannels()
     }
@@ -101,9 +109,12 @@ class DefaultNotificationChannels(
         // Migration - Remove deprecated channels
         for (channelId in listOf(
             "DEFAULT_SILENT_NOTIFICATION_CHANNEL_ID",
-            // "DEFAULT_NOISY_NOTIFICATION_CHANNEL_ID", // SC: still keeping that one
+            "DEFAULT_NOISY_NOTIFICATION_CHANNEL_ID",
+            "DEFAULT_NOISY_NOTIFICATION_CHANNEL_ID_V2",
             "CALL_NOTIFICATION_CHANNEL_ID",
             "CALL_NOTIFICATION_CHANNEL_ID_V2",
+            "RINGING_CALL_NOTIFICATION_CHANNEL_ID",
+            "RINGING_CALL_NOTIFICATION_CHANNEL_ID_V2",
             "LISTEN_FOR_EVENTS_NOTIFICATION_CHANNEL_ID",
         )) {
             notificationManager.getNotificationChannel(channelId)?.let {
@@ -111,25 +122,19 @@ class DefaultNotificationChannels(
             }
         }
 
-        // Default notification importance: shows everywhere, makes noise, but does not visually intrude.
+        // High importance is required for heads-up banners on Android 8+.
         notificationManager.createNotificationChannel(
             NotificationChannelCompat.Builder(
                 NOISY_NOTIFICATION_CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_DEFAULT
+                NotificationManagerCompat.IMPORTANCE_HIGH
             )
-                /* SC doesn't want Element sounds, better follow system sound
                 .setSound(
-                    Uri.Builder()
-                        .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-                        // Strangely we have to provide a "//" before the package name
-                        .path("//" + context.packageName + "/" + R.raw.message)
-                        .build(),
+                    context.rawResourceUri(R.raw.message),
                     AudioAttributes.Builder()
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .setUsage(USAGE_NOTIFICATION)
                         .build(),
                 )
-                 */
                 .setName(stringProvider.getString(R.string.notification_channel_noisy).ifEmpty { "Noisy notifications" })
                 .setDescription(stringProvider.getString(R.string.notification_channel_noisy))
                 .setVibrationEnabled(true)
@@ -153,56 +158,43 @@ class DefaultNotificationChannels(
         )
 
         // Register a channel for incoming and in progress call notifications with no ringing
-        notificationManager.createNotificationChannel(
-            NotificationChannelCompat.Builder(
+        systemNotificationManager.createNotificationChannel(
+            NotificationChannel(
                 CALL_NOTIFICATION_CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_HIGH
-            )
-                .setName(stringProvider.getString(R.string.notification_channel_call).ifEmpty { "Call" })
-                .setDescription(stringProvider.getString(R.string.notification_channel_call))
-                .setVibrationEnabled(true)
-                .setLightsEnabled(true)
-                .setLightColor(accentColor)
-                .build()
+                stringProvider.getString(R.string.notification_channel_call).ifEmpty { "Call" },
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = stringProvider.getString(R.string.notification_channel_call)
+                enableVibration(true)
+                enableLights(true)
+                lightColor = accentColor
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            }
         )
 
         // Register a channel for incoming call notifications which will ring the device when received
-        notificationManager.createNotificationChannel(
-            NotificationChannelCompat.Builder(
+        systemNotificationManager.createNotificationChannel(
+            NotificationChannel(
                 RINGING_CALL_NOTIFICATION_CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_MAX,
-            )
-                .setName(stringProvider.getString(R.string.notification_channel_ringing_calls).ifEmpty { "Ringing calls" })
-                .setVibrationEnabled(true)
-                .setSound(
-                    Settings.System.DEFAULT_RINGTONE_URI,
-                    AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setLegacyStreamType(AudioManager.STREAM_RING)
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
-                        .build()
-                )
-                .setDescription(stringProvider.getString(R.string.notification_channel_ringing_calls))
-                .setLightsEnabled(true)
-                .setLightColor(accentColor)
-                .build()
+                stringProvider.getString(R.string.notification_channel_ringing_calls).ifEmpty { "Ringing calls" },
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = stringProvider.getString(R.string.notification_channel_ringing_calls)
+                enableVibration(false)
+                setSound(null, null)
+                enableLights(true)
+                lightColor = accentColor
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+            }
         )
-
-        // SC addons
-        notificationManager.updateScNotificationChannels(stringProvider)
     }
 
     override fun getChannelForIncomingCall(ring: Boolean): String {
         return if (ring) RINGING_CALL_NOTIFICATION_CHANNEL_ID else CALL_NOTIFICATION_CHANNEL_ID
     }
 
-    override fun getChannelIdForMessage(sessionId: SessionId, noisy: Boolean): String {
-        return if (noisy) {
-            enterpriseService.getNoisyNotificationChannelId(sessionId)
-                ?: NOISY_NOTIFICATION_CHANNEL_ID
-        } else {
-            SILENT_NOTIFICATION_CHANNEL_ID
-        }
+    override fun getChannelIdForMessage(noisy: Boolean): String {
+        return if (noisy) NOISY_NOTIFICATION_CHANNEL_ID else SILENT_NOTIFICATION_CHANNEL_ID
     }
 
     override fun getChannelIdForTest(): String = NOISY_NOTIFICATION_CHANNEL_ID

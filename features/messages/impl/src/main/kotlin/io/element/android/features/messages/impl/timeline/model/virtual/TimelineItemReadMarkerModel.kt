@@ -8,6 +8,11 @@
 
 package io.element.android.features.messages.impl.timeline.model.virtual
 
+/**
+ * 阅读标记虚拟项目模型
+ *
+ * 用于在时间线中显示已读标记，标识用户已阅读到的位置。
+ */
 data object TimelineItemReadMarkerModel : TimelineItemVirtualModel {
     override val type: String = "TimelineItemReadMarkerModel"
 }

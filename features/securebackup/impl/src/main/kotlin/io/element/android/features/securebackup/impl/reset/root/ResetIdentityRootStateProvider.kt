@@ -10,7 +10,13 @@ package io.element.android.features.securebackup.impl.reset.root
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
+/**
+ * 重置身份根页面状态提供器
+ *
+ * 用于 Compose Preview 的状态提供器，提供不同状态的 [ResetIdentityRootState] 示例。
+ */
 class ResetIdentityRootStateProvider : PreviewParameterProvider<ResetIdentityRootState> {
+    /** 预览状态序列 */
     override val values: Sequence<ResetIdentityRootState>
         get() = sequenceOf(
             ResetIdentityRootState(

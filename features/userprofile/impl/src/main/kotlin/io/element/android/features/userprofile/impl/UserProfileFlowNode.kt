@@ -36,7 +36,6 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.core.UserId
-import io.element.android.libraries.matrix.api.notification.CallIntent
 import io.element.android.libraries.matrix.api.verification.VerificationRequest
 import io.element.android.libraries.mediaviewer.api.MediaViewerEntryPoint
 import kotlinx.parcelize.Parcelize
@@ -84,14 +83,8 @@ class UserProfileFlowNode(
                         callback.navigateToRoom(roomId)
                     }
 
-                    override fun startCall(dmRoomId: RoomId, callIntent: CallIntent) {
-                        elementCallEntryPoint.startCall(
-                            CallType.RoomCall(
-                                sessionId = sessionId,
-                                roomId = dmRoomId,
-                                isAudioCall = callIntent == CallIntent.AUDIO
-                            )
-                        )
+                    override fun startCall(dmRoomId: RoomId) {
+                        elementCallEntryPoint.startCall(CallType.RoomCall(sessionId = sessionId, roomId = dmRoomId))
                     }
 
                     override fun startVerifyUserFlow(userId: UserId) {

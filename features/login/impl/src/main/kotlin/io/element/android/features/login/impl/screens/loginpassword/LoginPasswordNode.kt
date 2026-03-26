@@ -18,6 +18,15 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedInject
 import io.element.android.annotations.ContributesNode
 
+/**
+ * 登录密码节点
+ *
+ * 使用用户名和密码进行登录的页面节点。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenter 业务逻辑 presenter
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class LoginPasswordNode(

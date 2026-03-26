@@ -11,20 +11,23 @@ package io.element.android.features.messages.impl.timeline.model
 import androidx.compose.runtime.Immutable
 
 /**
- * Attribute for a TimelineItem, used to render successive events from the same sender differently.
+ * 时间线项目分组位置密封接口
  *
- * Possible sequences in the timeline will be:
+ * 用于渲染同一发送者的连续事件的属性。
+ * 决定消息气泡的样式（是否显示头像、名称等）。
  *
- * Only one Event:
+ * 时间线中的可能序列：
+ *
+ * 仅一个事件：
  * - [None]
  *
- * Two Events
+ * 两个事件：
  * - [First]
  * - [Last]
  *
- * Many Events:
+ * 多个事件：
  * - [First]
- * - [Middle] (repeated if necessary)
+ * - [Middle]（如需要可重复）
  * - [Last]
  */
 @Immutable

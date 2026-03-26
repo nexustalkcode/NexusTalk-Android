@@ -47,6 +47,17 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
+/**
+ * 重置身份流程节点
+ *
+ * 负责管理整个身份重置流程的节点。
+ * 使用 BackStack 管理重置根页面和密码重置页面。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property resetIdentityFlowManager 重置身份流程管理器
+ * @property sessionCoroutineScope 会话协程作用域
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class ResetIdentityFlowNode(
@@ -60,22 +71,36 @@ class ResetIdentityFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 重置身份流程回调接口
+     */
     interface Callback : Plugin {
+        /** 重置完成回调 */
         fun onDone()
     }
 
     private val callback: Callback = callback()
 
+    /**
+     * 导航目标密封接口
+     */
     sealed interface NavTarget : Parcelable {
+        /** 根页面 */
         @Parcelize
         data object Root : NavTarget
 
+        /** 密码重置页面 */
         @Parcelize
         data object ResetPassword : NavTarget
     }
 
+    /** 当前 Activity 实例 */
     private lateinit var activity: Activity
+
+    /** 是否为深色主题 */
     private var darkTheme: Boolean = false
+
+    /** 重置任务 */
     private var resetJob: Job? = null
 
     override fun onBuilt() {

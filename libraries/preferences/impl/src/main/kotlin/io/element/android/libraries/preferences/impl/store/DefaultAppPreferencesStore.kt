@@ -15,8 +15,6 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.core.meta.BuildType
-import io.element.android.libraries.core.meta.isInternalBuild
-import io.element.android.libraries.core.meta.isScBetaBuild
 import io.element.android.libraries.matrix.api.media.MediaPreviewValue
 import io.element.android.libraries.matrix.api.tracing.LogLevel
 import io.element.android.libraries.matrix.api.tracing.TraceLogPack
@@ -156,7 +154,5 @@ private fun BuildMeta.defaultLogLevel(): LogLevel {
         BuildType.DEBUG -> LogLevel.TRACE
         BuildType.NIGHTLY -> LogLevel.DEBUG
         BuildType.RELEASE -> LogLevel.INFO
-        BuildType.DEBUG_SC -> LogLevel.TRACE
-        BuildType.RELEASE_SC -> if (isInternalBuild || isScBetaBuild) LogLevel.DEBUG else LogLevel.INFO
     }
 }

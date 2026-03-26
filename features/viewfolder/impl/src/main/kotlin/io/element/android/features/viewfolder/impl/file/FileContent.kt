@@ -33,6 +33,16 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 文件内容组件
+ *
+ * 使用 Jetpack Compose 实现文件内容的展示组件。
+ * 支持显示行号、点击复制行内容、根据着色模式显示不同颜色。
+ *
+ * @param lines 文件内容的行列表
+ * @param colorationMode 着色模式
+ * @param modifier 修饰符
+ */
 @Composable
 internal fun FileContent(
     lines: ImmutableList<String>,
@@ -66,6 +76,16 @@ internal fun FileContent(
     }
 }
 
+/**
+ * 行组件
+ *
+ * 渲染文件中的单行内容，包含行号和行内容。
+ * 点击整行可复制内容到剪贴板。
+ *
+ * @param lineNumber 行号
+ * @param line 行内容
+ * @param colorationMode 着色模式
+ */
 @Composable
 private fun LineRow(
     lineNumber: Int,
@@ -117,13 +137,15 @@ private fun LineRow(
 }
 
 /**
- * Convert a line to a color.
- * Ex for logcat:
- * `01-23 13:14:50.740 25818 25818 D org.matrix.rust.sdk: elementx: SyncIndicator = Hide | RustRoomListService.kt:81`
- *                                 ^ use this char to determine the color
- * Ex for Rust logs:
- * `2024-01-26T10:22:26.947416Z  WARN elementx: Restore with non-empty map | MatrixClientsHolder.kt:68`
- *                                  ^ use this char to determine the color, see [LogLevel]
+ * 将行内容转换为颜色
+ *
+ * 根据着色模式确定行的显示颜色：
+ * - Logcat 模式：根据第 32 个字符确定颜色（V/D/I/W/E/A）
+ * - RustLogs 模式：根据第 33 个字符确定颜色（TRACE/DEBUG/INFO/WARN/ERROR）
+ * - None 模式：使用默认前景色
+ *
+ * @param colorationMode 着色模式
+ * @return 行内容的显示颜色
  */
 @Composable
 private fun String.toColor(colorationMode: ColorationMode): Color {
@@ -148,7 +170,11 @@ private fun String.toColor(colorationMode: ColorationMode): Color {
     }
 }
 
+/** 调试级别颜色 */
 private val colorDebug = Color(0xFF299999)
+/** 信息级别颜色 */
 private val colorInfo = Color(0xFFABC023)
+/** 警告级别颜色 */
 private val colorWarning = Color(0xFFBBB529)
+/** 错误级别颜色 */
 private val colorError = Color(0xFFFF6B68)

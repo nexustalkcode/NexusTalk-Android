@@ -28,7 +28,7 @@ dependencies {
 
     api(projects.libraries.indicator.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.featureflag.test)
     testImplementation(projects.libraries.matrix.test)
 }

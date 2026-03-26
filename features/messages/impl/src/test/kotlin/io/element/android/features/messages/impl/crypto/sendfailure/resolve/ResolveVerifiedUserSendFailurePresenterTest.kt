@@ -47,7 +47,7 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             val sentMessage = aMessageEvent()
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(sentMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(sentMessage))
             ensureAllEventsConsumed()
         }
     }
@@ -61,7 +61,7 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             )
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(sentMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(sentMessage))
             ensureAllEventsConsumed()
         }
     }
@@ -75,7 +75,7 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             )
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(failedMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(failedMessage))
             ensureAllEventsConsumed()
         }
     }
@@ -94,11 +94,11 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             val failedMessage = aVerifiedUserHasUnsignedDeviceFailedMessage()
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(failedMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(failedMessage))
             skipItems(1)
             awaitItem().also { state ->
                 assertThat(state.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.UnsignedDevice.FromYou)
-                state.eventSink(ResolveVerifiedUserSendFailureEvent.Dismiss)
+                state.eventSink(ResolveVerifiedUserSendFailureEvents.Dismiss)
             }
             skipItems(1)
             awaitItem().also { state ->
@@ -122,12 +122,12 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             val failedMessage = aVerifiedUserHasUnsignedDeviceFailedMessage()
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(failedMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(failedMessage))
 
             skipItems(1)
             awaitItem().also { state ->
                 assertThat(state.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.UnsignedDevice.FromYou)
-                state.eventSink(ResolveVerifiedUserSendFailureEvent.Retry)
+                state.eventSink(ResolveVerifiedUserSendFailureEvents.Retry)
             }
             awaitItem().also { state ->
                 assertThat(state.retryAction).isEqualTo(AsyncAction.Loading)
@@ -158,12 +158,12 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             val failedMessage = aVerifiedUserHasUnsignedDeviceFailedMessage()
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(failedMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(failedMessage))
 
             skipItems(1)
             awaitItem().also { state ->
                 assertThat(state.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.UnsignedDevice.FromYou)
-                state.eventSink(ResolveVerifiedUserSendFailureEvent.ResolveAndResend)
+                state.eventSink(ResolveVerifiedUserSendFailureEvents.ResolveAndResend)
             }
             awaitItem().also { state ->
                 assertThat(state.resolveAction).isEqualTo(AsyncAction.Loading)
@@ -173,7 +173,7 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             awaitItem().also { state ->
                 assertThat(state.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.UnsignedDevice.FromOther(A_USER_ID_2.value))
                 assertThat(state.resolveAction).isEqualTo(AsyncAction.Success(Unit))
-                state.eventSink(ResolveVerifiedUserSendFailureEvent.ResolveAndResend)
+                state.eventSink(ResolveVerifiedUserSendFailureEvents.ResolveAndResend)
             }
 
             skipItems(3)
@@ -201,12 +201,12 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             val failedMessage = aVerifiedUserHasUnsignedDeviceFailedMessage()
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(failedMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(failedMessage))
 
             skipItems(1)
             awaitItem().also { state ->
                 assertThat(state.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.UnsignedDevice.FromYou)
-                state.eventSink(ResolveVerifiedUserSendFailureEvent.ResolveAndResend)
+                state.eventSink(ResolveVerifiedUserSendFailureEvents.ResolveAndResend)
             }
             awaitItem().also { state ->
                 assertThat(state.resolveAction).isEqualTo(AsyncAction.Loading)
@@ -233,12 +233,12 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             val failedMessage = aVerifiedUserChangedIdentityMessage()
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(failedMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(failedMessage))
 
             skipItems(1)
             awaitItem().also { state ->
                 assertThat(state.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.ChangedIdentity(A_USER_ID.value))
-                state.eventSink(ResolveVerifiedUserSendFailureEvent.Retry)
+                state.eventSink(ResolveVerifiedUserSendFailureEvents.Retry)
             }
             awaitItem().also { state ->
                 assertThat(state.retryAction).isEqualTo(AsyncAction.Loading)
@@ -269,12 +269,12 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             val failedMessage = aVerifiedUserChangedIdentityMessage()
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(failedMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(failedMessage))
 
             skipItems(1)
             awaitItem().also { state ->
                 assertThat(state.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.ChangedIdentity(A_USER_ID.value))
-                state.eventSink(ResolveVerifiedUserSendFailureEvent.ResolveAndResend)
+                state.eventSink(ResolveVerifiedUserSendFailureEvents.ResolveAndResend)
             }
             awaitItem().also { state ->
                 assertThat(state.resolveAction).isEqualTo(AsyncAction.Loading)
@@ -284,7 +284,7 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             awaitItem().also { state ->
                 assertThat(state.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.ChangedIdentity(A_USER_ID_2.value))
                 assertThat(state.resolveAction).isEqualTo(AsyncAction.Success(Unit))
-                state.eventSink(ResolveVerifiedUserSendFailureEvent.ResolveAndResend)
+                state.eventSink(ResolveVerifiedUserSendFailureEvents.ResolveAndResend)
             }
 
             skipItems(3)
@@ -312,12 +312,12 @@ class ResolveVerifiedUserSendFailurePresenterTest {
             val failedMessage = aVerifiedUserChangedIdentityMessage()
             val initialState = awaitItem()
             assertThat(initialState.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.None)
-            initialState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(failedMessage))
+            initialState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(failedMessage))
 
             skipItems(1)
             awaitItem().also { state ->
                 assertThat(state.verifiedUserSendFailure).isEqualTo(VerifiedUserSendFailure.ChangedIdentity(A_USER_ID.value))
-                state.eventSink(ResolveVerifiedUserSendFailureEvent.ResolveAndResend)
+                state.eventSink(ResolveVerifiedUserSendFailureEvents.ResolveAndResend)
             }
             awaitItem().also { state ->
                 assertThat(state.resolveAction).isEqualTo(AsyncAction.Loading)

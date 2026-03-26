@@ -16,6 +16,8 @@ import androidx.core.text.toSpannable
 import androidx.core.text.util.LinkifyCompat
 import io.element.android.libraries.core.extensions.runCatchingExceptions
 import timber.log.Timber
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 /**
  * Helper class to linkify text while preserving existing URL spans.
@@ -57,8 +59,7 @@ object LinkifyHelper {
 
                 // Adapt the url in the URL span to the new end index too if needed
                 if (end != newEnd) {
-                    val diff = end - newEnd
-                    val url = urlSpan.url.substring(0, urlSpan.url.length - diff)
+                    val url = spannable.subSequence(start, newEnd).toString()
                     spannable.removeSpan(urlSpan)
                     spannable.setSpan(URLSpan(url), start, newEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 } else {
@@ -86,17 +87,17 @@ object LinkifyHelper {
         var end = end
 
         // Trailing punctuation found, adjust the end index
-        while (end > start && spannable[end - 1] in sequenceOf('.', ',', ';', ':', '!', '?', '…')) {
+        while (spannable[end - 1] in sequenceOf('.', ',', ';', ':', '!', '?', '…') && end > start) {
             end--
         }
 
         // If the last character is a closing parenthesis, check if it's part of a pair
-        if (end > start && spannable[end - 1] == ')') {
+        if (spannable[end - 1] == ')' && end > start) {
             val linkifiedTextLastPath = spannable.substring(start, end).substringAfterLast('/')
             val closingParenthesisCount = linkifiedTextLastPath.count { it == ')' }
             val openingParenthesisCount = linkifiedTextLastPath.count { it == '(' }
             // If it's not part of a pair, remove it from the link span by adjusting the end index
-            end -= (closingParenthesisCount - openingParenthesisCount).coerceAtLeast(0)
+            end -= closingParenthesisCount - openingParenthesisCount
         }
         return end
     }

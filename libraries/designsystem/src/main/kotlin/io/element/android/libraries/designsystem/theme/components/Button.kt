@@ -33,6 +33,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.isSpecified
@@ -63,6 +64,7 @@ fun Button(
     showProgress: Boolean = false,
     destructive: Boolean = false,
     leadingIcon: IconSource? = null,
+    textGradientColors: List<Color>? = null,
 ) = ButtonInternal(
     text = text,
     onClick = onClick,
@@ -72,7 +74,8 @@ fun Button(
     size = size,
     showProgress = showProgress,
     destructive = destructive,
-    leadingIcon = leadingIcon
+    leadingIcon = leadingIcon,
+    textGradientColors = textGradientColors,
 )
 
 @Composable
@@ -85,6 +88,7 @@ fun OutlinedButton(
     showProgress: Boolean = false,
     destructive: Boolean = false,
     leadingIcon: IconSource? = null,
+    textGradientColors: List<Color>? = null,
 ) = ButtonInternal(
     text = text,
     onClick = onClick,
@@ -94,7 +98,8 @@ fun OutlinedButton(
     size = size,
     showProgress = showProgress,
     destructive = destructive,
-    leadingIcon = leadingIcon
+    leadingIcon = leadingIcon,
+    textGradientColors = textGradientColors,
 )
 
 @Composable
@@ -107,6 +112,7 @@ fun TextButton(
     showProgress: Boolean = false,
     destructive: Boolean = false,
     leadingIcon: IconSource? = null,
+    textGradientColors: List<Color>? = null,
 ) = ButtonInternal(
     text = text,
     onClick = onClick,
@@ -116,7 +122,8 @@ fun TextButton(
     size = size,
     showProgress = showProgress,
     destructive = destructive,
-    leadingIcon = leadingIcon
+    leadingIcon = leadingIcon,
+    textGradientColors = textGradientColors,
 )
 
 @Composable
@@ -139,6 +146,7 @@ private fun ButtonInternal(
     size: ButtonSize = ButtonSize.Large,
     showProgress: Boolean = false,
     leadingIcon: IconSource? = null,
+    textGradientColors: List<Color>? = null,
 ) {
     val minHeight = size.toMinHeight()
     val hasStartDrawable = showProgress || leadingIcon != null
@@ -229,7 +237,7 @@ private fun ButtonInternal(
                 Spacer(modifier = Modifier.width(8.dp))
             }
             leadingIcon != null -> {
-                Icon(
+                androidx.compose.material.Icon(
                     painter = leadingIcon.getPainter(),
                     contentDescription = null,
                     tint = LocalContentColor.current,
@@ -238,9 +246,24 @@ private fun ButtonInternal(
                 Spacer(modifier = Modifier.width(8.dp))
             }
         }
+        val useTextGradient = textGradientColors != null && textGradientColors.size >= 2
+        val gradientAlpha = if (enabled) 1f else 0.5f
+        val gradientColors = if (useTextGradient) {
+            textGradientColors.map { it.copy(alpha = it.alpha * gradientAlpha) }
+        } else {
+            emptyList()
+        }
+        val textStyle = if (gradientColors.size >= 2) {
+            ElementTheme.typography.fontBodyLgMedium.copy(
+                brush = Brush.horizontalGradient(colors = gradientColors),
+            )
+        } else {
+            ElementTheme.typography.fontBodyLgMedium
+        }
         Text(
             text = text,
-            style = ElementTheme.typography.fontBodyLgMedium,
+            color = if (useTextGradient) Color.Unspecified else LocalContentColor.current,
+            style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

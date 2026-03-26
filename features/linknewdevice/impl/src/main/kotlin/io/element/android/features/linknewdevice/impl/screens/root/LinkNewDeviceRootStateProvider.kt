@@ -14,14 +14,20 @@ import io.element.android.libraries.matrix.api.linknewdevice.ErrorType
 open class LinkNewDeviceRootStateProvider : PreviewParameterProvider<LinkNewDeviceRootState> {
     override val values: Sequence<LinkNewDeviceRootState>
         get() = sequenceOf(
+            // 默认状态
             aLinkNewDeviceRootState(),
+            // 支持链接新设备
             aLinkNewDeviceRootState(isSupported = AsyncData.Success(true)),
+            // 不支持链接新设备
             aLinkNewDeviceRootState(isSupported = AsyncData.Success(false)),
+            // 获取支持能力失败
             aLinkNewDeviceRootState(isSupported = AsyncData.Failure(Exception("Should not happen"))),
+            // 二维码加载中
             aLinkNewDeviceRootState(
                 isSupported = AsyncData.Success(true),
                 qrCodeData = AsyncData.Loading(),
             ),
+            // 二维码加载失败
             aLinkNewDeviceRootState(
                 isSupported = AsyncData.Success(true),
                 qrCodeData = AsyncData.Failure(ErrorType.NotFound("The rendezvous session was not found and might have expired")),
@@ -29,6 +35,7 @@ open class LinkNewDeviceRootStateProvider : PreviewParameterProvider<LinkNewDevi
         )
 }
 
+// 便捷创建预览状态
 fun aLinkNewDeviceRootState(
     isSupported: AsyncData<Boolean> = AsyncData.Uninitialized,
     qrCodeData: AsyncData<Unit> = AsyncData.Uninitialized,

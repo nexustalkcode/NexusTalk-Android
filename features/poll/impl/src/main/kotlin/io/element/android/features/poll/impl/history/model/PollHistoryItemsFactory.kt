@@ -18,12 +18,30 @@ import io.element.android.libraries.matrix.api.timeline.item.event.PollContent
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.withContext
 
+/**
+ * 投票历史项工厂
+ *
+ * 负责将时间线项转换为投票历史项集合。
+ * 按投票状态分为进行中和已结束两类。
+ *
+ * @property pollContentStateFactory 投票内容状态工厂
+ * @property dateFormatter 日期格式化器
+ * @property dispatchers 协程调度器
+ */
 @Inject
 class PollHistoryItemsFactory(
     private val pollContentStateFactory: PollContentStateFactory,
     private val dateFormatter: DateFormatter,
     private val dispatchers: CoroutineDispatchers,
 ) {
+    /**
+     * 创建投票历史项集合
+     *
+     * 将时间线项列表转换为按状态分类的投票历史项集合。
+     *
+     * @param timelineItems 时间线项列表
+     * @return PollHistoryItems 分类后的投票历史项
+     */
     suspend fun create(timelineItems: List<MatrixTimelineItem>): PollHistoryItems = withContext(dispatchers.computation) {
         val past = ArrayList<PollHistoryItem>()
         val ongoing = ArrayList<PollHistoryItem>()

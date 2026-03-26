@@ -26,6 +26,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * 搜索账户提供商 Presenter
+ *
+ * 负责处理搜索账户提供商页面的业务逻辑。
+ * 管理用户输入、服务器解析和选择状态。
+ *
+ * @property homeserverResolver Homeserver 解析器
+ * @property changeServerPresenter 服务器切换 Presenter
+ */
 @Inject
 class SearchAccountProviderPresenter(
     private val homeserverResolver: HomeserverResolver,

@@ -43,6 +43,8 @@
   <string name="screen_edit_profile_error">"Wystąpił nieznany błąd przez co nie można było zmienić informacji."</string>
   <string name="screen_edit_profile_error_title">"Nie można zaktualizować profilu"</string>
   <string name="screen_edit_profile_title">"Edytuj profil"</string>
+  <string name="screen_edit_profile_change_avatar">"Zmień awatar"</string>
+  <string name="screen_edit_profile_username">"Nazwa użytkownika"</string>
   <string name="screen_edit_profile_updating_details">"Aktualizuję profil…"</string>
   <string name="screen_labs_enable_threads">"Włącz odpowiedzi w wątkach"</string>
   <string name="screen_labs_enable_threads_description">"Aplikacja uruchomi się ponownie, aby zastosować tę zmianę."</string>
@@ -76,6 +78,8 @@ Niektóre ustawienia mogą ulec zmianie, jeśli kontynuujesz."</string>
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"ustawienia systemowe"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Powiadomienia systemowe wyłączone"</string>
   <string name="screen_notification_settings_title">"Powiadomienia"</string>
+  <string name="screen_preferences_section_customization">"Dostosowanie"</string>
+  <string name="screen_preferences_section_security">"Bezpieczeństwo"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Historia powiadomień Push"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Rozwiązywanie problemów"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Rozwiązywanie problemów powiadomień"</string>

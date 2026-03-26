@@ -29,6 +29,7 @@ class DefaultWellknownRetriever(
             .map { wellknownApi ->
                 try {
                     val result = wellknownApi.getElementWellKnown().map()
+                    Timber.d("Element well-known data retrieved successfully for $baseUrl: $result")
                     WellknownRetrieverResult.Success(result)
                 } catch (e: Exception) {
                     // Is it a 404?

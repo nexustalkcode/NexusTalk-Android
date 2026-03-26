@@ -23,7 +23,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import chat.schildi.theme.ScTheme
 import io.element.android.compound.theme.LinkColor
 
 fun String.toAnnotatedString(): AnnotatedString = buildAnnotatedString {
@@ -89,12 +88,10 @@ fun buildAnnotatedStringWithStyledPart(
 /**
  * Convert a string to an [AnnotatedString] with colored end period if present.
  */
-@Composable
 fun withColoredPeriod(
     text: String,
 ) = buildAnnotatedString {
     append(text)
-    if (ScTheme.yes) return@buildAnnotatedString
     if (text.endsWith(".")) {
         addStyle(
             style = SpanStyle(

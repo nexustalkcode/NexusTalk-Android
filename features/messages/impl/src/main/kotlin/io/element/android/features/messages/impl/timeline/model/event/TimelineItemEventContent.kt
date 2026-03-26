@@ -9,7 +9,6 @@
 package io.element.android.features.messages.impl.timeline.model.event
 
 import androidx.compose.runtime.Immutable
-import com.beeper.android.messageformat.MatrixBodyParseResult
 import io.element.android.libraries.matrix.api.media.MediaSource
 import kotlin.time.Duration
 
@@ -31,7 +30,6 @@ sealed interface TimelineItemEventContentWithAttachment :
     val fileSize: Long?
     val caption: String?
     val formattedCaption: CharSequence?
-    val formattedCaptionSc: MatrixBodyParseResult?
     val mediaSource: MediaSource
     val mimeType: String
     val formattedFileSize: String

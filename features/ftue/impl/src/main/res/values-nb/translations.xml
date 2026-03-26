@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Du kan endre innstillingene dine senere."</string>
   <string name="screen_notification_optin_title">"Tillat varslinger og gå aldri glipp av en melding"</string>
   <string name="screen_session_verification_enter_recovery_key">"Skriv inn gjenopprettingsnøkkel"</string>
+  <string name="screen_welcome_agreement">"Ved å trykke på Godta og fortsett godtar du våre %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Personvernregler"</string>
+  <string name="screen_welcome_title">"Velkommen til %s"</string>
+  <string name="screen_welcome_privacy_notice">"Vennligst les våre Personvernregler"</string>
+  <string name="screen_welcome_agree">"Godta"</string>
 </resources>

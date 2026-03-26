@@ -5,4 +5,9 @@
   <string name="common_favourite">"Favorite"</string>
   <string name="common_favourited">"Favorited"</string>
   <string name="crypto_history_visible">"This room has been configured so that new members can read history. %1$s"</string>
+  <string name="common_call_ended">"Call ended"</string>
+  <string name="action_start_call">"Start call"</string>
+  <string name="screen_roomlist_empty_no_call_title">"No calls"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Stay connected with communities"</string>
+  <string name="action_create_community">"Create community"</string>
 </resources>

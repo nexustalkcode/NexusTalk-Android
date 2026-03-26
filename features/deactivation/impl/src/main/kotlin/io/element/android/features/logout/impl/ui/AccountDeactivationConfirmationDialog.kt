@@ -14,6 +14,14 @@ import io.element.android.features.deactivation.impl.R
 import io.element.android.libraries.designsystem.components.dialogs.ConfirmationDialog
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 账户停用确认对话框
+ *
+ * 显示账户停用的二次确认，包含风险提示和停用说明。
+ *
+ * @param onSubmitClick 确认停用按钮点击回调
+ * @param onDismiss 取消/关闭对话框回调
+ */
 @Composable
 fun AccountDeactivationConfirmationDialog(
     onSubmitClick: () -> Unit,

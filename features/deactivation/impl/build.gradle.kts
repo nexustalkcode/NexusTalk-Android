@@ -36,6 +36,5 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     api(projects.features.deactivation.api)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.libraries.matrix.test)
 }

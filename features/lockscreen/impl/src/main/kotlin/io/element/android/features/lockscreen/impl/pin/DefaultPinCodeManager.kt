@@ -18,8 +18,18 @@ import io.element.android.libraries.cryptography.api.SecretKeyRepository
 import kotlinx.coroutines.flow.Flow
 import java.util.concurrent.CopyOnWriteArrayList
 
+/** PIN 码密钥别名 */
 private const val SECRET_KEY_ALIAS = "elementx.SECRET_KEY_ALIAS_PIN_CODE"
 
+/**
+ * 默认 PIN 码管理器实现
+ *
+ * 提供完整的 PIN 码管理功能，包括：
+ * - 加密存储 PIN 码
+ * - 验证 PIN 码
+ * - 删除 PIN 码
+ * - 回调管理
+ */
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
 class DefaultPinCodeManager(
@@ -27,6 +37,7 @@ class DefaultPinCodeManager(
     private val encryptionDecryptionService: EncryptionDecryptionService,
     private val lockScreenStore: LockScreenStore,
 ) : PinCodeManager {
+    /** 回调列表 */
     private val callbacks = CopyOnWriteArrayList<PinCodeManager.Callback>()
 
     override fun addCallback(callback: PinCodeManager.Callback) {

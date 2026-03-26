@@ -8,7 +8,6 @@
 
 package io.element.android.features.messages.impl.timeline.model.event
 
-import com.beeper.android.messageformat.MatrixBodyParseResult
 import io.element.android.libraries.matrix.api.media.MediaSource
 
 data class TimelineItemStickerContent(
@@ -16,7 +15,6 @@ data class TimelineItemStickerContent(
     override val fileSize: Long?,
     override val caption: String?,
     override val formattedCaption: CharSequence?,
-    override val formattedCaptionSc: MatrixBodyParseResult?,
     override val isEdited: Boolean,
     override val mediaSource: MediaSource,
     val thumbnailSource: MediaSource?,
@@ -32,5 +30,5 @@ data class TimelineItemStickerContent(
 
     /* Stickers are supposed to be small images so
        we allow using the mediaSource (unless the url is empty) */
-    val preferredMediaSource = if (mediaSource.safeUrl.isEmpty()) thumbnailSource else mediaSource
+    val preferredMediaSource = if (mediaSource.url.isEmpty()) thumbnailSource else mediaSource
 }

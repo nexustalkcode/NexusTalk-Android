@@ -19,7 +19,6 @@ data class RoomSummary(
         is LatestEventValue.None -> null
         is LatestEventValue.Local -> latestEvent.timestamp
         is LatestEventValue.Remote -> latestEvent.timestamp
-        is LatestEventValue.RoomInvite -> latestEvent.timestamp
     }
     val isOneToOne get() = info.activeMembersCount == 2L
 }

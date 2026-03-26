@@ -16,6 +16,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * 记录应用版本和构建信息的工具函数。
+ *
+ * 将应用版本号、构建类型、Git 提交 SHA、SDK 版本等关键信息
+ * 通过 Timber 日志框架输出到日志系统。
+ * 用于调试和问题排查时快速获取应用的版本信息。
+ *
+ * @param context 应用上下文，用于获取版本码等系统信息
+ */
 fun logApplicationInfo(context: Context) {
     val appVersion = buildString {
         append(BuildConfig.VERSION_NAME)
@@ -26,7 +35,7 @@ fun logApplicationInfo(context: Context) {
         append(" / ")
         append(BuildConfig.FLAVOR)
     }
-    // TODO Get SDK version somehow
+    // TODO 需要以某种方式获取 SDK 版本
     val sdkVersion = "SDK VERSION (TODO)"
     val date = SimpleDateFormat("MM-dd HH:mm:ss.SSSZ", Locale.US).format(Date())
 

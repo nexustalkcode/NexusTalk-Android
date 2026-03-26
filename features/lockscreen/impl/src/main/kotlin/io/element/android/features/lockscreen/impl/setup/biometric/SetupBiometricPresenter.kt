@@ -21,6 +21,11 @@ import io.element.android.features.lockscreen.impl.storage.LockScreenStore
 import io.element.android.libraries.architecture.Presenter
 import kotlinx.coroutines.launch
 
+/**
+ * 设置生物识别Presenter
+ *
+ * 负责管理设置生物识别界面的业务逻辑。
+ */
 @Inject
 class SetupBiometricPresenter(
     private val lockScreenStore: LockScreenStore,

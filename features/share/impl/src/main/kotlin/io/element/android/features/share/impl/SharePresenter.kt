@@ -8,14 +8,13 @@
 
 package io.element.android.features.share.impl
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
-import io.element.android.features.share.api.OnSharedData
-import io.element.android.features.share.api.ShareIntentData
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.architecture.runCatchingUpdatingState
@@ -31,28 +30,110 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
+/**
+ * 分享 Presenter
+ *
+ * 负责处理分享功能的业务逻辑，包括：
+ * - 处理分享意图
+ * - 上传媒体文件到房间
+ * - 发送文本消息到房间
+ * - 管理分享状态
+ *
+ * 使用协程进行异步操作，确保主线程流畅响应。
+ *
+ * @property intent 要分享的 Intent 内容
+ * @property sessionCoroutineScope 会话级协程作用域
+ * @property shareIntentHandler 分享意图处理器
+ * @property matrixClient Matrix 客户端
+ * @property mediaSenderRoomFactory 媒体发送器工厂
+ * @property activeRoomsHolder 活动房间持有者
+ * @property mediaOptimizationConfigProvider 媒体优化配置提供者
+ * @see ShareState 分享状态
+ * @see ShareIntentHandler 分享意图处理器接口
+ */
+/**
+ * Share Presenter.
+ *
+ * Responsible for handling the business logic of the share feature, including:
+ * - Processing share intents
+ * - Uploading media files to rooms
+ * - Sending text messages to rooms
+ * - Managing share state
+ *
+ * Uses coroutines for async operations to ensure smooth main thread responsiveness.
+ *
+ * @property intent The Intent to be shared
+ * @property sessionCoroutineScope Session-level coroutine scope
+ * @property shareIntentHandler Share intent handler
+ * @property matrixClient Matrix client
+ * @property mediaSenderRoomFactory Media sender room factory
+ * @property activeRoomsHolder Active rooms holder
+ * @property mediaOptimizationConfigProvider Media optimization config provider
+ * @see ShareState Share state
+ * @see ShareIntentHandler Share intent handler interface
+ */
 @AssistedInject
 class SharePresenter(
-    @Assisted private val shareIntentData: ShareIntentData,
+    @Assisted private val intent: Intent,
     @SessionCoroutineScope
     private val sessionCoroutineScope: CoroutineScope,
+    private val shareIntentHandler: ShareIntentHandler,
     private val matrixClient: MatrixClient,
     private val mediaSenderRoomFactory: MediaSenderRoomFactory,
     private val activeRoomsHolder: ActiveRoomsHolder,
     private val mediaOptimizationConfigProvider: MediaOptimizationConfigProvider,
-    private val onSharedData: OnSharedData,
 ) : Presenter<ShareState> {
+    /**
+     * Presenter 工厂接口
+     */
+    /**
+     * Presenter factory interface.
+     */
     @AssistedFactory
     fun interface Factory {
-        fun create(shareIntentData: ShareIntentData): SharePresenter
+        /**
+         * 创建 SharePresenter 实例
+         *
+         * @param intent 分享意图
+         * @return SharePresenter 实例
+         */
+        /**
+         * Creates a SharePresenter instance.
+         *
+         * @param intent The share intent
+         * @return SharePresenter instance
+         */
+        fun create(intent: Intent): SharePresenter
     }
 
+    /** 分享操作状态 */
+    /** The share action state */
     private val shareActionState: MutableState<AsyncAction<List<RoomId>>> = mutableStateOf(AsyncAction.Uninitialized)
 
+    /**
+     * 当房间被选中时调用
+     *
+     * @param roomIds 要分享到的房间 ID 列表
+     */
+    /**
+     * Called when a room is selected.
+     *
+     * @param roomIds The list of room IDs to share to
+     */
     fun onRoomSelected(roomIds: List<RoomId>) {
-        sessionCoroutineScope.share(shareIntentData, roomIds)
+        sessionCoroutineScope.share(intent, roomIds)
     }
 
+    /**
+     * 创建视图状态
+     *
+     * @return ShareState 当前分享的状态
+     */
+    /**
+     * Creates the view state.
+     *
+     * @return ShareState The current share state
+     */
     @Composable
     override fun present(): ShareState {
         fun handleEvent(event: ShareEvents) {
@@ -67,31 +148,44 @@ class SharePresenter(
         )
     }
 
+    /**
+     * 获取已加入的房间
+     *
+     * @param roomId 房间 ID
+     * @return JoinedRoom 实例，如果房间不存在则返回 null
+     */
+    /**
+     * Gets a joined room.
+     *
+     * @param roomId The room ID
+     * @return JoinedRoom instance, or null if the room doesn't exist
+     */
     private suspend fun getJoinedRoom(roomId: RoomId): JoinedRoom? {
         return activeRoomsHolder.getActiveRoom(matrixClient.sessionId)
             ?.takeIf { it.roomId == roomId }
             ?: matrixClient.getJoinedRoom(roomId)
     }
 
+    /**
+     * 执行分享操作
+     *
+     * @param intent 分享意图
+     * @param roomIds 目标房间 ID 列表
+     */
+    /**
+     * Executes the share operation.
+     *
+     * @param intent The share intent
+     * @param roomIds The target room ID list
+     */
     private fun CoroutineScope.share(
-        shareIntentData: ShareIntentData,
+        intent: Intent,
         roomIds: List<RoomId>,
     ) = launch {
         suspend {
-            val result = when (shareIntentData) {
-                is ShareIntentData.PlainText -> {
-                    roomIds
-                        .map { roomId ->
-                            getJoinedRoom(roomId)?.liveTimeline?.sendMessage(
-                                body = shareIntentData.content,
-                                htmlBody = null,
-                                intentionalMentions = emptyList(),
-                            )?.isSuccess.orFalse()
-                        }
-                        .all { it }
-                }
-                is ShareIntentData.Uris -> {
-                    val filesToShare = shareIntentData.uris
+            val result = shareIntentHandler.handleIncomingShareIntent(
+                intent,
+                onUris = { filesToShare ->
                     if (filesToShare.isEmpty()) {
                         false
                     } else {
@@ -102,7 +196,6 @@ class SharePresenter(
                                 filesToShare
                                     .map { fileToShare ->
                                         val result = mediaSender.sendMedia(
-                                            caption = shareIntentData.text,
                                             uri = fileToShare.uri,
                                             mimeType = fileToShare.mimeType,
                                             mediaOptimizationConfig = mediaOptimizationConfigProvider.get(),
@@ -126,12 +219,19 @@ class SharePresenter(
                             }
                             .all { it }
                     }
+                },
+                onPlainText = { text ->
+                    roomIds
+                        .map { roomId ->
+                            getJoinedRoom(roomId)?.liveTimeline?.sendMessage(
+                                body = text,
+                                htmlBody = null,
+                                intentionalMentions = emptyList(),
+                            )?.isSuccess.orFalse()
+                        }
+                        .all { it }
                 }
-            }
-
-            // Handle post-processing of shared data
-            onSharedData(shareIntentData)
-
+            )
             if (!result) {
                 error("Failed to handle incoming share intent")
             }

@@ -8,10 +8,15 @@
 
 package io.element.android.features.home.impl
 
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.moleculeFlow
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.announcement.api.Announcement
 import io.element.android.features.announcement.api.AnnouncementService
 import io.element.android.features.home.impl.roomlist.aRoomListState
+import io.element.android.features.home.impl.grouplist.GroupListState
+import io.element.android.features.home.impl.grouplist.aGroupListState
 import io.element.android.features.home.impl.spaces.HomeSpacesState
 import io.element.android.features.home.impl.spaces.aHomeSpacesState
 import io.element.android.features.logout.api.direct.aDirectLogoutState
@@ -19,6 +24,8 @@ import io.element.android.features.rageshake.api.RageshakeFeatureAvailability
 import io.element.android.features.rageshake.test.logs.FakeAnnouncementService
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatcher
+import io.element.android.libraries.featureflag.api.FeatureFlagService
+import io.element.android.libraries.featureflag.test.FakeFeatureFlagService
 import io.element.android.libraries.indicator.api.IndicatorService
 import io.element.android.libraries.indicator.test.FakeIndicatorService
 import io.element.android.libraries.matrix.api.MatrixClient
@@ -30,6 +37,7 @@ import io.element.android.libraries.matrix.test.A_USER_ID
 import io.element.android.libraries.matrix.test.A_USER_NAME
 import io.element.android.libraries.matrix.test.FakeMatrixClient
 import io.element.android.libraries.matrix.test.sync.FakeSyncService
+import io.element.android.libraries.matrix.test.verification.FakeSessionVerificationService
 import io.element.android.libraries.sessionstorage.api.SessionStore
 import io.element.android.libraries.sessionstorage.test.InMemorySessionStore
 import io.element.android.libraries.sessionstorage.test.aSessionData
@@ -67,7 +75,9 @@ class HomePresenterTest {
                 ),
             ),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.currentUserAndNeighbors.first()).isEqualTo(
                 MatrixUser(A_USER_ID, null, null)
@@ -91,7 +101,9 @@ class HomePresenterTest {
                 updateUserProfileResult = { _, _, _ -> },
             ),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.canReportBug).isFalse()
             val finalState = awaitItem()
@@ -108,7 +120,9 @@ class HomePresenterTest {
                 updateUserProfileResult = { _, _, _ -> },
             ),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.showAvatarIndicator).isFalse()
             indicatorService.setShowRoomListTopBarIndicator(true)
@@ -130,7 +144,9 @@ class HomePresenterTest {
                 updateUserProfileResult = { _, _, _ -> },
             ),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.currentUserAndNeighbors.first()).isEqualTo(MatrixUser(matrixClient.sessionId))
             // No new state is coming
@@ -148,10 +164,12 @@ class HomePresenterTest {
                 showAnnouncementResult = showAnnouncementResult,
             )
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.currentHomeNavigationBarItem).isEqualTo(HomeNavigationBarItem.Chats)
-            initialState.eventSink(HomeEvent.SelectHomeNavigationBarItem(HomeNavigationBarItem.Spaces))
+            initialState.eventSink(HomeEvents.SelectHomeNavigationBarItem(HomeNavigationBarItem.Spaces))
             val finalState = awaitItem()
             assertThat(finalState.currentHomeNavigationBarItem).isEqualTo(HomeNavigationBarItem.Spaces)
             showAnnouncementResult.assertions().isCalledOnce()
@@ -176,7 +194,7 @@ class HomePresenterTest {
             assertThat(initialState.currentHomeNavigationBarItem).isEqualTo(HomeNavigationBarItem.Chats)
             assertThat(initialState.showNavigationBar).isTrue()
             // User navigate to Spaces
-            initialState.eventSink(HomeEvent.SelectHomeNavigationBarItem(HomeNavigationBarItem.Spaces))
+            initialState.eventSink(HomeEvents.SelectHomeNavigationBarItem(HomeNavigationBarItem.Spaces))
             val spaceState = awaitItem()
             assertThat(spaceState.currentHomeNavigationBarItem).isEqualTo(HomeNavigationBarItem.Spaces)
             // The last space is left
@@ -196,6 +214,9 @@ internal fun createHomePresenter(
     snackbarDispatcher: SnackbarDispatcher = SnackbarDispatcher(),
     rageshakeFeatureAvailability: RageshakeFeatureAvailability = RageshakeFeatureAvailability { flowOf(false) },
     indicatorService: IndicatorService = FakeIndicatorService(),
+    sessionVerificationService: FakeSessionVerificationService = FakeSessionVerificationService(),
+    featureFlagService: FeatureFlagService = FakeFeatureFlagService(),
+    groupListPresenter: Presenter<GroupListState> = Presenter { aGroupListState() },
     homeSpacesPresenter: Presenter<HomeSpacesState> = Presenter { aHomeSpacesState() },
     sessionStore: SessionStore = InMemorySessionStore(),
     announcementService: AnnouncementService = FakeAnnouncementService(),
@@ -204,7 +225,10 @@ internal fun createHomePresenter(
     syncService = syncService,
     snackbarDispatcher = snackbarDispatcher,
     indicatorService = indicatorService,
+    sessionVerificationService = sessionVerificationService,
+    featureFlagService = featureFlagService,
     roomListPresenter = { aRoomListState() },
+    groupListPresenter = groupListPresenter,
     homeSpacesPresenter = homeSpacesPresenter,
     logoutPresenter = { aDirectLogoutState() },
     rageshakeFeatureAvailability = rageshakeFeatureAvailability,

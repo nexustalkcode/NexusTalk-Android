@@ -44,10 +44,10 @@ class LeaveSpaceStateTest {
     @Test
     fun `test last admin`() {
         val sut = aLeaveSpaceState(
-            isLastOwner = true,
+            isLastAdmin = true,
             selectableSpaceRooms = AsyncData.Success(
                 persistentListOf(
-                    aSelectableSpaceRoom(isLastOwner = false, isSelected = false),
+                    aSelectableSpaceRoom(isLastAdmin = false, isSelected = false),
                 )
             )
         )
@@ -63,8 +63,8 @@ class LeaveSpaceStateTest {
         val sut = aLeaveSpaceState(
             selectableSpaceRooms = AsyncData.Success(
                 listOf(
-                    aSelectableSpaceRoom(isLastOwner = false, isSelected = true),
-                    aSelectableSpaceRoom(isLastOwner = false, isSelected = false),
+                    aSelectableSpaceRoom(isLastAdmin = false, isSelected = true),
+                    aSelectableSpaceRoom(isLastAdmin = false, isSelected = false),
                 ).toImmutableList()
             )
         )
@@ -80,8 +80,8 @@ class LeaveSpaceStateTest {
         val sut = aLeaveSpaceState(
             selectableSpaceRooms = AsyncData.Success(
                 listOf(
-                    aSelectableSpaceRoom(isLastOwner = false, isSelected = true),
-                    aSelectableSpaceRoom(isLastOwner = false, isSelected = true),
+                    aSelectableSpaceRoom(isLastAdmin = false, isSelected = true),
+                    aSelectableSpaceRoom(isLastAdmin = false, isSelected = true),
                 ).toImmutableList()
             )
         )
@@ -97,9 +97,9 @@ class LeaveSpaceStateTest {
         val sut = aLeaveSpaceState(
             selectableSpaceRooms = AsyncData.Success(
                 persistentListOf(
-                    aSelectableSpaceRoom(isLastOwner = true, isSelected = false),
-                    aSelectableSpaceRoom(isLastOwner = false, isSelected = true),
-                    aSelectableSpaceRoom(isLastOwner = false, isSelected = true),
+                    aSelectableSpaceRoom(isLastAdmin = true, isSelected = false),
+                    aSelectableSpaceRoom(isLastAdmin = false, isSelected = true),
+                    aSelectableSpaceRoom(isLastAdmin = false, isSelected = true),
                 )
             )
         )
@@ -115,8 +115,8 @@ class LeaveSpaceStateTest {
         val sut = aLeaveSpaceState(
             selectableSpaceRooms = AsyncData.Success(
                 listOf(
-                    aSelectableSpaceRoom(isLastOwner = true, isSelected = false),
-                    aSelectableSpaceRoom(isLastOwner = true, isSelected = false),
+                    aSelectableSpaceRoom(isLastAdmin = true, isSelected = false),
+                    aSelectableSpaceRoom(isLastAdmin = true, isSelected = false),
                 ).toImmutableList()
             )
         )

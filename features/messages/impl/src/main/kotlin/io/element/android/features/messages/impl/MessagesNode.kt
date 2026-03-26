@@ -21,9 +21,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
-import chat.schildi.matrixsdk.urlpreview.UrlPreviewProvider
-import chat.schildi.matrixsdk.urlpreview.UrlPreviewStateProvider
-import com.beeper.android.messageformat.MatrixToLink
 import com.bumble.appyx.core.lifecycle.subscribe
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
@@ -39,16 +36,10 @@ import io.element.android.features.messages.impl.attachments.Attachment
 import io.element.android.features.messages.impl.messagecomposer.MessageComposerEvent
 import io.element.android.features.messages.impl.messagecomposer.MessageComposerPresenter
 import io.element.android.features.messages.impl.timeline.TimelineController
-import io.element.android.features.messages.impl.timeline.TimelineEvent
+import io.element.android.features.messages.impl.timeline.TimelineEvents
 import io.element.android.features.messages.impl.timeline.TimelinePresenter
 import io.element.android.features.messages.impl.timeline.di.LocalTimelineItemPresenterFactories
-import io.element.android.features.messages.impl.timeline.di.LocalUrlPreviewStateProvider
 import io.element.android.features.messages.impl.timeline.di.TimelineItemPresenterFactories
-import io.element.android.features.messages.impl.timeline.factories.event.LocalMatrixBodyDrawStyle
-import io.element.android.features.messages.impl.timeline.factories.event.LocalMatrixBodyFormatter
-import io.element.android.features.messages.impl.timeline.factories.event.LocalSessionId
-import io.element.android.features.messages.impl.timeline.factories.event.matrixBodyDrawStyle
-import io.element.android.features.messages.impl.timeline.factories.event.matrixBodyFormatter
 import io.element.android.features.messages.impl.timeline.model.TimelineItem
 import io.element.android.features.roommembermoderation.api.ModerationAction
 import io.element.android.features.roommembermoderation.api.RoomMemberModerationEvents
@@ -65,7 +56,6 @@ import io.element.android.libraries.di.annotations.ApplicationContext
 import io.element.android.libraries.di.annotations.SessionCoroutineScope
 import io.element.android.libraries.matrix.api.analytics.toAnalyticsViewRoom
 import io.element.android.libraries.matrix.api.core.EventId
-import io.element.android.libraries.matrix.api.core.RoomAlias
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.ThreadId
 import io.element.android.libraries.matrix.api.core.UserId
@@ -82,12 +72,40 @@ import io.element.android.services.analytics.api.AnalyticsLongRunningTransaction
 import io.element.android.services.analytics.api.AnalyticsService
 import io.element.android.services.analytics.api.finishLongRunningTransaction
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
+/**
+ * 消息节点类
+ *
+ * 消息功能模块的主要节点，负责管理和协调消息页面的各种组件。
+ * 集成时间线、消息撰写器、动作列表等功能模块。
+ *
+ * 使用 @ContributesNode 注解向 RoomScope 贡献节点，
+ * 使用 @AssistedInject 实现依赖注入。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property context 应用上下文
+ * @property sessionCoroutineScope 会话协程作用域
+ * @property room 已加入的房间实例
+ * @property analyticsService 分析服务
+ * @property messageComposerPresenterFactory 消息撰写器Presenter工厂
+ * @property timelinePresenterFactory 时间线Presenter工厂
+ * @property presenterFactory 消息Presenter工厂
+ * @property actionListPresenterFactory 动作列表Presenter工厂
+ * @property timelineItemPresenterFactories 时间线项Presenter工厂
+ * @property mediaPlayer 媒体播放器
+ * @property permalinkParser 永久链接解析器
+ * @property knockRequestsBannerRenderer 敲门前请Banner渲染器
+ * @property roomMemberModerationRenderer 房间成员 moderation 渲染器
+ *
+ * @see MessagesNavigator 消息导航器
+ * @see TimelineController 时间线控制器
+ * @see MessagesPresenter 消息Presenter
+ * @see Node Appyx核心节点
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class MessagesNode(
@@ -103,11 +121,15 @@ class MessagesNode(
     actionListPresenterFactory: ActionListPresenter.Factory,
     private val timelineItemPresenterFactories: TimelineItemPresenterFactories,
     private val mediaPlayer: MediaPlayer,
-    urlPreviewProvider: UrlPreviewProvider, // SC
     private val permalinkParser: PermalinkParser,
     private val knockRequestsBannerRenderer: KnockRequestsBannerRenderer,
     private val roomMemberModerationRenderer: RoomMemberModerationRenderer,
 ) : Node(buildContext, plugins = plugins), MessagesNavigator {
+    /**
+     * 消息节点输入数据类
+     *
+     * @property focusedEventId 聚焦的事件ID（可选），用于打开页面时定位到特定消息
+     */
     data class Inputs(
         val focusedEventId: EventId?,
     ) : NodeInputs
@@ -127,24 +149,101 @@ class MessagesNode(
         timelineController = timelineController,
     )
 
-    // SC: in order to avoid keeping too many url preview state holders around, limit this to a per-room-open scope
-    private val urlPreviewStateProvider = UrlPreviewStateProvider(urlPreviewProvider)
-
+    /**
+     * 消息节点回调接口
+     *
+     * 定义消息节点与父节点之间的通信协议，处理各种用户交互事件。
+     */
     interface Callback : Plugin {
+        /**
+         * 处理事件点击
+         *
+         * @param timelineMode 时间线模式
+         * @param event 时间线事件
+         * @return 是否处理了该事件
+         */
         fun handleEventClick(timelineMode: Timeline.Mode, event: TimelineItem.Event): Boolean
+
+        /**
+         * 导航到附件预览页面
+         *
+         * @param attachments 附件列表
+         * @param inReplyToEventId 回复的事件ID
+         */
         fun navigateToPreviewAttachments(attachments: ImmutableList<Attachment>, inReplyToEventId: EventId?)
+
+        /**
+         * 导航到房间成员详情页面
+         *
+         * @param userId 用户ID
+         */
         fun navigateToRoomMemberDetails(userId: UserId)
+
+        /**
+         * 处理永久链接点击
+         *
+         * @param data 永久链接数据
+         */
         fun handlePermalinkClick(data: PermalinkData)
+
+        /**
+         * 导航到事件调试信息页面
+         *
+         * @param eventId 事件ID
+         * @param debugInfo 调试信息
+         */
         fun navigateToEventDebugInfo(eventId: EventId?, debugInfo: TimelineItemDebugInfo)
+
+        /**
+         * 转发事件
+         *
+         * @param eventId 事件ID
+         */
         fun forwardEvent(eventId: EventId)
+
+        /**
+         * 导航到举报消息页面
+         *
+         * @param eventId 事件ID
+         * @param senderId 发送者ID
+         */
         fun navigateToReportMessage(eventId: EventId, senderId: UserId)
+
+        /** 导航到发送位置页面 */
         fun navigateToSendLocation()
+
+        /** 导航到创建投票页面 */
         fun navigateToCreatePoll()
+
+        /**
+         * 导航到编辑投票页面
+         *
+         * @param eventId 投票事件ID
+         */
         fun navigateToEditPoll(eventId: EventId)
-        fun navigateToRoomCall(roomId: RoomId, isAudioCall: Boolean)
+
+        /**
+         * 导航到房间通话页面
+         *
+         * @param roomId 房间ID
+         */
+        fun navigateToRoomCall(roomId: RoomId)
+
+        /**
+         * 导航到线程页面
+         *
+         * @param threadRootId 线程根事件ID
+         * @param focusedEventId 聚焦的事件ID
+         */
         fun navigateToThread(threadRootId: ThreadId, focusedEventId: EventId?)
+
+        /** 导航到房间详情页面 */
         fun navigateToRoomDetails()
+
+        /** 导航到固定消息列表页面 */
         fun navigateToPinnedMessagesList()
+
+        /** 导航到敲门前请求列表页面 */
         fun navigateToKnockRequestsList()
     }
 
@@ -159,7 +258,6 @@ class MessagesNode(
             },
             onDestroy = {
                 mediaPlayer.close()
-                urlPreviewStateProvider.clear()
             }
         )
     }
@@ -168,7 +266,7 @@ class MessagesNode(
         activity: Activity,
         darkTheme: Boolean,
         url: String,
-        eventSink: (TimelineEvent) -> Unit,
+        eventSink: (TimelineEvents) -> Unit,
         customTab: Boolean
     ) {
         when (val permalink = permalinkParser.parse(url)) {
@@ -195,12 +293,12 @@ class MessagesNode(
 
     private fun handleRoomLinkClick(
         roomLink: PermalinkData.RoomLink,
-        eventSink: (TimelineEvent) -> Unit,
+        eventSink: (TimelineEvents) -> Unit,
     ) {
         if (room.matches(roomLink.roomIdOrAlias)) {
             val eventId = roomLink.eventId
             if (eventId != null) {
-                eventSink(TimelineEvent.FocusOnEvent(eventId))
+                eventSink(TimelineEvents.FocusOnEvent(eventId))
             } else {
                 // Click on the same room, ignore
                 displaySameRoomToast()
@@ -253,63 +351,13 @@ class MessagesNode(
     override fun View(modifier: Modifier) {
         val activity = requireNotNull(LocalActivity.current)
         val isDark = ElementTheme.isLightTheme.not()
-        val state = presenter.present() // SC: moved up for click listener provides
         CompositionLocalProvider(
             LocalTimelineItemPresenterFactories provides timelineItemPresenterFactories,
-            LocalUrlPreviewStateProvider provides urlPreviewStateProvider.takeIfUrlPreviewsEnabledForRoom(room), // SC
-            LocalSessionId provides room.sessionId, // SC
-            LocalMatrixBodyFormatter provides matrixBodyFormatter( // SC
-                room.sessionId,
-                onLinkClick = {
-                    activity.openUrlInExternalApp(it)
-                },
-                onMatrixLinkClick = {
-                    when (it) {
-                        is MatrixToLink.MessageLink -> {
-                            val roomIdOrAlias = when {
-                                it.roomId.startsWith("!") -> RoomId(it.roomId).toRoomIdOrAlias()
-                                it.roomId.startsWith("#") -> RoomAlias(it.roomId).toRoomIdOrAlias()
-                                else -> {
-                                    // ???
-                                    activity.openUrlInExternalApp(it.rawUrl)
-                                    return@matrixBodyFormatter
-                                }
-                            }
-                            val permalinkData = PermalinkData.RoomLink(
-                                roomIdOrAlias,
-                                EventId(it.messageId),
-                                viaParameters = it.via?.toImmutableList() ?: persistentListOf(),
-                            )
-                            handleRoomLinkClick(permalinkData, state.timelineState.eventSink)
-                        }
-                        is MatrixToLink.RoomLink -> {
-                            val roomIdOrAlias = when {
-                                it.roomId.startsWith("!") -> RoomId(it.roomId).toRoomIdOrAlias()
-                                it.roomId.startsWith("#") -> RoomAlias(it.roomId).toRoomIdOrAlias()
-                                else -> {
-                                    // ???
-                                    activity.openUrlInExternalApp(it.rawUrl)
-                                    return@matrixBodyFormatter
-                                }
-                            }
-                            val permalinkData = PermalinkData.RoomLink(
-                                roomIdOrAlias,
-                                viaParameters = it.via?.toImmutableList() ?: persistentListOf(),
-                            )
-                            handleRoomLinkClick(permalinkData, state.timelineState.eventSink)
-                        }
-                        is MatrixToLink.UserMention -> {
-                            callback.navigateToRoomMemberDetails(UserId(it.userId))
-                        }
-                    }
-                },
-            ), // SC
-            LocalMatrixBodyDrawStyle provides matrixBodyDrawStyle(room.sessionId), // SC
         ) {
-            //val state = presenter.present()
+            val state = presenter.present()
 
             BackHandler {
-                state.eventSink(MessagesEvent.MarkAsFullyReadAndExit)
+                state.eventSink(MessagesEvents.MarkAsFullyReadAndExit)
             }
 
             OnLifecycleEvent { _, event ->
@@ -320,7 +368,7 @@ class MessagesNode(
             }
             MessagesView(
                 state = state,
-                onBackClick = { state.eventSink(MessagesEvent.MarkAsFullyReadAndExit) },
+                onBackClick = { state.eventSink(MessagesEvents.MarkAsFullyReadAndExit) },
                 onRoomDetailsClick = callback::navigateToRoomDetails,
                 onEventContentClick = { isLive, event ->
                     if (isLive) {
@@ -346,9 +394,7 @@ class MessagesNode(
                 },
                 onSendLocationClick = callback::navigateToSendLocation,
                 onCreatePollClick = callback::navigateToCreatePoll,
-                onJoinCallClick = { isAudioCall ->
-                    callback.navigateToRoomCall(room.roomId, isAudioCall)
-                },
+                onJoinCallClick = { callback.navigateToRoomCall(room.roomId) },
                 onViewAllPinnedMessagesClick = callback::navigateToPinnedMessagesList,
                 modifier = modifier,
                 knockRequestsBannerView = {
@@ -374,7 +420,7 @@ class MessagesNode(
             }
             LaunchedEffect(focusedEventId) {
                 if (focusedEventId != null) {
-                    state.timelineState.eventSink(TimelineEvent.FocusOnEvent(focusedEventId!!))
+                    state.timelineState.eventSink(TimelineEvents.FocusOnEvent(focusedEventId!!))
                     focusedEventId = null
                 }
             }

@@ -10,6 +10,11 @@ package io.element.android.features.preferences.impl.analytics
 
 import io.element.android.features.analytics.api.preferences.AnalyticsPreferencesState
 
+/**
+ * 分析设置页面状态数据类
+ *
+ * @property analyticsPreferencesState 分析首选项状态
+ */
 data class AnalyticsSettingsState(
     val analyticsPreferencesState: AnalyticsPreferencesState,
 )

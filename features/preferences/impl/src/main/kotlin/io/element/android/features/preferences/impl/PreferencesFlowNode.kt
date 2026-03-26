@@ -11,8 +11,6 @@ package io.element.android.features.preferences.impl
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import chat.schildi.lib.preferences.ScPrefScreen
-import chat.schildi.preferences.tweaks.ScTweaksSettingsNode
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import com.bumble.appyx.core.plugin.Plugin
@@ -37,6 +35,7 @@ import io.element.android.features.preferences.impl.notifications.NotificationSe
 import io.element.android.features.preferences.impl.notifications.edit.EditDefaultNotificationSettingNode
 import io.element.android.features.preferences.impl.root.PreferencesRootNode
 import io.element.android.features.preferences.impl.user.editprofile.EditUserProfileNode
+import io.element.android.features.preferences.impl.user.qrcode.UserQrCodeNode
 import io.element.android.libraries.architecture.BackstackView
 import io.element.android.libraries.architecture.BaseFlowNode
 import io.element.android.libraries.architecture.appyx.canPop
@@ -80,9 +79,6 @@ class PreferencesFlowNode(
         data object AdvancedSettings : NavTarget
 
         @Parcelize
-        data class ScTweaks(val prefScreen: ScPrefScreen?) : NavTarget
-
-        @Parcelize
         data object Labs : NavTarget
 
         @Parcelize
@@ -108,6 +104,9 @@ class PreferencesFlowNode(
 
         @Parcelize
         data class UserProfile(val matrixUser: MatrixUser) : NavTarget
+
+        @Parcelize
+        data class UserQrCode(val matrixUser: MatrixUser) : NavTarget
 
         @Parcelize
         data object BlockedUsers : NavTarget
@@ -164,10 +163,6 @@ class PreferencesFlowNode(
                         backstack.push(NavTarget.AdvancedSettings)
                     }
 
-                    override fun navigateToScTweaks(scPrefScreen: ScPrefScreen?) {
-                        backstack.push(NavTarget.ScTweaks(scPrefScreen))
-                    }
-
                     override fun navigateToLabs() {
                         backstack.push(NavTarget.Labs)
                     }
@@ -178,6 +173,10 @@ class PreferencesFlowNode(
 
                     override fun navigateToUserProfile(matrixUser: MatrixUser) {
                         backstack.push(NavTarget.UserProfile(matrixUser))
+                    }
+
+                    override fun navigateToUserQrCode(matrixUser: MatrixUser) {
+                        backstack.push(NavTarget.UserQrCode(matrixUser))
                     }
 
                     override fun navigateToBlockedUsers() {
@@ -287,23 +286,31 @@ class PreferencesFlowNode(
             NavTarget.AdvancedSettings -> {
                 createNode<AdvancedSettingsNode>(buildContext)
             }
-            is NavTarget.ScTweaks -> {
-                val input = ScTweaksSettingsNode.Inputs(navTarget.prefScreen)
-                val callback = object : ScTweaksSettingsNode.Callback {
-                    override fun navigateToScTweaks(scPrefScreen: ScPrefScreen) {
-                        backstack.push(NavTarget.ScTweaks(scPrefScreen))
-                    }
-                }
-                createNode<ScTweaksSettingsNode>(buildContext, plugins = listOf(input, callback))
-            }
             is NavTarget.UserProfile -> {
                 val inputs = EditUserProfileNode.Inputs(navTarget.matrixUser)
                 val callback = object : EditUserProfileNode.Callback {
                     override fun onDone() {
-                        backstack.pop()
+                        if (backstack.canPop()) {
+                            backstack.pop()
+                        } else {
+                            navigateUp()
+                        }
                     }
                 }
                 createNode<EditUserProfileNode>(buildContext, listOf(inputs, callback))
+            }
+            is NavTarget.UserQrCode -> {
+                val inputs = UserQrCodeNode.Inputs(navTarget.matrixUser)
+                val callback = object : UserQrCodeNode.Callback {
+                    override fun onDone() {
+                        if (backstack.canPop()) {
+                            backstack.pop()
+                        } else {
+                            navigateUp()
+                        }
+                    }
+                }
+                createNode<UserQrCodeNode>(buildContext, listOf(inputs, callback))
             }
             NavTarget.LockScreenSettings -> {
                 lockScreenEntryPoint.createNode(

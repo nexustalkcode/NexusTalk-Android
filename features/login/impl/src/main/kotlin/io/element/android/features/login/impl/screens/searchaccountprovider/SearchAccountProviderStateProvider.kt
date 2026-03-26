@@ -14,6 +14,9 @@ import io.element.android.features.login.impl.changeserver.aChangeServerState
 import io.element.android.features.login.impl.resolver.HomeserverData
 import io.element.android.libraries.architecture.AsyncData
 
+/**
+ * 搜索账户提供商状态预览参数提供者
+ */
 open class SearchAccountProviderStateProvider : PreviewParameterProvider<SearchAccountProviderState> {
     override val values: Sequence<SearchAccountProviderState>
         get() = sequenceOf(
@@ -23,6 +26,9 @@ open class SearchAccountProviderStateProvider : PreviewParameterProvider<SearchA
         )
 }
 
+/**
+ * 创建测试用搜索账户提供商状态
+ */
 fun aSearchAccountProviderState(
     userInput: String = "",
     userInputResult: AsyncData<List<HomeserverData>> = AsyncData.Uninitialized,
@@ -33,6 +39,9 @@ fun aSearchAccountProviderState(
     eventSink = {}
 )
 
+/**
+ * 创建测试用 Homeserver 数据列表
+ */
 fun aHomeserverDataList(): List<HomeserverData> {
     return listOf(
         aHomeserverData(homeserverUrl = AuthenticationConfig.MATRIX_ORG_URL),
@@ -41,6 +50,9 @@ fun aHomeserverDataList(): List<HomeserverData> {
     )
 }
 
+/**
+ * 创建测试用 Homeserver 数据
+ */
 fun aHomeserverData(
     homeserverUrl: String = AuthenticationConfig.MATRIX_ORG_URL,
 ): HomeserverData {

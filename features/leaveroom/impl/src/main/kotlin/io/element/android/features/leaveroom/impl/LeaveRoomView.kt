@@ -25,6 +25,15 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 离开房间视图组件
+ *
+ * 使用 Jetpack Compose 实现离开房间的用户界面。
+ * 支持显示确认对话框、加载状态和错误状态。
+ *
+ * @param state 当前视图状态
+ * @param onSelectNewOwners 选择新所有者时的回调
+ */
 @Suppress("LambdaParameterEventTrailing")
 @Composable
 fun LeaveRoomView(
@@ -54,6 +63,15 @@ fun LeaveRoomView(
     )
 }
 
+/**
+ * 离开房间确认对话框组件
+ *
+ * 根据不同的确认场景显示相应的确认对话框内容。
+ *
+ * @param confirmation 确认场景
+ * @param eventSink 事件处理函数
+ * @param onSelectNewOwners 选择新所有者回调
+ */
 @Composable
 private fun LeaveRoomConfirmationDialog(
     confirmation: Confirmation,
@@ -106,6 +124,18 @@ private fun LeaveRoomConfirmationDialog(
     }
 }
 
+/**
+ * 通用的离开房间确认对话框
+ *
+ * @param isDm 是否为私信
+ * @param text 对话框内容文本
+ * @param onSubmitClick 确认按钮点击事件
+ * @param onDismiss 取消按钮点击事件
+ * @param modifier 修饰符
+ * @param title 对话框标题
+ * @param submitText 确认按钮文本
+ * @param destructiveSubmit 是否为破坏性操作
+ */
 @Composable
 private fun LeaveRoomConfirmationDialog(
     isDm: Boolean,
@@ -128,6 +158,11 @@ private fun LeaveRoomConfirmationDialog(
     )
 }
 
+/**
+ * 离开房间进度对话框
+ *
+ * @param modifier 修饰符
+ */
 @Composable
 private fun LeaveRoomProgressDialog(modifier: Modifier = Modifier) {
     ProgressDialog(
@@ -136,6 +171,13 @@ private fun LeaveRoomProgressDialog(modifier: Modifier = Modifier) {
     )
 }
 
+/**
+ * 离开房间视图预览组件
+ *
+ * 用于在 Android Studio 预览中展示离开房间视图 UI。
+ *
+ * @param state 预览状态
+ */
 @PreviewsDayNight
 @Composable
 internal fun LeaveRoomViewPreview(

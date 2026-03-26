@@ -26,7 +26,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
-import io.element.android.features.messages.impl.timeline.TimelineEvent
+import io.element.android.features.messages.impl.timeline.TimelineEvents
 import io.element.android.features.messages.impl.timeline.TimelineRoomInfo
 import io.element.android.features.messages.impl.timeline.components.event.TimelineItemEventContentView
 import io.element.android.features.messages.impl.timeline.components.layout.ContentAvoidingLayoutData
@@ -51,11 +51,43 @@ import io.element.android.libraries.ui.utils.time.isTalkbackActive
 import io.element.android.wysiwyg.link.Link
 import kotlin.time.DurationUnit
 
+/**
+ * 时间线项目行组件
+ *
+ * 根据时间线项目的类型（虚拟项目、事件、分组事件）渲染相应的UI组件。
+ * 处理焦点事件高亮、辅助功能和无障碍访问。
+ *
+ * @param timelineItem 时间线项目
+ * @param timelineMode 时间线模式
+ * @param timelineRoomInfo 时间线房间信息
+ * @param isLatestCallNotify 是否为最新通话通知
+ * @param renderReadReceipts 是否渲染已读回执
+ * @param isLastOutgoingMessage 是否为最后一条发送的消息
+ * @param timelineProtectionState 时间线保护状态
+ * @param focusedEventId 聚焦事件ID
+ * @param displayThreadSummaries 是否显示线程摘要
+ * @param onUserDataClick 用户数据点击回调
+ * @param onLinkClick 链接点击回调
+ * @param onLinkLongClick 链接长按回调
+ * @param onContentClick 内容点击回调
+ * @param onLongClick 长按回调
+ * @param inReplyToClick 回复点击回调
+ * @param onReactionClick 反应点击回调
+ * @param onReactionLongClick 反应长按回调
+ * @param onMoreReactionsClick 更多反应点击回调
+ * @param onReadReceiptClick 已读回执点击回调
+ * @param onSwipeToReply 滑动回复回调
+ * @param onJoinCallClick 加入通话点击回调
+ * @param eventSink 事件处理函数
+ * @param modifier 修饰符
+ * @param eventContentView 自定义事件内容视图
+ */
 @Composable
 internal fun TimelineItemRow(
     timelineItem: TimelineItem,
     timelineMode: Timeline.Mode,
     timelineRoomInfo: TimelineRoomInfo,
+    isLatestCallNotify: Boolean = false,
     renderReadReceipts: Boolean,
     isLastOutgoingMessage: Boolean,
     timelineProtectionState: TimelineProtectionState,
@@ -72,19 +104,20 @@ internal fun TimelineItemRow(
     onMoreReactionsClick: (TimelineItem.Event) -> Unit,
     onReadReceiptClick: (TimelineItem.Event) -> Unit,
     onSwipeToReply: (TimelineItem.Event) -> Unit,
-    onJoinCallClick: (isAudioCall: Boolean) -> Unit,
-    eventSink: (TimelineEvent.TimelineItemEvent) -> Unit,
+    onJoinCallClick: () -> Unit,
+    eventSink: (TimelineEvents.EventFromTimelineItem) -> Unit,
     modifier: Modifier = Modifier,
     eventContentView: @Composable (TimelineItem.Event, Modifier, (ContentAvoidingLayoutData) -> Unit) -> Unit =
         { event, contentModifier, onContentLayoutChange ->
             TimelineItemEventContentView(
                 content = event.content,
                 hideMediaContent = timelineProtectionState.hideMediaContent(event.eventId),
+                isMine = event.isMine,
                 onShowContentClick = { timelineProtectionState.eventSink(TimelineProtectionEvent.ShowContent(event.eventId)) },
                 onContentClick = { onContentClick(event) },
+                onLongClick = { onLongClick(event) },
                 onLinkClick = onLinkClick,
                 onLinkLongClick = onLinkLongClick,
-                onLongClick = { onLongClick(event) },
                 eventSink = eventSink,
                 modifier = contentModifier,
                 onContentLayoutChange = onContentLayoutChange
@@ -92,7 +125,7 @@ internal fun TimelineItemRow(
         },
 ) {
     val backgroundModifier = if (timelineItem.isEvent(focusedEventId)) {
-        val focusedEventOffset = if ((timelineItem as? TimelineItem.Event)?.showSenderInformation == true) {
+        val focusedEventOffset = if ((timelineItem as? TimelineItem.Event)?.showSenderAvatar == true) {
             14.dp
         } else {
             2.dp
@@ -127,6 +160,7 @@ internal fun TimelineItemRow(
                         TimelineItemCallNotifyView(
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp),
                             event = timelineItem,
+                            isLatestCallNotify = isLatestCallNotify,
                             roomCallState = timelineRoomInfo.roomCallState,
                             onLongClick = onLongClick,
                             onJoinCallClick = onJoinCallClick,
@@ -222,7 +256,7 @@ private fun Modifier.focusedEvent(
     focusedEventOffset: Dp,
 ): Modifier {
     val highlightedLineColor = ElementTheme.colors.borderAccentSubtle
-    val gradientColors = scMessageHighlightColors() ?: gradientSubtleColors()
+    val gradientColors = gradientSubtleColors()
     val verticalOffset = focusedEventOffset.toPx()
     val verticalRatio = 0.7f
     return drawWithCache {

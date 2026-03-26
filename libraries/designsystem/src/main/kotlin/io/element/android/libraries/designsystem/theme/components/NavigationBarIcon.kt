@@ -10,9 +10,11 @@ package io.element.android.libraries.designsystem.theme.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.designsystem.atomic.atoms.CounterAtom
@@ -23,14 +25,16 @@ fun NavigationBarIcon(
     modifier: Modifier = Modifier,
     count: Int = 0,
     isCritical: Boolean = false,
+    iconSize: Dp = 24.dp,
 ) {
     Box(modifier) {
         Icon(
             imageVector = imageVector,
             contentDescription = null,
+            modifier = Modifier.size(iconSize),
         )
         CounterAtom(
-            modifier = Modifier.offset(11.dp, (-11).dp),
+            modifier = Modifier.offset(16.dp, (-8).dp),
             textStyle = ElementTheme.typography.fontBodyXsMedium,
             count = count,
             isCritical = isCritical,

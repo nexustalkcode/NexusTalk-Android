@@ -34,9 +34,9 @@ fun FormattedBody.toHtmlDocument(
         ?.trimEnd()
         ?.let { formattedBody ->
             val dom = if (prefix != null) {
-                ScHtmlToDomParser.document("$prefix $formattedBody")
+                HtmlToDomParser.document("$prefix $formattedBody")
             } else {
-                ScHtmlToDomParser.document(formattedBody)
+                HtmlToDomParser.document(formattedBody)
             }
 
             // Prepend `@` to mentions

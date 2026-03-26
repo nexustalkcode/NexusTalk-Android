@@ -13,17 +13,21 @@ import io.element.android.libraries.matrix.api.core.UserId
 import kotlinx.collections.immutable.ImmutableList
 
 /**
- * Length at which we ellipsize a reaction key for display
+ * 聚合反应的最大显示字符数
  *
- * Reactions can be free text, so we need to limit the length
- * displayed on screen.
+ * 反应可以是自由文本，因此需要限制屏幕上显示的长度。
  */
 private const val MAX_DISPLAY_CHARS = 16
 
 /**
- * @property currentUserId the ID of the currently logged in user
- * @property key the full reaction key (e.g. "👍", "YES!")
- * @property senders the list of users who sent the reactions
+ * 聚合反应数据类
+ *
+ * 表示一个聚合后的消息反应，包含反应内容和发送者信息。
+ * 用于在时间线中显示消息的反应。
+ *
+ * @property currentUserId 当前登录用户的ID
+ * @property key 完整的反应键（如 "👍", "YES!"）
+ * @property senders 发送此反应的用户列表
  */
 data class AggregatedReaction(
     val currentUserId: UserId,

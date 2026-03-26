@@ -21,8 +21,6 @@ android {
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.matrixsdk)
-    implementation(projects.schildi.lib)
     releaseImplementation(libs.matrix.sdk)
     if (file("${rootDir.path}/libraries/rustsdk/matrix-rust-sdk.aar").exists()) {
         println("\nNote: Using local binary of the Rust SDK.\n")
@@ -46,7 +44,7 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.kotlinx.collections.immutable)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.featureflag.test)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.preferences.test)

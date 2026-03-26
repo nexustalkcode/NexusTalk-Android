@@ -9,20 +9,33 @@
 package io.element.android.features.rageshake.impl.crash
 
 import android.os.Build
-import android.os.TransactionTooLargeException
-import io.element.android.libraries.architecture.appyx.lastCapturedNavState
 import io.element.android.libraries.core.data.tryOrNull
 import timber.log.Timber
 import java.io.PrintWriter
 import java.io.StringWriter
 
+/**
+ * Vector 未捕获异常处理器
+ *
+ * 捕获应用中的未处理异常，将其保存以便后续报告，
+ * 并调用系统默认的异常处理机制。
+ *
+ * @property preferencesCrashDataStore 崩溃数据存储
+ */
 class VectorUncaughtExceptionHandler(
     private val preferencesCrashDataStore: PreferencesCrashDataStore,
 ) : Thread.UncaughtExceptionHandler {
+    /**
+     * 之前的异常处理器
+     *
+     * 保存系统默认的异常处理器，以便在处理完后调用。
+     */
     private var previousHandler: Thread.UncaughtExceptionHandler? = null
 
     /**
-     * Activate this handler.
+     * 激活异常处理器
+     *
+     * 将此处理器设置为默认的未捕获异常处理器。
      */
     fun activate() {
         previousHandler = Thread.getDefaultUncaughtExceptionHandler()
@@ -30,10 +43,13 @@ class VectorUncaughtExceptionHandler(
     }
 
     /**
-     * An uncaught exception has been triggered.
+     * 未捕获的异常处理
      *
-     * @param thread the thread
-     * @param throwable the throwable
+     * 当发生未捕获的异常时，收集设备信息并保存崩溃数据，
+     * 然后调用系统默认的异常处理器。
+     *
+     * @param thread 发生异常的线程
+     * @param throwable 异常对象
      */
     @Suppress("PrintStackTrace")
     override fun uncaughtException(thread: Thread, throwable: Throwable) {
@@ -63,13 +79,6 @@ class VectorUncaughtExceptionHandler(
             val sw = StringWriter()
             val pw = PrintWriter(sw, true)
             throwable.printStackTrace(pw)
-
-            if (throwable is RuntimeException && throwable.cause is TransactionTooLargeException) {
-                pw.append('\n')
-                pw.append(lastCapturedNavState)
-                Timber.v(lastCapturedNavState)
-            }
-
             append(sw.buffer.toString())
         }
         Timber.e("FATAL EXCEPTION $bugDescription")

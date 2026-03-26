@@ -11,10 +11,17 @@ package io.element.android.features.messages.impl.timeline.model.bubble
 import io.element.android.features.messages.impl.timeline.TimelineRoomInfo
 import io.element.android.features.messages.impl.timeline.model.TimelineItemGroupPosition
 
+/**
+ * 气泡状态数据类
+ *
+ * @property groupPosition 时间线项目组位置
+ * @property isMine 是否为当前用户的消息
+ * @property timelineRoomInfo 时间线房间信息
+ * @property cutTopStart 是否裁剪气泡左上角（为发送者头像留出边距）
+ */
 data class BubbleState(
     val groupPosition: TimelineItemGroupPosition,
     val isMine: Boolean,
-    val scIsBgLess: Boolean = false,
     val timelineRoomInfo: TimelineRoomInfo,
 ) {
     /** True to cut out the top start corner of the bubble, to give margin for the sender avatar. */

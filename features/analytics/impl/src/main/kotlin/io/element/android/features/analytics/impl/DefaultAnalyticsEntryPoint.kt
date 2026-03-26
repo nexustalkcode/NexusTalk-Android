@@ -15,8 +15,24 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.analytics.api.AnalyticsEntryPoint
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * AnalyticsEntryPoint 的默认实现
+ *
+ * 提供分析功能的默认入口点实现，创建 AnalyticsOptInNode 节点。
+ * 该实现用于在应用级提供分析功能入口。
+ *
+ * @see AnalyticsEntryPoint 分析功能入口点接口
+ * @see AnalyticsOptInNode 分析功能节点
+ */
 @ContributesBinding(AppScope::class)
 class DefaultAnalyticsEntryPoint : AnalyticsEntryPoint {
+    /**
+     * 创建分析功能节点
+     *
+     * @param parentNode 父节点
+     * @param buildContext 构建上下文
+     * @return AnalyticsOptInNode 实例
+     */
     override fun createNode(parentNode: Node, buildContext: BuildContext): Node {
         return parentNode.createNode<AnalyticsOptInNode>(buildContext)
     }

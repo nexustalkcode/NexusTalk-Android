@@ -21,7 +21,22 @@ import io.element.android.libraries.matrix.api.room.RoomMember
 import io.element.android.libraries.matrix.api.room.RoomMembershipState
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 房间成员列表状态提供器
+ *
+ * 用于预览的测试数据提供器，继承自 PreviewParameterProvider。
+ * 提供多种成员列表状态用于 UI 预览和测试。
+ *
+ * @see PreviewParameterProvider 预览参数提供器
+ * @see RoomMemberListState 成员列表状态
+ */
 internal class RoomMemberListStateProvider : PreviewParameterProvider<RoomMemberListState> {
+    /**
+     * 获取状态序列
+     *
+     * 返回包含不同状态的序列，用于预览组件的不同场景。
+     * 包括加载中、错误、成功、封禁成员、搜索结果等各种状态。
+     */
     override val values: Sequence<RoomMemberListState>
         get() = sequenceOf(
             aRoomMemberListState(
@@ -85,7 +100,7 @@ internal fun aRoomMemberListState(
     selectedSection: SelectedSection = SelectedSection.MEMBERS,
     searchQuery: String = "",
     canInvite: Boolean = false,
-    eventSink: (RoomMemberListEvent) -> Unit = {},
+    eventSink: (RoomMemberListEvents) -> Unit = {},
 ) = RoomMemberListState(
     roomMembers = roomMembers,
     filteredRoomMembers = roomMembers.map { it.filter(searchQuery) },

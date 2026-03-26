@@ -7,7 +7,7 @@
   <string name="screen_deactivate_account_description_bold_part">"不可逆"</string>
   <string name="screen_deactivate_account_list_item_1">"%1$s 您的帳號（您將無法重新登入，也無法重用您的 ID）。"</string>
   <string name="screen_deactivate_account_list_item_1_bold_part">"永久停用"</string>
-  <string name="screen_deactivate_account_list_item_2">"將您從所有聊天室移除。"</string>
+  <string name="screen_deactivate_account_list_item_2">"將您從所有群聊移除。"</string>
   <string name="screen_deactivate_account_list_item_3">"從我們的身份伺服器將您的帳號資訊刪除。"</string>
   <string name="screen_deactivate_account_list_item_4">"註冊使用者仍可看到您的訊息，但如果您選擇刪除，新使用者與未註冊的使用者將看不到它們。"</string>
   <string name="screen_deactivate_account_title">"停用帳號"</string>

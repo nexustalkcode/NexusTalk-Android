@@ -31,6 +31,20 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 时间线项目反应视图组件
+ *
+ * 渲染消息的反应列表，支持展开/收起更多反应。
+ * 处理反应按钮的点击和长按事件。
+ *
+ * @param reactionsState 反应状态
+ * @param isOutgoing 是否为发送的消息（影响布局方向）
+ * @param userCanSendReaction 用户是否有发送反应的权限
+ * @param onReactionClick 反应点击回调
+ * @param onReactionLongClick 反应长按回调
+ * @param onMoreReactionsClick 更多反应点击回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun TimelineItemReactionsView(
     reactionsState: TimelineItemReactions,

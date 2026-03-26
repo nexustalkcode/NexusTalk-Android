@@ -26,7 +26,6 @@ fun AvatarType.Space.avatarShape(avatarSize: Dp) = RoundedCornerShape(avatarSize
 @Composable
 fun AvatarType.avatarShape(avatarSize: Dp): Shape {
     return when (this) {
-        is AvatarType.Sc -> shape
         is AvatarType.Space -> avatarShape(avatarSize)
         is AvatarType.Room -> avatarShape()
         is AvatarType.User -> avatarShape()

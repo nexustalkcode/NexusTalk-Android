@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ import io.element.android.libraries.designsystem.preview.PreviewGroup
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.CircularProgressIndicator
 import io.element.android.libraries.designsystem.theme.components.DialogPreview
+import io.element.android.libraries.designsystem.theme.components.GradientCircularProgressIndicator
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.theme.components.TextButton
 import io.element.android.libraries.ui.strings.CommonStrings
@@ -78,14 +80,14 @@ fun ProgressDialog(
             progressIndicator = {
                 when (type) {
                     is ProgressDialogType.Indeterminate -> {
-                        CircularProgressIndicator(
-                            color = ElementTheme.colors.iconPrimary
+                        GradientCircularProgressIndicator(
+                            modifier = Modifier.size(48.dp),
                         )
                     }
                     is ProgressDialogType.Determinate -> {
-                        CircularProgressIndicator(
+                        GradientCircularProgressIndicator(
+                            modifier = Modifier.size(48.dp),
                             progress = { type.progress },
-                            color = ElementTheme.colors.iconPrimary
                         )
                     }
                 }

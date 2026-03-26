@@ -31,10 +31,24 @@ import io.element.android.libraries.push.api.notifications.NotificationIdProvide
 import timber.log.Timber
 
 /**
- * A foreground service that shows a notification for an ongoing call while the UI is in background.
+ * 通话前台服务
+ *
+ * 这是一个前台服务，当通话 UI 处于后台时显示持续进行中的通话通知。
+ * 前台服务确保系统在内存紧张时不会终止该服务，保证通话能够持续进行。
+ *
+ * 使用此服务需要在 AndroidManifest 中声明 FOREGROUND_SERVICE 权限，
+ * 并且对于需要麦克风的通话还需要 DECLARE_MICROPHONE_FOREGROUND_SERVICE 权限。
+ *
+ * @see android.app.Service Android 服务基类
+ * @see NotificationCompat 通知构建器
  */
 class CallForegroundService : Service() {
     companion object {
+        /**
+         * 启动通话前台服务
+         *
+         * @param context Android 上下文
+         */
         fun start(context: Context) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                 val intent = Intent(context, CallForegroundService::class.java)
@@ -44,12 +58,18 @@ class CallForegroundService : Service() {
             }
         }
 
+        /**
+         * 停止通话前台服务
+         *
+         * @param context Android 上下文
+         */
         fun stop(context: Context) {
             val intent = Intent(context, CallForegroundService::class.java)
             context.stopService(intent)
         }
     }
 
+    /** 通知管理器兼容类 */
     private lateinit var notificationManagerCompat: NotificationManagerCompat
 
     override fun onCreate() {

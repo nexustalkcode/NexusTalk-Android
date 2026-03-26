@@ -13,6 +13,15 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 编辑通知设置房间信息数据类
+ *
+ * @property roomId 房间 ID
+ * @property name 房间名称
+ * @property heroesAvatar 房间头像列表（用于群聊头像）
+ * @property avatarData 头像数据
+ * @property notificationMode 通知模式
+ */
 data class EditNotificationSettingRoomInfo(
     val roomId: RoomId,
     val name: String?,

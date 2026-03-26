@@ -24,6 +24,16 @@ import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.architecture.inputs
 import io.element.android.libraries.matrix.api.auth.OidcDetails
 
+/**
+ * 初始页面节点
+ *
+ * Appyx 节点，用于管理初始页面的生命周期和导航。
+ * 包含初始页面的回调接口和参数。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenterFactory Presenter 工厂
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class OnBoardingNode(
@@ -34,17 +44,34 @@ class OnBoardingNode(
     buildContext = buildContext,
     plugins = plugins
 ) {
+    /**
+     * 初始页面回调接口
+     */
     interface Callback : Plugin {
+        /** 导航到注册流程 */
         fun navigateToSignUpFlow()
+        /** 导航到登录流程 */
         fun navigateToSignInFlow(mustChooseAccountProvider: Boolean)
+        /** 导航到二维码页面 */
         fun navigateToQrCode()
+        /** 导航到问题报告 */
         fun navigateToBugReport()
+        /** 导航到登录密码页面 */
         fun navigateToLoginPassword()
+        /** 导航到 OIDC 页面 */
         fun navigateToOidc(oidcDetails: OidcDetails)
+        /** 导航到创建账户页面 */
         fun navigateToCreateAccount(url: String)
+        /** 完成事件 */
         fun onDone()
     }
 
+    /**
+     * 节点参数
+     *
+     * @property accountProvider 账户提供商 URL
+     * @property loginHint 登录提示
+     */
     data class Params(
         val accountProvider: String?,
         val loginHint: String?,
@@ -57,6 +84,11 @@ class OnBoardingNode(
         params = params,
     )
 
+    /**
+     * 渲染初始页面视图
+     *
+     * @param modifier 修饰符
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

@@ -37,6 +37,6 @@ dependencies {
     implementation(projects.libraries.testtags)
     implementation(projects.services.analytics.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
 }

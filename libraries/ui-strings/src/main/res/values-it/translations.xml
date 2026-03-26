@@ -74,7 +74,7 @@
   <string name="action_copy_link_to_message">"Copia collegamento al messaggio"</string>
   <string name="action_copy_text">"Copia testo"</string>
   <string name="action_create">"Crea"</string>
-  <string name="action_create_room">"Crea stanza"</string>
+  <string name="action_create_room">"Crea una stanza"</string>
   <string name="action_deactivate">"Disattiva"</string>
   <string name="action_deactivate_account">"Disattiva account"</string>
   <string name="action_decline">"Rifiuta"</string>
@@ -104,7 +104,6 @@
   <string name="action_invite_people_to_app">"Invita persone su %1$s"</string>
   <string name="action_invites_list">"Inviti"</string>
   <string name="action_join">"Entra"</string>
-  <string name="action_learn_more">"Ulteriori informazioni"</string>
   <string name="action_leave">"Esci"</string>
   <string name="action_leave_conversation">"Abbandona la conversazione"</string>
   <string name="action_leave_room">"Esci dalla stanza"</string>
@@ -474,4 +473,9 @@ Sei sicuro di voler continuare?"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Non hai accesso a questo messaggio"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Impossibile decifrare il messaggio"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Questo messaggio è stato bloccato perché il dispositivo non è verificato o perché il mittente deve verificare la tua identità."</string>
+  <string name="common_call_ended">"Chiamata terminata"</string>
+  <string name="action_start_call">"Avvia chiamata"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Nessuna chiamata"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Resta in contatto con le comunità"</string>
+  <string name="action_create_community">"Crea comunità"</string>
 </resources>

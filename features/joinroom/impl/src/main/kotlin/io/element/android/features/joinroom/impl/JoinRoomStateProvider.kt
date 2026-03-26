@@ -27,7 +27,18 @@ import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.matrix.ui.model.InviteSender
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 加入房间状态提供者
+ *
+ * 用于在预览中提供各种 JoinRoomState 示例状态的类。
+ * 继承自 PreviewParameterProvider，用于 Compose 预览功能。
+ */
 open class JoinRoomStateProvider : PreviewParameterProvider<JoinRoomState> {
+    /**
+     * 提供预览状态序列
+     *
+     * 包含各种典型的加入房间状态，用于 UI 预览和测试。
+     */
     override val values: Sequence<JoinRoomState>
         get() = sequenceOf(
             aJoinRoomState(
@@ -151,12 +162,31 @@ open class JoinRoomStateProvider : PreviewParameterProvider<JoinRoomState> {
         )
 }
 
+/**
+ * 创建失败状态的内容
+ *
+ * @return ContentState.Failure 失败状态
+ */
 fun aFailureContentState(): ContentState {
     return ContentState.Failure(
         error = Exception("Error"),
     )
 }
 
+/**
+ * 创建已加载状态的内容
+ *
+ * @param roomId 房间 ID
+ * @param name 房间名称
+ * @param alias 房间别名
+ * @param topic 房间主题
+ * @param numberOfMembers 成员数量
+ * @param roomAvatarUrl 房间头像 URL
+ * @param joinAuthorisationStatus 加入授权状态
+ * @param joinRule 加入规则
+ * @param details 加载详情
+ * @return ContentState.Loaded 已加载状态
+ */
 fun aLoadedContentState(
     roomId: RoomId = A_ROOM_ID,
     name: String? = "Element X android",
@@ -179,12 +209,25 @@ fun aLoadedContentState(
     details = details,
 )
 
+/**
+ * 创建房间详情
+ *
+ * @param isDm 是否为直接消息
+ * @return LoadedDetails.Room 房间详情
+ */
 fun aLoadedDetailsRoom(
     isDm: Boolean = false,
 ) = LoadedDetails.Room(
     isDm = isDm
 )
 
+/**
+ * 创建空间详情
+ *
+ * @param childrenCount 子空间数量
+ * @param heroes 重要成员列表
+ * @return LoadedDetails.Space 空间详情
+ */
 fun aLoadedDetailsSpace(
     childrenCount: Int = 0,
     heroes: List<MatrixUser> = emptyList(),
@@ -193,6 +236,22 @@ fun aLoadedDetailsSpace(
     heroes = heroes.toImmutableList()
 )
 
+/**
+ * 创建加入房间状态
+ *
+ * @param roomIdOrAlias 房间 ID 或别名
+ * @param contentState 内容状态
+ * @param acceptDeclineInviteState 接受/拒绝邀请状态
+ * @param joinAction 加入操作状态
+ * @param knockAction 敲门操作状态
+ * @param forgetAction 忘记操作状态
+ * @param cancelKnockAction 取消敲门操作状态
+ * @param knockMessage 敲门消息
+ * @param hideInviteAvatars 是否隐藏邀请头像
+ * @param canReportRoom 是否可以报告房间
+ * @param eventSink 事件处理函数
+ * @return JoinRoomState 加入房间状态
+ */
 fun aJoinRoomState(
     roomIdOrAlias: RoomIdOrAlias = A_ROOM_ALIAS.toRoomIdOrAlias(),
     contentState: ContentState = aLoadedContentState(),
@@ -220,6 +279,15 @@ fun aJoinRoomState(
     eventSink = eventSink
 )
 
+/**
+ * 创建邀请发送者测试数据
+ *
+ * @param userId 用户 ID
+ * @param displayName 显示名称
+ * @param avatarData 头像数据
+ * @param membershipChangeReason 成员变更原因
+ * @return InviteSender 邀请发送者
+ */
 internal fun anInviteSender(
     userId: UserId = UserId("@bob:domain"),
     displayName: String = "Bob",
@@ -232,6 +300,14 @@ internal fun anInviteSender(
     membershipChangeReason = membershipChangeReason,
 )
 
+/**
+ * 创建邀请数据测试数据
+ *
+ * @param roomId 房间 ID
+ * @param roomName 房间名称
+ * @param isDm 是否为直接消息
+ * @return InviteData 邀请数据
+ */
 internal fun anInviteData(
     roomId: RoomId = A_ROOM_ID,
     roomName: String = "Room name",

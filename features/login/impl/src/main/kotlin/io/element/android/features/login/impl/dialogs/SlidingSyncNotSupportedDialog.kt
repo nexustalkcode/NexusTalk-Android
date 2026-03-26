@@ -18,6 +18,16 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.LocalBuildMeta
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * Sliding Sync 不支持对话框
+ *
+ * 当用户尝试连接到不支持 Sliding Sync 协议的服务器时显示的对话框。
+ * 提示用户该服务器不支持当前的同步协议，并提供了解更多信息的选项。
+ *
+ * @param onLearnMoreClick 点击"了解更多"的回调
+ * @param onDismiss 关闭对话框的回调
+ * @param modifier 修饰符
+ */
 @Composable
 internal fun SlidingSyncNotSupportedDialog(
     onLearnMoreClick: () -> Unit,

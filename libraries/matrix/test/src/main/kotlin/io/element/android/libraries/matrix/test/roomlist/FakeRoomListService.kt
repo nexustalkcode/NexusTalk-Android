@@ -11,22 +11,28 @@ package io.element.android.libraries.matrix.test.roomlist
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.roomlist.DynamicRoomList
 import io.element.android.libraries.matrix.api.roomlist.RoomList
+import io.element.android.libraries.matrix.api.roomlist.RoomListFilter
 import io.element.android.libraries.matrix.api.roomlist.RoomListService
+import io.element.android.libraries.matrix.api.roomlist.RoomSummary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 class FakeRoomListService(
-    private val subscribeToVisibleRoomsLambda: (List<RoomId>) -> Unit = {},
-    private val createRoomListLambda: (pageSize: Int) -> DynamicRoomList = { pageSize -> FakeDynamicRoomList(pageSize = pageSize) },
-    override val allRooms: RoomList = createRoomListLambda(Int.MAX_VALUE),
-    private val isInitialSyncLambda: () -> Boolean = { true },
+    var subscribeToVisibleRoomsLambda: (List<RoomId>) -> Unit = {},
 ) : RoomListService {
+    private val allRoomSummariesFlow = MutableStateFlow<List<RoomSummary>>(emptyList())
+    private val allRoomsLoadingStateFlow = MutableStateFlow<RoomList.LoadingState>(RoomList.LoadingState.NotLoaded)
     private val roomListStateFlow = MutableStateFlow<RoomListService.State>(RoomListService.State.Idle)
     private val syncIndicatorStateFlow = MutableStateFlow<RoomListService.SyncIndicator>(RoomListService.SyncIndicator.Hide)
 
-    override val isInitialSyncDone: Boolean
-        get() = isInitialSyncLambda()
+    suspend fun postAllRooms(roomSummaries: List<RoomSummary>) {
+        allRoomSummariesFlow.emit(roomSummaries)
+    }
+
+    suspend fun postAllRoomsLoadingState(loadingState: RoomList.LoadingState) {
+        allRoomsLoadingStateFlow.emit(loadingState)
+    }
 
     suspend fun postState(state: RoomListService.State) {
         roomListStateFlow.emit(state)
@@ -38,13 +44,24 @@ class FakeRoomListService(
 
     override fun createRoomList(
         pageSize: Int,
+        initialFilter: RoomListFilter,
         source: RoomList.Source,
         coroutineScope: CoroutineScope,
-    ) = createRoomListLambda(pageSize)
+    ): DynamicRoomList {
+        return when (source) {
+            RoomList.Source.All -> allRooms
+        }
+    }
 
     override suspend fun subscribeToVisibleRooms(roomIds: List<RoomId>) {
         subscribeToVisibleRoomsLambda(roomIds)
     }
+
+    override val allRooms = SimplePagedRoomList(
+        allRoomSummariesFlow,
+        allRoomsLoadingStateFlow,
+        MutableStateFlow(RoomListFilter.all())
+    )
 
     override val state: StateFlow<RoomListService.State> = roomListStateFlow
 

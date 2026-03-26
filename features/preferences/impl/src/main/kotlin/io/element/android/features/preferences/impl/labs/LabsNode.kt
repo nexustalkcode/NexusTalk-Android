@@ -19,6 +19,14 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 实验室功能页面 Node
+ *
+ * 负责显示实验室功能页面，允许用户启用或禁用实验性功能。
+ *
+ * @property presenter 实验室功能 Presenter
+ * @see Callback 页面回调接口
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class LabsNode(
@@ -26,7 +34,11 @@ class LabsNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: LabsPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 实验室功能页面回调接口
+     */
     interface Callback : Plugin {
+        /** 完成设置 */
         fun onDone()
     }
 

@@ -16,5 +16,4 @@ android {
 dependencies {
     implementation(projects.features.announcement.api)
     implementation(libs.coroutines.core)
-    implementation(projects.tests.testutils)
 }

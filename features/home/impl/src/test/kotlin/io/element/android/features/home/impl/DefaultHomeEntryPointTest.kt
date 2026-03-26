@@ -14,6 +14,7 @@ import com.google.common.truth.Truth.assertThat
 import io.element.android.features.home.api.HomeEntryPoint
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.room.JoinedRoom
+import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.matrix.test.FakeMatrixClient
 import io.element.android.services.analytics.test.FakeAnalyticsService
 import io.element.android.tests.testutils.lambda.lambdaError
@@ -46,13 +47,23 @@ class DefaultHomeEntryPointTest {
         }
         val callback = object : HomeEntryPoint.Callback {
             override fun navigateToRoom(roomId: RoomId, joinedRoom: JoinedRoom?) = lambdaError()
+            override fun navigateToStartChat() = lambdaError()
             override fun navigateToCreateRoom() = lambdaError()
             override fun navigateToCreateSpace() = lambdaError()
             override fun navigateToSettings() = lambdaError()
+            override fun navigateToUserProfile(matrixUser: MatrixUser) = lambdaError()
+            override fun navigateToUserQrCode(matrixUser: MatrixUser) = lambdaError()
+            override fun navigateToNotificationSettings() = lambdaError()
+            override fun navigateToLockScreenSettings() = lambdaError()
+            override fun navigateToAdvancedSettings() = lambdaError()
+            override fun navigateToAbout() = lambdaError()
+            override fun navigateToBlockedUsers() = lambdaError()
+            override fun navigateToSignOut() = lambdaError()
             override fun navigateToSetUpRecovery() = lambdaError()
             override fun navigateToEnterRecoveryKey() = lambdaError()
             override fun navigateToRoomSettings(roomId: RoomId) = lambdaError()
             override fun navigateToBugReport() = lambdaError()
+            override fun navigateToScanQrCode() = lambdaError()
         }
         val result = entryPoint.createNode(
             parentNode = parentNode,

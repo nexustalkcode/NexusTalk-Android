@@ -23,6 +23,16 @@ import io.element.android.libraries.matrix.api.core.ThreadId
 import io.element.android.libraries.push.impl.intent.IntentProvider
 import io.element.android.x.MainActivity
 
+/**
+ * 默认的 Intent 提供者实现。
+ *
+ * 实现 IntentProvider 接口，
+ * 负责创建用于跳转到指定房间的 Intent。
+ * 使用 DeepLinkCreator 生成深链接 URI，
+ * 支持指定会话、房间、线程和事件。
+ *
+ * 通过 @ContributesBinding 注解将其绑定到 AppScope。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultIntentProvider(
     @ApplicationContext private val context: Context,

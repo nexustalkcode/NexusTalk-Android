@@ -99,7 +99,6 @@
   <string name="action_invite_people_to_app">"دعوت افراد به %1$s"</string>
   <string name="action_invites_list">"دعوت‌ها"</string>
   <string name="action_join">"پیوستن"</string>
-  <string name="action_learn_more">"بیش‌تر دانستن"</string>
   <string name="action_leave">"ترک"</string>
   <string name="action_leave_conversation">"ترک گفت‌وگو"</string>
   <string name="action_leave_room">"ترک اتاق"</string>
@@ -399,4 +398,9 @@
   <string name="test_language_identifier">"fa"</string>
   <string name="test_untranslated_default_language_identifier">"en"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"به این پیام دسترسی ندارید"</string>
+  <string name="common_call_ended">"تماس پایان یافت"</string>
+  <string name="action_start_call">"شروع تماس"</string>
+  <string name="screen_roomlist_empty_no_call_title">"بدون تماس"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"با جوامع در ارتباط بمانید"</string>
+  <string name="action_create_community">"ایجاد جامعه"</string>
 </resources>

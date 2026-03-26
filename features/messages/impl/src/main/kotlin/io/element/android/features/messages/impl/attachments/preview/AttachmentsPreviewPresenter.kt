@@ -51,6 +51,30 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 附件预览Presenter
+ *
+ * 负责处理附件预览界面的业务逻辑和数据状态管理。
+ * 管理附件发送的完整生命周期，包括预处理、上传和错误处理。
+ *
+ * 主要功能：
+ * - 管理附件预览界面的状态
+ * - 处理媒体文件的预处理（压缩、优化）
+ * - 执行媒体文件上传
+ * - 处理发送过程中的各种状态变化
+ *
+ * @property attachment 要预览和发送的附件
+ * @property onDoneListener 完成监听器，当流程结束时回调
+ * @property timelineMode 时间线模式，决定发送目标
+ * @property inReplyToEventId 回复目标事件ID
+ * @property mediaSenderFactory 媒体发送器工厂
+ * @property permalinkBuilder 永久链接构建器，用于处理消息中的链接
+ * @property temporaryUriDeleter 临时URI删除器，用于清理临时文件
+ * @property mediaOptimizationSelectorPresenterFactory 媒体优化选择器Presenter工厂
+ * @property sessionCoroutineScope 会话级别的协程作用域
+ * @property dispatchers 协程调度器
+ * @property mediaOptimizationConfigProvider 媒体优化配置提供者
+ */
 @AssistedInject
 class AttachmentsPreviewPresenter(
     @Assisted private val attachment: Attachment,
@@ -65,8 +89,23 @@ class AttachmentsPreviewPresenter(
     private val dispatchers: CoroutineDispatchers,
     private val mediaOptimizationConfigProvider: MediaOptimizationConfigProvider,
 ) : Presenter<AttachmentsPreviewState> {
+    /**
+     * Presenter工厂接口
+     *
+     * 用于创建AttachmentsPreviewPresenter实例的工厂类。
+     * 实现依赖注入模式的自动化工厂生成。
+     */
     @AssistedFactory
     interface Factory {
+        /**
+         * 创建附件预览Presenter实例
+         *
+         * @param attachment 要预览和发送的附件
+         * @param timelineMode 时间线模式
+         * @param onDoneListener 完成监听器
+         * @param inReplyToEventId 回复目标事件ID
+         * @return AttachmentsPreviewPresenter实例
+         */
         fun create(
             attachment: Attachment,
             timelineMode: Timeline.Mode,
@@ -75,33 +114,56 @@ class AttachmentsPreviewPresenter(
         ): AttachmentsPreviewPresenter
     }
 
+    /**
+     * 媒体发送器
+     *
+     * 用于发送预处理后的媒体文件
+     */
     private val mediaSender = mediaSenderFactory.create(timelineMode)
 
+    /**
+     * 生成并返回附件预览状态
+     *
+     * Compose Composable函数，作为Presenter的主入口。
+     * 负责初始化状态、管理协程、处理用户事件并返回视图状态。
+     *
+     * @return AttachmentsPreviewState 包含所有视图所需数据的不可变状态对象
+     */
     @Composable
     override fun present(): AttachmentsPreviewState {
+        // 创建协程作用域，用于管理异步操作
         val coroutineScope = rememberCoroutineScope()
 
+        // 发送操作状态，管理附件发送的各个阶段
         val sendActionState = remember {
             mutableStateOf<SendActionState>(SendActionState.Idle)
         }
 
+        // Markdown文本编辑器状态，用于用户输入附件说明文字
         val markdownTextEditorState = rememberMarkdownTextEditorState(initialText = null, initialFocus = false)
         val textEditorState by rememberUpdatedState(
             TextEditorState.Markdown(markdownTextEditorState, isRoomEncrypted = null)
         )
 
+        // 当前正在进行的发送任务
         val ongoingSendAttachmentJob = remember { mutableStateOf<Job?>(null) }
 
+        // 媒体预处理任务
         var preprocessMediaJob by remember { mutableStateOf<Job?>(null) }
 
+        // 将附件转换为媒体附件类型
         val mediaAttachment = attachment as Attachment.Media
+        // 创建媒体优化选择器Presenter
         val mediaOptimizationSelectorPresenter = remember {
             mediaOptimizationSelectorPresenterFactory.create(mediaAttachment.localMedia)
         }
+        // 获取媒体优化选择器状态
         val mediaOptimizationSelectorState by rememberUpdatedState(mediaOptimizationSelectorPresenter.present())
 
+        // 将发送状态转换为可观察的Flow
         val observableSendState = snapshotFlow { sendActionState.value }
 
+        // 是否显示文件太大错误提示
         var displayFileTooLargeError by remember { mutableStateOf(false) }
 
         LaunchedEffect(mediaOptimizationSelectorState.displayMediaSelectorViews) {
@@ -140,12 +202,19 @@ class AttachmentsPreviewPresenter(
             }
         }
 
-        fun handleEvent(event: AttachmentsPreviewEvent) {
+        /**
+         * 处理用户事件
+         *
+         * 根据不同的事件类型执行相应的业务逻辑
+         *
+         * @param event 用户交互事件
+         */
+        fun handleEvent(event: AttachmentsPreviewEvents) {
             when (event) {
-                is AttachmentsPreviewEvent.SendAttachment -> {
+                // 发送附件事件
+                is AttachmentsPreviewEvents.SendAttachment -> {
                     ongoingSendAttachmentJob.value = coroutineScope.launch {
-                        // If the media optimization selector is displayed, we need to wait for the user to select the options
-                        // before we can pre-process the media.
+                        // 如果媒体优化选择器显示，需要等待用户选择选项后再处理媒体
                         if (mediaOptimizationSelectorState.displayMediaSelectorViews == true) {
                             val config = MediaOptimizationConfig(
                                 compressImages = mediaOptimizationSelectorState.isImageOptimizationEnabled == true,
@@ -159,24 +228,24 @@ class AttachmentsPreviewPresenter(
                             )
                         }
 
-                        // If the processing was hidden before, make it visible now
+                        // 如果之前处理是隐藏的，现在让它显示出来
                         if (sendActionState.value is SendActionState.Sending.Processing) {
                             sendActionState.value = SendActionState.Sending.Processing(displayProgress = true)
                         }
 
-                        // Wait until the media is ready to be uploaded
+                        // 等待媒体准备好上传
                         val mediaUploadInfo = observableSendState.firstInstanceOf<SendActionState.Sending.ReadyToUpload>().mediaInfo
 
-                        // Pre-processing is done, send the attachment
+                        // 预处理完成，发送附件
                         val caption = markdownTextEditorState.getMessageMarkdown(permalinkBuilder)
                             .takeIf { it.isNotEmpty() }
 
-                        // If we're supposed to send the media as a background job, we can dismiss this screen already
+                        // 如果媒体将在后台发送，可以立即关闭此界面
                         if (coroutineContext.isActive) {
                             onDoneListener()
                         }
 
-                        // Send the media using the session coroutine scope so it doesn't matter if this screen or the chat one are closed
+                        // 使用会话协程作用域发送媒体，这样即使用户关闭此界面或聊天界面也能完成发送
                         sessionCoroutineScope.launch(dispatchers.io) {
                             sendPreProcessedMedia(
                                 mediaUploadInfo = mediaUploadInfo,
@@ -186,28 +255,30 @@ class AttachmentsPreviewPresenter(
                                 inReplyToEventId = inReplyToEventId,
                             )
 
-                            // Clean up the pre-processed media after it's been sent
+                            // 发送完成后清理预处理后的媒体
                             mediaSender.cleanUp()
                         }
                     }
                 }
-                AttachmentsPreviewEvent.CancelAndDismiss -> {
+                // 取消并关闭预览界面事件
+                AttachmentsPreviewEvents.CancelAndDismiss -> {
                     displayFileTooLargeError = false
 
-                    // Cancel media preprocessing and sending
+                    // 取消媒体预处理和发送
                     preprocessMediaJob?.cancel()
-                    // If we couldn't send the pre-processed media, remove it
+                    // 如果无法发送预处理后的媒体，则删除它
                     mediaSender.cleanUp()
                     ongoingSendAttachmentJob.value?.cancel()
 
-                    // Dismiss the screen
+                    // 关闭界面
                     dismiss(
                         attachment,
                         sendActionState,
                     )
                 }
-                AttachmentsPreviewEvent.CancelAndClearSendState -> {
-                    // Cancel media sending
+                // 取消并清除发送状态事件
+                AttachmentsPreviewEvents.CancelAndClearSendState -> {
+                    // 取消媒体发送
                     ongoingSendAttachmentJob.value?.let {
                         it.cancel()
                         ongoingSendAttachmentJob.value = null
@@ -233,6 +304,17 @@ class AttachmentsPreviewPresenter(
         )
     }
 
+    /**
+     * 预处理附件
+     *
+     * 在后台协程中预处理媒体文件，包括压缩和优化
+     *
+     * @param attachment 要处理的附件
+     * @param mediaOptimizationConfig 媒体优化配置
+     * @param displayProgress 是否显示进度
+     * @param sendActionState 发送状态容器
+     * @return 预处理任务的Job
+     */
     private fun CoroutineScope.preProcessAttachment(
         attachment: Attachment,
         mediaOptimizationConfig: MediaOptimizationConfig,
@@ -251,6 +333,16 @@ class AttachmentsPreviewPresenter(
         }
     }
 
+    /**
+     * 预处理媒体文件
+     *
+     * 执行实际的媒体预处理操作（压缩、优化）
+     *
+     * @param mediaAttachment 媒体附件
+     * @param mediaOptimizationConfig 媒体优化配置
+     * @param displayProgress 是否显示进度
+     * @param sendActionState 发送状态容器
+     */
     private suspend fun preProcessMedia(
         mediaAttachment: Attachment.Media,
         mediaOptimizationConfig: MediaOptimizationConfig,
@@ -278,24 +370,39 @@ class AttachmentsPreviewPresenter(
         )
     }
 
+    /**
+     * 关闭预览界面
+     *
+     * 清理临时文件并触发完成回调
+     *
+     * @param attachment 要清理的附件
+     * @param sendActionState 发送状态容器
+     */
     private fun dismiss(
         attachment: Attachment,
         sendActionState: MutableState<SendActionState>,
     ) {
-        // Delete the temporary file
+        // 删除临时文件
         when (attachment) {
             is Attachment.Media -> {
                 temporaryUriDeleter.delete(attachment.localMedia.uri)
                 sendActionState.value.mediaUploadInfo()?.let { data ->
                     cleanUp(data)
                 }
-            }
         }
-        // Reset the sendActionState to ensure that dialog is closed before the screen
+        }
+        // 重置发送状态以确保对话框在界面关闭前关闭
         sendActionState.value = SendActionState.Done
         onDoneListener()
     }
 
+    /**
+     * 清理媒体上传信息
+     *
+     * 删除与媒体上传相关的临时文件
+     *
+     * @param mediaUploadInfo 媒体上传信息
+     */
     private fun cleanUp(
         mediaUploadInfo: MediaUploadInfo,
     ) {
@@ -304,6 +411,17 @@ class AttachmentsPreviewPresenter(
         }
     }
 
+    /**
+     * 发送预处理后的媒体
+     *
+     * 执行实际上传操作，将预处理完成的媒体发送到服务器
+     *
+     * @param mediaUploadInfo 预处理后的媒体上传信息
+     * @param caption 附件说明文字
+     * @param sendActionState 发送状态容器
+     * @param dismissAfterSend 发送后是否关闭界面
+     * @param inReplyToEventId 回复目标事件ID
+     */
     private suspend fun sendPreProcessedMedia(
         mediaUploadInfo: MediaUploadInfo,
         caption: String?,
@@ -321,7 +439,7 @@ class AttachmentsPreviewPresenter(
     }.fold(
         onSuccess = {
             cleanUp(mediaUploadInfo)
-            // Reset the sendActionState to ensure that dialog is closed before the screen
+            // 重置发送状态以确保对话框在界面关闭前关闭
             sendActionState.value = SendActionState.Done
 
             if (dismissAfterSend) {

@@ -8,6 +8,7 @@
 
 package io.element.android.features.home.impl.roomlist
 
+import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -20,32 +21,16 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import chat.schildi.features.home.spaces.PersistSpaceOnPause
-import chat.schildi.features.home.spaces.ScRoomListDataSource
-import chat.schildi.features.home.spaces.SpaceListDataSource
-import chat.schildi.features.home.spaces.SpaceUnreadCountsDataSource
-import chat.schildi.features.home.spaces.filterByUnread
-import chat.schildi.features.home.spaces.resolveSelection
-import chat.schildi.lib.preferences.ScAppStateStore
-import chat.schildi.lib.preferences.ScPreferencesStore
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
 import dev.zacsweers.metro.Inject
 import im.vector.app.features.analytics.plan.Interaction
 import io.element.android.features.announcement.api.Announcement
 import io.element.android.features.announcement.api.AnnouncementService
+import io.element.android.features.home.impl.datasource.RoomListDataSource
 import io.element.android.features.home.impl.filters.RoomListFiltersState
-import io.element.android.features.home.impl.filters.into
-import io.element.android.features.home.impl.handleLowPriorityFlow
-import io.element.android.features.home.impl.model.hasNewContent
-import io.element.android.features.home.impl.search.RoomListSearchEvent
+import io.element.android.features.home.impl.search.RoomListSearchEvents
 import io.element.android.features.home.impl.search.RoomListSearchState
-import io.element.android.features.home.impl.spacefilters.SpaceFiltersState
-import io.element.android.features.home.impl.spacefilters.into
-import io.element.android.features.home.impl.spacefilters.selectedFilter
 import io.element.android.features.invite.api.SeenInvitesStore
 import io.element.android.features.invite.api.acceptdecline.AcceptDeclineInviteEvents.AcceptInvite
 import io.element.android.features.invite.api.acceptdecline.AcceptDeclineInviteEvents.DeclineInvite
@@ -59,8 +44,8 @@ import io.element.android.libraries.matrix.api.MatrixClient
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.encryption.RecoveryState
 import io.element.android.libraries.matrix.api.roomlist.RoomList
-import io.element.android.libraries.matrix.api.roomlist.RoomListFilter
 import io.element.android.libraries.matrix.api.timeline.ReceiptType
+import io.element.android.libraries.matrix.api.verification.SessionVerifiedStatus
 import io.element.android.libraries.matrix.ui.safety.rememberHideInvitesAvatar
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
 import io.element.android.libraries.preferences.api.store.SessionPreferencesStore
@@ -69,11 +54,12 @@ import io.element.android.libraries.push.api.notifications.NotificationCleaner
 import io.element.android.services.analytics.api.AnalyticsService
 import io.element.android.services.analytics.api.watchers.AnalyticsColdStartWatcher
 import io.element.android.services.analyticsproviders.api.trackers.captureInteraction
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -82,19 +68,37 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
+private const val EXTENDED_RANGE_SIZE = 40
+private const val SUBSCRIBE_TO_VISIBLE_ROOMS_DEBOUNCE_IN_MILLIS = 300L
+
+/**
+ * 房间列表 Presenter
+ *
+ * 负责处理房间列表的业务逻辑，管理房间显示、上下文菜单、邀请处理等功能。
+ *
+ * @property client Matrix 客户端
+ * @property leaveRoomPresenter 离开房间 Presenter
+ * @property roomListDataSource 房间列表数据源
+ * @property filtersPresenter 筛选器 Presenter
+ * @property searchPresenter 搜索 Presenter
+ * @property sessionPreferencesStore 会话偏好设置存储
+ * @property analyticsService 分析服务
+ * @property acceptDeclineInvitePresenter 接受/拒绝邀请 Presenter
+ * @property fullScreenIntentPermissionsPresenter 全屏intent权限 Presenter
+ * @property batteryOptimizationPresenter 电池优化 Presenter
+ * @property notificationCleaner 通知清理器
+ * @property appPreferencesStore 应用偏好设置存储
+ * @property seenInvitesStore 已查看邀请存储
+ * @property announcementService 公告服务
+ * @property coldStartWatcher 冷启动观察者
+ */
 @Inject
 class RoomListPresenter(
     private val client: MatrixClient,
     private val leaveRoomPresenter: Presenter<LeaveRoomState>,
-    //private val roomListDataSource: RoomListDataSource,
-    // SC start
-    private val scPreferencesStore: ScPreferencesStore,
-    private val scAppStateStore: ScAppStateStore,
-    private val scRoomListDataSource: ScRoomListDataSource,
-    private val spaceListDataSource: SpaceListDataSource,
-    private val spaceUnreadCountsDataSource: SpaceUnreadCountsDataSource,
-    // SC end
+    private val roomListDataSource: RoomListDataSource,
     private val filtersPresenter: Presenter<RoomListFiltersState>,
     private val searchPresenter: Presenter<RoomListSearchState>,
     private val sessionPreferencesStore: SessionPreferencesStore,
@@ -107,11 +111,8 @@ class RoomListPresenter(
     private val seenInvitesStore: SeenInvitesStore,
     private val announcementService: AnnouncementService,
     private val coldStartWatcher: AnalyticsColdStartWatcher,
-    private val spaceFiltersPresenter: Presenter<SpaceFiltersState>,
 ) : Presenter<RoomListState> {
     private val encryptionService = client.encryptionService
-
-    val roomListDataSource = scRoomListDataSource // SC shim
 
     @Composable
     override fun present(): RoomListState {
@@ -119,82 +120,131 @@ class RoomListPresenter(
         val leaveRoomState = leaveRoomPresenter.present()
         val filtersState = filtersPresenter.present()
         val searchState = searchPresenter.present()
-        val spaceFiltersState = spaceFiltersPresenter.present()
         val acceptDeclineInviteState = acceptDeclineInvitePresenter.present()
 
         LaunchedEffect(Unit) {
-            spaceListDataSource.launchIn(this)
-            //roomListDataSource.launchIn(this)
-            scRoomListDataSource.launchIn(this, spaceListDataSource, scAppStateStore)
-            spaceUnreadCountsDataSource.launchIn(this, scRoomListDataSource, spaceListDataSource)
+            roomListDataSource.launchIn(this)
         }
-        PersistSpaceOnPause(scAppStateStore, scRoomListDataSource)
 
-        var securityBannerDismissed by rememberSaveable { mutableStateOf(false) }
+        var securityBannerDismissed by remember { mutableStateOf(false) }
+        var fullScreenIntentPermissionBannerDismissed by remember { mutableStateOf(false) }
+        var batteryOptimizationBannerDismissed by remember { mutableStateOf(false) }
+        var newNotificationSoundBannerDismissed by remember { mutableStateOf(false) }
         val showNewNotificationSoundBanner by remember {
             announcementService.announcementsToShowFlow().map { announcements ->
                 announcements.contains(Announcement.NewNotificationSound)
             }
         }.collectAsState(false)
 
-        // Avatar indicator
+        // 隐藏邀请头像
         val hideInvitesAvatar by client.rememberHideInvitesAvatar()
 
         val contextMenu = remember { mutableStateOf<RoomListState.ContextMenu>(RoomListState.ContextMenu.Hidden) }
         val declineInviteMenu = remember { mutableStateOf<RoomListState.DeclineInviteMenu>(RoomListState.DeclineInviteMenu.Hidden) }
 
-        fun handleEvent(event: RoomListEvent) {
+        fun handleEvent(event: RoomListEvents) {
             when (event) {
-                is RoomListEvent.UpdateSpaceFilter -> { scRoomListDataSource.updateSpaceSelection(event.spaceSelectionHierarchy.toImmutableList()) }
-                is RoomListEvent.UpdateVisibleRange -> coroutineScope.launch {
-                    roomListDataSource.updateVisibleRange(event.range)
+                is RoomListEvents.UpdateVisibleRange -> coroutineScope.launch {
+                    updateVisibleRange(event.range)
                 }
-                RoomListEvent.DismissRequestVerificationPrompt -> securityBannerDismissed = true
-                RoomListEvent.DismissBanner -> securityBannerDismissed = true
-                RoomListEvent.DismissNewNotificationSoundBanner -> coroutineScope.launch {
-                    announcementService.onAnnouncementDismissed(Announcement.NewNotificationSound)
+                RoomListEvents.DismissRequestVerificationPrompt -> {
+                    securityBannerDismissed = true
+                    Timber.d("RoomListBanner debug: dismiss request verification prompt")
                 }
-                RoomListEvent.ToggleSearchResults -> searchState.eventSink(RoomListSearchEvent.ToggleSearchVisibility)
-                is RoomListEvent.ShowContextMenu -> {
+                RoomListEvents.DismissBanner -> {
+                    securityBannerDismissed = true
+                    Timber.d("RoomListBanner debug: dismiss security banner")
+                }
+                RoomListEvents.DismissFullScreenIntentPermissionBanner -> {
+                    fullScreenIntentPermissionBannerDismissed = true
+                    Timber.d("RoomListBanner debug: dismiss full screen intent banner in current session")
+                }
+                RoomListEvents.DismissBatteryOptimizationBanner -> {
+                    batteryOptimizationBannerDismissed = true
+                    Timber.d("RoomListBanner debug: dismiss battery optimization banner in current session")
+                }
+                RoomListEvents.DismissNewNotificationSoundBanner -> {
+                    newNotificationSoundBannerDismissed = true
+                    Timber.d("RoomListBanner debug: dismiss new notification sound banner in current session")
+                }
+                RoomListEvents.ToggleSearchResults -> searchState.eventSink(RoomListSearchEvents.ToggleSearchVisibility)
+                is RoomListEvents.ShowContextMenu -> {
                     coroutineScope.showContextMenu(event, contextMenu)
                 }
-                is RoomListEvent.HideContextMenu -> {
+                is RoomListEvents.HideContextMenu -> {
                     contextMenu.value = RoomListState.ContextMenu.Hidden
                 }
-                is RoomListEvent.LeaveRoom -> {
+                is RoomListEvents.LeaveRoom -> {
                     leaveRoomState.eventSink(LeaveRoomEvent.LeaveRoom(event.roomId, needsConfirmation = event.needsConfirmation))
                 }
-                is RoomListEvent.SetRoomIsFavorite -> coroutineScope.setRoomIsFavorite(event.roomId, event.isFavorite)
-                is RoomListEvent.SetRoomIsLowPriority -> coroutineScope.launch { client.getRoom(event.roomId)?.use { it.setIsLowPriority(event.isLowPriority) } } // SC
-                is RoomListEvent.MarkAsRead -> coroutineScope.markAsRead(event.roomId)
-                is RoomListEvent.MarkAsUnread -> coroutineScope.markAsUnread(event.roomId)
-                is RoomListEvent.AcceptInvite -> {
+                is RoomListEvents.SetRoomIsFavorite -> coroutineScope.setRoomIsFavorite(event.roomId, event.isFavorite)
+                is RoomListEvents.MarkAsRead -> coroutineScope.markAsRead(event.roomId)
+                is RoomListEvents.MarkAsUnread -> coroutineScope.markAsUnread(event.roomId)
+                is RoomListEvents.AcceptInvite -> {
                     acceptDeclineInviteState.eventSink(
                         AcceptInvite(event.roomSummary.toInviteData())
                     )
                 }
-                is RoomListEvent.DeclineInvite -> {
+                is RoomListEvents.DeclineInvite -> {
                     acceptDeclineInviteState.eventSink(
                         DeclineInvite(event.roomSummary.toInviteData(), blockUser = event.blockUser, shouldConfirm = false)
                     )
                 }
-                is RoomListEvent.ShowDeclineInviteMenu -> declineInviteMenu.value = RoomListState.DeclineInviteMenu.Shown(event.roomSummary)
-                RoomListEvent.HideDeclineInviteMenu -> declineInviteMenu.value = RoomListState.DeclineInviteMenu.Hidden
-                is RoomListEvent.ClearCacheOfRoom -> coroutineScope.clearCacheOfRoom(event.roomId)
+                is RoomListEvents.ShowDeclineInviteMenu -> declineInviteMenu.value = RoomListState.DeclineInviteMenu.Shown(event.roomSummary)
+                RoomListEvents.HideDeclineInviteMenu -> declineInviteMenu.value = RoomListState.DeclineInviteMenu.Hidden
+                is RoomListEvents.ClearCacheOfRoom -> coroutineScope.clearCacheOfRoom(event.roomId)
             }
-        }
-
-        LaunchedEffect(filtersState.filterSelectionStates, spaceFiltersState.selectedFilter()) {
-            val selectedFilters = filtersState.selectedFilters().map { filter -> filter.into() }
-            val selectedSpaceFilter = spaceFiltersState.selectedFilter().into()
-            val allFilters = RoomListFilter.All(selectedFilters + listOfNotNull(selectedSpaceFilter))
-            roomListDataSource.updateFilter(allFilters)
         }
 
         val contentState = roomListContentState(
             securityBannerDismissed,
+            fullScreenIntentPermissionBannerDismissed,
+            batteryOptimizationBannerDismissed,
+            newNotificationSoundBannerDismissed,
             showNewNotificationSoundBanner,
         )
+
+        LaunchedEffect(
+            contentState,
+            securityBannerDismissed,
+            fullScreenIntentPermissionBannerDismissed,
+            batteryOptimizationBannerDismissed,
+            newNotificationSoundBannerDismissed,
+            showNewNotificationSoundBanner,
+        ) {
+            when (contentState) {
+                is RoomListContentState.Skeleton -> {
+                    Timber.d("RoomListBanner debug: contentState=Skeleton")
+                }
+                is RoomListContentState.Empty -> {
+                    Timber.d(
+                        "RoomListBanner debug: contentState=Empty security=%s securityDismissed=%s fullScreen=%s fullScreenDismissed=%s battery=%s batteryDismissed=%s newSound=%s newSoundDismissed=%s",
+                        contentState.securityBannerState,
+                        securityBannerDismissed,
+                        contentState.fullScreenIntentPermissionsState.shouldDisplayBanner,
+                        fullScreenIntentPermissionBannerDismissed,
+                        contentState.batteryOptimizationState.shouldDisplayBanner,
+                        batteryOptimizationBannerDismissed,
+                        contentState.showNewNotificationSoundBanner,
+                        newNotificationSoundBannerDismissed,
+                    )
+                }
+                is RoomListContentState.Rooms -> {
+                    Timber.d(
+                        "RoomListBanner debug: contentState=Rooms security=%s securityDismissed=%s fullScreen=%s fullScreenDismissed=%s battery=%s batteryDismissed=%s newSound=%s newSoundDismissed=%s summaries=%s",
+                        contentState.securityBannerState,
+                        securityBannerDismissed,
+                        contentState.fullScreenIntentPermissionsState.shouldDisplayBanner,
+                        fullScreenIntentPermissionBannerDismissed,
+                        contentState.batteryOptimizationState.shouldDisplayBanner,
+                        batteryOptimizationBannerDismissed,
+                        contentState.showNewNotificationSoundBanner,
+                        newNotificationSoundBannerDismissed,
+                        contentState.summaries.size,
+                    )
+                }
+            }
+        }
 
         val canReportRoom by produceState(false) { value = client.canReportRoom() }
 
@@ -204,7 +254,6 @@ class RoomListPresenter(
             leaveRoomState = leaveRoomState,
             filtersState = filtersState,
             searchState = searchState,
-            spaceFiltersState = spaceFiltersState,
             contentState = contentState,
             acceptDeclineInviteState = acceptDeclineInviteState,
             hideInvitesAvatars = hideInvitesAvatar,
@@ -213,28 +262,48 @@ class RoomListPresenter(
         )
     }
 
+    /**
+     * 记忆安全横幅状态
+     *
+     * @param securityBannerDismissed 安全横幅是否已关闭
+     * @return 安全横幅状态
+     */
     @Composable
     private fun rememberSecurityBannerState(
         securityBannerDismissed: Boolean,
     ): State<SecurityBannerState> {
         val currentSecurityBannerDismissed by rememberUpdatedState(securityBannerDismissed)
         val recoveryState by encryptionService.recoveryStateStateFlow.collectAsState()
+        val sessionVerifiedStatus by client.sessionVerificationService.sessionVerifiedStatus.collectAsState()
         return remember {
             derivedStateOf {
                 calculateBannerState(
                     securityBannerDismissed = currentSecurityBannerDismissed,
                     recoveryState = recoveryState,
+                    sessionVerifiedStatus = sessionVerifiedStatus,
                 )
             }
         }
     }
 
+    /**
+     * 计算横幅状态
+     *
+     * @param securityBannerDismissed 安全横幅是否已关闭
+     * @param recoveryState 恢复状态
+     * @return 安全横幅状态
+     */
     private fun calculateBannerState(
         securityBannerDismissed: Boolean,
         recoveryState: RecoveryState,
+        sessionVerifiedStatus: SessionVerifiedStatus,
     ): SecurityBannerState {
         if (securityBannerDismissed) {
             return SecurityBannerState.None
+        }
+
+        if (sessionVerifiedStatus == SessionVerifiedStatus.NotVerified) {
+            return SecurityBannerState.EnterRecoveryKey
         }
 
         when (recoveryState) {
@@ -248,52 +317,63 @@ class RoomListPresenter(
         return SecurityBannerState.None
     }
 
+    /**
+     * 房间列表内容状态
+     *
+     * @param securityBannerDismissed 安全横幅是否已关闭
+     * @param showNewNotificationSoundBanner 是否显示新通知声音横幅
+     * @return 房间列表内容状态
+     */
     @Composable
     private fun roomListContentState(
         securityBannerDismissed: Boolean,
+        fullScreenIntentPermissionBannerDismissed: Boolean,
+        batteryOptimizationBannerDismissed: Boolean,
+        newNotificationSoundBannerDismissed: Boolean,
         showNewNotificationSoundBanner: Boolean,
     ): RoomListContentState {
-        // SC spaces
-        val spaceNavEnabled = ScPrefs.SPACE_NAV.value()
-        val spaceSelectionHierarchy = if (spaceNavEnabled) scRoomListDataSource.spaceSelectionHierarchy.collectAsState().value else persistentListOf()
-        val totalUnreadCounts = if (spaceNavEnabled) spaceUnreadCountsDataSource.totalUnreadCounts.collectAsState().value else null
-        val spacesList = if (spaceNavEnabled) spaceUnreadCountsDataSource.enrichedSpaces.collectAsState().value?.filterByUnread(spaceSelectionHierarchy) else null
-        // SC end
-
         val roomSummaries by produceState(initialValue = AsyncData.Loading()) {
-            roomListDataSource.roomSummariesFlow.collect { value = AsyncData.Success(it) }
+            roomListDataSource.allRooms.collect { value = AsyncData.Success(it) }
         }
-        val loadingState by scRoomListDataSource.loadingState.collectAsState()
-        val showEmpty = //by remember {
-            //derivedStateOf {
+        val loadingState by roomListDataSource.loadingState.collectAsState()
+        val showEmpty by remember {
+            derivedStateOf {
                 (loadingState as? RoomList.LoadingState.Loaded)?.numberOfRooms == 0
-            //}
-        //}
-        val showSkeleton = //by remember {
-            //derivedStateOf {
+            }
+        }
+        val showSkeleton by remember {
+            derivedStateOf {
                 loadingState == RoomList.LoadingState.NotLoaded || roomSummaries is AsyncData.Loading
-            //}
-        //}
+            }
+        }
         val seenRoomInvites by remember { seenInvitesStore.seenRoomIds() }.collectAsState(emptySet())
         val securityBannerState by rememberSecurityBannerState(securityBannerDismissed)
+        val fullScreenIntentPermissionsState = fullScreenIntentPermissionsPresenter.present()
+        val batteryOptimizationState = batteryOptimizationPresenter.present()
         return when {
             showEmpty -> RoomListContentState.Empty(
                 securityBannerState = securityBannerState,
+                fullScreenIntentPermissionsState = fullScreenIntentPermissionsState.copy(
+                    shouldDisplayBanner = fullScreenIntentPermissionsState.shouldDisplayBanner && !fullScreenIntentPermissionBannerDismissed,
+                ),
+                batteryOptimizationState = batteryOptimizationState.copy(
+                    shouldDisplayBanner = batteryOptimizationState.shouldDisplayBanner && !batteryOptimizationBannerDismissed,
+                ),
+                showNewNotificationSoundBanner = showNewNotificationSoundBanner && !newNotificationSoundBannerDismissed,
             )
             showSkeleton -> RoomListContentState.Skeleton(count = 16)
             else -> {
                 coldStartWatcher.onRoomListVisible()
 
                 RoomListContentState.Rooms(
-                    // SC start
-                    spacesList = spacesList.orEmpty().toImmutableList(),
-                    spaceSelectionHierarchy = spaceSelectionHierarchy?.takeIf { spacesList?.resolveSelection(it) != null } ?: persistentListOf(),
-                    totalUnreadCounts = totalUnreadCounts,
-                    // SC end
                     securityBannerState = securityBannerState,
-                    showNewNotificationSoundBanner = showNewNotificationSoundBanner,
-                    fullScreenIntentPermissionsState = fullScreenIntentPermissionsPresenter.present(),
-                    batteryOptimizationState = batteryOptimizationPresenter.present(),
+                    showNewNotificationSoundBanner = showNewNotificationSoundBanner && !newNotificationSoundBannerDismissed,
+                    fullScreenIntentPermissionsState = fullScreenIntentPermissionsState.copy(
+                        shouldDisplayBanner = fullScreenIntentPermissionsState.shouldDisplayBanner && !fullScreenIntentPermissionBannerDismissed,
+                    ),
+                    batteryOptimizationState = batteryOptimizationState.copy(
+                        shouldDisplayBanner = batteryOptimizationState.shouldDisplayBanner && !batteryOptimizationBannerDismissed,
+                    ),
                     summaries = roomSummaries.dataOrNull().orEmpty().toImmutableList(),
                     seenRoomInvites = seenRoomInvites.toImmutableSet(),
                 )
@@ -301,15 +381,22 @@ class RoomListPresenter(
         }
     }
 
+    private fun isXiaomiDevice(): Boolean = Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)
+
+    /**
+     * 显示上下文菜单
+     *
+     * @param event 显示上下文菜单事件
+     * @param contextMenuState 上下文菜单状态
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun CoroutineScope.showContextMenu(event: RoomListEvent.ShowContextMenu, contextMenuState: MutableState<RoomListState.ContextMenu>) = launch {
+    private fun CoroutineScope.showContextMenu(event: RoomListEvents.ShowContextMenu, contextMenuState: MutableState<RoomListState.ContextMenu>) = launch {
         val initialState = RoomListState.ContextMenu.Shown(
             roomId = event.roomSummary.roomId,
             roomName = event.roomSummary.name,
             isDm = event.roomSummary.isDm,
             isFavorite = event.roomSummary.isFavorite,
-            isLowPriority = event.roomSummary.isLowPriority, // SC
-            hasNewContent = event.roomSummary.hasNewContent(scPreferencesStore),
+            hasNewContent = event.roomSummary.hasNewContent,
             displayClearRoomCacheAction = appPreferencesStore.isDeveloperModeEnabledFlow().first(),
         )
         contextMenuState.value = initialState
@@ -319,16 +406,13 @@ class RoomListPresenter(
             val isShowingContextMenuFlow = snapshotFlow { contextMenuState.value is RoomListState.ContextMenu.Shown }
                 .distinctUntilChanged()
 
-            handleLowPriorityFlow(room, contextMenuState, initialState, isShowingContextMenuFlow) // SC: same as favourite flow below, but launchIn instead of collect
-
             val isFavoriteFlow = room.roomInfoFlow
                 .map { it.isFavorite }
                 .distinctUntilChanged()
 
             isFavoriteFlow
                 .onEach { isFavorite ->
-                    //contextMenuState.value = initialState.copy(isFavorite = isFavorite)
-                    contextMenuState.value = (contextMenuState.value as? RoomListState.ContextMenu.Shown ?: initialState).copy(isFavorite = isFavorite)
+                    contextMenuState.value = initialState.copy(isFavorite = isFavorite)
                 }
                 .flatMapLatest { isShowingContextMenuFlow }
                 .takeWhile { isShowingContextMenu -> isShowingContextMenu }
@@ -336,6 +420,12 @@ class RoomListPresenter(
         }
     }
 
+    /**
+     * 设置房间为收藏
+     *
+     * @param roomId 房间 ID
+     * @param isFavorite 是否收藏
+     */
     private fun CoroutineScope.setRoomIsFavorite(roomId: RoomId, isFavorite: Boolean) = launch {
         client.getRoom(roomId)?.use { room ->
             room.setIsFavorite(isFavorite)
@@ -345,6 +435,11 @@ class RoomListPresenter(
         }
     }
 
+    /**
+     * 标记为已读
+     *
+     * @param roomId 房间 ID
+     */
     private fun CoroutineScope.markAsRead(roomId: RoomId) = launch {
         notificationCleaner.clearMessagesForRoom(client.sessionId, roomId)
         client.getRoom(roomId)?.use { room ->
@@ -361,6 +456,11 @@ class RoomListPresenter(
         }
     }
 
+    /**
+     * 标记为未读
+     *
+     * @param roomId 房间 ID
+     */
     private fun CoroutineScope.markAsUnread(roomId: RoomId) = launch {
         client.getRoom(roomId)?.use { room ->
             room.setUnreadFlag(isUnread = true)
@@ -370,9 +470,39 @@ class RoomListPresenter(
         }
     }
 
+    /**
+     * 清除房间缓存
+     *
+     * @param roomId 房间 ID
+     */
     private fun CoroutineScope.clearCacheOfRoom(roomId: RoomId) = launch {
         client.getRoom(roomId)?.use { room ->
             room.clearEventCacheStorage()
+        }
+    }
+
+    private var currentUpdateVisibleRangeJob: Job? = null
+
+    /**
+     * 更新可见范围
+     *
+     * @param range 可见范围
+     */
+    private fun CoroutineScope.updateVisibleRange(range: IntRange) {
+        currentUpdateVisibleRangeJob?.cancel()
+        currentUpdateVisibleRangeJob = launch {
+            // 防抖订阅以避免订阅过多房间
+            delay(SUBSCRIBE_TO_VISIBLE_ROOMS_DEBOUNCE_IN_MILLIS)
+
+            if (range.isEmpty()) return@launch
+            val currentRoomList = roomListDataSource.allRooms.first()
+            // 使用扩展范围来预取下一个房间信息
+            val midExtendedRangeSize = EXTENDED_RANGE_SIZE / 2
+            val extendedRange = range.first until range.last + midExtendedRangeSize
+            val roomIds = extendedRange.mapNotNull { index ->
+                currentRoomList.getOrNull(index)?.roomId
+            }
+            roomListDataSource.subscribeToVisibleRooms(roomIds)
         }
     }
 }

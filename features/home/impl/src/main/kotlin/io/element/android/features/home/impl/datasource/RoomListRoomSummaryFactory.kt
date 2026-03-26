@@ -29,6 +29,7 @@ import kotlinx.collections.immutable.toImmutableList
 class RoomListRoomSummaryFactory(
     private val dateFormatter: DateFormatter,
     private val roomLatestEventFormatter: RoomLatestEventFormatter,
+    private val latestEventMentionFormatter: LatestEventMentionFormatter,
 ) {
     fun create(roomSummary: RoomSummary): RoomListRoomSummary {
         val roomInfo = roomSummary.info
@@ -40,23 +41,13 @@ class RoomListRoomSummaryFactory(
             numberOfUnreadMessages = roomInfo.numUnreadMessages,
             numberOfUnreadMentions = roomInfo.numUnreadMentions,
             numberOfUnreadNotifications = roomInfo.numUnreadNotifications,
-            // SC start
-            canUserManageSpaces = roomInfo.canUserManageSpaces,
-            spaceChildren = roomInfo.spaceChildren.toImmutableList(),
-            notificationCount = roomInfo.notificationCount,
-            highlightCount = roomInfo.highlightCount,
-            unreadCount = roomInfo.unreadCount,
-            lastMessageTimestamp = roomSummary.latestEventTimestamp,
-            isLowPriority = roomInfo.isLowPriority,
-            bridgeState = roomInfo.bridgeState.toImmutableList(),
-            // SC end
             isMarkedUnread = roomInfo.isMarkedUnread,
             timestamp = dateFormatter.format(
                 timestamp = roomSummary.latestEventTimestamp,
                 mode = DateFormatterMode.TimeOrDate,
                 useRelative = true,
             ),
-            latestEvent = computeLatestEvent(roomSummary.latestEvent, roomInfo.isDm),
+            latestEvent = computeLatestEvent(roomSummary.latestEvent, roomInfo.isDm, roomSummary),
             avatarData = avatarData,
             userDefinedNotificationMode = roomInfo.userDefinedNotificationMode,
             hasRoomCall = roomInfo.hasRoomCall,
@@ -84,14 +75,19 @@ class RoomListRoomSummaryFactory(
         )
     }
 
-    private fun computeLatestEvent(latestEvent: LatestEventValue, dm: Boolean): LatestEvent {
+    private fun computeLatestEvent(latestEvent: LatestEventValue, dm: Boolean, roomSummary: RoomSummary): LatestEvent {
         return when (latestEvent) {
             is LatestEventValue.None -> {
                 LatestEvent.None
             }
             is LatestEventValue.Local -> {
+                val content = roomLatestEventFormatter.format(latestEvent, dm)?.let {
+                    latestEventMentionFormatter.format(it, roomSummary)
+                }
+                if (content == null) {
+                    return LatestEvent.None
+                }
                 if (latestEvent.isSending) {
-                    val content = roomLatestEventFormatter.format(latestEvent, dm).orEmpty()
                     LatestEvent.Sending(
                         content = content,
                     )
@@ -100,12 +96,14 @@ class RoomListRoomSummaryFactory(
                 }
             }
             is LatestEventValue.Remote -> {
-                val content = roomLatestEventFormatter.format(latestEvent, dm).orEmpty()
-                LatestEvent.Synced(
-                    content = content,
-                )
+                roomLatestEventFormatter.format(latestEvent, dm)?.let {
+                    latestEventMentionFormatter.format(it, roomSummary)
+                }?.let { content ->
+                    LatestEvent.Synced(
+                        content = content,
+                    )
+                } ?: LatestEvent.None
             }
-            is LatestEventValue.RoomInvite -> LatestEvent.None
         }
     }
 }

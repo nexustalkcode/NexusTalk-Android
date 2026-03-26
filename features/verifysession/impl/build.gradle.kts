@@ -39,7 +39,7 @@ dependencies {
     api(libs.statemachine)
     api(projects.features.verifysession.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.features.logout.test)
     testImplementation(projects.libraries.dateformatter.test)
     testImplementation(projects.libraries.matrix.test)

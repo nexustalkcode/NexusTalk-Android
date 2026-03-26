@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
@@ -64,8 +63,6 @@ fun Badge(
                 text = text,
                 style = ElementTheme.typography.fontBodySmRegular,
                 color = textColor,
-                overflow = TextOverflow.Ellipsis,
-                softWrap = false,
             )
         }
     }

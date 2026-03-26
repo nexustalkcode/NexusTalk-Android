@@ -27,6 +27,7 @@ import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.Checkbox as CheckboxComponent
 import io.element.android.libraries.designsystem.theme.components.Icon as IconComponent
 import io.element.android.libraries.designsystem.theme.components.RadioButton as RadioButtonComponent
+import io.element.android.libraries.designsystem.theme.components.RadioCheckbox as RadioCheckboxComponent
 import io.element.android.libraries.designsystem.theme.components.Switch as SwitchComponent
 import io.element.android.libraries.designsystem.theme.components.Text as TextComponent
 
@@ -72,6 +73,19 @@ sealed interface ListItemContent {
     ) : ListItemContent
 
     /**
+     * RadioCheckbox content for [ListItem] - combines RadioButton logic with Checkbox visual style.
+     * @param selected The current state of the radio checkbox.
+     * @param enabled Whether the radio checkbox is enabled or not.
+     * @param compact Reduces the size of the component to make the wrapping [ListItem] smaller.
+     * This is especially useful when the [ListItem] is used inside a Dialog. `false` by default.
+     */
+    data class RadioCheckbox(
+        val selected: Boolean,
+        val enabled: Boolean = true,
+        val compact: Boolean = false
+    ) : ListItemContent
+
+    /**
      * Default Icon content for [ListItem]. Sets the Icon component to a predefined size.
      * @param iconSource The icon to display, using [IconSource.getPainter].
      * @param tintColor The tint color for the icon, if any. Defaults to `null`.
@@ -108,6 +122,12 @@ sealed interface ListItemContent {
                 enabled = enabled && isItemEnabled,
             )
             is RadioButton -> RadioButtonComponent(
+                modifier = if (compact) Modifier.size(maxCompactSize) else Modifier,
+                selected = selected,
+                onClick = null,
+                enabled = enabled && isItemEnabled,
+            )
+            is RadioCheckbox -> RadioCheckboxComponent(
                 modifier = if (compact) Modifier.size(maxCompactSize) else Modifier,
                 selected = selected,
                 onClick = null,

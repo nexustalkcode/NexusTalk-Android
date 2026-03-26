@@ -8,14 +8,12 @@
 
 package io.element.android.features.share.impl
 
+import android.content.Intent
 import android.net.Uri
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.moleculeFlow
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import io.element.android.features.share.api.OnSharedData
-import io.element.android.features.share.api.ShareIntentData
-import io.element.android.features.share.api.UriToShare
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.core.mimetype.MimeTypes
 import io.element.android.libraries.matrix.api.MatrixClient
@@ -74,17 +72,8 @@ class SharePresenterTest {
 
     @Test
     fun `present - on room selected ok`() = runTest {
-        val joinedRoom = FakeJoinedRoom(
-            liveTimeline = FakeTimeline().apply {
-                sendMessageLambda = { _, _, _ -> Result.success(Unit) }
-            },
-        )
-        val matrixClient = FakeMatrixClient().apply {
-            givenGetRoomResult(A_ROOM_ID, joinedRoom)
-        }
         val presenter = createSharePresenter(
-            matrixClient = matrixClient,
-            shareIntentData = ShareIntentData.PlainText(A_MESSAGE),
+            shareIntentHandler = FakeShareIntentHandler { _, _, _ -> true }
         )
         moleculeFlow(RecompositionMode.Immediate) {
             presenter.present()
@@ -111,7 +100,9 @@ class SharePresenterTest {
         }
         val presenter = createSharePresenter(
             matrixClient = matrixClient,
-            shareIntentData = ShareIntentData.PlainText(A_MESSAGE),
+            shareIntentHandler = FakeShareIntentHandler { _, _, onText ->
+                onText(A_MESSAGE)
+            }
         )
         moleculeFlow(RecompositionMode.Immediate) {
             presenter.present()
@@ -140,15 +131,16 @@ class SharePresenterTest {
         )
         val presenter = createSharePresenter(
             matrixClient = matrixClient,
-            shareIntentData = ShareIntentData.Uris(
-                text = A_MESSAGE,
-                listOf(
-                    UriToShare(
-                        uri = Uri.parse("content://image.jpg"),
-                        mimeType = MimeTypes.Jpeg,
+            shareIntentHandler = FakeShareIntentHandler { _, onFile, _ ->
+                onFile(
+                    listOf(
+                        ShareIntentHandler.UriToShare(
+                            uri = Uri.parse("content://image.jpg"),
+                            mimeType = MimeTypes.Jpeg,
+                        )
                     )
                 )
-            ),
+            },
             mediaSenderRoomFactory = MediaSenderRoomFactory { mediaSender },
         )
         moleculeFlow(RecompositionMode.Immediate) {
@@ -167,20 +159,20 @@ class SharePresenterTest {
 }
 
 internal fun TestScope.createSharePresenter(
-    shareIntentData: ShareIntentData = ShareIntentData.PlainText(A_MESSAGE),
+    intent: Intent = Intent(),
+    shareIntentHandler: ShareIntentHandler = FakeShareIntentHandler(),
     matrixClient: MatrixClient = FakeMatrixClient(),
     activeRoomsHolder: ActiveRoomsHolder = DefaultActiveRoomsHolder(),
     mediaSenderRoomFactory: MediaSenderRoomFactory = MediaSenderRoomFactory { FakeMediaSender() },
     mediaOptimizationConfigProvider: MediaOptimizationConfigProvider = FakeMediaOptimizationConfigProvider(),
-    onSharedData: OnSharedData = OnSharedData {},
 ): SharePresenter {
     return SharePresenter(
-        shareIntentData = shareIntentData,
+        intent = intent,
         sessionCoroutineScope = this,
+        shareIntentHandler = shareIntentHandler,
         matrixClient = matrixClient,
         activeRoomsHolder = activeRoomsHolder,
         mediaSenderRoomFactory = mediaSenderRoomFactory,
         mediaOptimizationConfigProvider = mediaOptimizationConfigProvider,
-        onSharedData = onSharedData,
     )
 }

@@ -36,6 +36,17 @@ import io.element.android.libraries.designsystem.theme.components.TextField
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 依赖项许可证列表视图组件
+ *
+ * 使用 Jetpack Compose 实现依赖项许可证列表的用户界面。
+ * 支持搜索过滤、显示加载状态和错误状态。
+ *
+ * @param state 当前视图状态
+ * @param onBackClick 返回按钮点击回调
+ * @param onOpenLicense 打开许可证详情回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DependencyLicensesListView(
@@ -117,6 +128,13 @@ fun DependencyLicensesListView(
     }
 }
 
+/**
+ * 依赖项许可证列表视图预览组件
+ *
+ * 用于在 Android Studio 预览中展示许可证列表视图 UI。
+ *
+ * @param state 预览状态
+ */
 @PreviewsDayNight
 @Composable
 internal fun DependencyLicensesListViewPreview(

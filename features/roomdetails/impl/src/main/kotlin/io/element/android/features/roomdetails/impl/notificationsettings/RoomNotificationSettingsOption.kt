@@ -20,6 +20,20 @@ import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 
+/**
+ * 通知设置选项组件
+ *
+ * Composable 函数，用于渲染单个通知设置选项。
+ * 显示选项标题、副标题（可选）和单选按钮。
+ *
+ * @param roomNotificationSettingsItem 通知设置项
+ * @param onSelectOption 选项选择回调
+ * @param displayMentionsOnlyDisclaimer 是否显示仅提及免责声明
+ * @param modifier 视图修饰符
+ * @param enabled 是否启用
+ * @param isSelected 是否已选中
+ * @see RoomNotificationSettingsItem 通知设置项
+ */
 @Composable
 fun RoomNotificationSettingsOption(
     roomNotificationSettingsItem: RoomNotificationSettingsItem,
@@ -42,7 +56,7 @@ fun RoomNotificationSettingsOption(
         enabled = enabled,
         headlineContent = { Text(title) },
         supportingContent = subtitle?.let { { Text(it) } },
-        trailingContent = ListItemContent.RadioButton(selected = isSelected),
+        trailingContent = ListItemContent.RadioCheckbox(selected = isSelected),
         onClick = { onSelectOption(roomNotificationSettingsItem) },
     )
 }

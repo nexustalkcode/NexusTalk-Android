@@ -18,8 +18,6 @@ import io.element.android.features.home.impl.model.aRoomListRoomSummary
 import io.element.android.features.home.impl.model.anInviteSender
 import io.element.android.features.home.impl.search.RoomListSearchState
 import io.element.android.features.home.impl.search.aRoomListSearchState
-import io.element.android.features.home.impl.spacefilters.SpaceFiltersState
-import io.element.android.features.home.impl.spacefilters.anUnselectedSpaceFiltersState
 import io.element.android.features.invite.api.acceptdecline.AcceptDeclineInviteState
 import io.element.android.features.invite.api.acceptdecline.anAcceptDeclineInviteState
 import io.element.android.features.leaveroom.api.LeaveRoomEvent
@@ -31,7 +29,17 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 房间列表状态提供者
+ *
+ * 为预览和测试提供 RoomListState 示例数据。
+ *
+ * @see RoomListState 房间列表状态
+ */
 open class RoomListStateProvider : PreviewParameterProvider<RoomListState> {
+    /**
+     * 提供预览状态序列
+     */
     override val values: Sequence<RoomListState>
         get() = sequenceOf(
             aRoomListState(),
@@ -48,25 +56,38 @@ open class RoomListStateProvider : PreviewParameterProvider<RoomListState> {
         )
 }
 
+/**
+ * 创建示例房间列表状态
+ *
+ * @param contextMenu 上下文菜单状态
+ * @param declineInviteMenu 拒绝邀请菜单状态
+ * @param leaveRoomState 离开房间状态
+ * @param searchState 搜索状态
+ * @param filtersState 筛选器状态
+ * @param contentState 内容状态
+ * @param acceptDeclineInviteState 接受/拒绝邀请状态
+ * @param hideInvitesAvatars 是否隐藏邀请头像
+ * @param canReportRoom 是否可以报告房间
+ * @param eventSink 事件处理函数
+ * @return RoomListState 示例实例
+ */
 internal fun aRoomListState(
     contextMenu: RoomListState.ContextMenu = RoomListState.ContextMenu.Hidden,
     declineInviteMenu: RoomListState.DeclineInviteMenu = RoomListState.DeclineInviteMenu.Hidden,
     leaveRoomState: LeaveRoomState = aLeaveRoomState(),
     searchState: RoomListSearchState = aRoomListSearchState(),
     filtersState: RoomListFiltersState = aRoomListFiltersState(),
-    spaceFiltersState: SpaceFiltersState = anUnselectedSpaceFiltersState(),
     contentState: RoomListContentState = aRoomsContentState(),
     acceptDeclineInviteState: AcceptDeclineInviteState = anAcceptDeclineInviteState(),
     hideInvitesAvatars: Boolean = false,
     canReportRoom: Boolean = true,
-    eventSink: (RoomListEvent) -> Unit = {}
+    eventSink: (RoomListEvents) -> Unit = {}
 ) = RoomListState(
     contextMenu = contextMenu,
     declineInviteMenu = declineInviteMenu,
     leaveRoomState = leaveRoomState,
     filtersState = filtersState,
     searchState = searchState,
-    spaceFiltersState = spaceFiltersState,
     contentState = contentState,
     acceptDeclineInviteState = acceptDeclineInviteState,
     hideInvitesAvatars = hideInvitesAvatars,
@@ -74,12 +95,23 @@ internal fun aRoomListState(
     eventSink = eventSink,
 )
 
+/**
+ * 创建示例离开房间状态
+ *
+ * @param eventSink 事件处理函数
+ * @return LeaveRoomState 示例实例
+ */
 internal fun aLeaveRoomState(
     eventSink: (LeaveRoomEvent) -> Unit = {}
 ) = object : LeaveRoomState {
     override val eventSink: (LeaveRoomEvent) -> Unit = eventSink
 }
 
+/**
+ * 创建示例房间列表摘要列表
+ *
+ * @return ImmutableList<RoomListRoomSummary> 示例房间摘要列表
+ */
 internal fun aRoomListRoomSummaryList(): ImmutableList<RoomListRoomSummary> {
     return persistentListOf(
         aRoomListRoomSummary(
@@ -116,6 +148,12 @@ internal fun aRoomListRoomSummaryList(): ImmutableList<RoomListRoomSummary> {
     )
 }
 
+/**
+ * 生成房间列表摘要列表
+ *
+ * @param numberOfRooms 房间数量（默认为 10）
+ * @return ImmutableList<RoomListRoomSummary> 生成的房间摘要列表
+ */
 internal fun generateRoomListRoomSummaryList(
     numberOfRooms: Int = 10,
 ): ImmutableList<RoomListRoomSummary> {

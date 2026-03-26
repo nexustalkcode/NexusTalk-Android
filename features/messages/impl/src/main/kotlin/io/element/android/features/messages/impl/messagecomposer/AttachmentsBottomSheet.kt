@@ -36,6 +36,18 @@ import io.element.android.libraries.designsystem.theme.components.ListItemStyle
 import io.element.android.libraries.designsystem.theme.components.ModalBottomSheet
 import io.element.android.libraries.designsystem.theme.components.Text
 
+/**
+ * 附件底部弹出面板
+ *
+ * 显示消息编辑器中的附件来源选择菜单，允许用户选择从相机、相册、文件、位置或创建投票等方
+ * 式添加附件。
+ *
+ * @param state 消息编辑器状态
+ * @param onSendLocationClick 点击位置分享的回调
+ * @param onCreatePollClick 点击创建投票的回调
+ * @param enableTextFormatting 是否启用文本格式化
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AttachmentsBottomSheet(
@@ -86,6 +98,16 @@ internal fun AttachmentsBottomSheet(
     }
 }
 
+/**
+ * 附件来源选择菜单
+ *
+ * 显示可用的附件来源选项列表，包括相机拍照、录像、相册、文件、位置和投票等选项。
+ *
+ * @param state 消息编辑器状态
+ * @param onSendLocationClick 点击位置分享的回调
+ * @param onCreatePollClick 点击创建投票的回调
+ * @param enableTextFormatting 是否启用文本格式化
+ */
 @Composable
 private fun AttachmentSourcePickerMenu(
     state: MessageComposerState,

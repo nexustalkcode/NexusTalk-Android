@@ -18,6 +18,11 @@ import io.element.android.features.lockscreen.api.LockScreenEntryPoint
 import io.element.android.features.lockscreen.impl.unlock.activity.PinUnlockActivity
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * 默认锁屏入口点实现
+ *
+ * 实现 LockScreenEntryPoint 接口，提供锁屏模块的入口功能。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultLockScreenEntryPoint : LockScreenEntryPoint {
     override fun createNode(

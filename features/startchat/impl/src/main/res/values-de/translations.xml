@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"Passender Chat gefunden"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Chat nicht gefunden"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"z. B. #room -name:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"QR-Code scannen"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Scannen Sie den QR-Code, um einen Kontakt hinzuzufügen"</string>
+  <string name="screen_scan_user_qr_code_success">"QR-Code erfolgreich gescannt"</string>
 </resources>

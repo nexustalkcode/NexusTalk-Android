@@ -8,6 +8,16 @@
 
 package io.element.android.features.rageshake.impl.bugreport
 
+/**
+ * 问题报告表单错误密封类
+ *
+ * 定义了问题报告表单可能出现的各种验证错误。
+ */
 sealed class BugReportFormError : Exception() {
+    /**
+     * 问题描述过短
+     *
+     * 当用户输入的问题描述长度不足时触发。
+     */
     data object DescriptionTooShort : BugReportFormError()
 }

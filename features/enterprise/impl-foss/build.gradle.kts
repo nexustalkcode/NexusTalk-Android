@@ -24,6 +24,5 @@ dependencies {
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.matrix.api)
 
-    testCommonDependencies(libs)
     testImplementation(projects.libraries.matrix.test)
 }

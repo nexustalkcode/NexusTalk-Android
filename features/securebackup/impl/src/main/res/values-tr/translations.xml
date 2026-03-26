@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Anahtar depolamasını sil"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Yedeklemeyi aç"</string>
-  <string name="screen_chat_backup_key_backup_description">"Kriptografik kimliğinizi ve mesaj anahtarlarınızı sunucuda güvenli bir şekilde saklayın. Bu, mesaj geçmişinizi herhangi bir yeni cihazda görüntülemenize olanak tanır. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Kriptografik kimliğinizi ve mesaj anahtarlarınızı sunucuda güvenli bir şekilde saklayın. Bu, mesaj geçmişinizi herhangi bir yeni cihazda görüntülemenize olanak tanır. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Anahtar Depolama"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"Kurtarmayı ayarlamak için anahtar depolama alanı açık olmalıdır."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Anahtarları bu cihazdan yükle"</string>

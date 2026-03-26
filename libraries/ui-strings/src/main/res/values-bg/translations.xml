@@ -75,7 +75,6 @@
   <string name="action_invite_people_to_app">"Поканване на хора в %1$s"</string>
   <string name="action_invites_list">"Покани"</string>
   <string name="action_join">"Присъединяване"</string>
-  <string name="action_learn_more">"Научете повече"</string>
   <string name="action_leave">"Напускане"</string>
   <string name="action_leave_conversation">"Напускане на разговора"</string>
   <string name="action_leave_room">"Напускане на стаята"</string>
@@ -338,4 +337,9 @@
   <string name="timeline_decryption_failure_historical_event_unverified_device">"Трябва да потвърдите това устройство за да достъпите исторически съобщения"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Нямате достъп до това съобщение"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Съобщението не може да се разшифрова"</string>
+  <string name="common_call_ended">"Разговорът приключи"</string>
+  <string name="action_start_call">"Започване на разговор"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Няма разговори"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Оставете във връзка с общностите"</string>
+  <string name="action_create_community">"Създаване на общност"</string>
 </resources>

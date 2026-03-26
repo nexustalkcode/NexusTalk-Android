@@ -3,4 +3,7 @@
   <string name="screen_create_room_action_create_room">"Новы пакой"</string>
   <string name="screen_room_directory_search_title">"Каталог пакояў"</string>
   <string name="screen_start_chat_error_starting_chat">"Пры спробе пачаць чат адбылася памылка"</string>
+  <string name="screen_scan_user_qr_code_title">"Сканаваць QR-код"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Скануйце QR-код, каб дадаць кантакт"</string>
+  <string name="screen_scan_user_qr_code_success">"QR-код паспяхова адсканаваны"</string>
 </resources>

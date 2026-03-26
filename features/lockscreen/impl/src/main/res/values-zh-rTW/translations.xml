@@ -15,7 +15,7 @@
   <string name="screen_app_lock_setup_biometric_unlock_subtitle">"為自己節省一些時間，使用 %1$s 來解鎖應用程式"</string>
   <string name="screen_app_lock_setup_choose_pin">"選擇 PIN 碼"</string>
   <string name="screen_app_lock_setup_confirm_pin">"確認 PIN 碼"</string>
-  <string name="screen_app_lock_setup_pin_context">"將 %1$s 上鎖，為你的聊天室添加一層防護。
+  <string name="screen_app_lock_setup_pin_context">"將 %1$s 上鎖，為你的群聊添加一層防護。
 
 請選擇好記憶的數字。如果忘記 PIN 碼，您會被登出。"</string>
   <string name="screen_app_lock_setup_pin_forbidden_dialog_content">"基於安全性的考量，您選的 PIN 碼無法使用"</string>

@@ -6,9 +6,18 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 计数器原子组件
+ *
+ * 用于显示数字的圆形计数器组件，支持正常和关键两种颜色样式。
+ * 常用于显示未读消息数量、通知计数等场景。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.atoms
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +31,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
+import io.element.android.libraries.designsystem.ext.angledGradient
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.text.toDp
@@ -64,12 +74,19 @@ fun CounterAtom(
         modifier = modifier
             .size(squareSize.toDp() + 1.dp)
             .clip(CircleShape)
-            .background(
-                if (isCritical) {
-                    ElementTheme.colors.iconCriticalPrimary
+            .angledGradient(
+                colorStops = if (isCritical) {
+                    arrayOf(
+                        0f to ElementTheme.colors.iconCriticalPrimary,
+                        1f to ElementTheme.colors.iconCriticalPrimary
+                    )
                 } else {
-                    ElementTheme.colors.iconAccentPrimary
-                }
+                    arrayOf(
+                        0f to ElementTheme.colors.gradientBrandStop1,
+                        1f to ElementTheme.colors.gradientBrandStop2
+                    )
+                },
+                degrees = 89f
             )
     ) {
         Text(
@@ -81,7 +98,19 @@ fun CounterAtom(
     }
 }
 
+/**
+ * CounterAtom 样式默认值
+ *
+ * 提供 CounterAtom 组件的默认样式配置。
+ */
 object CounterAtomDefaults {
+    /**
+     * 默认文本样式
+     *
+     * 获取计数器组件文本的默认样式，使用 Element 主题的中等字体大小和中等字重。
+     *
+     * @return TextStyle 默认的文本样式配置
+     */
     val textStyle: TextStyle
         @Composable get() = ElementTheme.typography.fontBodyMdMedium
 }

@@ -16,6 +16,17 @@ import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.matrix.api.room.BaseRoom
 import io.element.android.libraries.matrix.api.room.JoinedRoom
 
+/**
+ * 房间依赖注入图接口。
+ *
+ * 使用 @GraphExtension 注解标记，扩展自 RoomScope。
+ * 定义了聊天房间级别的依赖注入关系。
+ * 继承自 NodeFactoriesBindings 和 TimelineBindings，
+ * 同时提供节点工厂和时间线绑定。
+ *
+ * Factory 接口定义了创建 RoomGraph 实例的工厂方法，
+ * 接收 JoinedRoom 和 BaseRoom 作为参数。
+ */
 @GraphExtension(RoomScope::class)
 interface RoomGraph : NodeFactoriesBindings, TimelineBindings {
     @GraphExtension.Factory

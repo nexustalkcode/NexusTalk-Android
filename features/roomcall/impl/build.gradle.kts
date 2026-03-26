@@ -28,7 +28,7 @@ dependencies {
     implementation(projects.libraries.matrix.api)
     implementation(projects.libraries.matrixui)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.features.call.test)
     testImplementation(projects.features.enterprise.test)

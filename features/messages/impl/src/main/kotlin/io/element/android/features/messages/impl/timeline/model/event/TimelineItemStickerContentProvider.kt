@@ -31,7 +31,6 @@ fun aTimelineItemStickerContent(
     fileSize = 4 * 1024 * 1024L,
     caption = "a body",
     formattedCaption = null,
-    formattedCaptionSc = null,
     isEdited = false,
     mediaSource = MediaSource(""),
     thumbnailSource = null,

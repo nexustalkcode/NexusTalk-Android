@@ -43,6 +43,8 @@
   <string name="screen_edit_profile_error">"Tuntematon virhe tapahtui, eikä tietoja voitu muuttaa."</string>
   <string name="screen_edit_profile_error_title">"Profiilin muokkaaminen ei onnistunut"</string>
   <string name="screen_edit_profile_title">"Muokkaa profiilia"</string>
+  <string name="screen_edit_profile_change_avatar">"Vaihda avatar"</string>
+  <string name="screen_edit_profile_username">"Käyttäjätunnus"</string>
   <string name="screen_edit_profile_updating_details">"Muokataan profiilia…"</string>
   <string name="screen_labs_enable_threads">"Ota käyttöön viestiketjuvastaukset"</string>
   <string name="screen_labs_enable_threads_description">"Sovellus käynnistyy uudelleen muutoksen käyttöönottamiseksi."</string>
@@ -76,6 +78,8 @@ Jos jatkat, jotkin asetukset saattavat muuttua."</string>
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"järjestelmäsi asetuksia"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Järjestelmän ilmoitukset on poissa päältä"</string>
   <string name="screen_notification_settings_title">"Ilmoitukset"</string>
+  <string name="screen_preferences_section_customization">"Mukautus"</string>
+  <string name="screen_preferences_section_security">"Tietoturva"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Push-historia"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Vianmääritys"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Ilmoitusten vianmääritys"</string>

@@ -25,6 +25,15 @@ import io.element.android.libraries.core.uri.ensureProtocol
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
+/**
+ * 选择账户提供商 Presenter
+ *
+ * 负责处理选择账户提供商页面的业务逻辑。
+ * 管理提供商列表、选择状态和登录模式提交。
+ *
+ * @property enterpriseService 企业服务
+ * @property loginHelper 登录辅助类
+ */
 @Inject
 class ChooseAccountProviderPresenter(
     private val enterpriseService: EnterpriseService,

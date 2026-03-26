@@ -16,14 +16,34 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
+/**
+ * 时间线项目索引器
+ *
+ * 用于管理和查询时间线中事件的索引位置。
+ * 通过维护一个事件ID到索引的映射，可以快速定位时间线中的特定事件。
+ *
+ * 此类线程安全，使用互斥锁保护共享状态。
+ * 使用 CompletableDeferred 确保首次处理完成前其他操作等待。
+ *
+ * @see EventId 事件ID
+ * @see TimelineItem 时间线项目
+ */
 @Inject
 class TimelineItemIndexer {
-    // This is a latch to wait for the first process call
+    // 这是一个锁存器，等待第一次 process 调用完成
     private val firstProcessLatch = CompletableDeferred<Unit>()
+    /** 事件ID到索引的映射表 */
     private val timelineEventsIndexes = mutableMapOf<EventId, Int>()
 
+    /** 互斥锁，用于保护共享状态 */
     private val mutex = Mutex()
 
+    /**
+     * 检查事件ID是否已知
+     *
+     * @param eventId 事件ID
+     * @return 是否已知
+     */
     suspend fun isKnown(eventId: EventId): Boolean {
         firstProcessLatch.await()
         return mutex.withLock {
@@ -33,6 +53,12 @@ class TimelineItemIndexer {
         }
     }
 
+    /**
+     * 获取事件ID对应的索引
+     *
+     * @param eventId 事件ID
+     * @return 事件索引，如果不存在返回 -1
+     */
     suspend fun indexOf(eventId: EventId): Int {
         firstProcessLatch.await()
         return mutex.withLock {
@@ -42,6 +68,14 @@ class TimelineItemIndexer {
         }
     }
 
+    /**
+     * 处理时间线项目列表，构建索引
+     *
+     * 清空现有索引并为所有事件项目建立新的索引映射。
+     * 处理单独的事件和分组事件。
+     *
+     * @param timelineItems 时间线项目列表
+     */
     suspend fun process(timelineItems: List<TimelineItem>) = mutex.withLock {
         Timber.d("process ${timelineItems.size} items")
         timelineEventsIndexes.clear()
@@ -61,6 +95,12 @@ class TimelineItemIndexer {
         firstProcessLatch.complete(Unit)
     }
 
+    /**
+     * 处理单个事件，建立索引
+     *
+     * @param event 时间线事件
+     * @param index 索引位置
+     */
     private fun processEvent(event: TimelineItem.Event, index: Int) {
         if (event.eventId == null) return
         timelineEventsIndexes[event.eventId] = index

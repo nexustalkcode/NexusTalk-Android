@@ -67,6 +67,21 @@ import io.element.android.libraries.testtags.TestTags
 import io.element.android.libraries.testtags.testTag
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 密码登录页面组件
+ *
+ * 提供用户名和密码登录功能，支持：
+ * - 用户名/邮箱输入（支持自动填充）
+ * - 密码输入（支持显示/隐藏切换）
+ * - 表单提交处理
+ * - 登录错误提示
+ *
+ * 页面会根据登录状态显示加载指示器，并在登录失败时显示错误对话框。
+ *
+ * @param state 登录页面状态对象，包含表单数据、账户提供商信息和登录状态
+ * @param onBackClick 返回按钮点击回调，用于返回上一页面
+ * @param modifier 组件修饰符，用于自定义布局和样式
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginPasswordView(
@@ -170,6 +185,16 @@ fun LoginPasswordView(
     }
 }
 
+/**
+ * 登录表单组件
+ *
+ * 渲染用户名和密码输入字段，包含输入验证和状态管理。
+ * 表单字段支持键盘导航（Tab/Enter键）和自动填充功能。
+ *
+ * @param state 登录页面状态对象，提供表单数据和事件处理
+ * @param isLoading 是否处于加载状态，加载时禁用输入字段
+ * @param onSubmit 表单提交回调，触发登录操作
+ */
 @Composable
 private fun LoginForm(
     state: LoginPasswordState,
@@ -273,12 +298,25 @@ private fun LoginForm(
 }
 
 /**
- * Ensure that the string does not contain any new line characters, which can happen when pasting values.
+ * 清理输入字符串
+ *
+ * 移除字符串中所有换行符，防止粘贴内容时引入非法字符。
+ * 换行符可能导致表单验证或提交时出现问题。
+ *
+ * @return 清理后的字符串，不包含任何换行符
  */
 private fun String.sanitize(): String {
     return replace("\n", "")
 }
 
+/**
+ * 登录错误对话框组件
+ *
+ * 显示登录失败时的错误信息，对话框包含标题和错误描述。
+ *
+ * @param error 登录失败的异常对象，用于获取错误信息
+ * @param onDismiss 对话框关闭回调，用于清除错误状态
+ */
 @Composable
 private fun LoginErrorDialog(error: Throwable, onDismiss: () -> Unit) {
     ErrorDialog(

@@ -24,7 +24,6 @@ import io.element.android.libraries.push.impl.notifications.model.SimpleNotifiab
 import io.element.android.tests.testutils.lambda.LambdaFiveParamsRecorder
 import io.element.android.tests.testutils.lambda.LambdaListAnyParamsRecorder
 import io.element.android.tests.testutils.lambda.LambdaOneParamRecorder
-import io.element.android.tests.testutils.lambda.LambdaThreeParamsRecorder
 import io.element.android.tests.testutils.lambda.LambdaTwoParamsRecorder
 import io.element.android.tests.testutils.lambda.lambdaAnyRecorder
 import io.element.android.tests.testutils.lambda.lambdaRecorder
@@ -35,8 +34,8 @@ class FakeNotificationCreator(
         lambdaRecorder { _, _ -> A_NOTIFICATION },
     var createSimpleNotificationResult: LambdaTwoParamsRecorder<NotificationAccountParams, SimpleNotifiableEvent, Notification> =
         lambdaRecorder { _, _ -> A_NOTIFICATION },
-    var createFallbackNotificationResult: LambdaThreeParamsRecorder<Notification?, NotificationAccountParams, List<FallbackNotifiableEvent>, Notification> =
-        lambdaRecorder { _, _, _ -> A_NOTIFICATION },
+    var createFallbackNotificationResult: LambdaTwoParamsRecorder<NotificationAccountParams, FallbackNotifiableEvent, Notification> =
+        lambdaRecorder { _, _ -> A_NOTIFICATION },
     var createSummaryListNotificationResult: LambdaFiveParamsRecorder<
         NotificationAccountParams, String, Boolean, Long, NotificationAccountParams, Notification
         > = lambdaRecorder { _, _, _, _, _ -> A_NOTIFICATION },
@@ -76,15 +75,10 @@ class FakeNotificationCreator(
     }
 
     override fun createFallbackNotification(
-        existingNotification: Notification?,
         notificationAccountParams: NotificationAccountParams,
-        fallbackNotifiableEvents: List<FallbackNotifiableEvent>,
+        fallbackNotifiableEvent: FallbackNotifiableEvent,
     ): Notification {
-        return createFallbackNotificationResult(
-            existingNotification,
-            notificationAccountParams,
-            fallbackNotifiableEvents,
-        )
+        return createFallbackNotificationResult(notificationAccountParams, fallbackNotifiableEvent)
     }
 
     override fun createSummaryListNotification(

@@ -72,7 +72,6 @@ class DefaultRoomLatestEventFormatterTest {
         formatter = DefaultRoomLatestEventFormatter(
             sp = AndroidStringProvider(context.resources),
             roomMembershipContentFormatter = RoomMembershipContentFormatter(fakeMatrixClient, stringProvider),
-            profileChangeContentFormatter = ProfileChangeContentFormatter(stringProvider),
             stateContentFormatter = StateContentFormatter(stringProvider),
             permalinkParser = FakePermalinkParser(),
         )
@@ -776,127 +775,29 @@ class DefaultRoomLatestEventFormatterTest {
 
     @Test
     @Config(qualifiers = "en")
-    fun `Profile change - avatar`() {
-        val otherName = "Other"
-        val changedContent = aProfileChangeMessageContent(avatarUrl = "new_avatar_url", prevAvatarUrl = "old_avatar_url")
-        val setContent = aProfileChangeMessageContent(avatarUrl = "new_avatar_url", prevAvatarUrl = null)
-        val removedContent = aProfileChangeMessageContent(avatarUrl = null, prevAvatarUrl = "old_avatar_url")
-        val invalidContent = aProfileChangeMessageContent(avatarUrl = null, prevAvatarUrl = null)
-        val sameContent = aProfileChangeMessageContent(avatarUrl = "same_avatar_url", prevAvatarUrl = "same_avatar_url")
-
-        val youChangedAvatarEvent = createLatestEvent(sentByYou = true, senderDisplayName = null, content = changedContent)
-        val youChangedAvatar = formatter.format(youChangedAvatarEvent, false)
-        assertThat(youChangedAvatar).isEqualTo("You changed your avatar")
-
-        val someoneChangeAvatarEvent = createLatestEvent(sentByYou = false, senderDisplayName = otherName, content = changedContent)
-        val someoneChangeAvatar = formatter.format(someoneChangeAvatarEvent, false)
-        assertThat(someoneChangeAvatar).isEqualTo("$otherName changed their avatar")
-
-        val youSetAvatarEvent = createLatestEvent(sentByYou = true, senderDisplayName = null, content = setContent)
-        val youSetAvatar = formatter.format(youSetAvatarEvent, false)
-        assertThat(youSetAvatar).isEqualTo("You changed your avatar")
-
-        val someoneSetAvatarEvent = createLatestEvent(sentByYou = false, senderDisplayName = otherName, content = setContent)
-        val someoneSetAvatar = formatter.format(someoneSetAvatarEvent, false)
-        assertThat(someoneSetAvatar).isEqualTo("$otherName changed their avatar")
-
-        val youRemovedAvatarEvent = createLatestEvent(sentByYou = true, senderDisplayName = null, content = removedContent)
-        val youRemovedAvatar = formatter.format(youRemovedAvatarEvent, false)
-        assertThat(youRemovedAvatar).isEqualTo("You changed your avatar")
-
-        val someoneRemovedAvatarEvent = createLatestEvent(sentByYou = false, senderDisplayName = otherName, content = removedContent)
-        val someoneRemovedAvatar = formatter.format(someoneRemovedAvatarEvent, false)
-        assertThat(someoneRemovedAvatar).isEqualTo("$otherName changed their avatar")
-
-        val unchangedEvent = createLatestEvent(sentByYou = true, senderDisplayName = otherName, content = sameContent)
-        val unchangedResult = formatter.format(unchangedEvent, false)
-        assertThat(unchangedResult).isNull()
-
-        val invalidEvent = createLatestEvent(sentByYou = true, senderDisplayName = otherName, content = invalidContent)
-        val invalidResult = formatter.format(invalidEvent, false)
-        assertThat(invalidResult).isNull()
-    }
-
-    @Test
-    @Config(qualifiers = "en")
-    fun `Profile change - display name`() {
-        val newDisplayName = "New"
-        val oldDisplayName = "Old"
-        val otherName = "Other"
-        val changedContent = aProfileChangeMessageContent(displayName = newDisplayName, prevDisplayName = oldDisplayName)
-        val setContent = aProfileChangeMessageContent(displayName = newDisplayName, prevDisplayName = null)
-        val removedContent = aProfileChangeMessageContent(displayName = null, prevDisplayName = oldDisplayName)
-        val sameContent = aProfileChangeMessageContent(displayName = newDisplayName, prevDisplayName = newDisplayName)
-        val invalidContent = aProfileChangeMessageContent(displayName = null, prevDisplayName = null)
-
-        val youChangedDisplayNameEvent = createLatestEvent(sentByYou = true, senderDisplayName = null, content = changedContent)
-        val youChangedDisplayName = formatter.format(youChangedDisplayNameEvent, false)
-        assertThat(youChangedDisplayName).isEqualTo("You changed your display name from $oldDisplayName to $newDisplayName")
-
-        val someoneChangedDisplayNameEvent = createLatestEvent(sentByYou = false, senderDisplayName = otherName, content = changedContent)
-        val someoneChangedDisplayName = formatter.format(someoneChangedDisplayNameEvent, false)
-        assertThat(someoneChangedDisplayName).isEqualTo("$someoneElseId changed their display name from $oldDisplayName to $newDisplayName")
-
-        val youSetDisplayNameEvent = createLatestEvent(sentByYou = true, senderDisplayName = null, content = setContent)
-        val youSetDisplayName = formatter.format(youSetDisplayNameEvent, false)
-        assertThat(youSetDisplayName).isEqualTo("You set your display name to $newDisplayName")
-
-        val someoneSetDisplayNameEvent = createLatestEvent(sentByYou = false, senderDisplayName = otherName, content = setContent)
-        val someoneSetDisplayName = formatter.format(someoneSetDisplayNameEvent, false)
-        assertThat(someoneSetDisplayName).isEqualTo("$someoneElseId set their display name to $newDisplayName")
-
-        val youRemovedDisplayNameEvent = createLatestEvent(sentByYou = true, senderDisplayName = null, content = removedContent)
-        val youRemovedDisplayName = formatter.format(youRemovedDisplayNameEvent, false)
-        assertThat(youRemovedDisplayName).isEqualTo("You removed your display name (it was $oldDisplayName)")
-
-        val someoneRemovedDisplayNameEvent = createLatestEvent(sentByYou = false, senderDisplayName = otherName, content = removedContent)
-        val someoneRemovedDisplayName = formatter.format(someoneRemovedDisplayNameEvent, false)
-        assertThat(someoneRemovedDisplayName).isEqualTo("$someoneElseId removed their display name (it was $oldDisplayName)")
-
-        val unchangedEvent = createLatestEvent(sentByYou = true, senderDisplayName = otherName, content = sameContent)
-        val unchangedResult = formatter.format(unchangedEvent, false)
-        assertThat(unchangedResult).isNull()
-
-        val invalidEvent = createLatestEvent(sentByYou = true, senderDisplayName = otherName, content = invalidContent)
-        val invalidResult = formatter.format(invalidEvent, false)
-        assertThat(invalidResult).isNull()
-    }
-
-    @Test
-    @Config(qualifiers = "en")
-    fun `Profile change - display name & avatar`() {
-        val newDisplayName = "New"
-        val oldDisplayName = "Old"
-        val changedContent = aProfileChangeMessageContent(
-            displayName = newDisplayName,
-            prevDisplayName = oldDisplayName,
-            avatarUrl = "new_avatar_url",
-            prevAvatarUrl = "old_avatar_url",
-        )
-        val invalidContent = aProfileChangeMessageContent(
-            displayName = null,
-            prevDisplayName = null,
-            avatarUrl = null,
-            prevAvatarUrl = null,
-        )
-        val sameContent = aProfileChangeMessageContent(
-            displayName = newDisplayName,
-            prevDisplayName = newDisplayName,
-            avatarUrl = "same_avatar_url",
-            prevAvatarUrl = "same_avatar_url",
+    fun `Profile change is hidden from room latest event`() {
+        val contents = listOf(
+            aProfileChangeMessageContent(avatarUrl = "new_avatar_url", prevAvatarUrl = "old_avatar_url"),
+            aProfileChangeMessageContent(displayName = "New", prevDisplayName = "Old"),
+            aProfileChangeMessageContent(
+                displayName = "New",
+                prevDisplayName = "Old",
+                avatarUrl = "new_avatar_url",
+                prevAvatarUrl = "old_avatar_url",
+            ),
+            aProfileChangeMessageContent(
+                displayName = null,
+                prevDisplayName = null,
+                avatarUrl = null,
+                prevAvatarUrl = null,
+            ),
         )
 
-        val youChangedBothEvent = createLatestEvent(sentByYou = true, senderDisplayName = null, content = changedContent)
-        val youChangedBoth = formatter.format(youChangedBothEvent, false)
-        assertThat(youChangedBoth).isEqualTo("You changed your display name from $oldDisplayName to $newDisplayName\n(avatar was changed too)")
-
-        val invalidContentEvent = createLatestEvent(sentByYou = true, senderDisplayName = null, content = invalidContent)
-        val invalidMessage = formatter.format(invalidContentEvent, false)
-        assertThat(invalidMessage).isNull()
-
-        val sameContentEvent = createLatestEvent(sentByYou = true, senderDisplayName = null, content = sameContent)
-        val sameMessage = formatter.format(sameContentEvent, false)
-        assertThat(sameMessage).isNull()
+        contents.forEach { content ->
+            val latestEvent = createLatestEvent(sentByYou = false, senderDisplayName = "Other", content = content)
+            assertThat(formatter.format(latestEvent, false)).isNull()
+            assertThat(formatter.format(latestEvent, true)).isNull()
+        }
     }
 
     // endregion

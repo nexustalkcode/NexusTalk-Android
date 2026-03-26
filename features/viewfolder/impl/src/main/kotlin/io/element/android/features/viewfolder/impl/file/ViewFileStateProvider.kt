@@ -11,7 +11,20 @@ package io.element.android.features.viewfolder.impl.file
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncData
 
+/**
+ * ViewFileState 预览参数提供者
+ *
+ * 提供 ViewFileState 的示例值，用于在 Android Studio 预览中展示 UI 效果。
+ * 包含多种状态场景：未初始化、加载中、失败、成功等。
+ *
+ * @see ViewFileState 文件查看状态
+ */
 open class ViewFileStateProvider : PreviewParameterProvider<ViewFileState> {
+    /**
+     * 获取预览状态序列
+     *
+     * @return 包含不同场景的 ViewFileState 序列
+     */
     override val values: Sequence<ViewFileState>
         get() = sequenceOf(
             aViewFileState(),
@@ -56,6 +69,14 @@ open class ViewFileStateProvider : PreviewParameterProvider<ViewFileState> {
         )
 }
 
+/**
+ * 创建示例文件状态
+ *
+ * @param name 文件名，默认为 "aName"
+ * @param lines 文件内容异步数据，默认为未初始化
+ * @param colorationMode 着色模式，默认为无
+ * @return 示例 ViewFileState 实例
+ */
 fun aViewFileState(
     name: String = "aName",
     lines: AsyncData<List<String>> = AsyncData.Uninitialized,

@@ -42,6 +42,15 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Scaffold
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 
+/**
+ * 设置 PIN 码视图
+ *
+ * 显示设置 PIN 码的可组合界面。
+ *
+ * @param state 设置 PIN 码状态
+ * @param onBackClick 返回点击回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun SetupPinView(
     state: SetupPinState,

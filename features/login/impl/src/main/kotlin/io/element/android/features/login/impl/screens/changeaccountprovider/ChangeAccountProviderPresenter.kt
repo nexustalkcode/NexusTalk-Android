@@ -20,6 +20,16 @@ import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.core.uri.ensureProtocol
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 更改账户提供商 Presenter
+ *
+ * 负责处理更改账户提供商页面的业务逻辑。
+ * 管理可用账户提供商列表、搜索功能和服务器切换状态。
+ *
+ * @property changeServerPresenter 服务器切换 Presenter
+ * @property enterpriseService 企业服务
+ * @see ChangeAccountProviderState UI 状态
+ */
 @Inject
 class ChangeAccountProviderPresenter(
     private val changeServerPresenter: Presenter<ChangeServerState>,

@@ -20,16 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.state
-import chat.schildi.lib.preferences.value
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import io.element.android.features.messages.impl.MessagesNavigator
 import io.element.android.features.messages.impl.UserEventPermissions
-import io.element.android.features.messages.impl.crypto.sendfailure.resolve.ResolveVerifiedUserSendFailureEvent
+import io.element.android.features.messages.impl.crypto.sendfailure.resolve.ResolveVerifiedUserSendFailureEvents
 import io.element.android.features.messages.impl.crypto.sendfailure.resolve.ResolveVerifiedUserSendFailureState
 import io.element.android.features.messages.impl.timeline.components.MessageShieldData
 import io.element.android.features.messages.impl.timeline.factories.TimelineItemsFactory
@@ -79,6 +75,28 @@ import timber.log.Timber
 
 const val FOCUS_ON_PINNED_EVENT_DEBOUNCE_DURATION_IN_MILLIS = 200L
 
+/**
+ * 时间线 Presenter
+ *
+ * 负责处理时间线的业务逻辑，管理时间线项目加载、焦点事件、投票操作等功能。
+ *
+ * @property timelineItemsFactoryCreator 时间线项目工厂创建者
+ * @property room 已加入的房间
+ * @property dispatchers 协程调度器
+ * @property sessionCoroutineScope 会话协程作用域
+ * @property navigator 消息导航器
+ * @property redactedVoiceMessageManager 已编辑语音消息管理器
+ * @property sendPollResponseAction 发送投票响应动作
+ * @property endPollAction 结束投票动作
+ * @property sessionPreferencesStore 会话偏好设置存储
+ * @property timelineController 时间线控制器
+ * @property timelineItemIndexer 时间线项目索引器
+ * @property resolveVerifiedUserSendFailurePresenter 解决验证用户发送失败 Presenter
+ * @property typingNotificationPresenter 打字通知 Presenter
+ * @property roomCallStatePresenter 房间通话状态 Presenter
+ * @property featureFlagService 功能标志服务
+ * @property analyticsService 分析服务
+ */
 @AssistedInject
 class TimelinePresenter(
     timelineItemsFactoryCreator: TimelineItemsFactory.Creator,
@@ -101,8 +119,18 @@ class TimelinePresenter(
 ) : Presenter<TimelineState> {
     private val tag = "TimelinePresenter"
 
+    /**
+     * Presenter 工厂接口
+     */
     @AssistedFactory
     interface Factory {
+        /**
+         * 创建 Presenter 实例
+         *
+         * @param timelineController 时间线控制器
+         * @param navigator 消息导航器
+         * @return TimelinePresenter 实例
+         */
         fun create(
             timelineController: TimelineController,
             navigator: MessagesNavigator
@@ -150,47 +178,26 @@ class TimelinePresenter(
             timelineController.isLive()
         }.collectAsState(initial = true)
 
-        // SC start
-        val scReadState = createScReadState(room.liveTimeline)
-        val syncReadReceiptAndMarker = ScPrefs.SYNC_READ_RECEIPT_AND_MARKER.state()
-        val context = LocalContext.current
-        // SC end
-
         val displayThreadSummaries by produceState(false) {
             value = featureFlagService.isFeatureEnabled(FeatureFlags.Threads)
         }
 
-        fun handleEvent(event: TimelineEvent) {
+        fun handleEvent(event: TimelineEvents) {
             when (event) {
-                // SC start
-                is TimelineEvent.OnUnreadLineVisible -> scReadState.sawUnreadLine.value = true
-                is TimelineEvent.MarkAsRead -> forceSetReceipts(context, sessionCoroutineScope, room, scReadState, isSendPublicReadReceiptsEnabled)
-                // SC end
-                is TimelineEvent.LoadMore -> {
+                is TimelineEvents.LoadMore -> {
                     if (event.direction == Timeline.PaginationDirection.FORWARDS && timelineMode is Timeline.Mode.Thread) {
-                        // Do not paginate forwards in thread mode, as it's not supported
+                        // 不在线程模式下向前分页，因为不支持
                         return
                     }
                     localScope.launch {
                         timelineController.paginate(direction = event.direction)
                     }
                 }
-                is TimelineEvent.OnScrollFinished -> {
+                is TimelineEvents.OnScrollFinished -> {
                     if (isLive) {
                         if (event.firstIndex == 0) {
                             newEventState.value = NewEventState.None
                         }
-
-                        if (syncReadReceiptAndMarker.value) { // SC block
-                            sessionCoroutineScope.scOnScrollFinished(
-                                dispatchers = dispatchers,
-                                scReadState = scReadState,
-                                firstVisibleIndex = event.firstIndex,
-                                timelineItems = timelineItems,
-                            )
-                            return
-                        }
-
                         Timber.tag(tag).d("## sendReadReceiptIfNeeded firstVisibleIndex: ${event.firstIndex}")
                         sessionCoroutineScope.sendReadReceiptIfNeeded(
                             firstVisibleIndex = event.firstIndex,
@@ -202,7 +209,7 @@ class TimelinePresenter(
                         newEventState.value = NewEventState.None
                     }
                 }
-                is TimelineEvent.SelectPollAnswer -> sessionCoroutineScope.launch {
+                is TimelineEvents.SelectPollAnswer -> sessionCoroutineScope.launch {
                     timelineController.invokeOnCurrentTimeline {
                         sendPollResponseAction.execute(
                             timeline = this,
@@ -211,7 +218,7 @@ class TimelinePresenter(
                         )
                     }
                 }
-                is TimelineEvent.EndPoll -> sessionCoroutineScope.launch {
+                is TimelineEvents.EndPoll -> sessionCoroutineScope.launch {
                     timelineController.invokeOnCurrentTimeline {
                         endPollAction.execute(
                             timeline = this,
@@ -219,38 +226,38 @@ class TimelinePresenter(
                         )
                     }
                 }
-                is TimelineEvent.EditPoll -> {
+                is TimelineEvents.EditPoll -> {
                     navigator.navigateToEditPoll(event.pollStartId)
                 }
-                is TimelineEvent.FocusOnEvent -> sessionCoroutineScope.launch {
-                    focusRequestState.value = FocusRequestState.Requested(event.eventId, event.debounce, event.forReadMarker)
+                is TimelineEvents.FocusOnEvent -> sessionCoroutineScope.launch {
+                    focusRequestState.value = FocusRequestState.Requested(event.eventId, event.debounce)
                     delay(event.debounce)
                     Timber.tag(tag).d("Started focus on ${event.eventId}")
-                    focusOnEvent(event.eventId, focusRequestState, forReadMarker = event.forReadMarker)
+                    focusOnEvent(event.eventId, focusRequestState)
                 }.start()
-                is TimelineEvent.OnFocusEventRender -> {
-                    // If there was a pending 'notification tap opens timeline' transaction, finish it now we're focused in the required event
+                is TimelineEvents.OnFocusEventRender -> {
+                    // 如果有待处理的"通知点击打开时间线"事务，现在聚焦到所需事件后完成它
                     analyticsService.finishLongRunningTransaction(NotificationToMessage)
 
                     focusRequestState.value = focusRequestState.value.onFocusEventRender()
                 }
-                is TimelineEvent.ClearFocusRequestState -> {
+                is TimelineEvents.ClearFocusRequestState -> {
                     focusRequestState.value = FocusRequestState.None
                 }
-                is TimelineEvent.JumpToLive -> {
+                is TimelineEvents.JumpToLive -> {
                     timelineController.focusOnLive()
                 }
-                TimelineEvent.HideShieldDialog -> messageShieldDialogData.value = null
-                is TimelineEvent.ShowShieldDialog -> messageShieldDialogData.value = event.messageShieldData
-                is TimelineEvent.ComputeVerifiedUserSendFailure -> {
-                    resolveVerifiedUserSendFailureState.eventSink(ResolveVerifiedUserSendFailureEvent.ComputeForMessage(event.event))
+                TimelineEvents.HideShieldDialog -> messageShieldDialogData.value = null
+                is TimelineEvents.ShowShieldDialog -> messageShieldDialogData.value = event.messageShieldData
+                is TimelineEvents.ComputeVerifiedUserSendFailure -> {
+                    resolveVerifiedUserSendFailureState.eventSink(ResolveVerifiedUserSendFailureEvents.ComputeForMessage(event.event))
                 }
-                is TimelineEvent.NavigateToPredecessorOrSuccessorRoom -> {
-                    // Navigate to the predecessor or successor room
+                is TimelineEvents.NavigateToPredecessorOrSuccessorRoom -> {
+                    // 导航到前一个或后继房间
                     val serverNames = calculateServerNamesForRoom(room)
                     navigator.navigateToRoom(event.roomId, null, serverNames)
                 }
-                is TimelineEvent.OpenThread -> {
+                is TimelineEvents.OpenThread -> {
                     navigator.navigateToThread(
                         threadRootId = event.threadRootEventId,
                         focusedEventId = event.focusedEvent,
@@ -297,8 +304,8 @@ class TimelinePresenter(
             if (currentFocusRequestState is FocusRequestState.Success && !currentFocusRequestState.rendered) {
                 val eventId = currentFocusRequestState.eventId
                 if (timelineItemIndexer.isKnown(eventId)) {
-                    val index = timelineItemIndexer.indexOf(eventId).offsetForUnreadMarkerFocus(currentFocusRequestState.forReadMarker)
-                    focusRequestState.value = FocusRequestState.Success(eventId = eventId, index = index, forReadMarker = currentFocusRequestState.forReadMarker)
+                    val index = timelineItemIndexer.indexOf(eventId)
+                    focusRequestState.value = FocusRequestState.Success(eventId = eventId, index = index)
                 } else {
                     Timber.w("Unknown timeline item for focused item, can't render focus")
                 }
@@ -330,7 +337,6 @@ class TimelinePresenter(
         }
 
         return TimelineState(
-            scReadState = scReadState,
             timelineItems = timelineItems,
             timelineMode = timelineMode,
             timelineRoomInfo = timelineRoomInfo,
@@ -345,14 +351,19 @@ class TimelinePresenter(
         )
     }
 
+    /**
+     * 聚焦到事件
+     *
+     * @param eventId 事件 ID
+     * @param focusRequestState 焦点请求状态
+     */
     private suspend fun focusOnEvent(
         eventId: EventId,
         focusRequestState: MutableState<FocusRequestState>,
-        forReadMarker: Boolean,
     ) {
         if (timelineItemIndexer.isKnown(eventId)) {
-            val index = timelineItemIndexer.indexOf(eventId).offsetForUnreadMarkerFocus(forReadMarker)
-            focusRequestState.value = FocusRequestState.Success(eventId = eventId, index = index, forReadMarker = forReadMarker)
+            val index = timelineItemIndexer.indexOf(eventId)
+            focusRequestState.value = FocusRequestState.Success(eventId = eventId, index = index)
             return
         }
 
@@ -365,7 +376,7 @@ class TimelinePresenter(
         }
 
         if (timelineController.mainTimelineMode() is Timeline.Mode.Thread && threadId == null) {
-            // We are in a thread timeline, and the event isn't part of a thread, we need to navigate back to the room
+            // 我们在线程时间线中，但事件不属于线程，需要导航回房间
             focusRequestState.value = FocusRequestState.None
             navigator.navigateToRoom(room.roomId, eventId, calculateServerNamesForRoom(room))
         } else {
@@ -374,16 +385,16 @@ class TimelinePresenter(
                 .onSuccess { result ->
                     when (result) {
                         is EventFocusResult.FocusedOnLive -> {
-                            focusRequestState.value = FocusRequestState.Success(eventId = eventId, forReadMarker = forReadMarker)
+                            focusRequestState.value = FocusRequestState.Success(eventId = eventId)
                         }
                         is EventFocusResult.IsInThread -> {
                             val currentThreadId = (timelineController.mainTimelineMode() as? Timeline.Mode.Thread)?.threadRootId
                             if (currentThreadId == result.threadId) {
-                                // It's the same thread, we just focus on the event
-                                focusRequestState.value = FocusRequestState.Success(eventId = eventId, forReadMarker = forReadMarker)
+                                // 是同一个线程，我们只聚焦到事件
+                                focusRequestState.value = FocusRequestState.Success(eventId = eventId)
                             } else {
-                                focusRequestState.value = FocusRequestState.Success(eventId = result.threadId.asEventId(), forReadMarker = forReadMarker)
-                                // It's part of a thread we're not in, let's open it in another timeline
+                                focusRequestState.value = FocusRequestState.Success(eventId = result.threadId.asEventId())
+                                // 它属于我们不在的线程，让我们在另一个时间线中打开它
                                 navigator.navigateToThread(result.threadId, eventId)
                             }
                         }
@@ -396,21 +407,28 @@ class TimelinePresenter(
     }
 
     /**
-     * This method compute the hasNewItem state passed as a [MutableState] each time the timeline items size changes.
-     * Basically, if we got new timeline event from sync or local, either from us or another user, we update the state so we tell we have new items.
-     * The state never goes back to None from this method, but need to be reset from somewhere else.
+     * 计算新项目状态
+     *
+     * 此方法在时间线项目大小改变时计算作为 [MutableState] 传递的 hasNewItem 状态。
+     * 基本上，如果从同步或本地收到新的时间线事件（无论是来自我们还是其他用户），
+     * 我们更新状态以告知有新项目。
+     * 状态永远不会从此方法重置为 None，但需要从其他地方重置。
+     *
+     * @param timelineItems 时间线项目列表
+     * @param prevMostRecentItemId 上一个最近项目 ID
+     * @param newEventState 新事件状态
      */
     private suspend fun computeNewItemState(
         timelineItems: ImmutableList<TimelineItem>,
         prevMostRecentItemId: MutableState<UniqueId?>,
         newEventState: MutableState<NewEventState>
     ) = withContext(dispatchers.computation) {
-        // FromMe is prioritized over FromOther, so skip if we already have a FromMe
+        // FromMe 优先于 FromOther，所以如果已有 FromMe 则跳过
         if (newEventState.value == NewEventState.FromMe) {
             return@withContext
         }
         val newMostRecentItem = timelineItems.firstOrNull {
-            // Ignore typing item
+            // 忽略打字项目
             (it as? TimelineItem.Virtual)?.model !is TimelineItemTypingNotificationModel
         }
         val prevMostRecentItemIdValue = prevMostRecentItemId.value
@@ -421,7 +439,7 @@ class TimelinePresenter(
             newMostRecentItemId != prevMostRecentItemIdValue
 
         if (hasNewEvent) {
-            // Scroll to bottom if the new event is from me, even if sent from another device
+            // 如果新事件来自我，即使是来自另一个设备也滚动到底部
             val fromMe = newMostRecentItem.isMine
             newEventState.value = if (fromMe) {
                 NewEventState.FromMe
@@ -432,19 +450,27 @@ class TimelinePresenter(
         prevMostRecentItemId.value = newMostRecentItemId
     }
 
+    /**
+     * 必要时发送已读回执
+     *
+     * @param firstVisibleIndex 第一个可见索引
+     * @param timelineItems 时间线项目列表
+     * @param lastReadReceiptId 上一个已读回执 ID
+     * @param readReceiptType 已读回执类型
+     */
     private fun CoroutineScope.sendReadReceiptIfNeeded(
         firstVisibleIndex: Int,
         timelineItems: ImmutableList<TimelineItem>,
         lastReadReceiptId: MutableState<EventId?>,
         readReceiptType: ReceiptType,
     ) = launch(dispatchers.computation) {
-        // If we are at the bottom of timeline, we mark the room as read.
+        // 如果我们在时间线底部，将房间标记为已读
         if (firstVisibleIndex == 0) {
             timelineController.invokeOnCurrentTimeline {
                 markAsRead(receiptType = readReceiptType)
             }
         } else {
-            // Get last valid EventId seen by the user, as the first index might refer to a Virtual item
+            // 获取用户看到的最后一个有效 EventId，因为第一个索引可能指向 Virtual 项目
             val eventId = getLastEventIdBeforeOrAt(firstVisibleIndex, timelineItems)
             if (eventId != null && eventId != lastReadReceiptId.value) {
                 lastReadReceiptId.value = eventId
@@ -455,6 +481,13 @@ class TimelinePresenter(
         }
     }
 
+    /**
+     * 获取指定索引之前或位置的最后一个事件 ID
+     *
+     * @param index 索引
+     * @param items 项目列表
+     * @return 最后一个事件 ID（如果找到）
+     */
     private fun getLastEventIdBeforeOrAt(index: Int, items: ImmutableList<TimelineItem>): EventId? {
         for (i in index until items.count()) {
             val item = items[i]

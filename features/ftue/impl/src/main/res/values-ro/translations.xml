@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Puteți modifica setările mai târziu."</string>
   <string name="screen_notification_optin_title">"Permiteți notificările și nu pierdeți niciodată un mesaj"</string>
   <string name="screen_session_verification_enter_recovery_key">"Introduceți cheia de recuperare"</string>
+  <string name="screen_welcome_agreement">"Atingând Sunt de acord și Continu, acceptați %s noastre"</string>
+  <string name="screen_welcome_privacy_policy_link">"Politica de confidențialitate"</string>
+  <string name="screen_welcome_title">"Bine ați venit la %s"</string>
+  <string name="screen_welcome_privacy_notice">"Vă rugăm să citiți Politica noastră de confidențialitate"</string>
+  <string name="screen_welcome_agree">"Sunt de acord"</string>
 </resources>

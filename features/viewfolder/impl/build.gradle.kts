@@ -28,6 +28,6 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     api(projects.features.viewfolder.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
 }

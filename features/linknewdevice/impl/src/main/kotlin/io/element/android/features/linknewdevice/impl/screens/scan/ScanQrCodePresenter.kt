@@ -22,43 +22,65 @@ import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.matrix.api.linknewdevice.LinkDesktopStep
 import kotlinx.coroutines.launch
 
+/**
+ * 扫描二维码 Presenter
+ *
+ * 负责处理链接新设备时扫描二维码的业务逻辑和状态管理。
+ * 管理二维码扫描流程和结果处理。
+ *
+ * @property linkNewDesktopHandler 链接新桌面设备处理器
+ */
 @Inject
 class ScanQrCodePresenter(
     private val linkNewDesktopHandler: LinkNewDesktopHandler,
 ) : Presenter<ScanQrCodeState> {
+    /**
+     * 生成界面状态
+     *
+     * @return ScanQrCodeState 扫描二维码状态
+     */
     @Composable
     override fun present(): ScanQrCodeState {
         val coroutineScope = rememberCoroutineScope()
+        // 扫描状态，初始为 Loading
         var scanAction: AsyncAction<Unit> by remember { mutableStateOf(AsyncAction.Loading) }
 
-        // Observe the flow to react on LinkDesktopStep.InvalidQrCode
+        // 观察流程以响应 LinkDesktopStep.InvalidQrCode
         val linkDesktopStep by linkNewDesktopHandler.stepFlow.collectAsState()
 
         LaunchedEffect(Unit) {
+            // 每次进入页面都创建新的 handler，确保二维码有效
             linkNewDesktopHandler.createNewHandler()
         }
 
         LaunchedEffect(linkDesktopStep) {
             when (val step = linkDesktopStep) {
                 is LinkDesktopStep.InvalidQrCode -> {
+                    // 扫描到无效二维码，显示错误
                     scanAction = AsyncAction.Failure(Exception(step.error))
                 }
                 else -> Unit
             }
         }
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 扫描二维码事件
+         */
         fun handleEvent(event: ScanQrCodeEvent) {
             when (event) {
                 ScanQrCodeEvent.TryAgain -> {
+                    // 重新尝试时恢复加载态
                     scanAction = AsyncAction.Loading
                 }
                 is ScanQrCodeEvent.QrCodeScanned -> coroutineScope.launch {
-                    // In this case the scanning will stop and a loader will be shown
+                    // 扫码成功后停止扫描并显示加载器
                     scanAction = AsyncAction.Success(Unit)
                     try {
                         linkNewDesktopHandler.onScannedCode(event.data)
                     } catch (e: Exception) {
-                        // Should not happen as errors are handled through the LinkDesktopStep flow
+                        // 理论上不会走到这里，错误通过 stepFlow 通知
                         scanAction = AsyncAction.Failure(e)
                     }
                 }

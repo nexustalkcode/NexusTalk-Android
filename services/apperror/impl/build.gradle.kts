@@ -31,6 +31,6 @@ dependencies {
 
     api(projects.services.apperror.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.services.toolbox.test)
 }

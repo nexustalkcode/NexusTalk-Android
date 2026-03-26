@@ -30,8 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
 import io.element.android.emojibasebindings.Emoji
 import io.element.android.features.messages.impl.timeline.components.customreaction.EmojiItem
 import io.element.android.libraries.designsystem.preview.ElementPreview
@@ -39,6 +37,7 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.text.toSp
 import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.IconSource
+import io.element.android.libraries.designsystem.theme.components.SearchBar
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
@@ -49,24 +48,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun EmojiPicker(
     onSelectEmoji: (Emoji) -> Unit,
-    onSelectCustomEmoji: (String) -> Unit, // SC
     state: EmojiPickerState,
     selectedEmojis: ImmutableSet<String>,
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
-
-    val pagerState = rememberPagerState(
-        pageCount = state.scEmojiPickerSize().let {{ it }},
-        initialPage = if (ScPrefs.PREFER_FREEFORM_REACTIONS.value()) state.pageFreeformReactionIndex() else 0,
-    )
+    val pagerState = rememberPagerState(pageCount = { state.categories.size })
     Column(modifier) {
-        ScEmojiPickerSearchBar(
+        SearchBar(
             modifier = Modifier.padding(bottom = 10.dp),
             queryState = state.searchQuery,
             resultState = state.searchResults,
             active = state.isSearchActive,
-            onActiveChange = { state.eventSink(EmojiPickerEvent.ToggleSearchActive(it)) },
+            onActiveChange = { state.eventSink(EmojiPickerEvents.ToggleSearchActive(it)) },
             windowInsets = WindowInsets(0, 0, 0, 0),
             placeHolderTitle = stringResource(CommonStrings.emoji_picker_search_placeholder),
         ) { emojis ->
@@ -95,32 +89,18 @@ fun EmojiPicker(
                                 )
                             }
                         },
-                        selected = pagerState.currentPage.removeScPickerOffset() == index,
+                        selected = pagerState.currentPage == index,
                         onClick = {
-                            coroutineScope.launch { pagerState.animateScrollToPage(index.addScPickerOffset()) }
+                            coroutineScope.launch { pagerState.animateScrollToPage(index) }
                         }
                     )
                 }
-                ScEmojiPickerTabsEnd(state, pagerState) { state.eventSink(EmojiPickerEvent.ToggleSearchActive(true)) }
             }
 
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxWidth(),
-            ) { scIndex ->
-                val index = scIndex.removeScPickerOffset()
-                if (scEmojiPickerPage(
-                        state,
-                        scIndex,
-                        pagerState.currentPage,
-                        onSelectCustomEmoji
-                ) {
-                    state.eventSink(EmojiPickerEvent.ToggleSearchActive(true))
-                    pagerState.requestScrollToPage(0)
-                }) {
-                    return@HorizontalPager
-                }
-
+            ) { index ->
                 val emojis = state.categories[index].emojis
                 EmojiResults(
                     emojis = emojis,
@@ -162,7 +142,6 @@ private fun EmojiResults(
 internal fun EmojiPickerPreview(@PreviewParameter(EmojiPickerStateProvider::class) state: EmojiPickerState) = ElementPreview {
     EmojiPicker(
         onSelectEmoji = {},
-        onSelectCustomEmoji = {},
         state = state,
         selectedEmojis = persistentSetOf("😀", "😄", "😃"),
         modifier = Modifier.fillMaxWidth(),

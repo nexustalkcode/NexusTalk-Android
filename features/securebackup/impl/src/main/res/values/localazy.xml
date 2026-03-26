@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Delete key storage"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Turn on backup"</string>
-  <string name="screen_chat_backup_key_backup_description">"Store your cryptographic identity and message keys securely on the server. This will allow you to view your message history on any new devices. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Store your cryptographic identity and message keys securely on the server. This will allow you to view your message history on any new devices. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Key storage"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"Key storage must be turned on to set up recovery."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Upload keys from this device"</string>
@@ -67,4 +67,16 @@
   <string name="screen_reset_encryption_password_placeholder">"Enter…"</string>
   <string name="screen_reset_encryption_password_subtitle">"Confirm that you want to reset your identity."</string>
   <string name="screen_reset_encryption_password_title">"Enter your account password to continue"</string>
+  <string name="screen_recovery_key_confirm_custom_title">"Recover your encrypted history"</string>
+  <string name="screen_recovery_key_confirm_custom_subtitle">"Use your recovery key to decrypt your previous chat history."</string>
+  <string name="screen_recovery_key_confirm_warning_title">"Important reminder"</string>
+  <string name="screen_recovery_key_confirm_warning_message">"Your recovery key decrypts your end-to-end encrypted messages. Keep it safe and do not share it with anyone."</string>
+  <string name="screen_recovery_key_confirm_input_title">"Enter recovery key"</string>
+  <string name="screen_recovery_key_confirm_why_title">"Why do I need a recovery key?"</string>
+  <string name="screen_recovery_key_confirm_why_point_1">"Recovery keys decrypt your end-to-end encrypted messages."</string>
+  <string name="screen_recovery_key_confirm_why_point_2">"You may need it when signing in on a new device."</string>
+  <string name="screen_recovery_key_confirm_why_point_3">"If you lose the key, you may lose access to older encrypted messages."</string>
+  <string name="screen_recovery_key_confirm_why_point_4">"We recommend storing it safely in a password manager."</string>
+  <string name="screen_recovery_key_confirm_skip_action">"Set up later"</string>
+  <string name="screen_recovery_key_confirm_submit_action">"Restore history"</string>
 </resources>

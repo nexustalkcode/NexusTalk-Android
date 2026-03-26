@@ -33,7 +33,6 @@ fun aTimelineItemImageContent(
     fileSize = 4 * 1024 * 1024L,
     caption = caption,
     formattedCaption = null,
-    formattedCaptionSc = null,
     isEdited = false,
     mediaSource = MediaSource(""),
     thumbnailSource = null,

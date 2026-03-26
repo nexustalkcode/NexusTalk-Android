@@ -14,6 +14,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 
+/**
+ * 通知设置选项列表组件
+ *
+ * Composable 函数，用于渲染通知设置选项列表。
+ * 使用可选择组容器，包含所有可用的通知模式选项。
+ *
+ * @param selected 当前选中的通知模式
+ * @param enabled 是否启用
+ * @param onSelectOption 选项选择回调
+ * @param displayMentionsOnlyDisclaimer 是否显示仅提及免责声明
+ * @param modifier 视图修饰符
+ * @see RoomNotificationMode 房间通知模式
+ * @see RoomNotificationSettingsItem 通知设置项
+ */
 @Composable
 fun RoomNotificationSettingsOptions(
     selected: RoomNotificationMode?,

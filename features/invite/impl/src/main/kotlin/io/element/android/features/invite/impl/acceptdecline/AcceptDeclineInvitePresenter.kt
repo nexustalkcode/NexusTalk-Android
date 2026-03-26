@@ -27,11 +27,25 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 接受/拒绝邀请 Presenter
+ *
+ * 负责处理接受或拒绝房间邀请功能的业务逻辑和状态管理。
+ * 管理邀请的接受、拒绝和确认流程。
+ *
+ * @property acceptInvite 接受邀请服务
+ * @property declineInvite 拒绝邀请服务
+ */
 @Inject
 class AcceptDeclineInvitePresenter(
     private val acceptInvite: AcceptInvite,
     private val declineInvite: DeclineInvite,
 ) : Presenter<AcceptDeclineInviteState> {
+    /**
+     * 生成界面状态
+     *
+     * @return AcceptDeclineInviteState 接受/拒绝邀请状态
+     */
     @Composable
     override fun present(): AcceptDeclineInviteState {
         val localCoroutineScope = rememberCoroutineScope()
@@ -40,6 +54,11 @@ class AcceptDeclineInvitePresenter(
         val declinedAction: MutableState<AsyncAction<RoomId>> =
             remember { mutableStateOf(AsyncAction.Uninitialized) }
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 接受/拒绝邀请事件
+         */
         fun handleEvent(event: AcceptDeclineInviteEvents) {
             when (event) {
                 is AcceptDeclineInviteEvents.AcceptInvite -> {
@@ -75,6 +94,12 @@ class AcceptDeclineInvitePresenter(
         )
     }
 
+    /**
+     * 执行接受邀请操作
+     *
+     * @param roomId 房间 ID
+     * @param acceptedAction 接受操作的异步状态
+     */
     private fun CoroutineScope.acceptInvite(
         roomId: RoomId,
         acceptedAction: MutableState<AsyncAction<RoomId>>,
@@ -84,6 +109,13 @@ class AcceptDeclineInvitePresenter(
         }
     }
 
+    /**
+     * 执行拒绝邀请操作
+     *
+     * @param inviteData 邀请数据
+     * @param blockUser 是否封禁用户
+     * @param declinedAction 拒绝操作的异步状态
+     */
     private fun CoroutineScope.declineInvite(
         inviteData: InviteData,
         blockUser: Boolean,

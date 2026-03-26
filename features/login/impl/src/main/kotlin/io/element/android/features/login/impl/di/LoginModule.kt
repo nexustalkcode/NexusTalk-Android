@@ -18,12 +18,33 @@ import io.element.android.features.login.impl.screens.onboarding.classic.LoginWi
 import io.element.android.features.login.impl.screens.onboarding.classic.LoginWithClassicState
 import io.element.android.libraries.architecture.Presenter
 
+/**
+ * 登录模块依赖注入配置
+ *
+ * 使用 Metro 依赖注入框架的模块接口。
+ * 定义登录功能中 Presenter 的依赖绑定关系。
+ *
+ * @see ChangeServerPresenter 更改服务器 Presenter
+ * @see LoginWithClassicPresenter 经典登录 Presenter
+ */
 @ContributesTo(AppScope::class)
 @BindingContainer
 interface LoginModule {
+    /**
+     * 绑定更改服务器 Presenter
+     *
+     * @param presenter ChangeServerPresenter 实例
+     * @return 绑定后的 Presenter 接口
+     */
     @Binds
     fun bindChangeServerPresenter(presenter: ChangeServerPresenter): Presenter<ChangeServerState>
 
+    /**
+     * 绑定经典登录 Presenter
+     *
+     * @param presenter LoginWithClassicPresenter 实例
+     * @return 绑定后的 Presenter 接口
+     */
     @Binds
     fun bindLoginWithClassicPresenter(presenter: LoginWithClassicPresenter): Presenter<LoginWithClassicState>
 }

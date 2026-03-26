@@ -6,4 +6,7 @@
   <string name="screen_start_chat_join_room_by_address_invalid_address">"Ez da baliozko helbidea"</string>
   <string name="screen_start_chat_join_room_by_address_placeholder">"Sartu…"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Ez da gela aurkitu"</string>
+  <string name="screen_scan_user_qr_code_title">"Eskaneatu QR kodea"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Eskaneatu QR kodea kontaktu bat gehitzeko"</string>
+  <string name="screen_scan_user_qr_code_success">"QR kodea ondo eskaneatu da"</string>
 </resources>

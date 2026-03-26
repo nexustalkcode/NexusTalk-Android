@@ -10,6 +10,12 @@ package io.element.android.features.home.impl.filters.selection
 
 import io.element.android.features.home.impl.filters.RoomListFilter
 
+/**
+ * 过滤器选择状态数据类
+ *
+ * @property filter 房间列表过滤器
+ * @property isSelected 是否被选中
+ */
 data class FilterSelectionState(
     val filter: RoomListFilter,
     val isSelected: Boolean,

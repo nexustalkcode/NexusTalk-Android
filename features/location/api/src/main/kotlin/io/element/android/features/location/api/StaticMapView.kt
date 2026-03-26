@@ -38,7 +38,17 @@ import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.utils.CommonDrawables
 
 /**
- * Shows a static map image downloaded via a third party service's static maps API.
+ * 显示静态地图视图
+ *
+ * 通过第三方服务的静态地图 API 下载并显示静态地图图片。
+ * 该 Composable 组件会在加载完成后显示地图图片和位置标记图钉。
+ *
+ * @param lat 地图中心的纬度
+ * @param lon 地图中心的经度
+ * @param zoom 地图缩放级别
+ * @param contentDescription 图片的无障碍描述
+ * @param modifier 修饰符
+ * @param darkMode 是否使用深色模式地图样式
  */
 @Composable
 fun StaticMapView(

@@ -16,5 +16,5 @@ android {
 dependencies {
     implementation(projects.features.viewfolder.api)
     implementation(projects.libraries.architecture)
-    implementation(projects.tests.testutils)
+    
 }

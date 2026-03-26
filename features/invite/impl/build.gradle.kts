@@ -38,7 +38,6 @@ dependencies {
     implementation(projects.services.analytics.api)
     implementation(projects.libraries.push.api)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.features.invite.test)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.push.test)

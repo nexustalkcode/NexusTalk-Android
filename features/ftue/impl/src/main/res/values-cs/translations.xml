@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Nastavení můžete později změnit."</string>
   <string name="screen_notification_optin_title">"Povolte oznámení a nezmeškejte žádnou zprávu"</string>
   <string name="screen_session_verification_enter_recovery_key">"Zadejte klíč pro obnovení"</string>
+  <string name="screen_welcome_agreement">"Klepnutím na Souhlasit a pokračovat přijímáte naše %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Zásady ochrany osobních údajů"</string>
+  <string name="screen_welcome_title">"Vítejte v %s"</string>
+  <string name="screen_welcome_privacy_notice">"Přečtěte si naše Zásady ochrany osobních údajů"</string>
+  <string name="screen_welcome_agree">"Souhlasit"</string>
 </resources>

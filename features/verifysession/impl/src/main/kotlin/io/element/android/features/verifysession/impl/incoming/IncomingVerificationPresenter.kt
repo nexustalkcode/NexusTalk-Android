@@ -39,6 +39,24 @@ import timber.log.Timber
 import io.element.android.features.verifysession.impl.incoming.IncomingVerificationStateMachine.Event as StateMachineEvent
 import io.element.android.features.verifysession.impl.incoming.IncomingVerificationStateMachine.State as StateMachineState
 
+/**
+ * 传入会话验证 Presenter
+ *
+ * 负责处理传入会话验证页面的业务逻辑，包括：
+ * - 管理会话验证状态机
+ * - 处理传入验证请求
+ * - 确认或拒绝验证请求
+ * - 处理 SAS 验证挑战
+ * - 观察验证服务状态
+ *
+ * @property verificationRequest 传入验证请求
+ * @property navigator 传入验证导航器
+ * @property sessionCoroutineScope 会话协程作用域
+ * @property sessionVerificationService 会话验证服务
+ * @property stateMachine 状态机
+ * @property器
+ * @see IncomingVerification dateFormatter 日期格式化State 传入会话验证状态
+ */
 @AssistedInject
 class IncomingVerificationPresenter(
     @Assisted private val verificationRequest: VerificationRequest.Incoming,

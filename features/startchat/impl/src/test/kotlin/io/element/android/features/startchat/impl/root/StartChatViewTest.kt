@@ -142,16 +142,19 @@ private fun <R : TestRule> AndroidComposeTestRule<R, ComponentActivity>.setStart
     onInviteFriendsClick: () -> Unit = EnsureNeverCalled(),
     onJoinRoomByAddressClick: () -> Unit = EnsureNeverCalled(),
     onRoomDirectorySearchClick: () -> Unit = EnsureNeverCalled(),
+    onScanQrCodeClick: () -> Unit = EnsureNeverCalled(),
 ) {
     setContent {
         StartChatView(
             state = state,
+            isVisible = true,
             onCloseClick = onCloseClick,
             onNewRoomClick = onNewRoomClick,
             onOpenDM = onOpenDM,
             onInviteFriendsClick = onInviteFriendsClick,
             onJoinByAddressClick = onJoinRoomByAddressClick,
             onRoomDirectorySearchClick = onRoomDirectorySearchClick,
+            onScanQrCodeClick = onScanQrCodeClick,
         )
     }
 }

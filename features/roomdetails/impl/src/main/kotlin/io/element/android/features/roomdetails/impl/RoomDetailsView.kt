@@ -20,9 +20,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
+import io.element.android.libraries.designsystem.theme.components.TextButton
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,11 +35,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import im.vector.app.features.analytics.plan.Interaction
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
@@ -53,7 +59,6 @@ import io.element.android.libraries.designsystem.components.avatar.AvatarData
 import io.element.android.libraries.designsystem.components.avatar.AvatarSize
 import io.element.android.libraries.designsystem.components.avatar.AvatarType
 import io.element.android.libraries.designsystem.components.avatar.DmAvatars
-import io.element.android.libraries.designsystem.components.button.BackButton
 import io.element.android.libraries.designsystem.components.button.MainActionButton
 import io.element.android.libraries.designsystem.components.list.ListItemContent
 import io.element.android.libraries.designsystem.components.preferences.PreferenceCategory
@@ -73,13 +78,13 @@ import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.ListItemStyle
 import io.element.android.libraries.designsystem.theme.components.Scaffold
 import io.element.android.libraries.designsystem.theme.components.Text
-import io.element.android.libraries.designsystem.theme.components.TopAppBar
+import io.element.android.libraries.designsystem.theme.components.CenteredTitleTopBar
+import io.element.android.libraries.designsystem.theme.components.HorizontalDivider
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarHost
 import io.element.android.libraries.designsystem.utils.snackbar.rememberSnackbarHostState
 import io.element.android.libraries.matrix.api.core.RoomAlias
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.UserId
-import io.element.android.libraries.matrix.api.notification.CallIntent
 import io.element.android.libraries.matrix.api.room.RoomMember
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 import io.element.android.libraries.matrix.api.room.getBestName
@@ -93,6 +98,34 @@ import io.element.android.services.analyticsproviders.api.trackers.captureIntera
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 房间详情视图
+ *
+ * Composable 函数，用于渲染房间详情页面。
+ * 根据房间类型（普通房间/DM）显示不同的 UI 布局。
+ * 包含房间信息、成员列表、通知设置、收藏、投票等功能入口。
+ *
+ * @param state 房间详情状态
+ * @param goBack 返回回调
+ * @param onActionClick 操作按钮点击回调
+ * @param onShareRoom 分享房间回调
+ * @param openRoomMemberList 打开成员列表回调
+ * @param openRoomNotificationSettings 打开通知设置回调
+ * @param invitePeople 邀请人员回调
+ * @param openAvatarPreview 打开头像预览回调
+ * @param openPollHistory 打开投票历史回调
+ * @param openMediaGallery 打开媒体库回调
+ * @param openAdminSettings 打开管理设置回调
+ * @param onJoinCallClick 加入通话点击回调
+ * @param onPinnedMessagesClick 固定消息点击回调
+ * @param onKnockRequestsClick 敲门请求点击回调
+ * @param onSecurityAndPrivacyClick 安全与隐私点击回调
+ * @param onProfileClick 个人资料点击回调
+ * @param onReportRoomClick 举报房间点击回调
+ * @param modifier 视图修饰符
+ * @param leaveRoomView 离开房间视图
+ * @see RoomDetailsState 房间详情状态
+ */
 @Composable
 fun RoomDetailsView(
     state: RoomDetailsState,
@@ -106,7 +139,7 @@ fun RoomDetailsView(
     openPollHistory: () -> Unit,
     openMediaGallery: () -> Unit,
     openAdminSettings: () -> Unit,
-    onJoinCallClick: (CallIntent) -> Unit,
+    onJoinCallClick: () -> Unit,
     onPinnedMessagesClick: () -> Unit,
     onKnockRequestsClick: () -> Unit,
     onSecurityAndPrivacyClick: () -> Unit,
@@ -118,11 +151,19 @@ fun RoomDetailsView(
     val snackbarHostState = rememberSnackbarHostState(snackbarMessage = state.snackbarMessage)
     Scaffold(
         modifier = modifier,
+        containerColor = ElementTheme.colors.bgSubtleSecondary,
         topBar = {
-            RoomDetailsTopBar(
-                goBack = goBack,
-                showEdit = state.canEdit,
-                onActionClick = onActionClick
+            CenteredTitleTopBar(
+                title = state.roomName,
+                onBackClick = goBack,
+                actions = {
+                    if (state.canEdit) {
+                        TextButton(
+                            text = stringResource(CommonStrings.action_edit),
+                            onClick = { onActionClick(RoomDetailsAction.Edit) },
+                        )
+                    }
+                },
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -185,30 +226,45 @@ fun RoomDetailsView(
                     onActionClick = onActionClick,
                 )
             }
-
-            PreferenceCategory {
-                if (state.roomNotificationSettings != null) {
-                    NotificationItem(
-                        isDefaultMode = state.roomNotificationSettings.isDefault,
-                        openRoomNotificationSettings = openRoomNotificationSettings
-                    )
-                }
-
-                FavoriteItem(
-                    isFavorite = state.isFavorite,
-                    onFavoriteChanges = {
-                        state.eventSink(RoomDetailsEvent.SetFavorite(it))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+            ) {
+                PreferenceCategory(showTopDivider = false) {
+                    if (state.roomNotificationSettings != null) {
+                        NotificationItem(
+                            isDefaultMode = state.roomNotificationSettings.isDefault,
+                            openRoomNotificationSettings = openRoomNotificationSettings
+                        )
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
                     }
-                )
 
-                // SC: low priority item, if sorting by low priority is enabled
-                LowPriorityItem(state.isLowPriority) { state.eventSink(RoomDetailsEvent.SetLowPriority(it)) }
-
-                if (state.canShowSecurityAndPrivacy) {
-                    SecurityAndPrivacyItem(
-                        onClick = onSecurityAndPrivacyClick
+                    FavoriteItem(
+                        isFavorite = state.isFavorite,
+                        onFavoriteChanges = {
+                            state.eventSink(RoomDetailsEvent.SetFavorite(it))
+                        }
                     )
+
+                    if (state.canShowSecurityAndPrivacy) {
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
+                        SecurityAndPrivacyItem(
+                            onClick = onSecurityAndPrivacyClick
+                        )
+                    }
                 }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+            ) {
 
                 state.roomMemberDetailsState?.let { dmMemberDetails ->
                     ProfileItem(
@@ -216,66 +272,82 @@ fun RoomDetailsView(
                         onClick = { onProfileClick(dmMemberDetails.userId) }
                     )
                 }
-            }
 
-            if (state.roomType is RoomDetailsType.Room) {
-                PreferenceCategory {
-                    MembersItem(
-                        memberCount = state.memberCount,
-                        hasVerificationViolations = state.hasMemberVerificationViolations,
-                        openRoomMemberList = openRoomMemberList,
-                    )
-                    if (state.canShowKnockRequests) {
-                        KnockRequestsItem(
-                            knockRequestsCount = state.knockRequestsCount,
-                            onKnockRequestsClick = onKnockRequestsClick
+                if (state.roomType is RoomDetailsType.Room) {
+                    PreferenceCategory(showTopDivider = false) {
+                        MembersItem(
+                            memberCount = state.memberCount,
+                            hasVerificationViolations = state.hasMemberVerificationViolations,
+                            openRoomMemberList = openRoomMemberList,
                         )
-                    }
-                    if (state.displayRolesAndPermissionsSettings) {
-                        ListItem(
-                            headlineContent = { Text(stringResource(R.string.screen_room_details_roles_and_permissions)) },
-                            leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Admin())),
-                            onClick = openAdminSettings,
-                        )
+                        if (state.canShowKnockRequests) {
+                            KnockRequestsItem(
+                                knockRequestsCount = state.knockRequestsCount,
+                                onKnockRequestsClick = onKnockRequestsClick
+                            )
+                        }
+                        if (state.displayRolesAndPermissionsSettings) {
+                            ListItem(
+                                headlineContent = { Text(stringResource(R.string.screen_room_details_roles_and_permissions)) },
+                                leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Admin())),
+                                onClick = openAdminSettings,
+                            )
+                        }
                     }
                 }
             }
 
-            PreferenceCategory {
-                PinnedMessagesItem(
-                    pinnedMessagesCount = state.pinnedMessagesCount,
-                    onPinnedMessagesClick = onPinnedMessagesClick
-                )
-                PollsItem(
-                    openPollHistory = openPollHistory
-                )
-                MediaGalleryItem(
-                    onClick = openMediaGallery
-                )
-            }
 
+            Spacer(modifier = Modifier.height(16.dp))
+            PreferenceCategory(showTopDivider = false) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+                ) {
+                    PinnedMessagesItem(
+                        pinnedMessagesCount = state.pinnedMessagesCount,
+                        onPinnedMessagesClick = onPinnedMessagesClick
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
+                    PollsItem(
+                        openPollHistory = openPollHistory
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
+                    MediaGalleryItem(
+                        onClick = openMediaGallery
+                    )
+                }
+
+            }
+            Spacer(modifier = Modifier.height(16.dp))
             if (state.roomType is RoomDetailsType.Dm && state.roomMemberDetailsState != null) {
                 val roomMemberState = state.roomMemberDetailsState
-                BlockUserSection(roomMemberState)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+                ) {
+                    BlockUserSection(roomMemberState)
+                }
                 BlockUserDialogs(roomMemberState)
-            }
-
-            OtherActionsSection(
-                canReportRoom = state.canReportRoom,
-                onReportRoomClick = onReportRoomClick,
-                onLeaveRoomClick = { state.eventSink(RoomDetailsEvent.LeaveRoom(needsConfirmation = true)) }
-            )
-
-            if (state.showDebugInfo) {
-                DebugInfoSection(
-                    roomId = state.roomId,
-                    roomVersion = state.roomVersion,
-                )
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
 }
 
+/**
+ * 敲门请求项组件
+ *
+ * Composable 函数，用于渲染敲门请求列表项。
+ * 显示请求数量（如果有）。
+ *
+ * @param knockRequestsCount 敲门请求数量
+ * @param onKnockRequestsClick 点击回调
+ */
 @Composable
 private fun KnockRequestsItem(knockRequestsCount: Int?, onKnockRequestsClick: () -> Unit) {
     ListItem(
@@ -290,109 +362,140 @@ private fun KnockRequestsItem(knockRequestsCount: Int?, onKnockRequestsClick: ()
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun RoomDetailsTopBar(
-    goBack: () -> Unit,
-    onActionClick: (RoomDetailsAction) -> Unit,
-    showEdit: Boolean,
-) {
-    var showMenu by remember { mutableStateOf(false) }
-
-    TopAppBar(
-        //title = { },
-        navigationIcon = { BackButton(onClick = goBack) },
-        actions = {
-            if (showEdit) {
-                IconButton(onClick = { showMenu = !showMenu }) {
-                    Icon(CompoundIcons.OverflowVertical(), stringResource(id = CommonStrings.a11y_user_menu))
-                }
-                DropdownMenu(
-                    expanded = showMenu,
-                    onDismissRequest = { showMenu = false },
-                ) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(id = CommonStrings.action_edit)) },
-                        onClick = {
-                            // Explicitly close the menu before handling the action, as otherwise it stays open during the
-                            // transition and renders really badly.
-                            showMenu = false
-                            onActionClick(RoomDetailsAction.Edit)
-                        },
-                    )
-                }
-            }
-        },
-    )
-}
-
+/**
+ * 主要操作区域组件
+ *
+ * Composable 函数，用于渲染房间详情页面的主要操作按钮区域。
+ * 包括静音/取消静音、呼叫、邀请成员、分享房间等操作。
+ *
+ * @param state 房间详情状态
+ * @param onShareRoom 分享房间回调
+ * @param onInvitePeople 邀请人员回调
+ * @param onCall 呼叫回调
+ */
 @Composable
 private fun MainActionsSection(
     state: RoomDetailsState,
     onShareRoom: () -> Unit,
     onInvitePeople: () -> Unit,
-    onCall: (callIntent: CallIntent) -> Unit,
+    onCall: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         state.roomNotificationSettings?.let { roomNotificationSettings ->
             if (roomNotificationSettings.mode == RoomNotificationMode.MUTE) {
-                MainActionButton(
-                    title = stringResource(CommonStrings.common_unmute),
-                    imageVector = CompoundIcons.NotificationsOff(),
-                    onClick = {
-                        state.eventSink(RoomDetailsEvent.UnmuteNotification)
-                    },
-                )
+                Card(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = CardDefaults.cardColors(containerColor = ElementTheme.colors.bgCanvasDefault),
+                ) {
+                    MainActionButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        title = stringResource(CommonStrings.common_unmute),
+                        imageVector = CompoundIcons.NotificationsOff(),
+                        onClick = {
+                            state.eventSink(RoomDetailsEvent.UnmuteNotification)
+                        },
+                        iconTint = ElementTheme.colors.textSecondary
+                    )
+                }
             } else {
-                MainActionButton(
-                    title = stringResource(CommonStrings.common_mute),
-                    imageVector = CompoundIcons.Notifications(),
-                    onClick = {
-                        state.eventSink(RoomDetailsEvent.MuteNotification)
-                    },
-                )
+                Card(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = CardDefaults.cardColors(containerColor = ElementTheme.colors.bgCanvasDefault),
+                ) {
+                    MainActionButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        title = stringResource(CommonStrings.common_mute),
+                        imageVector = CompoundIcons.Notifications(),
+                        onClick = {
+                            state.eventSink(RoomDetailsEvent.MuteNotification)
+                        },
+                    )
+                }
             }
         }
         if (state.roomCallState.hasPermissionToJoin()) {
             // TODO Improve the view depending on all the cases here?
-            if (state.roomType is RoomDetailsType.Dm) {
-                // As per design, only show voice call in DM
+            Card(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(containerColor = ElementTheme.colors.bgCanvasDefault),
+            ) {
                 MainActionButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp),
                     title = stringResource(CommonStrings.action_call),
-                    imageVector = CompoundIcons.VoiceCall(),
-                    onClick = { onCall(CallIntent.AUDIO) },
+                    imageVector = CompoundIcons.VideoCall(),
+                    onClick = onCall,
+                    iconTint = ElementTheme.colors.textSecondary
                 )
             }
-
-            MainActionButton(
-                title = stringResource(CommonStrings.common_video),
-                imageVector = CompoundIcons.VideoCall(),
-                onClick = { onCall(CallIntent.VIDEO) },
-            )
         }
         if (state.roomType is RoomDetailsType.Room) {
             if (state.canInvite) {
-                MainActionButton(
-                    title = stringResource(CommonStrings.action_invite),
-                    imageVector = CompoundIcons.UserAdd(),
-                    onClick = onInvitePeople,
-                )
+                Card(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = CardDefaults.cardColors(containerColor = ElementTheme.colors.bgCanvasDefault),
+                ) {
+                    MainActionButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        title = stringResource(CommonStrings.action_invite),
+                        imageVector = CompoundIcons.UserAdd(),
+                        onClick = onInvitePeople,
+                        iconTint = ElementTheme.colors.textSecondary
+                    )
+                }
             }
             // Share CTA should be hidden for DMs
-            MainActionButton(
-                title = stringResource(CommonStrings.action_share),
-                imageVector = CompoundIcons.ShareAndroid(),
-                onClick = onShareRoom
-            )
+            Card(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(containerColor = ElementTheme.colors.bgCanvasDefault),
+            ) {
+                MainActionButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp),
+                    title = stringResource(CommonStrings.action_share),
+                    imageVector = CompoundIcons.ShareAndroid(),
+                    onClick = onShareRoom,
+                    iconTint = ElementTheme.colors.textSecondary
+                )
+            }
         }
     }
 }
 
+/**
+ * 房间头部区域组件
+ *
+ * Composable 函数，用于渲染房间详情页面的头部区域。
+ * 显示房间头像、名称和别名。
+ *
+ * @param avatarUrl 头像URL
+ * @param roomId 房间ID
+ * @param roomName 房间名称
+ * @param roomAlias 房间别名
+ * @param heroes 重要成员列表
+ * @param isTombstoned 是否为墓碑状态
+ * @param openAvatarPreview 打开头像预览回调
+ * @param onSubtitleClick 副标题点击回调
+ * @see MatrixUser Matrix用户
+ */
 @Composable
 private fun RoomHeaderSection(
     avatarUrl: String?,
@@ -436,6 +539,20 @@ private fun RoomHeaderSection(
     }
 }
 
+/**
+ * DM头部区域组件
+ *
+ * Composable 函数，用于渲染 DM（直接消息）详情页面的头部区域。
+ * 显示当前用户和其他用户的头像组合、名称和用户ID。
+ *
+ * @param me 当前用户成员
+ * @param otherMember 其他成员
+ * @param roomName 房间名称
+ * @param openAvatarPreview 打开头像预览回调
+ * @param onSubtitleClick 副标题点击回调
+ * @param modifier 视图修饰符
+ * @see RoomMember 房间成员
+ */
 @Composable
 private fun DmHeaderSection(
     me: RoomMember,
@@ -465,6 +582,16 @@ private fun DmHeaderSection(
     }
 }
 
+/**
+ * 标题和副标题组件
+ *
+ * Composable 函数，用于渲染标题和可选的副标题。
+ * 标题居中显示，副标题可点击。
+ *
+ * @param title 标题文本
+ * @param subtitle 副标题文本
+ * @param onSubtitleClick 副标题点击回调
+ */
 @Composable
 private fun TitleAndSubtitle(
     title: String,
@@ -475,7 +602,7 @@ private fun TitleAndSubtitle(
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = title,
-            style = ElementTheme.typography.fontHeadingLgBold,
+            style = ElementTheme.typography.fontHeadingLgBold.copy(color = ElementTheme.colors.textPrimary),
             textAlign = TextAlign.Center,
         )
         if (subtitle != null) {
@@ -491,6 +618,17 @@ private fun TitleAndSubtitle(
     }
 }
 
+/**
+ * 徽章列表组件
+ *
+ * Composable 函数，用于渲染房间徽章列表。
+ * 显示加密状态和公开状态徽章。
+ *
+ * @param roomBadge 房间徽章列表
+ * @param modifier 视图修饰符
+ * @see RoomBadge 房间徽章
+ * @see ImmutableList 不可变列表
+ */
 @Composable
 private fun BadgeList(
     roomBadge: ImmutableList<RoomBadge>,
@@ -507,6 +645,14 @@ private fun BadgeList(
     }
 }
 
+/**
+ * 转换为矩阵徽章数据
+ *
+ * 扩展函数，将 RoomBadge 转换为 MatrixBadgeAtom.MatrixBadgeData。
+ *
+ * @return MatrixBadgeAtom.MatrixBadgeData 矩阵徽章数据
+ * @see MatrixBadgeAtom.MatrixBadgeData 矩阵徽章数据
+ */
 @Composable
 private fun RoomBadge.toMatrixBadgeData(): MatrixBadgeAtom.MatrixBadgeData {
     return when (this) {
@@ -531,30 +677,19 @@ private fun RoomBadge.toMatrixBadgeData(): MatrixBadgeAtom.MatrixBadgeData {
                 type = MatrixBadgeAtom.Type.Info,
             )
         }
-        RoomBadge.SHARED_HISTORY_HIDDEN -> {
-            MatrixBadgeAtom.MatrixBadgeData(
-                text = stringResource(R.string.crypto_history_sharing_room_info_hidden_badge_content),
-                icon = CompoundIcons.VisibilityOff(),
-                type = MatrixBadgeAtom.Type.Info
-            )
-        }
-        RoomBadge.SHARED_HISTORY_SHARED -> {
-            MatrixBadgeAtom.MatrixBadgeData(
-                text = stringResource(R.string.crypto_history_sharing_room_info_shared_badge_content),
-                icon = CompoundIcons.History(),
-                type = MatrixBadgeAtom.Type.Info
-            )
-        }
-        RoomBadge.SHARED_HISTORY_WORLD_READABLE -> {
-            MatrixBadgeAtom.MatrixBadgeData(
-                text = stringResource(R.string.crypto_history_sharing_room_info_world_readable_badge_content),
-                icon = CompoundIcons.UserProfileSolid(),
-                type = MatrixBadgeAtom.Type.Info
-            )
-        }
     }
 }
 
+/**
+ * 主题区域组件
+ *
+ * Composable 函数，用于渲染房间主题区域。
+ * 根据主题状态显示添加主题按钮或现有主题内容。
+ *
+ * @param roomTopic 房间主题状态
+ * @param onActionClick 操作点击回调
+ * @see RoomTopicState 房间主题状态
+ */
 @Composable
 private fun TopicSection(
     roomTopic: RoomTopicState,
@@ -565,15 +700,23 @@ private fun TopicSection(
         showTopDivider = false,
     ) {
         if (roomTopic is RoomTopicState.CanAddTopic) {
-            ListItem(
-                leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Plus())),
-                headlineContent = {
-                    Text(stringResource(id = R.string.screen_room_details_add_topic_title))
-                },
-                onClick = {
-                    onActionClick(RoomDetailsAction.AddTopic)
-                },
-            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+            ) {
+                ListItem(
+                    leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Plus())),
+                    headlineContent = {
+                        Text(stringResource(id = R.string.screen_room_details_add_topic_title))
+                    },
+                    onClick = {
+                        onActionClick(RoomDetailsAction.AddTopic)
+                    },
+                )
+            }
         } else if (roomTopic is RoomTopicState.ExistingTopic) {
             ClickableLinkText(
                 text = roomTopic.topic,
@@ -587,6 +730,15 @@ private fun TopicSection(
     }
 }
 
+/**
+ * 通知设置项组件
+ *
+ * Composable 函数，用于渲染通知设置列表项。
+ * 显示通知设置入口和当前通知模式。
+ *
+ * @param isDefaultMode 是否为默认模式
+ * @param openRoomNotificationSettings 打开通知设置回调
+ */
 @Composable
 private fun NotificationItem(
     isDefaultMode: Boolean,
@@ -605,6 +757,14 @@ private fun NotificationItem(
     )
 }
 
+/**
+ * 安全与隐私项组件
+ *
+ * Composable 函数，用于渲染安全与隐私设置列表项。
+ *
+ * @param onClick 点击回调
+ * @param modifier 视图修饰符
+ */
 @Composable
 private fun SecurityAndPrivacyItem(
     onClick: () -> Unit,
@@ -618,24 +778,36 @@ private fun SecurityAndPrivacyItem(
     )
 }
 
+/**
+ * 收藏项组件
+ *
+ * Composable 函数，用于渲染收藏开关列表项。
+ *
+ * @param isFavorite 是否已收藏
+ * @param onFavoriteChanges 收藏状态变更回调
+ */
 @Composable
 private fun FavoriteItem(
     isFavorite: Boolean,
     onFavoriteChanges: (Boolean) -> Unit,
 ) {
-    val (textResId, icon) = if (isFavorite) {
-        CommonStrings.common_favourited to CompoundIcons.FavouriteSolid()
-    } else {
-        CommonStrings.common_favourite to CompoundIcons.Favourite()
-    }
     PreferenceSwitch(
-        icon = icon,
-        title = stringResource(id = textResId),
+        icon = CompoundIcons.Favourite(),
+        title = stringResource(id = CommonStrings.common_favourite),
         isChecked = isFavorite,
         onCheckedChange = onFavoriteChanges
     )
 }
 
+/**
+ * 个人资料项组件
+ *
+ * Composable 函数，用于渲染 DM 详情页面的个人资料列表项。
+ * 显示验证状态图标（已验证/验证失败）。
+ *
+ * @param verificationState 验证状态
+ * @param onClick 点击回调
+ */
 @Composable
 private fun ProfileItem(
     verificationState: UserProfileVerificationState,
@@ -659,6 +831,16 @@ private fun ProfileItem(
     )
 }
 
+/**
+ * 成员项组件
+ *
+ * Composable 函数，用于渲染成员数量列表项。
+ * 显示成员数量和验证违规警告图标。
+ *
+ * @param memberCount 成员数量
+ * @param hasVerificationViolations 是否有验证违规
+ * @param openRoomMemberList 打开成员列表回调
+ */
 @Composable
 private fun MembersItem(
     memberCount: Long,
@@ -680,6 +862,15 @@ private fun MembersItem(
     )
 }
 
+/**
+ * 固定消息项组件
+ *
+ * Composable 函数，用于渲染固定消息列表项。
+ * 显示固定消息数量。
+ *
+ * @param pinnedMessagesCount 固定消息数量
+ * @param onPinnedMessagesClick 点击回调
+ */
 @Composable
 private fun PinnedMessagesItem(
     pinnedMessagesCount: Int?,
@@ -704,6 +895,13 @@ private fun PinnedMessagesItem(
     )
 }
 
+/**
+ * 投票项组件
+ *
+ * Composable 函数，用于渲染投票列表项。
+ *
+ * @param openPollHistory 打开投票历史回调
+ */
 @Composable
 private fun PollsItem(
     openPollHistory: () -> Unit,
@@ -715,6 +913,13 @@ private fun PollsItem(
     )
 }
 
+/**
+ * 媒体库项组件
+ *
+ * Composable 函数，用于渲染媒体库列表项。
+ *
+ * @param onClick 点击回调
+ */
 @Composable
 private fun MediaGalleryItem(
     onClick: () -> Unit,
@@ -726,23 +931,28 @@ private fun MediaGalleryItem(
     )
 }
 
+/**
+ * 其他操作区域组件
+ *
+ * Composable 函数，用于渲染房间详情页面的其他操作区域。
+ * 包含离开房间等操作。
+ *
+ * @param canReportRoom 是否可以举报房间
+ * @param onReportRoomClick 举报房间点击回调
+ * @param onLeaveRoomClick 离开房间点击回调
+ */
 @Composable
 private fun OtherActionsSection(
     canReportRoom: Boolean,
     onReportRoomClick: () -> Unit,
     onLeaveRoomClick: () -> Unit,
 ) {
-    PreferenceCategory(showTopDivider = true) {
-        if (canReportRoom) {
-            ListItem(
-                headlineContent = {
-                    Text(stringResource(CommonStrings.action_report_room))
-                },
-                leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChatProblem())),
-                style = ListItemStyle.Destructive,
-                onClick = onReportRoomClick,
-            )
-        }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+    ) {
         ListItem(
             headlineContent = {
                 Text(stringResource(CommonStrings.action_leave_room))
@@ -754,6 +964,15 @@ private fun OtherActionsSection(
     }
 }
 
+/**
+ * 调试信息区域组件
+ *
+ * Composable 函数，用于渲染调试信息区域。
+ * 仅在开发者模式下显示，包含房间ID和房间版本信息。
+ *
+ * @param roomId 房间ID
+ * @param roomVersion 房间版本
+ */
 @Composable
 private fun DebugInfoSection(
     roomId: RoomId,
@@ -816,6 +1035,16 @@ internal fun RoomDetailsA11yPreview() = ElementPreview {
     )
 }
 
+/**
+ * 预览内容组件
+ *
+ * Composable 函数，用于在预览中渲染房间详情内容。
+ * 标记为 @ExcludeFromCoverage 以排除代码覆盖率统计。
+ *
+ * @param state 房间详情状态
+ * @see RoomDetailsState 房间详情状态
+ * @see ExcludeFromCoverage 排除覆盖率统计
+ */
 @ExcludeFromCoverage
 @Composable
 private fun ContentToPreview(state: RoomDetailsState) {

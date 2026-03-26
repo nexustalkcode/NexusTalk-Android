@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="a11y_add_reaction">"Ajouter une réaction: %1$s"</string>
-  <string name="a11y_address">"Adresse"</string>
   <string name="a11y_avatar">"Avatar"</string>
   <string name="a11y_collapse_message_text_field">"Réduire la taille du composeur"</string>
   <string name="a11y_delete">"Supprimer"</string>
@@ -28,10 +27,8 @@
   <string name="a11y_paused_voice_message">"Message vocal, durée: %1$s, position actuelle: %2$s"</string>
   <string name="a11y_pin_field">"Code PIN"</string>
   <string name="a11y_play">"Lecture"</string>
-  <string name="a11y_playback_speed">"Vitesse de lecture"</string>
   <string name="a11y_poll">"Sondage"</string>
   <string name="a11y_poll_end">"Sondage terminé"</string>
-  <string name="a11y_qr_code">"Code QR"</string>
   <string name="a11y_react_with">"Réagir avec %1$s"</string>
   <string name="a11y_react_with_other_emojis">"Réagir avec d’autres émojis"</string>
   <string name="a11y_read_receipts_multiple">"Lu par %1$s et %2$s"</string>
@@ -110,7 +107,6 @@
   <string name="action_invite_people_to_app">"Invitez des personnes à %1$s"</string>
   <string name="action_invites_list">"Invitations"</string>
   <string name="action_join">"Rejoindre"</string>
-  <string name="action_learn_more">"En savoir plus"</string>
   <string name="action_leave">"Quitter"</string>
   <string name="action_leave_conversation">"Quitter la discussion"</string>
   <string name="action_leave_room">"Quitter le salon"</string>
@@ -156,7 +152,6 @@
   <string name="action_send_voice_message">"Envoyer un message vocal"</string>
   <string name="action_share">"Partager"</string>
   <string name="action_share_link">"Partager le lien"</string>
-  <string name="action_share_live_location">"Partager la position en continu"</string>
   <string name="action_show">"Afficher"</string>
   <string name="action_sign_in_again">"Se connecter à nouveau"</string>
   <string name="action_signout">"Se déconnecter"</string>
@@ -228,7 +223,7 @@ Raison : %1$s."</string>
   <string name="common_everyone">"Tout le monde"</string>
   <string name="common_failed">"Échec"</string>
   <string name="common_favourite">"Favori"</string>
-  <string name="common_favourited">"Ajouté aux favoris"</string>
+  <string name="common_favourited">"Favorisé"</string>
   <string name="common_file">"Fichier"</string>
   <string name="common_file_deleted">"Fichier supprimé"</string>
   <string name="common_file_saved">"Fichier enregistré"</string>
@@ -272,7 +267,6 @@ Raison : %1$s."</string>
   <string name="common_offline">"Hors ligne"</string>
   <string name="common_open_source_licenses">"Licences open source"</string>
   <string name="common_or">"ou"</string>
-  <string name="common_other_options">"Autres options"</string>
   <string name="common_password">"Mot de passe"</string>
   <string name="common_people">"Personnes"</string>
   <string name="common_permalink">"Permalien"</string>
@@ -290,10 +284,8 @@ Raison : %1$s."</string>
   </plurals>
   <string name="common_preparing">"Préparation…"</string>
   <string name="common_privacy_policy">"Politique de confidentialité"</string>
-  <string name="common_private">"Privé"</string>
   <string name="common_private_room">"Salon privé"</string>
   <string name="common_private_space">"Espace privé"</string>
-  <string name="common_public">"Public"</string>
   <string name="common_public_room">"Salon public"</string>
   <string name="common_public_space">"Espace public"</string>
   <string name="common_reaction">"Réaction"</string>
@@ -341,14 +333,12 @@ Raison : %1$s."</string>
   <string name="common_server_url">"URL du serveur"</string>
   <string name="common_settings">"Paramètres"</string>
   <string name="common_share_space">"Partager l’espace"</string>
-  <string name="common_shared_history">"Les nouveaux membres voient les anciens messages"</string>
   <string name="common_shared_location">"Position partagée"</string>
   <string name="common_shared_space">"Espace partagé"</string>
   <string name="common_signing_out">"Déconnexion"</string>
   <string name="common_something_went_wrong">"Une erreur s’est produite"</string>
   <string name="common_something_went_wrong_message">"Nous avons rencontré un problème. Veuillez réessayer."</string>
   <string name="common_space">"Espace"</string>
-  <string name="common_space_members">"Membres de l’espace"</string>
   <string name="common_space_topic_placeholder">"Quel est le sujet de cet espace ?"</string>
   <plurals name="common_spaces">
     <item quantity="one">"%1$d Espace"</item>
@@ -394,7 +384,6 @@ Raison : %1$s."</string>
   <string name="common_voice_message">"Message vocal"</string>
   <string name="common_waiting">"En attente…"</string>
   <string name="common_waiting_for_decryption_key">"En attente de la clé de déchiffrement"</string>
-  <string name="common_world_readable_history">"Tout le monde peut voir les anciens messages"</string>
   <string name="common_you">"Vous"</string>
   <string name="crypto_event_key_forwarded_known_profile_dialog_content">"%1$s (%2$s) a partagé ce message avec vous car vous n’étiez pas dans le salon lors de son envoi."</string>
   <string name="crypto_event_key_forwarded_unknown_profile_dialog_content">"%1$s a partagé ce message avec vous car vous n’étiez pas dans le salon lors de son envoi."</string>
@@ -405,7 +394,6 @@ Raison : %1$s."</string>
   <string name="crypto_identity_change_profile_pin_violation">"L’identité de %1$s a été réinitialisée."</string>
   <string name="crypto_identity_change_verification_violation_new">"L’identité de %1$s %2$s a été réinitialisée. %3$s"</string>
   <string name="crypto_identity_change_withdraw_verification_action">"Révoquer la vérification"</string>
-  <string name="dialog_allow_access">"Autoriser l’accès"</string>
   <string name="dialog_confirm_link_message">"Le lien \"%1$s\" vous redirige vers un autre site \"%2$s\".
 
 Êtes-vous sûr de vouloir continuer ?"</string>
@@ -454,7 +442,6 @@ Raison : %1$s."</string>
   <string name="screen_create_poll_remove_accessibility_label">"Supprimer %1$s"</string>
   <string name="screen_create_poll_settings_section_title">"Paramètres"</string>
   <string name="screen_media_picker_error_failed_selection">"Échec de la sélection du média, veuillez réessayer."</string>
-  <string name="screen_onboarding_welcome_back">"Bon retour parmi nous"</string>
   <string name="screen_pinned_timeline_empty_state_description">"Cliquez (clic long) sur un message et choisissez « %1$s » pour qu‘il apparaisse ici."</string>
   <string name="screen_pinned_timeline_empty_state_headline">"Épinglez les messages importants pour leur donner plus de visibilité"</string>
   <plurals name="screen_pinned_timeline_screen_title">
@@ -506,4 +493,10 @@ Raison : %1$s."</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Vous ne pouvez pas voir ce message"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Impossible de déchiffrer le message"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Ce message a été bloqué soit parce que vous n’avez pas vérifié votre session, soit parce que l’expéditeur doit vérifier votre identité."</string>
+
+  <string name="common_call_ended">"Appel terminé"</string>
+  <string name="action_start_call">"Démarrer l'appel"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Aucun appel"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Restez connecté avec les communautés"</string>
+  <string name="action_create_community">"Créer une communauté"</string>
 </resources>

@@ -35,10 +35,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
@@ -51,8 +53,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.libraries.androidutils.ui.showKeyboard
@@ -96,6 +96,7 @@ import io.element.android.wysiwyg.compose.RichTextEditor
 import io.element.android.wysiwyg.display.TextDisplay
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import uniffi.wysiwyg_composer.MenuAction
 import kotlin.time.Duration.Companion.seconds
@@ -122,6 +123,8 @@ fun TextComposer(
     resolveAtRoomMentionDisplay: () -> TextDisplay,
     modifier: Modifier = Modifier,
     showTextFormatting: Boolean = false,
+    onToggleEmojiPicker: (() -> Unit)? = null,
+    maxMessageLength: Int = Int.MAX_VALUE,
 ) {
     val markdown = when (state) {
         is TextEditorState.Markdown -> state.state.text.value()
@@ -134,6 +137,17 @@ fun TextComposer(
 
     val onPauseVoiceMessageClick = {
         onVoicePlayerEvent(VoiceMessagePlayerEvent.Pause)
+    }
+
+    if (state is TextEditorState.Rich) {
+        LaunchedEffect(state.richTextEditorState, maxMessageLength) {
+            snapshotFlow { state.richTextEditorState.messageMarkdown }
+                .collect { messageMarkdown ->
+                    if (messageMarkdown.length > maxMessageLength) {
+                        state.richTextEditorState.setMarkdown(messageMarkdown.take(maxMessageLength))
+                    }
+                }
+        }
     }
 
     val onSeekVoiceMessage = { position: Float ->
@@ -151,6 +165,23 @@ fun TextComposer(
     } else {
         stringResource(id = R.string.rich_text_editor_composer_placeholder)
     }
+
+    val emojiButton: (@Composable () -> Unit)? = onToggleEmojiPicker?.let {
+        {
+            IconButton(
+                modifier = Modifier.size(40.dp),
+                onClick = it,
+            ) {
+                Icon(
+                    modifier = Modifier.padding(3.dp),
+                    imageVector = CompoundIcons.Sticker(),
+                    contentDescription = "Sticker",
+                    tint = ElementTheme.colors.iconPrimary
+                )
+            }
+        }
+    }
+
     val textInput: @Composable () -> Unit = when (state) {
         is TextEditorState.Rich -> {
             val coroutineScope = rememberCoroutineScope()
@@ -174,6 +205,7 @@ fun TextComposer(
                         composerMode = composerMode,
                         onResetComposerMode = onResetComposerMode,
                         isTextEmpty = state.richTextEditorState.messageHtml.isEmpty(),
+                        trailingIcon = emojiButton,
                     ) {
                         RichTextEditor(
                             state = state.richTextEditorState,
@@ -200,11 +232,13 @@ fun TextComposer(
                     composerMode = composerMode,
                     onResetComposerMode = onResetComposerMode,
                     isTextEmpty = state.state.text.value().isEmpty(),
+                    trailingIcon = emojiButton,
                 ) {
                     MarkdownTextInput(
                         state = state.state,
                         placeholder = placeholder,
                         placeholderColor = ElementTheme.colors.textSecondary,
+                        maxLength = maxMessageLength,
                         onTyping = onTyping,
                         onReceiveSuggestion = onReceiveSuggestion,
                         richTextEditorStyle = style,
@@ -399,6 +433,7 @@ fun TextComposer(
             onAddAttachment = onAddAttachment,
             onDeleteVoiceMessage = onDeleteVoiceMessage,
             onVoiceRecorderEvent = onVoiceRecorderEvent,
+            onToggleEmojiPicker = onToggleEmojiPicker,
         )
     }
 
@@ -439,10 +474,11 @@ private fun StandardLayout(
     onAddAttachment: () -> Unit,
     onDeleteVoiceMessage: () -> Unit,
     onVoiceRecorderEvent: (VoiceMessageRecorderEvent) -> Unit,
+    onToggleEmojiPicker: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        if (isRoomEncrypted == false && !ScPrefs.SC_TIMELINE_LAYOUT.value()) {
+        if (isRoomEncrypted == false) {
             Spacer(Modifier.height(16.dp))
             NotEncryptedBadge()
             Spacer(Modifier.height(4.dp))
@@ -481,11 +517,10 @@ private fun StandardLayout(
                                 modifier = Modifier
                                     .clip(CircleShape)
                                     .size(30.dp)
-                                    .background(ElementTheme.colors.iconPrimary)
                                     .padding(3.dp),
-                                imageVector = CompoundIcons.Plus(),
+                                imageVector = CompoundIcons.PlusV1(),
                                 contentDescription = stringResource(R.string.rich_text_editor_a11y_add_attachment),
-                                tint = ElementTheme.colors.iconOnSolidPrimary
+                                tint = ElementTheme.colors.iconPrimary
                             )
                         } else {
                             when (voiceMessageState) {
@@ -611,13 +646,14 @@ private fun TextInputBox(
     onResetComposerMode: () -> Unit,
     isTextEmpty: Boolean,
     modifier: Modifier = Modifier,
+    trailingIcon: (@Composable () -> Unit)? = null,
     textInput: @Composable () -> Unit,
 ) {
     val bgColor = ElementTheme.colors.bgSubtleSecondary
     val borderColor = ElementTheme.colors.borderDisabled
     val roundedCorners = textInputRoundedCornerShape(composerMode = composerMode)
 
-    Column(
+    Row(
         modifier = Modifier
             .clip(roundedCorners)
             .border(0.5.dp, borderColor, roundedCorners)
@@ -625,36 +661,49 @@ private fun TextInputBox(
             .requiredHeightIn(min = 42.dp)
             .fillMaxSize()
             .then(modifier),
+        verticalAlignment = Alignment.Bottom
     ) {
-        if (composerMode is MessageComposerMode.Special) {
-            ComposerModeView(
-                composerMode = composerMode,
-                onResetComposerMode = onResetComposerMode,
-            )
-        }
-        Box(
-            modifier = Modifier
-                .padding(top = 4.dp, bottom = 4.dp, start = 12.dp, end = 12.dp)
-                .then(Modifier.testTag(TestTags.textEditor)),
-            contentAlignment = Alignment.CenterStart,
-        ) {
-            textInput()
-            if (isTextEmpty && composerMode.showCaptionCompatibilityWarning()) {
-                var showBottomSheet by remember { mutableStateOf(false) }
-                Icon(
-                    modifier = Modifier
-                        .clickable { showBottomSheet = true }
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                        .align(Alignment.CenterEnd),
-                    imageVector = CompoundIcons.InfoSolid(),
-                    tint = ElementTheme.colors.iconCriticalPrimary,
-                    contentDescription = null,
+        Column(modifier = Modifier.weight(1f)) {
+            if (composerMode is MessageComposerMode.Special) {
+                ComposerModeView(
+                    composerMode = composerMode,
+                    onResetComposerMode = onResetComposerMode,
                 )
-                if (showBottomSheet) {
-                    CaptionWarningBottomSheet(
-                        onDismiss = { showBottomSheet = false },
+            }
+
+            Box(
+                modifier = Modifier
+                    .padding(top = 4.dp, bottom = 4.dp, start = 12.dp, end = 12.dp)
+                    .then(Modifier.testTag(TestTags.textEditor)),
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                textInput()
+                if (isTextEmpty && composerMode.showCaptionCompatibilityWarning()) {
+                    var showBottomSheet by remember { mutableStateOf(false) }
+                    Icon(
+                        modifier = Modifier
+                            .clickable { showBottomSheet = true }
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .align(Alignment.CenterEnd),
+                        imageVector = CompoundIcons.InfoSolid(),
+                        tint = ElementTheme.colors.iconCriticalPrimary,
+                        contentDescription = null,
                     )
+                    if (showBottomSheet) {
+                        CaptionWarningBottomSheet(
+                            onDismiss = { showBottomSheet = false },
+                        )
+                    }
                 }
+            }
+        }
+
+
+        if (trailingIcon != null) {
+            Box(
+                contentAlignment = Alignment.Center,
+            ) {
+                trailingIcon()
             }
         }
     }
@@ -986,6 +1035,7 @@ private fun ATextComposer(
     voiceMessageState: VoiceMessageState,
     composerMode: MessageComposerMode,
     showTextFormatting: Boolean = false,
+    onToggleEmojiPicker: (() -> Unit)? = null,
 ) {
     TextComposer(
         state = state,
@@ -1007,6 +1057,7 @@ private fun ATextComposer(
         resolveMentionDisplay = { _, _ -> TextDisplay.Plain },
         resolveAtRoomMentionDisplay = { TextDisplay.Plain },
         onSelectRichContent = null,
+        onToggleEmojiPicker = onToggleEmojiPicker,
     )
 }
 

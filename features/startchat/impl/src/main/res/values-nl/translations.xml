@@ -3,4 +3,7 @@
   <string name="screen_create_room_action_create_room">"Nieuwe kamer"</string>
   <string name="screen_room_directory_search_title">"Kamergids"</string>
   <string name="screen_start_chat_error_starting_chat">"Er is een fout opgetreden bij het starten van een chat"</string>
+  <string name="screen_scan_user_qr_code_title">"QR-code scannen"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Scan de QR-code om een contact toe te voegen"</string>
+  <string name="screen_scan_user_qr_code_success">"QR-code succesvol gescand"</string>
 </resources>

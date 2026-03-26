@@ -14,7 +14,22 @@ import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 
+/**
+ * 房间通知设置状态提供器
+ *
+ * 用于预览的测试数据提供器，继承自 PreviewParameterProvider。
+ * 提供多种通知设置状态用于 UI 预览和测试。
+ *
+ * @see PreviewParameterProvider 预览参数提供器
+ * @see RoomNotificationSettingsState 通知设置状态
+ */
 internal class RoomNotificationSettingsStateProvider : PreviewParameterProvider<RoomNotificationSettingsState> {
+    /**
+     * 获取状态序列
+     *
+     * 返回包含不同状态的序列，用于预览组件的不同场景。
+     * 包括默认设置、自定义设置、加载中、错误等状态。
+     */
     override val values: Sequence<RoomNotificationSettingsState>
         get() = sequenceOf(
             aRoomNotificationSettingsState(),

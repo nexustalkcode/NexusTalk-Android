@@ -10,6 +10,7 @@ package io.element.android.features.startchat.impl.userlist
 
 data class UserListPresenterArgs(
     val selectionMode: SelectionMode,
+    val initialQuery: String? = null,
 )
 
 enum class SelectionMode {

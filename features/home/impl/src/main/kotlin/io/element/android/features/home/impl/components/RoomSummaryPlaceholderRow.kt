@@ -31,7 +31,13 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.placeholderBackground
 
 /**
- * https://www.figma.com/file/0MMNu7cTOzLOlWb7ctTkv3/Element-X?node-id=6547%3A147623
+ * 房间摘要占位符行
+ *
+ * 渲染房间列表加载时的占位符骨架屏，提供良好的加载体验。
+ * 显示模拟的头像、名称和时间戳占位符。
+ *
+ * @param modifier 修饰符
+ * @see Figma 设计稿: https://www.figma.com/file/0MMNu7cTOzLOlWb7ctTkv3/Element-X?node-id=6547%3A147623
  */
 @Composable
 internal fun RoomSummaryPlaceholderRow(

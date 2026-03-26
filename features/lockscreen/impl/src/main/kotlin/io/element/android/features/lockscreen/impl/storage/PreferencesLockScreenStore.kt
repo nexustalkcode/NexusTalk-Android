@@ -21,6 +21,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
+/**
+ * 基于 Preferences DataStore 的锁屏存储实现
+ *
+ * 使用 DataStore 持久化存储 PIN 码和生物识别设置。
+ */
 @ContributesBinding(AppScope::class)
 class PreferencesLockScreenStore(
     preferenceDataStoreFactory: PreferenceDataStoreFactory,
@@ -28,8 +33,11 @@ class PreferencesLockScreenStore(
 ) : LockScreenStore {
     private val dataStore = preferenceDataStoreFactory.create("pin_code_store")
 
+    /** PIN 码存储键 */
     private val pinCodeKey = stringPreferencesKey("encoded_pin_code")
+    /** 剩余尝试次数存储键 */
     private val remainingAttemptsKey = intPreferencesKey("remaining_pin_code_attempts")
+    /** 生物识别解锁开关存储键 */
     private val biometricUnlockKey = booleanPreferencesKey("biometric_unlock_enabled")
 
     override suspend fun getRemainingPinCodeAttemptsNumber(): Int {

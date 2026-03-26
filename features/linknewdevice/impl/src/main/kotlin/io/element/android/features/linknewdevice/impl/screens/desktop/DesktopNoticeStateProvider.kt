@@ -16,7 +16,9 @@ import io.element.android.libraries.permissions.api.aPermissionsState
 open class DesktopNoticeStateProvider : PreviewParameterProvider<DesktopNoticeState> {
     override val values: Sequence<DesktopNoticeState>
         get() = sequenceOf(
+            // 默认状态
             aDesktopNoticeState(),
+            // 模拟弹出相机权限对话框的状态
             aDesktopNoticeState(cameraPermissionState = aPermissionsState(showDialog = true, permission = Manifest.permission.CAMERA)),
         )
 }

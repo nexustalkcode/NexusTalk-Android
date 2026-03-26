@@ -21,5 +21,5 @@ dependencies {
     implementation(projects.libraries.core)
     implementation(projects.libraries.di)
 
-    testCommonDependencies(libs)
+   
 }

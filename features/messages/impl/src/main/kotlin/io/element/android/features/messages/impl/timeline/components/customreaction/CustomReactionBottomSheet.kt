@@ -15,8 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
 import io.element.android.emojibasebindings.Emoji
 import io.element.android.features.messages.impl.timeline.components.customreaction.picker.EmojiPicker
 import io.element.android.features.messages.impl.timeline.components.customreaction.picker.EmojiPickerPresenter
@@ -30,34 +28,21 @@ import io.element.android.libraries.matrix.api.timeline.item.event.EventOrTransa
 fun CustomReactionBottomSheet(
     state: CustomReactionState,
     onSelectEmoji: (EventOrTransactionId, Emoji) -> Unit,
-    onSelectCustomEmoji: (EventOrTransactionId, String) -> Unit, // SC
     modifier: Modifier = Modifier,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = ScPrefs.PREFER_FULLSCREEN_REACTION_SHEET.value())
+    val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     val target = state.target as? CustomReactionState.Target.Success
 
     fun onDismiss() {
-        state.eventSink(CustomReactionEvent.DismissCustomReactionSheet)
+        state.eventSink(CustomReactionEvents.DismissCustomReactionSheet)
     }
 
     fun onEmojiSelectedDismiss(emoji: Emoji) {
         if (target?.event == null) return
-
         sheetState.hide(coroutineScope) {
-            state.eventSink(CustomReactionEvent.DismissCustomReactionSheet)
+            state.eventSink(CustomReactionEvents.DismissCustomReactionSheet)
             onSelectEmoji(target.event.eventOrTransactionId, emoji)
-        }
-    }
-
-    fun onCustomEmojiSelectedDismiss(emoji: String) {
-        if (target?.event == null) return
-
-        val wasSelected = state.selectedEmoji.contains(emoji)
-
-        sheetState.hide(coroutineScope) {
-            state.eventSink(CustomReactionEvent.DismissCustomReactionSheet)
-            onSelectCustomEmoji(target.event.eventOrTransactionId, emoji)
         }
     }
 
@@ -76,7 +61,6 @@ fun CustomReactionBottomSheet(
             }
             EmojiPicker(
                 onSelectEmoji = ::onEmojiSelectedDismiss,
-                onSelectCustomEmoji = ::onCustomEmojiSelectedDismiss,
                 state = presenter.present(),
                 selectedEmojis = state.selectedEmoji,
                 modifier = Modifier.fillMaxSize(),

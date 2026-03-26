@@ -14,35 +14,37 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.createroom.api.CreateRoomEntryPoint
 import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.di.SessionScope
-import io.element.android.libraries.matrix.api.core.RoomId
 
+/**
+ * 默认创建房间入口点实现
+ *
+ * CreateRoomEntryPoint 接口的默认实现，负责创建创建房间流程的主节点。
+ * 绑定到 SessionScope 生命周期。
+ */
 @ContributesBinding(SessionScope::class)
 class DefaultCreateRoomEntryPoint : CreateRoomEntryPoint {
-    class Builder(
-        private val parentNode: Node,
-        private val buildContext: BuildContext,
-        private val callback: CreateRoomEntryPoint.Callback,
-    ) : CreateRoomEntryPoint.Builder {
-        private var isSpace = false
-        private var parentSpaceId: RoomId? = null
-
-        override fun setIsSpace(isSpace: Boolean): Builder {
-            this.isSpace = isSpace
-            return this
+    /**
+     * 创建创建房间流程节点
+     *
+     * @param isSpace 是否创建为空间
+     * @param parentNode 父节点
+     * @param buildContext 构建上下文
+     * @param callback 回调接口
+     * @return 创建房间流程节点
+     */
+    override fun createNode(
+        isSpace: Boolean,
+        parentNode: Node,
+        buildContext: BuildContext,
+        callback: CreateRoomEntryPoint.Callback,
+        addPeopleCallback: CreateRoomEntryPoint.AddPeopleCallback?,
+    ): Node {
+        val inputs = CreateRoomFlowNode.Inputs(isSpace)
+        val plugins = buildList {
+            add(inputs)
+            add(callback)
+            addPeopleCallback?.let { add(it) }
         }
-
-        override fun setParentSpace(parentSpaceId: RoomId): Builder {
-            this.parentSpaceId = parentSpaceId
-            return this
-        }
-
-        override fun build(): Node {
-            val inputs = CreateRoomFlowNode.Inputs(isSpace = isSpace, parentSpaceId = parentSpaceId)
-            return parentNode.createNode<CreateRoomFlowNode>(buildContext, listOf(inputs, callback))
-        }
-    }
-
-    override fun builder(parentNode: Node, buildContext: BuildContext, callback: CreateRoomEntryPoint.Callback): CreateRoomEntryPoint.Builder {
-        return Builder(parentNode, buildContext, callback)
+        return parentNode.createNode<CreateRoomFlowNode>(buildContext, plugins)
     }
 }

@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"Ruangan yang cocok ditemukan"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Ruangan tidak ditemukan"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"mis. #nama-ruangan:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"Pindai Kode QR"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Pindai kode QR untuk menambahkan kontak"</string>
+  <string name="screen_scan_user_qr_code_success">"Kode QR berhasil dipindai"</string>
 </resources>

@@ -17,5 +17,4 @@ android {
 
 dependencies {
     implementation(projects.features.ftue.api)
-    implementation(projects.tests.testutils)
 }

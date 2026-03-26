@@ -19,15 +19,12 @@ import io.element.android.features.messages.api.timeline.voicemessages.composer.
 import io.element.android.features.messages.api.timeline.voicemessages.composer.VoiceMessageComposerState
 import io.element.android.features.messages.impl.messagecomposer.aReplyMode
 import io.element.android.features.messages.test.FakeMessageComposerContext
-import io.element.android.libraries.audio.api.AudioFocus
-import io.element.android.libraries.audio.api.AudioFocusRequester
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.media.AudioInfo
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.libraries.matrix.test.media.FakeMediaUploadHandler
 import io.element.android.libraries.matrix.test.room.FakeJoinedRoom
 import io.element.android.libraries.matrix.test.timeline.FakeTimeline
-import io.element.android.libraries.mediaplayer.test.FakeAudioFocus
 import io.element.android.libraries.mediaplayer.test.FakeMediaPlayer
 import io.element.android.libraries.mediaupload.api.MediaOptimizationConfig
 import io.element.android.libraries.mediaupload.impl.DefaultMediaSender
@@ -82,12 +79,6 @@ class DefaultVoiceMessageComposerPresenterTest {
         room = joinedRoom,
         timelineMode = Timeline.Mode.Live,
         mediaOptimizationConfigProvider = { MediaOptimizationConfig(compressImages = true, videoCompressionPreset = VideoCompressionPreset.STANDARD) },
-    )
-    private val requestAudioFocusResult = lambdaRecorder<AudioFocusRequester, () -> Unit, Unit> { _, _ -> }
-    private val releaseAudioFocusResult = lambdaRecorder<Unit> { }
-    private val audioFocus: AudioFocus = FakeAudioFocus(
-        requestAudioFocusResult = requestAudioFocusResult,
-        releaseAudioFocusResult = releaseAudioFocusResult,
     )
     private val messageComposerContext = FakeMessageComposerContext()
 
@@ -165,61 +156,6 @@ class DefaultVoiceMessageComposerPresenterTest {
             }
 
             testPauseAndDestroy(finalState)
-        }
-    }
-
-    @Test
-    fun `present - recording requests audio focus and releases on stop`() = runTest {
-        val presenter = createDefaultVoiceMessageComposerPresenter()
-        presenter.test {
-            awaitItem().eventSink(VoiceMessageComposerEvent.RecorderEvent(VoiceMessageRecorderEvent.Start))
-            val recordingState = awaitItem()
-            requestAudioFocusResult.assertions().isCalledOnce()
-            releaseAudioFocusResult.assertions().isNeverCalled()
-
-            recordingState.eventSink(VoiceMessageComposerEvent.RecorderEvent(VoiceMessageRecorderEvent.Stop))
-            awaitItem()
-            releaseAudioFocusResult.assertions().isCalledOnce()
-
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `present - cancelling recording releases audio focus`() = runTest {
-        val presenter = createDefaultVoiceMessageComposerPresenter()
-        presenter.test {
-            awaitItem().eventSink(VoiceMessageComposerEvent.RecorderEvent(VoiceMessageRecorderEvent.Start))
-            awaitItem().eventSink(VoiceMessageComposerEvent.RecorderEvent(VoiceMessageRecorderEvent.Cancel))
-            awaitItem()
-            requestAudioFocusResult.assertions().isCalledOnce()
-            releaseAudioFocusResult.assertions().isCalledOnce()
-
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `present - audio focus loss during recording finishes gracefully`() = runTest {
-        var onFocusLost: (() -> Unit)? = null
-        val testAudioFocus = FakeAudioFocus(
-            requestAudioFocusResult = { _, callback -> onFocusLost = callback },
-            releaseAudioFocusResult = { },
-        )
-        val presenter = createDefaultVoiceMessageComposerPresenter(audioFocus = testAudioFocus)
-        presenter.test {
-            awaitItem().eventSink(VoiceMessageComposerEvent.RecorderEvent(VoiceMessageRecorderEvent.Start))
-            awaitItem()
-
-            // simulate focus loss (phone call, etc)
-            onFocusLost?.invoke()
-            advanceUntilIdle()
-
-            val finalState = awaitItem()
-            assertThat(finalState.voiceMessageState).isEqualTo(aPreviewState())
-            voiceRecorder.assertCalls(started = 1, stopped = 1)
-
-            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -586,9 +522,7 @@ class DefaultVoiceMessageComposerPresenterTest {
             permissionsPresenter.setPermissionGranted()
 
             awaitItem().eventSink(VoiceMessageComposerEvent.RecorderEvent(VoiceMessageRecorderEvent.Start))
-            advanceUntilIdle()
-
-            val finalState = expectMostRecentItem()
+            val finalState = awaitItem()
             assertThat(finalState.voiceMessageState).isEqualTo(RECORDING_STATE)
             voiceRecorder.assertCalls(stopped = 1, started = 1)
 
@@ -613,16 +547,14 @@ class DefaultVoiceMessageComposerPresenterTest {
                 assertThat(it.showPermissionRationaleDialog).isTrue()
                 it.eventSink(VoiceMessageComposerEvent.AcceptPermissionRationale)
             }
-            skipItems(1)
 
             // Dialog is hidden, user accepts permissions
             assertThat(awaitItem().showPermissionRationaleDialog).isFalse()
 
-            // Permission is granted, recording starts automatically
             permissionsPresenter.setPermissionGranted()
-            advanceUntilIdle()
 
-            val finalState = expectMostRecentItem()
+            awaitItem().eventSink(VoiceMessageComposerEvent.RecorderEvent(VoiceMessageRecorderEvent.Start))
+            val finalState = awaitItem()
             assertThat(finalState.voiceMessageState).isEqualTo(RECORDING_STATE)
             voiceRecorder.assertCalls(started = 1)
 
@@ -647,14 +579,12 @@ class DefaultVoiceMessageComposerPresenterTest {
                 assertThat(it.showPermissionRationaleDialog).isTrue()
                 it.eventSink(VoiceMessageComposerEvent.DismissPermissionsRationale)
             }
-            skipItems(1)
 
             // Dialog is hidden, user tries to record again
             awaitItem().also {
                 assertThat(it.showPermissionRationaleDialog).isFalse()
                 it.eventSink(VoiceMessageComposerEvent.RecorderEvent(VoiceMessageRecorderEvent.Start))
             }
-            skipItems(1)
 
             // Dialog is shown once again
             val finalState = awaitItem().also {
@@ -663,7 +593,6 @@ class DefaultVoiceMessageComposerPresenterTest {
             }
             voiceRecorder.assertCalls(started = 0)
 
-            cancelAndIgnoreRemainingEvents()
             testPauseAndDestroy(finalState)
         }
     }
@@ -711,14 +640,12 @@ class DefaultVoiceMessageComposerPresenterTest {
     private fun TestScope.createDefaultVoiceMessageComposerPresenter(
         permissionsPresenter: PermissionsPresenter = createFakePermissionsPresenter(),
         voiceRecorder: VoiceRecorder = this@DefaultVoiceMessageComposerPresenterTest.voiceRecorder,
-        audioFocus: AudioFocus = this@DefaultVoiceMessageComposerPresenterTest.audioFocus,
     ): DefaultVoiceMessageComposerPresenter {
         return DefaultVoiceMessageComposerPresenter(
             sessionCoroutineScope = backgroundScope,
             timelineMode = Timeline.Mode.Live,
             voiceRecorder = voiceRecorder,
             analyticsService = analyticsService,
-            audioFocus = audioFocus,
             mediaSenderFactory = { mediaSender },
             player = VoiceMessageComposerPlayer(FakeMediaPlayer(), this),
             messageComposerContext = messageComposerContext,

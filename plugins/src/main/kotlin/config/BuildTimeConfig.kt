@@ -9,20 +9,37 @@
 package config
 
 object BuildTimeConfig {
-    //const val APPLICATION_ID = "io.element.android.x"
-    const val APPLICATION_NAME = "Schildi" // SC: should be overriden by our variants... so use something which will make apparent if that's not happening, where it comes from
-    // SC: should be overridden by our variants anyway, but better have below patched anyway...
-    const val GOOGLE_APP_ID_RELEASE = "1:326900467720:android:675ae0d20ab67aa73b29bd"
-    const val GOOGLE_APP_ID_DEBUG = "1:326900467720:android:675ae0d20ab67aa73b29bd"
-    const val GOOGLE_APP_ID_NIGHTLY = "1:326900467720:android:675ae0d20ab67aa73b29bd"
+    const val APPLICATION_ID = "chat.haddpp.android.z"
+    const val APPLICATION_NAME = "NexusTalk"
+    const val GOOGLE_APP_ID_RELEASE = "1:363522161055:android:2ba979a8d1ff892a9165aa"
+    const val GOOGLE_APP_ID_DEBUG = "1:363522161055:android:2ba979a8d1ff892a9165aa"
+    const val GOOGLE_APP_ID_NIGHTLY = "1:363522161055:android:2ba979a8d1ff892a9165aa"
 
     val METADATA_HOST_REVERSED: String? = null
-    val URL_WEBSITE: String? = null
-    val URL_LOGO: String? = null
-    val URL_COPYRIGHT: String? = null
-    val URL_ACCEPTABLE_USE: String? = null
-    val URL_PRIVACY: String? = null
-    val URL_POLICY: String? = null
+    val URL_WEBSITE: String? = "https://nexustalk.space"
+    val URL_LOGO: String? = "https://nexustalk.space/static/img/mobile-icon.png"
+    val URL_COPYRIGHT: String? = "https://element.io/copyright"
+    val URL_ACCEPTABLE_USE: String? = "https://nexustalk.space/acceptable-use-policy-terms"
+    val URL_PRIVACY: String? = "https://nexustalk.space/privacy"
+    val URL_POLICY: String? = "https://nexustalk.space/privacy"
+
+
+//    val URL_WEBSITE: String? = "https://element.io"
+//    val URL_LOGO: String? = "https://element.io/mobile-icon.png"
+//    val URL_COPYRIGHT: String? = "https://element.io/copyright"
+//    val URL_ACCEPTABLE_USE: String? = "https://element.io/acceptable-use-policy-terms"
+//    val URL_PRIVACY: String? = "https://element.io/privacy"
+//    val URL_POLICY: String? = "https://element.io/privacy"
+
+//    val URL_WEBSITE: String? = "https://schildi.chat"
+//    val URL_LOGO: String? = "https://schildi.chat/img/icon-next.png"
+//    val URL_COPYRIGHT: String? = "https://element.io/copyright"
+//    val URL_ACCEPTABLE_USE: String? = "https://schildi.chat/next/privacy//"
+//    val URL_PRIVACY: String? = "https://schildi.chat/next/privacy//"
+//    val URL_POLICY: String? = "https://schildi.chat/next/privacy//"
+
+
+
     val SERVICES_MAPTILER_BASE_URL: String? = null
     val SERVICES_MAPTILER_APIKEY: String? = null
     val SERVICES_MAPTILER_LIGHT_MAPID: String? = null

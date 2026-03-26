@@ -57,6 +57,20 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import io.element.android.services.analytics.compose.LocalAnalyticsService
 import io.element.android.services.analyticsproviders.api.trackers.captureInteraction
 
+/**
+ * 固定消息横幅视图
+ *
+ * Compose Composable函数，用于渲染固定消息横幅界面。
+ * 根据当前状态显示或隐藏横幅，并处理用户交互。
+ *
+ * @param state 固定消息横幅的当前状态
+ * @param onClick 点击横幅时的回调，参数为事件ID
+ * @param onViewAllClick 点击"查看全部"按钮时的回调
+ * @param modifier Compose修饰符，用于自定义样式和布局
+ *
+ * @see PinnedMessagesBannerState 固定消息横幅状态
+ * @see EventId 事件ID
+ */
 @Composable
 fun PinnedMessagesBannerView(
     state: PinnedMessagesBannerState,
@@ -65,7 +79,9 @@ fun PinnedMessagesBannerView(
     modifier: Modifier = Modifier,
 ) {
     when (state) {
+        // 隐藏状态，不渲染任何内容
         PinnedMessagesBannerState.Hidden -> Unit
+        // 可见状态，显示横幅内容
         is PinnedMessagesBannerState.Visible -> {
             PinnedMessagesBannerRow(
                 state = state,
@@ -77,6 +93,20 @@ fun PinnedMessagesBannerView(
     }
 }
 
+/**
+ * 固定消息横幅行组件
+ *
+ * 渲染固定消息横幅的主要行布局，包含：
+ * - 位置指示器（显示当前消息在列表中的位置）
+ * - 图钉图标
+ * - 消息内容
+ * - "查看全部"按钮
+ *
+ * @param state 可见状态下的固定消息横幅状态
+ * @param onClick 点击事件回调，参数为当前消息的事件ID
+ * @param onViewAllClick 点击"查看全部"按钮回调
+ * @param modifier Compose修饰符
+ */
 @Composable
 private fun PinnedMessagesBannerRow(
     state: PinnedMessagesBannerState.Visible,
@@ -96,7 +126,7 @@ private fun PinnedMessagesBannerRow(
                 if (state is PinnedMessagesBannerState.Loaded) {
                     analyticsService.captureInteraction(Interaction.Name.PinnedMessageBannerClick)
                     onClick(state.currentPinnedMessage.eventId)
-                    state.eventSink(PinnedMessagesBannerEvent.MoveToNextPinned)
+                    state.eventSink(PinnedMessagesBannerEvents.MoveToNextPinned)
                 }
             },
         verticalAlignment = Alignment.CenterVertically,
@@ -130,6 +160,16 @@ private fun PinnedMessagesBannerRow(
     }
 }
 
+/**
+ * "查看全部"按钮组件
+ *
+ * 渲染"查看全部"按钮，用于跳转到完整的置顶消息列表。
+ * 按钮文字和加载状态根据当前状态动态显示。
+ *
+ * @param state 固定消息横幅状态
+ * @param onViewAllClick 点击按钮回调
+ * @param modifier Compose修饰符
+ */
 @Composable
 private fun ViewAllButton(
     state: PinnedMessagesBannerState,
@@ -170,6 +210,19 @@ private fun Modifier.drawBorder(borderColor: Color): Modifier {
         .shadow(elevation = 5.dp, spotColor = Color.Transparent)
 }
 
+/**
+ * 位置指示器组件
+ *
+ * 渲染一列小圆点指示器，用于显示当前查看的置顶消息位置。
+ * 指示器的数量和高度根据总消息数动态调整：
+ * - 1条消息：显示1个较高的指示器
+ * - 2条消息：显示2个中等高度的指示器
+ * - 3条及以上：显示3个较矮的指示器
+ *
+ * @param pinIndex 当前查看的消息索引（0-based）
+ * @param pinsCount 置顶消息总数
+ * @param modifier Compose修饰符
+ */
 @Composable
 private fun PinIndicators(
     pinIndex: Int,
@@ -224,6 +277,18 @@ private fun PinIndicators(
     }
 }
 
+/**
+ * 置顶消息项目组件
+ *
+ * 渲染单个置顶消息的内容，包括：
+ * - 位置信息（如 "1 / 5"），仅在有多条消息时显示
+ * - 消息文本内容
+ *
+ * @param index 当前消息索引（0-based）
+ * @param totalCount 消息总数
+ * @param message 格式化后的消息内容
+ * @param modifier Compose修饰符
+ */
 @Composable
 private fun PinnedMessageItem(
     index: Int,
@@ -258,19 +323,50 @@ private fun PinnedMessageItem(
     }
 }
 
+/**
+ * 固定消息横幅滚动行为接口
+ *
+ * 定义横幅在滚动时的可见性行为。
+ * 用于实现滚动时自动隐藏/显示横幅的效果。
+ *
+ * @property isVisible 横幅当前是否可见
+ * @property nestedScrollConnection 嵌套滚动连接，用于处理滚动事件
+ *
+ * @see NestedScrollConnection 嵌套滚动连接
+ */
 @Stable
 internal interface PinnedMessagesBannerViewScrollBehavior {
     val isVisible: Boolean
     val nestedScrollConnection: NestedScrollConnection
 }
 
+/**
+ * 固定消息横幅视图默认值对象
+ *
+ * 提供创建滚动行为的默认方法。
+ */
 internal object PinnedMessagesBannerViewDefaults {
+    /**
+     * 创建并记住滚动行为
+     *
+     * @param pinnedMessagesCount 置顶消息数量
+     * @return PinnedMessagesBannerViewScrollBehavior 滚动行为实例
+     */
     @Composable
     fun rememberScrollBehavior(pinnedMessagesCount: Int): PinnedMessagesBannerViewScrollBehavior = remember(pinnedMessagesCount) {
         ExitOnScrollBehavior()
     }
 }
 
+/**
+ * 滚动退出行为实现类
+ *
+ * 实现滚动时自动隐藏横幅的行为：
+ * - 向上滚动时显示横幅
+ * - 向下滚动时隐藏横幅
+ *
+ * @see PinnedMessagesBannerViewScrollBehavior 滚动行为接口
+ */
 private class ExitOnScrollBehavior : PinnedMessagesBannerViewScrollBehavior {
     override var isVisible by mutableStateOf(true)
     override val nestedScrollConnection: NestedScrollConnection = object : NestedScrollConnection {

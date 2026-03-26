@@ -1,2 +1,0 @@
-- Update codebase to Element X v25.04.3
-- Improve push notification reliability

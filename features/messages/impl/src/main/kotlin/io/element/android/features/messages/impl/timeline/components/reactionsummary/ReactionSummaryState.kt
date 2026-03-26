@@ -12,9 +12,15 @@ import io.element.android.features.messages.impl.timeline.model.AggregatedReacti
 import io.element.android.libraries.matrix.api.core.EventId
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 反应摘要状态数据类
+ *
+ * @property target 反应摘要目标
+ * @property eventSink 事件处理函数
+ */
 data class ReactionSummaryState(
     val target: Summary?,
-    val eventSink: (ReactionSummaryEvent) -> Unit
+    val eventSink: (ReactionSummaryEvents) -> Unit
 ) {
     data class Summary(
         val reactions: ImmutableList<AggregatedReaction>,

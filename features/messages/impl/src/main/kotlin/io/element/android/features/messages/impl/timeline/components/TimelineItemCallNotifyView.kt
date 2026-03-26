@@ -44,11 +44,15 @@ import io.element.android.libraries.ui.strings.CommonStrings
 @Composable
 internal fun TimelineItemCallNotifyView(
     event: TimelineItem.Event,
+    isLatestCallNotify: Boolean = false,
     roomCallState: RoomCallState,
     onLongClick: (TimelineItem.Event) -> Unit,
-    onJoinCallClick: (isAudioCall: Boolean) -> Unit,
+    onJoinCallClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val onGoingRoomCallState = roomCallState as? RoomCallState.OnGoing
+    val isJoinableCall = onGoingRoomCallState != null && isLatestCallNotify
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -86,7 +90,13 @@ internal fun TimelineItemCallNotifyView(
                     tint = ElementTheme.colors.iconSecondary,
                 )
                 Text(
-                    text = stringResource(CommonStrings.common_call_started),
+                    text = stringResource(
+                        if (isJoinableCall) {
+                            CommonStrings.common_call_started
+                        } else {
+                            CommonStrings.common_call_ended
+                        }
+                    ),
                     style = ElementTheme.typography.fontBodyMdRegular,
                     color = ElementTheme.colors.textSecondary,
                     maxLines = 1,
@@ -94,9 +104,9 @@ internal fun TimelineItemCallNotifyView(
                 )
             }
         }
-        if (roomCallState is RoomCallState.OnGoing) {
+        if (isJoinableCall && onGoingRoomCallState != null) {
             CallMenuItem(
-                roomCallState = roomCallState,
+                roomCallState = onGoingRoomCallState,
                 onJoinCallClick = onJoinCallClick,
             )
         } else {
@@ -121,6 +131,7 @@ internal fun TimelineItemCallNotifyViewPreview() = ElementPreview {
             .forEach { roomCallState ->
                 TimelineItemCallNotifyView(
                     event = aTimelineItemEvent(content = TimelineItemRtcNotificationContent()),
+                    isLatestCallNotify = roomCallState is RoomCallState.OnGoing,
                     roomCallState = roomCallState,
                     onLongClick = {},
                     onJoinCallClick = {},

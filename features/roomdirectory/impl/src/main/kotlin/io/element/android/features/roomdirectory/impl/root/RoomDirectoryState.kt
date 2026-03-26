@@ -11,6 +11,15 @@ package io.element.android.features.roomdirectory.impl.root
 import io.element.android.features.roomdirectory.api.RoomDescription
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 房间目录状态数据类
+ *
+ * @property query 搜索查询
+ * @property roomDescriptions 房间描述列表
+ * @property displayLoadMoreIndicator 是否显示加载更多指示器
+ * @property eventSink 事件处理函数
+ * @property displayEmptyState 是否显示空状态
+ */
 data class RoomDirectoryState(
     val query: String,
     val roomDescriptions: ImmutableList<RoomDescription>,

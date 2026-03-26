@@ -10,4 +10,12 @@ package io.element.android.features.licenses.api
 
 import io.element.android.libraries.architecture.SimpleFeatureEntryPoint
 
+/**
+ * 开源许可证功能入口点接口
+ *
+ * 定义开源许可证查看功能的入口接口，
+ * 继承自 SimpleFeatureEntryPoint，提供轻量级的功能入口。
+ *
+ * @see DefaultOpenSourcesLicensesEntryPoint 默认实现
+ */
 interface OpenSourceLicensesEntryPoint : SimpleFeatureEntryPoint

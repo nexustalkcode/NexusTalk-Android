@@ -24,6 +24,5 @@ dependencies {
     implementation(projects.libraries.matrix.api)
     implementation(projects.libraries.di)
 
-    testCommonDependencies(libs, false)
     testImplementation(projects.libraries.sessionStorage.test)
 }

@@ -23,12 +23,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.size
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.libraries.designsystem.preview.ElementThemedPreview
@@ -43,6 +46,8 @@ fun MainActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    iconTint: Color? = null,
+    iconSize: Dp = 24.dp,
 ) {
     val ripple = ripple(bounded = false)
     val interactionSource = remember { MutableInteractionSource() }
@@ -58,9 +63,13 @@ fun MainActionButton(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
+            modifier = Modifier.size(iconSize),
             contentDescription = null,
             imageVector = imageVector,
-            tint = if (enabled) LocalContentColor.current else ElementTheme.colors.iconDisabled,
+            tint = when {
+                iconTint != null && enabled -> iconTint
+                else -> if (enabled) LocalContentColor.current else ElementTheme.colors.iconDisabled
+            },
         )
         Spacer(modifier = Modifier.height(14.dp))
         Text(

@@ -37,6 +37,28 @@ import io.element.android.libraries.matrix.api.verification.VerificationRequest
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
+/**
+ * FTUE 会话验证流程节点
+ *
+ * 这是首次用户体验中会话验证流程的根节点，继承自 BaseFlowNode。
+ * 使用 BackStack 导航模型管理验证流程中的各个步骤。
+ *
+ * 主要职责：
+ * - 管理会话验证的导航流程
+ * - 提供多种验证方式供用户选择（使用另一台设备、输入恢复密钥、重置身份）
+ * - 处理验证完成后的回调
+ *
+ * 验证流程步骤：
+ * 1. Root：选择验证方式页面
+ * 2. UseAnotherDevice：使用另一台设备验证
+ * 3. EnterRecoveryKey：输入恢复密钥
+ * 4. ResetIdentity：重置身份
+ *
+ * @param buildContext 构建上下文
+ * @param plugins 插件列表
+ * @param outgoingVerificationEntryPoint 外出验证入口点
+ * @param secureBackupEntryPoint 安全备份入口点
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class FtueSessionVerificationFlowNode(
@@ -52,21 +74,58 @@ class FtueSessionVerificationFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 会话验证流程导航目标密封接口
+     *
+     * 定义会话验证流程中的各个导航步骤。
+     */
     sealed interface NavTarget : Parcelable {
+        /**
+         * 根节点 - 选择验证方式页面
+         *
+         * 用户可以选择使用另一台设备、输入恢复密钥或重置身份进行验证。
+         */
         @Parcelize
         data object Root : NavTarget
 
+        /**
+         * 使用另一台设备验证
+         *
+         * 引导用户使用其他已登录的设备完成验证。
+         */
         @Parcelize
         data object UseAnotherDevice : NavTarget
 
+        /**
+         * 输入恢复密钥验证
+         *
+         * 引导用户输入之前保存的恢复密钥完成验证。
+         */
         @Parcelize
         data object EnterRecoveryKey : NavTarget
 
+        /**
+         * 重置身份
+         *
+         * 允许用户在无法完成验证时重置身份。
+         */
         @Parcelize
         data object ResetIdentity : NavTarget
     }
 
+    /**
+     * 会话验证完成回调接口
+     *
+     * 定义会话验证流程完成后的回调方法。
+     */
     interface Callback : Plugin {
+        fun onBack()
+
+        /**
+         * 验证完成回调
+         *
+         * 当用户成功完成会话验证后调用。
+         */
         fun onDone()
     }
 
@@ -85,6 +144,10 @@ class FtueSessionVerificationFlowNode(
         return when (navTarget) {
             is NavTarget.Root -> {
                 val callback = object : ChooseSelfVerificationModeNode.Callback {
+                    override fun onBack() {
+                        callback.onBack()
+                    }
+
                     override fun navigateToUseAnotherDevice() {
                         backstack.push(NavTarget.UseAnotherDevice)
                     }

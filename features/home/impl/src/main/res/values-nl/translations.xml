@@ -9,6 +9,8 @@
   <string name="full_screen_intent_banner_message">"Pas je instellingen aan om meldingen op het volledige scherm toe te staan wanneer de telefoon is vergrendeld. Zo mis je nooit een belangrijk gesprek."</string>
   <string name="full_screen_intent_banner_title">"Verbeter je gesprekservaring"</string>
   <string name="screen_home_tab_chats">"Chats"</string>
+  <string name="screen_home_tab_community">"Gemeenschap"</string>
+  <string name="screen_home_tab_spaces">"Ruimtes"</string>
   <string name="screen_invites_decline_chat_message">"Weet je zeker dat je de uitnodiging om toe te treden tot %1$s wilt weigeren?"</string>
   <string name="screen_invites_decline_chat_title">"Uitnodiging weigeren"</string>
   <string name="screen_invites_decline_direct_chat_message">"Weet je zeker dat je deze privéchat met %1$s wilt weigeren?"</string>
@@ -42,4 +44,9 @@ Je hebt geen ongelezen berichten!"</string>
   <string name="screen_roomlist_mark_as_unread">"Markeren als ongelezen"</string>
   <string name="session_verification_banner_message">"Het lijkt erop dat je een nieuw apparaat gebruikt. Verifieer met een ander apparaat om toegang te krijgen tot je versleutelde berichten."</string>
   <string name="session_verification_banner_title">"Verifieer dat jij het bent"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Communities brengen leden samen in op thema's gebaseerde groepen. Alle community's waarvan je lid wordt, worden hier weergegeven."</string>
+  <string name="screen_community_list_header_count">"%1$d Gemeenschap"</string>
+  <string name="screen_community_list_header_description">"Community's die u maakt of waarvan u lid bent"</string>
+  <string name="screen_roomlist_empty_message_new">"Deze plek is alleen van jou en de mensen die het dichtst bij je staan"</string>
 </resources>

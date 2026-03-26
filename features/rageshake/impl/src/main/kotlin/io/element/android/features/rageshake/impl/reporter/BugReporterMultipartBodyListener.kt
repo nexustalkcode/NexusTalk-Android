@@ -8,12 +8,19 @@
 
 package io.element.android.features.rageshake.impl.reporter
 
+/**
+ * 问题报告多部分请求体监听器接口
+ *
+ * 用于监听文件上传进度的接口。
+ */
 fun interface BugReporterMultipartBodyListener {
     /**
-     * Upload listener.
+     * 上传进度回调
      *
-     * @param totalWritten  total written bytes
-     * @param contentLength content length
+     * 当写入数据时调用，用于更新上传进度。
+     *
+     * @param totalWritten 已写入的总字节数
+     * @param contentLength 内容的总长度
      */
     fun onWrite(totalWritten: Long, contentLength: Long)
 }

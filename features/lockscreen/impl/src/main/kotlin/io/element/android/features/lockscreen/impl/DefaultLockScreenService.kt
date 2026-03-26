@@ -33,6 +33,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 
+/**
+ * 默认锁屏服务实现
+ *
+ * 提供完整的锁屏功能实现，包括：
+ * - 锁状态管理
+ * - PIN 码验证回调处理
+ * - 生物识别解锁回调处理
+ * - 应用前后台状态监听
+ * - 会话状态监听
+ */
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class DefaultLockScreenService(
@@ -45,9 +55,11 @@ class DefaultLockScreenService(
     private val appForegroundStateService: AppForegroundStateService,
     biometricAuthenticatorManager: BiometricAuthenticatorManager,
 ) : LockScreenService {
+    /** 锁状态的 MutableStateFlow */
     private val _lockState = MutableStateFlow<LockScreenLockState>(LockScreenLockState.Unlocked)
     override val lockState: StateFlow<LockScreenLockState> = _lockState
 
+    /** 锁定任务的 Job */
     private var lockJob: Job? = null
 
     init {

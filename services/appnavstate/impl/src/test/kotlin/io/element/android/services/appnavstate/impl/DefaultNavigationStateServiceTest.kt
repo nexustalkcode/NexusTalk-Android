@@ -13,12 +13,15 @@ import io.element.android.libraries.matrix.test.A_ROOM_ID
 import io.element.android.libraries.matrix.test.A_ROOM_ID_2
 import io.element.android.libraries.matrix.test.A_SESSION_ID
 import io.element.android.libraries.matrix.test.A_SESSION_ID_2
+import io.element.android.libraries.matrix.test.A_SPACE_ID
+import io.element.android.libraries.matrix.test.A_SPACE_ID_2
 import io.element.android.libraries.matrix.test.A_THREAD_ID
 import io.element.android.libraries.matrix.test.A_THREAD_ID_2
 import io.element.android.services.appnavstate.api.AppNavigationStateService
 import io.element.android.services.appnavstate.api.NavigationState
 import io.element.android.services.appnavstate.test.A_ROOM_OWNER
 import io.element.android.services.appnavstate.test.A_SESSION_OWNER
+import io.element.android.services.appnavstate.test.A_SPACE_OWNER
 import io.element.android.services.appnavstate.test.A_THREAD_OWNER
 import io.element.android.services.appnavstate.test.FakeAppForegroundStateService
 import kotlinx.coroutines.flow.first
@@ -30,17 +33,22 @@ class DefaultNavigationStateServiceTest {
     private val navigationStateRoot = NavigationState.Root
     private val navigationStateSession = NavigationState.Session(
         owner = A_SESSION_OWNER,
-        sessionId = A_SESSION_ID,
+        sessionId = A_SESSION_ID
+    )
+    private val navigationStateSpace = NavigationState.Space(
+        owner = A_SPACE_OWNER,
+        spaceId = A_SPACE_ID,
+        parentSession = navigationStateSession
     )
     private val navigationStateRoom = NavigationState.Room(
         owner = A_ROOM_OWNER,
         roomId = A_ROOM_ID,
-        parentSession = navigationStateSession,
+        parentSpace = navigationStateSpace
     )
     private val navigationStateThread = NavigationState.Thread(
         owner = A_THREAD_OWNER,
         threadId = A_THREAD_ID,
-        parentRoom = navigationStateRoom,
+        parentRoom = navigationStateRoom
     )
 
     @Test
@@ -49,6 +57,8 @@ class DefaultNavigationStateServiceTest {
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoot)
         service.onNavigateToSession(A_SESSION_OWNER, A_SESSION_ID)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
+        service.onNavigateToSpace(A_SPACE_OWNER, A_SPACE_ID)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
         service.onNavigateToRoom(A_ROOM_OWNER, A_ROOM_ID)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoom)
         service.onNavigateToThread(A_THREAD_OWNER, A_THREAD_ID)
@@ -57,6 +67,8 @@ class DefaultNavigationStateServiceTest {
         service.onLeavingThread(A_THREAD_OWNER)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoom)
         service.onLeavingRoom(A_ROOM_OWNER)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
+        service.onLeavingSpace(A_SPACE_OWNER)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
         service.onLeavingSession(A_SESSION_OWNER)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoot)
@@ -65,7 +77,7 @@ class DefaultNavigationStateServiceTest {
     @Test
     fun testFailure() = runTest {
         val service = createStateService()
-        service.onNavigateToRoom(A_ROOM_OWNER, A_ROOM_ID)
+        service.onNavigateToSpace(A_SPACE_OWNER, A_SPACE_ID)
         assertThat(service.appNavigationState.value.navigationState).isEqualTo(NavigationState.Root)
     }
 
@@ -80,6 +92,11 @@ class DefaultNavigationStateServiceTest {
         service.navigateToSession()
         service.onNavigateToThread(A_THREAD_OWNER, A_THREAD_ID)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
+        // From space (no effect)
+        service.reset()
+        service.navigateToSpace()
+        service.onNavigateToThread(A_THREAD_OWNER, A_THREAD_ID)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
         // From room
         service.reset()
         service.navigateToRoom()
@@ -99,9 +116,14 @@ class DefaultNavigationStateServiceTest {
         // From root (no effect)
         service.onNavigateToRoom(A_ROOM_OWNER, A_ROOM_ID)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoot)
-        // From session
+        // From session (no effect)
         service.reset()
         service.navigateToSession()
+        service.onNavigateToRoom(A_ROOM_OWNER, A_ROOM_ID)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
+        // From space
+        service.reset()
+        service.navigateToSpace()
         service.onNavigateToRoom(A_ROOM_OWNER, A_ROOM_ID)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoom)
         // From room
@@ -118,6 +140,35 @@ class DefaultNavigationStateServiceTest {
     }
 
     @Test
+    fun testOnNavigateToSpace() = runTest {
+        val service = createStateService()
+        // From root (no effect)
+        service.onNavigateToSpace(A_SPACE_OWNER, A_SPACE_ID)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoot)
+        // From session
+        service.reset()
+        service.navigateToSession()
+        service.onNavigateToSpace(A_SPACE_OWNER, A_SPACE_ID)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
+        // From space
+        service.reset()
+        service.navigateToSpace()
+        // Navigate to another space
+        service.onNavigateToSpace(A_SPACE_OWNER, A_SPACE_ID_2)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace.copy(spaceId = A_SPACE_ID_2))
+        // From room (no effect)
+        service.reset()
+        service.navigateToRoom()
+        service.onNavigateToSpace(A_SPACE_OWNER, A_SPACE_ID)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
+        // From thread (no effect)
+        service.reset()
+        service.navigateToThread()
+        service.onNavigateToSpace(A_SPACE_OWNER, A_SPACE_ID)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
+    }
+
+    @Test
     fun testOnNavigateToSession() = runTest {
         val service = createStateService()
         // From root
@@ -129,6 +180,11 @@ class DefaultNavigationStateServiceTest {
         // Navigate to another session
         service.onNavigateToSession(A_SESSION_OWNER, A_SESSION_ID_2)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession.copy(sessionId = A_SESSION_ID_2))
+        // From space
+        service.reset()
+        service.navigateToSpace()
+        service.onNavigateToSession(A_SESSION_OWNER, A_SESSION_ID)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
         // From room
         service.reset()
         service.navigateToRoom()
@@ -152,6 +208,11 @@ class DefaultNavigationStateServiceTest {
         service.navigateToSession()
         service.onLeavingThread(A_THREAD_OWNER)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
+        // From space (no effect)
+        service.reset()
+        service.navigateToSpace()
+        service.onLeavingThread(A_THREAD_OWNER)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
         // From room (no effect)
         service.reset()
         service.navigateToRoom()
@@ -175,15 +236,48 @@ class DefaultNavigationStateServiceTest {
         service.navigateToSession()
         service.onLeavingRoom(A_ROOM_OWNER)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
+        // From space (no effect)
+        service.reset()
+        service.navigateToSpace()
+        service.onLeavingRoom(A_ROOM_OWNER)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
         // From room
         service.reset()
         service.navigateToRoom()
         service.onLeavingRoom(A_ROOM_OWNER)
-        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
         // From thread (no effect)
         service.reset()
         service.navigateToThread()
         service.onLeavingRoom(A_ROOM_OWNER)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateThread)
+    }
+
+    @Test
+    fun testOnLeavingSpace() = runTest {
+        val service = createStateService()
+        // From root (no effect)
+        service.onLeavingSpace(A_SPACE_OWNER)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoot)
+        // From session (no effect)
+        service.reset()
+        service.navigateToSession()
+        service.onLeavingSpace(A_SPACE_OWNER)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
+        // From space
+        service.reset()
+        service.navigateToSpace()
+        service.onLeavingSpace(A_SPACE_OWNER)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSession)
+        // From room (no effect)
+        service.reset()
+        service.navigateToRoom()
+        service.onLeavingSpace(A_SPACE_OWNER)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoom)
+        // From thread (no effect)
+        service.reset()
+        service.navigateToThread()
+        service.onLeavingSpace(A_SPACE_OWNER)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateThread)
     }
 
@@ -198,6 +292,11 @@ class DefaultNavigationStateServiceTest {
         service.navigateToSession()
         service.onLeavingSession(A_SESSION_OWNER)
         assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateRoot)
+        // From space (no effect)
+        service.reset()
+        service.navigateToSpace()
+        service.onLeavingSession(A_SESSION_OWNER)
+        assertThat(service.appNavigationState.first().navigationState).isEqualTo(navigationStateSpace)
         // From room (no effect)
         service.reset()
         service.navigateToRoom()
@@ -219,8 +318,13 @@ class DefaultNavigationStateServiceTest {
         onNavigateToSession(A_SESSION_OWNER, A_SESSION_ID)
     }
 
-    private fun AppNavigationStateService.navigateToRoom() {
+    private fun AppNavigationStateService.navigateToSpace() {
         navigateToSession()
+        onNavigateToSpace(A_SPACE_OWNER, A_SPACE_ID)
+    }
+
+    private fun AppNavigationStateService.navigateToRoom() {
+        navigateToSpace()
         onNavigateToRoom(A_ROOM_OWNER, A_ROOM_ID)
     }
 

@@ -53,8 +53,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.messages.impl.actionlist.model.TimelineItemAction
@@ -101,6 +99,23 @@ import io.element.android.libraries.matrix.ui.messages.sender.SenderNameMode
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 动作列表视图主入口
+ *
+ * 显示消息动作列表的底部弹出模态框。
+ * 当用户点击消息时，显示可用的动作选项列表，包括回复、转发、编辑等操作。
+ *
+ * @param state 动作列表当前状态，包含目标消息和可用动作
+ * @param onSelectAction 用户选择某个动作时的回调函数
+ * @param onEmojiReactionClick 用户点击表情反应时的回调函数
+ * @param onCustomReactionClick 用户点击自定义反应按钮时的回调函数
+ * @param onVerifiedUserSendFailureClick 用户点击已验证用户发送失败提示时的回调函数
+ * @param modifier 视图修饰符
+ *
+ * @see ActionListState 动作列表状态
+ * @see TimelineItemAction 动作项
+ * @see ModalBottomSheet 底部弹出模态框
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActionListView(
@@ -111,7 +126,7 @@ fun ActionListView(
     onVerifiedUserSendFailureClick: (TimelineItem.Event) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = ScPrefs.FULLY_EXPAND_MESSAGE_MENU.value())
+    val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     val targetItem = (state.target as? ActionListState.Target.Success)?.event
 
@@ -120,7 +135,7 @@ fun ActionListView(
     ) {
         if (targetItem == null) return
         sheetState.hide(coroutineScope) {
-            state.eventSink(ActionListEvent.Clear)
+            state.eventSink(ActionListEvents.Clear)
             onSelectAction(itemAction, targetItem)
         }
     }
@@ -128,7 +143,7 @@ fun ActionListView(
     fun onEmojiReactionClick(emoji: String) {
         if (targetItem == null) return
         sheetState.hide(coroutineScope) {
-            state.eventSink(ActionListEvent.Clear)
+            state.eventSink(ActionListEvents.Clear)
             onEmojiReactionClick(emoji, targetItem)
         }
     }
@@ -136,19 +151,19 @@ fun ActionListView(
     fun onCustomReactionClick() {
         if (targetItem == null) return
         sheetState.hide(coroutineScope) {
-            state.eventSink(ActionListEvent.Clear)
+            state.eventSink(ActionListEvents.Clear)
             onCustomReactionClick(targetItem)
         }
     }
 
     fun onDismiss() {
-        state.eventSink(ActionListEvent.Clear)
+        state.eventSink(ActionListEvents.Clear)
     }
 
     fun onVerifiedUserSendFailureClick() {
         if (targetItem == null) return
         sheetState.hide(coroutineScope) {
-            state.eventSink(ActionListEvent.Clear)
+            state.eventSink(ActionListEvents.Clear)
             onVerifiedUserSendFailureClick(targetItem)
         }
     }
@@ -173,6 +188,23 @@ fun ActionListView(
     }
 }
 
+/**
+ * 动作列表内容视图
+ *
+ * 动作列表的主要内容包括：
+ * - 消息摘要区域：显示发送者头像、名称、时间和消息预览
+ * - 消息盾牌视图：如果消息有安全盾牌则显示
+ * - 已验证用户发送失败视图：如果存在发送失败则显示
+ * - Emoji反应行：显示最近使用的表情和自定义反应按钮
+ * - 动作列表项：显示所有可用的动作选项
+ *
+ * @param state 动作列表状态
+ * @param onActionClick 用户点击动作项时的回调
+ * @param onEmojiReactionClick 用户点击表情时的回调
+ * @param onCustomReactionClick 用户点击自定义反应按钮时的回调
+ * @param onVerifiedUserSendFailureClick 用户点击发送失败提示时的回调
+ * @param modifier 视图修饰符
+ */
 @Composable
 private fun ActionListViewContent(
     state: ActionListState,
@@ -259,6 +291,21 @@ private fun ActionListViewContent(
     }
 }
 
+/**
+ * 消息摘要组件
+ *
+ * 在动作列表顶部显示的消息预览信息。
+ * 包含发送者头像、名称、发送时间以及消息内容的简短预览。
+ * 根据不同的消息内容类型(text、image、file、voice等)显示相应的摘要信息。
+ *
+ * @param event 消息事件
+ * @param sentTimeFull 完整格式的发送时间文本
+ * @param modifier 视图修饰符
+ *
+ * @see TimelineItem.Event 消息事件
+ * @see Avatar 头像组件
+ * @see SenderName 发送者名称组件
+ */
 @Suppress("MultipleEmitters") // False positive
 @Composable
 private fun MessageSummary(
@@ -277,7 +324,7 @@ private fun MessageSummary(
 
     @Composable
     fun ContentForBody(body: String) {
-        ScMessageContextPreview(body) ?: Text(body, style = contentStyle, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(body, style = contentStyle, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 
     val context = LocalContext.current
@@ -345,6 +392,20 @@ private fun MessageSummary(
     }
 }
 
+/**
+ * Emoji反应行组件
+ *
+ * 显示最近使用的emoji表情列表供用户快速反应，
+ * 同时提供一个"添加反应"按钮让用户选择更多emoji。
+ * 包含一个水平滚动的emoji列表和右侧的添加按钮。
+ * 列表右侧有渐变效果以提示可滚动。
+ *
+ * @param recentEmojis 最近使用的emoji列表
+ * @param highlightedEmojis 当前消息已添加的高亮emoji列表
+ * @param onEmojiReactionClick 点击emoji时的回调
+ * @param onCustomReactionClick 点击添加自定义反应按钮时的回调
+ * @param modifier 视图修饰符
+ */
 private val emojiRippleRadius = 24.dp
 
 @Composable
@@ -422,6 +483,21 @@ private fun EmojiReactionsRow(
     }
 }
 
+/**
+ * 已验证用户发送失败视图组件
+ *
+ * 当消息发送失败时显示的错误提示视图。
+ * 展示不同类型的发送失败错误信息：
+ * - 未知设备：提示用户使用未签名设备发送
+ * - 身份变更：提示接收者身份已变更
+ *
+ * @param sendFailure 发送失败状态
+ * @param onClick 点击该视图时的回调
+ * @param modifier 视图修饰符
+ *
+ * @see VerifiedUserSendFailure 发送失败类型
+ * @see ListItem 列表项组件
+ */
 @Composable
 private fun VerifiedUserSendFailureView(
     sendFailure: VerifiedUserSendFailure,
@@ -460,6 +536,21 @@ private fun VerifiedUserSendFailureView(
     )
 }
 
+/**
+ * Emoji按钮组件
+ *
+ * 显示单个emoji表情的圆形按钮。
+ * 支持高亮状态（用户已添加该emoji时显示背景色）。
+ * 包含无障碍功能标签，说明用户是否已添加该反应。
+ *
+ * @param emoji 要显示的emoji字符
+ * @param isHighlighted 是否高亮显示（用户已添加该反应）
+ * @param onClick 点击按钮时的回调
+ * @param modifier 视图修饰符
+ *
+ * @see ripple 涟漪效果
+ * @see a11yReactionAction 无障碍标签生成
+ */
 @Composable
 private fun EmojiButton(
     emoji: String,
@@ -495,6 +586,17 @@ private fun EmojiButton(
     }
 }
 
+/**
+ * 动作列表视图预览
+ *
+ * 用于开发阶段预览动作列表的不同状态。
+ * 使用 [ActionListStateProvider] 提供多种测试状态。
+ *
+ * @param state 由 [ActionListStateProvider] 提供的预览状态参数
+ *
+ * @see PreviewsDayNight 日夜模式预览注解
+ * @see ActionListStateProvider 状态提供器
+ */
 @PreviewsDayNight
 @Composable
 internal fun ActionListViewContentPreview(

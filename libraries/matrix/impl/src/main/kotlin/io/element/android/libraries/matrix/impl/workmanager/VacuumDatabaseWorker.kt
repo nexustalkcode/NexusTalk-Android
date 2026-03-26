@@ -27,11 +27,11 @@ import timber.log.Timber
 
 @AssistedInject
 class VacuumDatabaseWorker(
-    @Assisted params: WorkerParameters,
+    @Assisted workerParams: WorkerParameters,
     @ApplicationContext private val context: Context,
     private val matrixClientProvider: MatrixClientProvider,
     private val analyticsService: AnalyticsService,
-) : CoroutineWorker(context, params) {
+) : CoroutineWorker(context, workerParams) {
     companion object {
         const val SESSION_ID_PARAM = "session_id"
     }

@@ -23,6 +23,11 @@ import io.element.android.libraries.architecture.inputs
 import io.element.android.libraries.di.RoomScope
 import io.element.android.services.analytics.api.AnalyticsService
 
+/**
+ * 显示位置节点
+ *
+ * 负责显示位置信息的界面，包含地图视图和分享功能。
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class ShowLocationNode(

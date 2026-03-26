@@ -11,13 +11,17 @@ package io.element.android.features.messages.impl.typing
 import kotlinx.collections.immutable.ImmutableList
 
 /**
- * State for the typing notification view.
+ * 打字通知状态数据类
+ *
+ * @property renderTypingNotifications 是否根据用户偏好显示打字通知
+ * @property typingMembers 当前正在打字的房间成员列表
+ * @property reserveSpace 是否在时间线底部为打字通知保留空间
  */
 data class TypingNotificationState(
-    /** Whether to render the typing notifications based on the user's preferences. */
+    /** 是否根据用户偏好显示打字通知 */
     val renderTypingNotifications: Boolean,
-    /** The room members currently typing. */
+    /** 当前正在打字的房间成员列表 */
     val typingMembers: ImmutableList<TypingRoomMember>,
-    /** Whether to reserve space for the typing notifications at the bottom of the timeline. */
+    /** 是否在时间线底部为打字通知保留空间 */
     val reserveSpace: Boolean,
 )

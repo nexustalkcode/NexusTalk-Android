@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Вы можаце змяніць налады пазней."</string>
   <string name="screen_notification_optin_title">"Дазвольце апавяшчэнні і ніколі не прапускайце іх"</string>
   <string name="screen_session_verification_enter_recovery_key">"Увядзіце ключ аднаўлення"</string>
+  <string name="screen_welcome_agreement">"Націскаючы \"Пагаджацца і працягнуць\", вы прымаеце нашы %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Палітыка прыватнасці"</string>
+  <string name="screen_welcome_title">"Сардэчна запрашаем у %s"</string>
+  <string name="screen_welcome_privacy_notice">"Калі ласка, прачытайце нашую Палітыку прыватнасці"</string>
+  <string name="screen_welcome_agree">"Пагаджацца"</string>
 </resources>

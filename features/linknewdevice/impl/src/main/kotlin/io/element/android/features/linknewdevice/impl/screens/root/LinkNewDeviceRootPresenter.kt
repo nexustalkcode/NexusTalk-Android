@@ -23,18 +23,35 @@ import io.element.android.libraries.matrix.api.MatrixClient
 import io.element.android.libraries.matrix.api.linknewdevice.LinkMobileStep
 import kotlinx.coroutines.launch
 
+/**
+ * 链接新设备根页面 Presenter
+ *
+ * 负责处理链接新设备根页面的业务逻辑和状态管理。
+ * 管理链接功能的初始化和状态展示。
+ *
+ * @property matrixClient Matrix 客户端
+ * @property linkNewMobileHandler 链接新移动设备处理器
+ */
 @Inject
 class LinkNewDeviceRootPresenter(
     private val matrixClient: MatrixClient,
     private val linkNewMobileHandler: LinkNewMobileHandler,
 ) : Presenter<LinkNewDeviceRootState> {
+    /**
+     * 生成界面状态
+     *
+     * @return LinkNewDeviceRootState 链接新设备根页面状态
+     */
     @Composable
     override fun present(): LinkNewDeviceRootState {
         val coroutineScope = rememberCoroutineScope()
+        // 是否支持链接新设备
         var isSupported by remember { mutableStateOf<AsyncData<Boolean>>(AsyncData.Uninitialized) }
+        // 二维码生成状态（仅关心是否准备好）
         var qrCodeData by remember { mutableStateOf<AsyncData<Unit>>(AsyncData.Uninitialized) }
 
         LaunchedEffect(Unit) {
+            // 查询当前账户是否支持此功能
             matrixClient.canLinkNewDevice().fold(
                 onSuccess = { supported ->
                     isSupported = AsyncData.Success(supported)
@@ -45,32 +62,43 @@ class LinkNewDeviceRootPresenter(
             )
         }
 
+        // 监听移动端链接流程的状态变化
         val step by linkNewMobileHandler.stepFlow.collectAsState()
 
         LaunchedEffect(step) {
             when (val finalStep = step) {
                 is LinkMobileStep.Uninitialized -> {
+                    // 未开始生成二维码
                     qrCodeData = AsyncData.Uninitialized
                 }
                 is LinkMobileStep.QrReady -> {
+                    // 二维码就绪
                     qrCodeData = AsyncData.Success(Unit)
                 }
                 is LinkMobileStep.Error -> {
+                    // 生成二维码失败
                     qrCodeData = AsyncData.Failure(finalStep.errorType)
                 }
                 else -> Unit
             }
         }
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 链接新设备根页面事件
+         */
         fun handleEvent(event: LinkNewDeviceRootEvent) {
             when (event) {
                 LinkNewDeviceRootEvent.LinkMobileDevice -> coroutineScope.launch {
+                    // 开始生成二维码，进入加载态
                     qrCodeData = AsyncData.Loading()
-                    // Wait for the QrCode to be ready
+                    // 重置并启动新的二维码生成流程
                     linkNewMobileHandler.reset()
                     linkNewMobileHandler.createAndStartNewHandler()
                 }
                 LinkNewDeviceRootEvent.CloseDialog -> coroutineScope.launch {
+                    // 关闭错误弹窗时重置流程
                     linkNewMobileHandler.reset()
                 }
             }

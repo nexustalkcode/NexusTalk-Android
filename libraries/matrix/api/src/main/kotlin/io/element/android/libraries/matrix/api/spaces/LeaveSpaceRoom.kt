@@ -10,6 +10,5 @@ package io.element.android.libraries.matrix.api.spaces
 
 data class LeaveSpaceRoom(
     val spaceRoom: SpaceRoom,
-    val isLastOwner: Boolean,
-    val areCreatorsPrivileged: Boolean,
+    val isLastAdmin: Boolean,
 )

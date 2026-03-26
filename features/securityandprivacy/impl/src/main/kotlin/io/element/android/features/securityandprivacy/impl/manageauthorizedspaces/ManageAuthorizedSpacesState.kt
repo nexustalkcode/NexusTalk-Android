@@ -12,6 +12,15 @@ import io.element.android.libraries.matrix.api.spaces.SpaceRoom
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 
+/**
+ * 管理授权空间状态数据类
+ *
+ * @property selectableSpaces 可选的空间集合
+ * @property unknownSpaceIds 未知空间 ID 列表
+ * @property selectedIds 已选中的空间 ID 列表
+ * @property eventSink 事件处理函数
+ * @property isDoneButtonEnabled 完成按钮是否启用
+ */
 data class ManageAuthorizedSpacesState(
     val selectableSpaces: ImmutableSet<SpaceRoom>,
     val unknownSpaceIds: ImmutableList<RoomId>,

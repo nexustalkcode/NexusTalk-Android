@@ -28,14 +28,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import chat.schildi.lib.compose.thenIf
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
-import io.element.android.features.messages.impl.MessagesState
-import io.element.android.features.messages.impl.SharedHistoryIcon
-import io.element.android.features.messages.impl.aMessagesState
 import io.element.android.features.messages.impl.timeline.components.CallMenuItem
 import io.element.android.features.roomcall.api.RoomCallState
 import io.element.android.features.roomcall.api.aStandByCallState
@@ -60,6 +54,26 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 消息视图顶部栏组件
+ *
+ * 消息页面（聊天页面）的顶部栏，显示：
+ * - 返回按钮
+ * - 房间头像和名称（可点击进入房间详情）
+ * - DM用户身份验证状态图标（验证、警告或无）
+ * - 通话按钮（根据通话状态显示）
+ *
+ * @param roomName 房间名称，如果为null则显示"无房间名称"
+ * @param roomAvatar 房间头像数据
+ * @param isTombstoned 是否为已废弃的房间
+ * @param heroes 房间中的重要成员头像列表（用于群组头像显示）
+ * @param roomCallState 房间通话状态
+ * @param dmUserIdentityState DM用户身份验证状态（可选）
+ * @param onRoomDetailsClick 点击房间详情时的回调
+ * @param onJoinCallClick 点击加入通话按钮时的回调
+ * @param onBackClick 点击返回按钮时的回调
+ * @param modifier 视图修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MessagesViewTopBar(
@@ -69,12 +83,9 @@ internal fun MessagesViewTopBar(
     heroes: ImmutableList<AvatarData>,
     roomCallState: RoomCallState,
     dmUserIdentityState: IdentityState?,
-    sharedHistoryIcon: SharedHistoryIcon,
     onRoomDetailsClick: () -> Unit,
-    onJoinCallClick: (isAudioCall: Boolean) -> Unit,
+    onJoinCallClick: () -> Unit,
     onBackClick: () -> Unit,
-    state: MessagesState, // SC
-    onViewAllPinnedMessagesClick: () -> Unit, // SC
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
@@ -97,7 +108,7 @@ internal fun MessagesViewTopBar(
                     roomAvatar = roomAvatar,
                     isTombstoned = isTombstoned,
                     heroes = heroes,
-                    modifier = titleModifier.thenIf(ScPrefs.SC_TIMELINE_LAYOUT.value()) { weight(1f, fill = false) }
+                    modifier = titleModifier
                 )
 
                 when (dmUserIdentityState) {
@@ -117,22 +128,6 @@ internal fun MessagesViewTopBar(
                     }
                     else -> Unit
                 }
-
-                ScTitleAdditions(state)
-
-                when (sharedHistoryIcon) {
-                    SharedHistoryIcon.NONE -> Unit
-                    SharedHistoryIcon.SHARED -> Icon(
-                        imageVector = CompoundIcons.History(),
-                        tint = ElementTheme.colors.iconInfoPrimary,
-                        contentDescription = stringResource(CommonStrings.common_shared_history),
-                    )
-                    SharedHistoryIcon.WORLD_READABLE -> Icon(
-                        imageVector = CompoundIcons.UserProfileSolid(),
-                        tint = ElementTheme.colors.iconInfoPrimary,
-                        contentDescription = stringResource(CommonStrings.common_world_readable_history),
-                    )
-                }
             }
         },
         actions = {
@@ -140,8 +135,7 @@ internal fun MessagesViewTopBar(
                 roomCallState = roomCallState,
                 onJoinCallClick = onJoinCallClick,
             )
-            //Spacer(Modifier.width(8.dp)) // SC: moved to scMessagesViewTopBarActions()
-            scMessagesViewTopBarActions(state, roomCallState, onJoinCallClick, onViewAllPinnedMessagesClick)
+            Spacer(Modifier.width(8.dp))
         },
         windowInsets = WindowInsets(0.dp)
     )
@@ -195,7 +189,6 @@ internal fun MessagesViewTopBarPreview() = ElementPreview {
         heroes: ImmutableList<AvatarData> = persistentListOf(),
         roomCallState: RoomCallState = RoomCallState.Unavailable,
         dmUserIdentityState: IdentityState? = null,
-        sharedHistoryIcon: SharedHistoryIcon = SharedHistoryIcon.NONE,
     ) = MessagesViewTopBar(
         roomName = roomName,
         roomAvatar = roomAvatar,
@@ -203,12 +196,9 @@ internal fun MessagesViewTopBarPreview() = ElementPreview {
         heroes = heroes,
         roomCallState = roomCallState,
         dmUserIdentityState = dmUserIdentityState,
-        sharedHistoryIcon = sharedHistoryIcon,
         onRoomDetailsClick = {},
         onJoinCallClick = {},
         onBackClick = {},
-        state = aMessagesState(), // SC
-        onViewAllPinnedMessagesClick = {}, // SC
     )
     Column {
         AMessagesViewTopBar()
@@ -237,17 +227,6 @@ internal fun MessagesViewTopBarPreview() = ElementPreview {
             roomName = "A DM with a very very very long name",
             isTombstoned = true,
             dmUserIdentityState = IdentityState.VerificationViolation
-        )
-        HorizontalDivider()
-        AMessagesViewTopBar(
-            roomName = "A DM with shared history",
-            dmUserIdentityState = IdentityState.Verified,
-            sharedHistoryIcon = SharedHistoryIcon.SHARED,
-        )
-        HorizontalDivider()
-        AMessagesViewTopBar(
-            roomName = "A room with world_readable history",
-            sharedHistoryIcon = SharedHistoryIcon.WORLD_READABLE,
         )
     }
 }

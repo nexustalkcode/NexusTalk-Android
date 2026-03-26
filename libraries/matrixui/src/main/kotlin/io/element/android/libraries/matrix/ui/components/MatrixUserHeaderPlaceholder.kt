@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.designsystem.atomic.atoms.PlaceholderAtom
@@ -33,6 +34,7 @@ import io.element.android.libraries.designsystem.theme.placeholderBackground
 @Composable
 fun MatrixUserHeaderPlaceholder(
     modifier: Modifier = Modifier,
+    avatarSize: Dp? = null,
 ) {
     Row(
         modifier = modifier
@@ -43,7 +45,7 @@ fun MatrixUserHeaderPlaceholder(
         Box(
             modifier = Modifier
                 .padding(vertical = 12.dp)
-                .size(AvatarSize.UserPreference.dp)
+                .size(avatarSize ?: AvatarSize.UserPreference.dp)
                 .background(color = ElementTheme.colors.placeholderBackground, shape = CircleShape)
         )
         Spacer(modifier = Modifier.width(16.dp))

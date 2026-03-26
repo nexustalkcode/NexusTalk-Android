@@ -12,14 +12,24 @@ import io.element.android.features.location.api.BuildConfig
 import kotlin.math.roundToInt
 
 /**
- * Builds an URL for MapTiler's Static Maps API.
+ * MapTiler 静态地图 URL 构建器
  *
- * https://docs.maptiler.com/cloud/api/static-maps/
+ * 用于构建 MapTiler 静态地图 API 的请求 URL。
+ * 详细 API 文档请参考：https://docs.maptiler.com/cloud/api/static-maps/
+ *
+ * @property baseUrl MapTiler API 基础 URL
+ * @property apiKey MapTiler API 密钥
+ * @property lightMapId 浅色地图样式 ID
+ * @property darkMapId 深色地图样式 ID
  */
 internal class MapTilerStaticMapUrlBuilder(
+    /** MapTiler API 基础 URL */
     private val baseUrl: String,
+    /** MapTiler API 密钥 */
     private val apiKey: String,
+    /** 浅色地图样式 ID */
     private val lightMapId: String,
+    /** 深色地图样式 ID */
     private val darkMapId: String,
 ) : StaticMapUrlBuilder {
     constructor() : this(
@@ -83,6 +93,9 @@ private fun coerceWidthAndHeight(width: Int, height: Int, is2x: Boolean): Pair<I
     }
 }
 
+/** 静态地图宽高范围（1x 缩放），API 超出范围会报错 */
 private val widthHeightRange = 1..2048 // API will error if outside 1-2048 range @1x.
+/** 静态地图宽高范围（2x 缩放），API 超出范围会报错 */
 private val widthHeightRange2x = 1..1024 // API will error if outside 1-1024 range @2x.
+/** 缩放级别范围，API 超出范围会报错 */
 private val zoomRange = 0.0..22.0 // API will error if outside 0-22 range.

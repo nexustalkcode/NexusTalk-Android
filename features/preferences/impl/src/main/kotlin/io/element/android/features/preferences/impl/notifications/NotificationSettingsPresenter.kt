@@ -44,6 +44,24 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * 通知设置 Presenter
+ *
+ * 负责处理通知设置页面的业务逻辑，包括：
+ * - 获取和观察 Matrix 通知设置
+ * - 管理应用通知启用状态
+ * - 处理推送提供商和分发器的切换
+ * - 修复配置不匹配问题
+ *
+ * @property notificationSettingsService 通知设置服务
+ * @property userPushStoreFactory 用户推送存储工厂
+ * @property matrixClient Matrix 客户端
+ * @property pushService 推送服务
+ * @property systemNotificationsEnabledProvider 系统通知启用状态提供者
+ * @property fullScreenIntentPermissionsPresenter 全屏意图权限 Presenter
+ * @property sessionCoroutineScope 会话协程作用域
+ * @see NotificationSettingsState 通知设置状态
+ */
 @Inject
 class NotificationSettingsPresenter(
     private val notificationSettingsService: NotificationSettingsService,
@@ -98,12 +116,30 @@ class NotificationSettingsPresenter(
         var refreshPushProvider by remember { mutableIntStateOf(0) }
 
         LaunchedEffect(refreshPushProvider) {
-            val p = pushService.getCurrentPushProvider(matrixClient.sessionId)
-            val distributor = p?.getCurrentDistributor(matrixClient.sessionId)
+            val pushProvider = pushService.getCurrentPushProvider(matrixClient.sessionId)
+            val distributor = pushProvider?.getCurrentDistributor(matrixClient.sessionId)
             currentDistributor = if (distributor != null) {
                 AsyncData.Success(distributor)
             } else {
-                AsyncData.Failure(Exception("Failed to get current push provider"))
+                val firebaseFallback = distributors.firstOrNull { (provider, fallbackDistributor) ->
+                    provider.name == FIREBASE_PROVIDER_NAME && fallbackDistributor.value == FIREBASE_PROVIDER_NAME
+                }
+                firebaseFallback?.let { (provider, fallbackDistributor) ->
+                    pushService.registerWith(
+                        matrixClient = matrixClient,
+                        pushProvider = provider,
+                        distributor = fallbackDistributor
+                    ).fold(
+                        onSuccess = {
+                            refreshPushProvider++
+                            Unit
+                        },
+                        onFailure = {
+                            currentDistributor = AsyncData.Failure(it)
+                        }
+                    )
+                    AsyncData.Loading(currentDistributor.dataOrNull())
+                } ?: AsyncData.Failure(Exception("Failed to get current push provider"))
             }
         }
 
@@ -270,5 +306,9 @@ class NotificationSettingsPresenter(
         } else {
             pushService.getCurrentPushProvider(matrixClient.sessionId)?.unregister(matrixClient)
         }
+    }
+
+    private companion object {
+        const val FIREBASE_PROVIDER_NAME = "Firebase"
     }
 }

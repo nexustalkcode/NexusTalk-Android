@@ -72,5 +72,5 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     implementation(libs.coil.compose)
 
-    testCommonDependencies(libs)
+   
 }

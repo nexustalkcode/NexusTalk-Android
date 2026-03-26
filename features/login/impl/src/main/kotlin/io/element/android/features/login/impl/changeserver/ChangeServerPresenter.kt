@@ -25,6 +25,19 @@ import io.element.android.libraries.matrix.api.auth.MatrixAuthenticationService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 更改服务器Presenter
+ *
+ * 负责处理更改账户提供商（homeserver）的业务逻辑。
+ * 验证用户选择的服务器是否允许连接，检查服务器是否支持 Matrix 协议，
+ * 并将有效的服务器保存到数据源中。
+ *
+ * @property authenticationService Matrix 认证服务，用于设置 homeserver
+ * @property accountProviderDataSource 账户提供商数据源，用于保存用户选择的服务器
+ * @property defaultAccountProviderAccessControl 访问控制验证
+ * @see ChangeServerState 对应的 UI 状态
+ * @see ChangeServerEvents 用户交互事件
+ */
 @Inject
 class ChangeServerPresenter(
     private val authenticationService: MatrixAuthenticationService,

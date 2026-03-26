@@ -8,7 +8,6 @@
 
 package io.element.android.libraries.matrix.impl.room
 
-import chat.schildi.matrixsdk.ScTimelineFilterSettings
 import io.element.android.appconfig.TimelineConfig
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
 import io.element.android.libraries.featureflag.api.FeatureFlagService
@@ -58,7 +57,7 @@ class RustRoomFactory(
     private val roomListService: RoomListService,
     private val innerRoomListService: InnerRoomListService,
     private val roomSyncSubscriber: RoomSyncSubscriber,
-    private val timelineEventFilterFactory: TimelineEventFilterFactory,
+    private val timelineEventTypeFilterFactory: TimelineEventTypeFilterFactory,
     private val featureFlagService: FeatureFlagService,
     private val roomMembershipObserver: RoomMembershipObserver,
     private val roomInfoMapper: RoomInfoMapper,
@@ -71,7 +70,7 @@ class RustRoomFactory(
     private val eventFilters = TimelineConfig.excludedEvents
         .takeIf { it.isNotEmpty() }
         ?.let { listStateEventType ->
-            timelineEventFilterFactory.create(listStateEventType)
+            timelineEventTypeFilterFactory.create(listStateEventType)
         }
 
     suspend fun destroy() {
@@ -106,7 +105,7 @@ class RustRoomFactory(
         sessionCoroutineScope = sessionCoroutineScope,
     )
 
-    suspend fun getJoinedRoomOrPreview(roomId: RoomId, serverNames: List<String>, scTimelineFilterSettings: ScTimelineFilterSettings): GetRoomResult? = withContext(dispatcher) {
+    suspend fun getJoinedRoomOrPreview(roomId: RoomId, serverNames: List<String>): GetRoomResult? = withContext(dispatcher) {
         mutex.withLock {
             if (isDestroyed.get()) {
                 Timber.d("Room factory is destroyed, returning null for $roomId")
@@ -134,8 +133,7 @@ class RustRoomFactory(
                             sdkRoom.timelineWithConfiguration(
                                 TimelineConfiguration(
                                     focus = TimelineFocus.Live(hideThreadedEvents = hideThreadedEvents),
-                                    //filter = eventFilters?.let(TimelineFilter::EventFilter) ?: TimelineFilter.All,
-                                    filter = eventFilters.scTimelineFilter(scTimelineFilterSettings),
+                                    filter = eventFilters?.let(TimelineFilter::EventTypeFilter) ?: TimelineFilter.All,
                                     internalIdPrefix = "live",
                                     dateDividerMode = DateDividerMode.DAILY,
                                     trackReadReceipts = TimelineReadReceiptTracking.ALL_EVENTS,

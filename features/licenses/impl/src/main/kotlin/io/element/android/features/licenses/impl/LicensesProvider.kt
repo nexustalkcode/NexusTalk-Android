@@ -19,15 +19,44 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 
+/**
+ * 许可证提供者接口
+ *
+ * 定义获取依赖项许可证列表的功能接口。
+ *
+ * @see AssetLicensesProvider 默认实现
+ */
 interface LicensesProvider {
+    /**
+     * 提供许可证列表
+     *
+     * @return 依赖项许可证列表
+     */
     suspend fun provides(): List<DependencyLicenseItem>
 }
 
+/**
+ * 从 Assets 加载许可证的提供者实现
+ *
+ * 从应用的 assets 目录加载 licensee-artifacts.json 文件，
+ * 解析并返回依赖项许可证列表。
+ *
+ * @property context 应用上下文
+ * @property dispatchers 协程调度器
+ * @see LicensesProvider 许可证提供者接口
+ */
 @ContributesBinding(AppScope::class)
 class AssetLicensesProvider(
     @ApplicationContext private val context: Context,
     private val dispatchers: CoroutineDispatchers,
 ) : LicensesProvider {
+    /**
+     * 提供许可证列表
+     *
+     * 从 assets 加载并解析许可证数据，按名称排序返回。
+     *
+     * @return 排序后的依赖项许可证列表
+     */
     @OptIn(ExperimentalSerializationApi::class)
     override suspend fun provides(): List<DependencyLicenseItem> {
         return withContext(dispatchers.io) {

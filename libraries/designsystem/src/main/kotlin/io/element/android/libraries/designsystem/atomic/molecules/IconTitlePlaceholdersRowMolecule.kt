@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 图标标题占位符行分子组件
+ *
+ * 用于在加载状态显示图标和标题占位符的组件。
+ * 包含一个圆形图标占位符和多个文本占位符。
+ * 常用于列表项加载骨架屏中的图标和标题区域。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.molecules
 
 import androidx.compose.foundation.background
@@ -28,6 +39,29 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.placeholderBackground
 
+/**
+ * 图标标题占位符行组件
+ *
+ * 创建一个包含图标占位符和多个标题占位符的行布局。
+ * 适用于显示列表项在加载过程中的占位效果。
+ *
+ * @param iconSize Dp 图标占位符的尺寸大小
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ * @param horizontalArrangement Arrangement.Horizontal 水平排列方式，默认为 Arrangement.Start
+ * @param verticalAlignment Alignment.Vertical 垂直对齐方式，默认为 Alignment.CenterVertically
+ *
+ * @return Unit
+ *
+ * @see [PlaceholderAtom] 占位符组件
+ * @see [AvatarSize] 头像尺寸规格
+ *
+ * @example
+ * ```kotlin
+ * IconTitlePlaceholdersRowMolecule(
+ *     iconSize = AvatarSize.TimelineRoom.dp
+ * )
+ * ```
+ */
 @Composable
 fun IconTitlePlaceholdersRowMolecule(
     iconSize: Dp,
@@ -54,6 +88,12 @@ fun IconTitlePlaceholdersRowMolecule(
     }
 }
 
+/**
+ * IconTitlePlaceholdersRowMolecule 预览组件
+ *
+ * 用于在设计预览中展示 IconTitlePlaceholdersRowMolecule 组件的默认状态。
+ * 此预览函数支持日夜两种主题模式。
+ */
 @PreviewsDayNight
 @Composable
 internal fun IconTitlePlaceholdersRowMoleculePreview() = ElementPreview {

@@ -41,6 +41,6 @@ dependencies {
     implementation(projects.features.startchat.api)
     implementation(projects.services.analytics.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
 }

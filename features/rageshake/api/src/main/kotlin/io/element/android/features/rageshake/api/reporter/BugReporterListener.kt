@@ -9,30 +9,40 @@
 package io.element.android.features.rageshake.api.reporter
 
 /**
- * Bug report upload listener.
+ * 问题报告上传监听器接口
+ *
+ * 监听问题报告上传过程中的各种事件，包括进度、成功和失败状态。
  */
 interface BugReporterListener {
     /**
-     * The bug report has been cancelled.
+     * 上传已取消
+     *
+     * 当用户取消问题报告上传时调用。
      */
     fun onUploadCancelled()
 
     /**
-     * The bug report upload failed.
+     * 上传失败
      *
-     * @param reason the failure reason
+     * 当问题报告上传失败时调用。
+     *
+     * @param reason 失败原因
      */
     fun onUploadFailed(reason: String?)
 
     /**
-     * The upload progress (in percent).
+     * 上传进度更新
      *
-     * @param progress the upload progress
+     * 上传进度更新回调，以百分比表示。
+     *
+     * @param progress 上传进度（0-100）
      */
     fun onProgress(progress: Int)
 
     /**
-     * The bug report upload succeeded.
+     * 上传成功
+     *
+     * 当问题报告成功上传时调用。
      */
     fun onUploadSucceed()
 }

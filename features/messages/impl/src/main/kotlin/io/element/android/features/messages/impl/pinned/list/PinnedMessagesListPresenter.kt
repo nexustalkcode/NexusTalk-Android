@@ -61,6 +61,25 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 固定消息列表 Presenter
+ *
+ * 负责处理固定消息列表界面的业务逻辑和状态管理。
+ * 管理固定消息的展示、取消固定和导航功能。
+ *
+ * @property navigator 固定消息列表导航器
+ * @property room 已加入的房间
+ * @property timelineItemsFactoryCreator 时间线项工厂创建者
+ * @property timelineProvider 固定事件时间线提供者
+ * @property timelineProtectionPresenter 时间线保护 Presenter
+ * @property linkPresenter 链接 Presenter
+ * @property snackbarDispatcher Snackbar 调度器
+ * @property actionListPresenter 操作列表 Presenter
+ * @property sessionCoroutineScope 会话级别的协程作用域
+ * @property analyticsService 分析服务
+ * @property featureFlagService 功能标志服务
+ * @property htmlConverterProvider HTML转换器提供者
+ */
 @AssistedInject
 class PinnedMessagesListPresenter(
     @Assisted private val navigator: PinnedMessagesListNavigator,
@@ -77,8 +96,18 @@ class PinnedMessagesListPresenter(
     private val featureFlagService: FeatureFlagService,
     private val htmlConverterProvider: HtmlConverterProvider,
 ) : Presenter<PinnedMessagesListState> {
+    /**
+     * 工厂接口
+     */
     @AssistedFactory
     interface Factory {
+        /**
+         * 创建 Presenter 实例
+         *
+         * @param navigator 固定消息列表导航器
+         * @param actionListPresenter 操作列表 Presenter
+         * @return PinnedMessagesListPresenter 实例
+         */
         fun create(
             navigator: PinnedMessagesListNavigator,
             actionListPresenter: Presenter<ActionListState>,
@@ -92,6 +121,11 @@ class PinnedMessagesListPresenter(
         )
     )
 
+    /**
+     * 生成界面状态
+     *
+     * @return PinnedMessagesListState 固定消息列表状态
+     */
     @Composable
     override fun present(): PinnedMessagesListState {
         htmlConverterProvider.Update()
@@ -101,12 +135,12 @@ class PinnedMessagesListPresenter(
                 TimelineRoomInfo(
                     isDm = roomInfo.isDm,
                     name = roomInfo.name,
-                    // We don't need to compute those values
+                    // 我们不需要计算这些值
                     userHasPermissionToSendMessage = false,
                     userHasPermissionToSendReaction = false,
-                    // We do not care about the call state here.
+                    // 我们不关心这里的通话状态。
                     roomCallState = aStandByCallState(),
-                    // don't compute this value or the pin icon will be shown
+                    // 不要计算这个值，否则会显示图钉图标
                     pinnedEventIds = persistentListOf(),
                     typingNotificationState = TypingNotificationState(
                         renderTypingNotifications = false,
@@ -134,9 +168,14 @@ class PinnedMessagesListPresenter(
             }
         )
 
-        fun handleEvent(event: PinnedMessagesListEvent) {
+        /**
+         * 处理用户事件
+         *
+         * @param event 固定消息列表事件
+         */
+        fun handleEvent(event: PinnedMessagesListEvents) {
             when (event) {
-                is PinnedMessagesListEvent.HandleAction -> sessionCoroutineScope.handleTimelineAction(event.action, event.event)
+                is PinnedMessagesListEvents.HandleAction -> sessionCoroutineScope.handleTimelineAction(event.action, event.event)
             }
         }
 
@@ -151,6 +190,12 @@ class PinnedMessagesListPresenter(
         )
     }
 
+    /**
+     * 处理时间线操作
+     *
+     * @param action 时间线操作
+     * @param targetEvent 目标事件
+     */
     private fun CoroutineScope.handleTimelineAction(
         action: TimelineItemAction,
         targetEvent: TimelineItem.Event,
@@ -175,6 +220,11 @@ class PinnedMessagesListPresenter(
         }
     }
 
+    /**
+     * 处理取消固定操作
+     *
+     * @param targetEvent 目标事件
+     */
     private suspend fun handleUnpinAction(targetEvent: TimelineItem.Event) {
         if (targetEvent.eventId == null) return
         analyticsService.capture(
@@ -192,6 +242,11 @@ class PinnedMessagesListPresenter(
         }
     }
 
+    /**
+     * 固定消息列表副作用处理
+     *
+     * @param onItemsChange 项目变化回调
+     */
     @Composable
     private fun PinnedMessagesListEffect(onItemsChange: (AsyncData<ImmutableList<TimelineItem>>) -> Unit) {
         val updatedOnItemsChange by rememberUpdatedState(onItemsChange)
@@ -224,6 +279,18 @@ class PinnedMessagesListPresenter(
         }
     }
 
+    /**
+     * 生成固定消息列表状态
+     *
+     * @param timelineRoomInfo 时间线房间信息
+     * @param timelineProtectionState 时间线保护状态
+     * @param displayThreadSummaries 是否显示线程摘要
+     * @param linkState 链接状态
+     * @param userEventPermissions 用户事件权限
+     * @param timelineItems 时间线项目
+     * @param eventSink 事件处理函数
+     * @return PinnedMessagesListState 固定消息列表状态
+     */
     @Composable
     private fun pinnedMessagesListState(
         timelineRoomInfo: TimelineRoomInfo,
@@ -232,7 +299,7 @@ class PinnedMessagesListPresenter(
         linkState: LinkState,
         userEventPermissions: UserEventPermissions,
         timelineItems: AsyncData<ImmutableList<TimelineItem>>,
-        eventSink: (PinnedMessagesListEvent) -> Unit
+        eventSink: (PinnedMessagesListEvents) -> Unit
     ): PinnedMessagesListState {
         return when (timelineItems) {
             AsyncData.Uninitialized, is AsyncData.Loading -> PinnedMessagesListState.Loading

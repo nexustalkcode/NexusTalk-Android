@@ -44,6 +44,20 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Text
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 打字通知视图组件
+ *
+ * 负责显示房间中正在打字的成员通知。
+ * 根据正在打字的成员数量显示不同的文字：
+ * - 1人：显示 "[成员] 正在输入..."
+ * - 2人：显示 "[成员1] 和 [成员2] 正在输入..."
+ * - 3人及以上：显示 "[成员1]、[成员2] 和其他 [N] 人正在输入..."
+ *
+ * 使用AnimatedVisibility实现平滑的显示/隐藏动画效果。
+ *
+ * @param state 当前打字通知状态
+ * @param modifier 视图修饰符
+ */
 @Suppress("MultipleEmitters") // False positive
 @Composable
 fun TypingNotificationView(

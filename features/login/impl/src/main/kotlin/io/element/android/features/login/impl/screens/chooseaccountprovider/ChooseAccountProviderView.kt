@@ -46,6 +46,20 @@ import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.matrix.api.auth.OidcDetails
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 选择账户提供商视图组件
+ *
+ * 用于显示账户提供商列表并允许用户选择的可组合组件。
+ * 展示可用服务器选项，支持单选和继续操作。
+ *
+ * @param state 选择账户提供商状态
+ * @param onBackClick 返回按钮回调
+ * @param onOidcDetails OIDC 详情回调
+ * @param onNeedLoginPassword 需要密码登录回调
+ * @param onLearnMoreClick 了解更多回调
+ * @param onCreateAccountContinue 继续创建账户回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun ChooseAccountProviderView(
     state: ChooseAccountProviderState,

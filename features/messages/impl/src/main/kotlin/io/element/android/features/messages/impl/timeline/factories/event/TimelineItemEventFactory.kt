@@ -66,14 +66,7 @@ class TimelineItemEventFactory(
             timestamp = currentTimelineItem.event.timestamp,
             mode = DateFormatterMode.TimeOnly,
         )
-        val sentDate = dateFormatter.format( // SC
-            timestamp = currentTimelineItem.event.timestamp,
-            mode = DateFormatterMode.Day,
-            useRelative = true,
-        )
-        val senderMember = roomMembers.find { it.userId == currentSender } // SC
         val senderAvatarData = AvatarData(
-            powerLevel = senderMember?.powerLevel, // SC
             id = currentSender.value,
             name = senderProfile.getDisambiguatedDisplayName(currentSender),
             url = senderProfile.getAvatarUrl(),
@@ -115,7 +108,6 @@ class TimelineItemEventFactory(
             canBeRepliedTo = currentTimelineItem.event.canBeRepliedTo,
             sentTimeMillis = currentTimelineItem.event.timestamp,
             sentTime = sentTime,
-            sentDate = sentDate, // SC
             groupPosition = groupPosition,
             reactionsState = currentTimelineItem.computeReactionsState(),
             readReceiptState = currentTimelineItem.computeReadReceiptState(roomMembers),

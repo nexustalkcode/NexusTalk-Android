@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.buildSpannedString
-import chat.schildi.theme.ScTheme
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.element.android.compound.theme.ElementTheme
@@ -77,10 +76,10 @@ class MentionSpanTheme(val currentUserId: UserId) {
     @Suppress("ComposableNaming")
     @Composable
     fun updateStyles() {
-        currentUserTextColor = ScTheme.exposures.mentionFgLegacy?.toArgb() ?: ElementTheme.colors.textBadgeAccent.toArgb()
-        currentUserBackgroundColor = ScTheme.exposures.mentionBgLegacy?.toArgb() ?: ElementTheme.colors.bgBadgeAccent.toArgb()
+        currentUserTextColor = ElementTheme.colors.textBadgeAccent.toArgb()
+        currentUserBackgroundColor = ElementTheme.colors.bgBadgeAccent.toArgb()
         otherTextColor = ElementTheme.colors.textPrimary.toArgb()
-        otherBackgroundColor = ScTheme.exposures.mentionBgOtherLegacy?.toArgb() ?: ElementTheme.colors.bgBadgeDefault.toArgb()
+        otherBackgroundColor = ElementTheme.colors.bgBadgeDefault.toArgb()
 
         typeface.value = ElementTheme.typography.fontBodyLgMedium.rememberTypeface().value
         val density = LocalDensity.current

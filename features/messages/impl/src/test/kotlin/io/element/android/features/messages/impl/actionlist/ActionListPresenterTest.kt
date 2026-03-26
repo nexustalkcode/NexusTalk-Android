@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.actionlist
 
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.moleculeFlow
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.messages.impl.aUserEventPermissions
 import io.element.android.features.messages.impl.actionlist.model.TimelineItemAction
@@ -59,7 +62,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - initial state`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.target).isEqualTo(ActionListState.Target.None)
         }
@@ -68,11 +73,13 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for message from me redacted`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(isMine = true, isEditable = false, content = TimelineItemRedactedContent)
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -96,7 +103,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -104,7 +111,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for message from others redacted`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = false,
@@ -112,7 +121,7 @@ class ActionListPresenterTest {
                 content = TimelineItemRedactedContent
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -136,7 +145,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -144,7 +153,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for others message`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = false,
@@ -152,7 +163,7 @@ class ActionListPresenterTest {
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -182,7 +193,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -199,7 +210,7 @@ class ActionListPresenterTest {
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -229,7 +240,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -237,7 +248,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for others message cannot sent message`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = false,
@@ -245,7 +258,7 @@ class ActionListPresenterTest {
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -274,7 +287,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -282,7 +295,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for others message and can redact`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = false,
@@ -290,7 +305,7 @@ class ActionListPresenterTest {
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -321,7 +336,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -329,7 +344,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for others message and cannot send reaction`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = false,
@@ -337,7 +354,7 @@ class ActionListPresenterTest {
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -368,7 +385,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -376,14 +393,16 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for my message`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -414,7 +433,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -430,7 +449,7 @@ class ActionListPresenterTest {
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -461,7 +480,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -469,14 +488,16 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for my message cannot redact`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -506,7 +527,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -514,14 +535,16 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for my message no permission`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -548,7 +571,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -556,7 +579,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for a media item`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
@@ -564,7 +589,7 @@ class ActionListPresenterTest {
                 content = aTimelineItemImageContent(),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -594,7 +619,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -602,7 +627,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for a media with caption item`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
@@ -612,7 +639,7 @@ class ActionListPresenterTest {
                 ),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -644,7 +671,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -652,7 +679,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for a media with caption item - other user event`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = false,
@@ -662,7 +691,7 @@ class ActionListPresenterTest {
                 ),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -692,7 +721,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -700,14 +729,16 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for a state item in debug build`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val stateEvent = aTimelineItemEvent(
                 isMine = true,
                 content = aTimelineItemStateEventContent(),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = stateEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -731,7 +762,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -739,14 +770,16 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for a state item in non-debuggable build`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = false)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val stateEvent = aTimelineItemEvent(
                 isMine = true,
                 content = aTimelineItemStateEventContent(),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = stateEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -764,14 +797,16 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute message in non-debuggable build`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = false)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -801,7 +836,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -809,14 +844,16 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute message when user can't pin`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -846,7 +883,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -860,14 +897,16 @@ class ActionListPresenterTest {
             isDeveloperModeEnabled = true,
             room = room
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
                 content = TimelineItemTextContent(body = A_MESSAGE, htmlDocument = null, isEdited = false, formattedBody = A_MESSAGE)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -898,7 +937,7 @@ class ActionListPresenterTest {
                     recentEmojis = suggestedEmojis,
                 )
             )
-            initialState.eventSink.invoke(ActionListEvent.Clear)
+            initialState.eventSink.invoke(ActionListEvents.Clear)
             assertThat(awaitItem().target).isEqualTo(ActionListState.Target.None)
         }
     }
@@ -906,7 +945,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute message with no actions`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = false)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
@@ -918,7 +959,7 @@ class ActionListPresenterTest {
             )
 
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -932,7 +973,7 @@ class ActionListPresenterTest {
             assertThat(awaitItem().target).isInstanceOf(ActionListState.Target.Success::class.java)
 
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = redactedEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = false,
@@ -951,7 +992,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute not sent message`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = false)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 // No event id, so it's not sent yet
@@ -962,7 +1005,7 @@ class ActionListPresenterTest {
             )
 
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -994,7 +1037,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for editable poll message`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = false)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
@@ -1002,7 +1047,7 @@ class ActionListPresenterTest {
                 content = aTimelineItemPollContent(answerItems = aPollAnswerItemList(hasVotes = false)),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -1037,7 +1082,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for non-editable poll message`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = false)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
@@ -1045,7 +1092,7 @@ class ActionListPresenterTest {
                 content = aTimelineItemPollContent(answerItems = aPollAnswerItemList(hasVotes = true)),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -1079,7 +1126,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for ended poll message`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = false)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
@@ -1087,7 +1136,7 @@ class ActionListPresenterTest {
                 content = aTimelineItemPollContent(isEnded = true),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -1120,7 +1169,9 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for voice message`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = false)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
@@ -1130,7 +1181,7 @@ class ActionListPresenterTest {
                 ),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -1164,14 +1215,16 @@ class ActionListPresenterTest {
     @Test
     fun `present - compute for call notify`() = runTest {
         val presenter = createActionListPresenter(isDeveloperModeEnabled = true)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
                 content = TimelineItemRtcNotificationContent(),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -1203,13 +1256,15 @@ class ActionListPresenterTest {
             userDisplayNameResult = { Result.success("Alice") }
         )
         val presenter = createActionListPresenter(isDeveloperModeEnabled = false, room = room)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 sendState = LocalEventSendState.Failed.VerifiedUserChangedIdentity(users = listOf(A_USER_ID)),
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(),
                 )
@@ -1228,7 +1283,9 @@ class ActionListPresenterTest {
             timelineMode = Timeline.Mode.Thread(A_THREAD_ID),
             featureFlagService = FakeFeatureFlagService(initialState = mapOf(FeatureFlags.Threads.key to true)),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 isMine = true,
@@ -1239,7 +1296,7 @@ class ActionListPresenterTest {
                 threadInfo = TimelineItemThreadInfo.ThreadResponse(threadRootId = A_THREAD_ID)
             )
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -1277,7 +1334,9 @@ class ActionListPresenterTest {
             isDeveloperModeEnabled = false,
             featureFlagService = FakeFeatureFlagService(initialState = mapOf(FeatureFlags.Threads.key to true)),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 eventId = AN_EVENT_ID,
@@ -1291,7 +1350,7 @@ class ActionListPresenterTest {
             assertThat(messageEvent.isRemote).isTrue()
 
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -1329,7 +1388,9 @@ class ActionListPresenterTest {
             isDeveloperModeEnabled = false,
             featureFlagService = FakeFeatureFlagService(initialState = mapOf(FeatureFlags.Threads.key to true)),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 eventId = AN_EVENT_ID,
@@ -1344,7 +1405,7 @@ class ActionListPresenterTest {
             assertThat(messageEvent.isRemote).isTrue()
 
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -1382,7 +1443,9 @@ class ActionListPresenterTest {
             isDeveloperModeEnabled = false,
             featureFlagService = FakeFeatureFlagService(initialState = mapOf(FeatureFlags.Threads.key to true)),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 eventId = null,
@@ -1397,7 +1460,7 @@ class ActionListPresenterTest {
             assertThat(messageEvent.isRemote).isFalse()
 
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,
@@ -1435,7 +1498,9 @@ class ActionListPresenterTest {
             isDeveloperModeEnabled = false,
             recentEmojis = GetRecentEmojis { Result.success((listOf("👍️", ":)", "❤️") + otherEmojis).toImmutableList()) },
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             val messageEvent = aMessageEvent(
                 eventId = null,
@@ -1448,7 +1513,7 @@ class ActionListPresenterTest {
             )
 
             initialState.eventSink.invoke(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = messageEvent,
                     userEventPermissions = aUserEventPermissions(
                         canRedactOwn = true,

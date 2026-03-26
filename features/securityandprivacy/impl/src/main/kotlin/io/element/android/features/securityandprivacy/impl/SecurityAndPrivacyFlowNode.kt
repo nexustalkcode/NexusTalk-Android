@@ -40,11 +40,25 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 安全与隐私流程节点
+ *
+ * 安全与隐私功能的主流程节点，继承自 BaseFlowNode。
+ * 管理整个安全与隐私设置的导航流程，包括：
+ * - 主安全与隐私设置页面
+ * - 编辑房间地址页面
+ * - 管理授权空间页面
+ *
+ * @property room 已加入的房间，用于获取和修改房间的安全与隐私设置
+ * @see BaseFlowNode 基础流程节点
+ * @see NavTarget 导航目标
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class SecurityAndPrivacyFlowNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
+    /** 已加入的房间，用于获取和修改房间设置 */
     private val room: JoinedRoom,
 ) : BaseFlowNode<SecurityAndPrivacyFlowNode.NavTarget>(
     backstack = BackStack(
@@ -54,13 +68,21 @@ class SecurityAndPrivacyFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 导航目标密封接口
+     *
+     * 定义安全与隐私流程中可能的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
+        /** 主安全与隐私设置页面 */
         @Parcelize
         data object SecurityAndPrivacy : NavTarget
 
+        /** 编辑房间地址页面 */
         @Parcelize
         data object EditRoomAddress : NavTarget
 
+        /** 管理授权空间页面 */
         @Parcelize
         data object ManageAuthorizedSpaces : NavTarget
     }

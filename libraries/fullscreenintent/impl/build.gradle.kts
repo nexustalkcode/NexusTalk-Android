@@ -29,7 +29,7 @@ dependencies {
     implementation(projects.services.toolbox.api)
     implementation(libs.androidx.datastore.preferences)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.permissions.test)
     testImplementation(projects.libraries.preferences.test)

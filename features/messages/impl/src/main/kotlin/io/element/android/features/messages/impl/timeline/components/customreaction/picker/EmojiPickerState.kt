@@ -16,6 +16,16 @@ import io.element.android.libraries.designsystem.theme.components.IconSource
 import io.element.android.libraries.designsystem.theme.components.SearchBarResultState
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 表情选择器状态数据类
+ *
+ * @property categories 表情类别列表
+ * @property allEmojis 所有表情列表
+ * @property searchQuery 搜索查询的文本字段状态
+ * @property isSearchActive 搜索是否处于活动状态
+ * @property searchResults 搜索结果状态
+ * @property eventSink 事件处理函数
+ */
 // Emoji is unstable (because from an external library?), so we annotate with @Immutable
 @Immutable
 data class EmojiPickerState(
@@ -24,7 +34,7 @@ data class EmojiPickerState(
     val searchQuery: TextFieldState,
     val isSearchActive: Boolean,
     val searchResults: SearchBarResultState<ImmutableList<Emoji>>,
-    val eventSink: (EmojiPickerEvent) -> Unit,
+    val eventSink: (EmojiPickerEvents) -> Unit,
 )
 
 /**

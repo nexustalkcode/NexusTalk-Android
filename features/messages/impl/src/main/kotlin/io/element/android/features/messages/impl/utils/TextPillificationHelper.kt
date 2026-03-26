@@ -28,10 +28,33 @@ import io.element.android.libraries.textcomposer.mentions.getMentionSpans
 import io.element.android.wysiwyg.view.spans.CodeBlockSpan
 import io.element.android.wysiwyg.view.spans.InlineCodeSpan
 
+/**
+ * 文本胶囊化助手接口
+ *
+ * 负责将文本中的特定模式（如Matrix用户ID、房间别名、提及等）
+ * 转换为可点击的"胶囊"样式显示。
+ *
+ * @see DefaultTextPillificationHelper 默认实现
+ */
 interface TextPillificationHelper {
     fun pillify(text: CharSequence, pillifyPermalinks: Boolean = true): CharSequence
 }
 
+/**
+ * 默认文本胶囊化助手实现类
+ *
+ * 实现 TextPillificationHelper 接口，将文本中的Matrix特定模式转换为胶囊样式：
+ * 1. Matrix用户ID（如 @user:matrix.org） - 转换为用户提及胶囊
+ * 2. 房间别名（如 #room:matrix.org） - 转换为房间提及胶囊
+ * 3. @room 提及 - 转换为全体成员提及胶囊
+ * 4. 链接 - 转换为链接胶囊
+ *
+ * 使用 @ContributesBinding 注解绑定到 RoomScope。
+ *
+ * @property mentionSpanProvider 提及样式提供器
+ * @property permalinkParser 永久链接解析器
+ * @property permalinkBuilder 永久链接构建器
+ */
 @ContributesBinding(RoomScope::class)
 class DefaultTextPillificationHelper(
     private val mentionSpanProvider: MentionSpanProvider,

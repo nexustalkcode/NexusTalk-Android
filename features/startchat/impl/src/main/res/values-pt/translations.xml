@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"Sala correspondente encontrado"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Sala não encontrada"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"por exemplo, #sala:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"Digitalizar código QR"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Digitalize o código QR para adicionar um contacto"</string>
+  <string name="screen_scan_user_qr_code_success">"Código QR digitalizado com sucesso"</string>
 </resources>

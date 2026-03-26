@@ -17,6 +17,21 @@ import io.element.android.libraries.matrix.api.tracing.TraceLogPack
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 
+/**
+ * 开发者设置页面状态数据类
+ *
+ * @property features 功能标志列表
+ * @property cacheSize 缓存大小
+ * @property databaseSizes 数据库大小
+ * @property rageshakeState 崩溃报告偏好状态
+ * @property clearCacheAction 清除缓存操作状态
+ * @property customElementCallBaseUrlState 自定义 Element Call 基础 URL 状态
+ * @property tracingLogLevel 追踪日志级别
+ * @property tracingLogPacks 追踪日志包列表
+ * @property isEnterpriseBuild 是否为企业版构建
+ * @property showColorPicker 是否显示颜色选择器
+ * @property eventSink 事件处理函数
+ */
 data class DeveloperSettingsState(
     val features: ImmutableList<FeatureUiModel>,
     val cacheSize: AsyncData<String>,
@@ -30,9 +45,16 @@ data class DeveloperSettingsState(
     val showColorPicker: Boolean,
     val eventSink: (DeveloperSettingsEvents) -> Unit
 ) {
+    /** 是否显示加载指示器 */
     val showLoader = clearCacheAction is AsyncAction.Loading
 }
 
+/**
+ * 自定义 Element Call 基础 URL 状态数据类
+ *
+ * @property baseUrl 基础 URL
+ * @property validator URL 验证函数
+ */
 data class CustomElementCallBaseUrlState(
     val baseUrl: String?,
     val validator: (String?) -> Boolean,

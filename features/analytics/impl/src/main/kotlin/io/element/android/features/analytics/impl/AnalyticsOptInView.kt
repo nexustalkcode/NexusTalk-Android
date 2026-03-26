@@ -46,6 +46,17 @@ import io.element.android.libraries.designsystem.theme.components.TextButton
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 分析功能选择视图组件
+ *
+ * 使用 Jetpack Compose 实现分析功能选择的用户界面。
+ * 展示分析功能的介绍、隐私政策和接受/拒绝按钮。
+ * 按返回键会拒绝分析。
+ *
+ * @param state 当前视图状态
+ * @param onClickTerms 点击隐私政策链接回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun AnalyticsOptInView(
     state: AnalyticsOptInState,
@@ -80,8 +91,17 @@ fun AnalyticsOptInView(
     )
 }
 
+/** 链接标签常量 */
 private const val LINK_TAG = "link"
 
+/**
+ * 分析功能选择视图头部组件
+ *
+ * 展示应用名称、介绍文字和隐私政策链接。
+ *
+ * @param state 当前视图状态
+ * @param onClickTerms 点击隐私政策链接回调
+ */
 @Composable
 private fun AnalyticsOptInHeader(
     state: AnalyticsOptInState,
@@ -120,6 +140,11 @@ private fun AnalyticsOptInHeader(
     }
 }
 
+/**
+ * 分析功能选择视图内容组件
+ *
+ * 展示分析功能的数据使用说明列表。
+ */
 @Composable
 private fun AnalyticsOptInContent() {
     Box(
@@ -150,6 +175,14 @@ private fun AnalyticsOptInContent() {
     }
 }
 
+/**
+ * 分析功能选择视图底部组件
+ *
+ * 展示接受和拒绝按钮。
+ *
+ * @param onAcceptTerms 接受分析按钮点击回调
+ * @param onDeclineTerms 拒绝分析按钮点击回调
+ */
 @Composable
 private fun AnalyticsOptInFooter(
     onAcceptTerms: () -> Unit,
@@ -170,6 +203,13 @@ private fun AnalyticsOptInFooter(
     }
 }
 
+/**
+ * 分析功能选择视图预览组件
+ *
+ * 用于在 Android Studio 预览中展示分析选择视图 UI。
+ *
+ * @param state 预览状态
+ */
 @PreviewsDayNight
 @Composable
 internal fun AnalyticsOptInViewPreview(@PreviewParameter(AnalyticsOptInStateProvider::class) state: AnalyticsOptInState) = ElementPreview {

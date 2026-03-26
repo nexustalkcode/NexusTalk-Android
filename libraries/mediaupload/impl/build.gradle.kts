@@ -41,7 +41,7 @@ dependencies {
     implementation(libs.coroutines.core)
     implementation(libs.vanniktech.blurhash)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.services.toolbox.test)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.preferences.test)

@@ -48,8 +48,8 @@ dependencies {
     implementation(projects.libraries.permissions.noop)
     implementation(projects.services.toolbox.api)
     implementation(projects.appconfig)
+    implementation(projects.appicon.element)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.services.analytics.test)
     testImplementation(projects.services.analytics.noop)

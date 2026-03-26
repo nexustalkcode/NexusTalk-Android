@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"می‌توانید بعداً تنظیماتتان را تغییر دهید."</string>
   <string name="screen_notification_optin_title">"اجازه به آگاهی‌ها و از دست ندادن پیام‌ها"</string>
   <string name="screen_session_verification_enter_recovery_key">"ورود کلید بازیابی"</string>
+  <string name="screen_welcome_agreement">"با زدن موافقت و ادامه، %s ما را می‌پذیرید"</string>
+  <string name="screen_welcome_privacy_policy_link">"سیاست حریم خصوصی"</string>
+  <string name="screen_welcome_title">"به %s خوش آمدید"</string>
+  <string name="screen_welcome_privacy_notice">"لطفاً سیاست حریم خصوصی ما را بخوانید"</string>
+  <string name="screen_welcome_agree">"موافقت"</string>
 </resources>

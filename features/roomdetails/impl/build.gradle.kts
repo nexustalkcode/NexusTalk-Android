@@ -62,7 +62,7 @@ dependencies {
     implementation(projects.features.roomdetailsedit.api)
     implementation(projects.features.invitepeople.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.mediaupload.test)
     testImplementation(projects.libraries.mediapickers.test)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 Element Creations Ltd.
+ * Copyright (c) 2025 Element Creations Ltd.
  *
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial.
  * Please see LICENSE files in the repository root for full details.
@@ -15,6 +15,7 @@
 @file:Suppress("all")
 package io.element.android.compound.tokens.generated
 
+import androidx.compose.ui.graphics.Color
 import io.element.android.compound.annotations.CoreColorToken
 import io.element.android.compound.tokens.generated.internal.DarkColorTokens
 
@@ -73,19 +74,23 @@ val compoundColorsDark = SemanticColors(
     gradientActionStop2 = DarkColorTokens.colorGreen900,
     gradientActionStop3 = DarkColorTokens.colorGreen700,
     gradientActionStop4 = DarkColorTokens.colorGreen500,
-    gradientCriticalStop1 = DarkColorTokens.colorRed200,
-    gradientCriticalStop2 = DarkColorTokens.colorThemeBg,
-    gradientInfoStop1 = DarkColorTokens.colorBlue200,
-    gradientInfoStop2 = DarkColorTokens.colorThemeBg,
+    gradientInfoStop1 = DarkColorTokens.colorAlphaBlue500,
+    gradientInfoStop2 = DarkColorTokens.colorAlphaBlue400,
+    gradientInfoStop3 = DarkColorTokens.colorAlphaBlue300,
+    gradientInfoStop4 = DarkColorTokens.colorAlphaBlue200,
+    gradientInfoStop5 = DarkColorTokens.colorAlphaBlue100,
+    gradientInfoStop6 = DarkColorTokens.colorTransparent,
     gradientSubtleStop1 = DarkColorTokens.colorAlphaGreen500,
     gradientSubtleStop2 = DarkColorTokens.colorAlphaGreen400,
     gradientSubtleStop3 = DarkColorTokens.colorAlphaGreen300,
     gradientSubtleStop4 = DarkColorTokens.colorAlphaGreen200,
     gradientSubtleStop5 = DarkColorTokens.colorAlphaGreen100,
     gradientSubtleStop6 = DarkColorTokens.colorTransparent,
+    gradientBrandStop1 = DarkColorTokens.colorBrandStart,
+    gradientBrandStop2 = DarkColorTokens.colorBrandEnd,
     iconAccentPrimary = DarkColorTokens.colorGreen900,
     iconAccentTertiary = DarkColorTokens.colorGreen800,
-    iconCriticalPrimary = DarkColorTokens.colorRed900,
+    iconCriticalPrimary = Color(0xFFFF4439),
     iconDisabled = DarkColorTokens.colorGray700,
     iconInfoPrimary = DarkColorTokens.colorBlue1100,
     iconOnSolidPrimary = DarkColorTokens.colorThemeBg,
@@ -95,7 +100,7 @@ val compoundColorsDark = SemanticColors(
     iconQuaternaryAlpha = DarkColorTokens.colorAlphaGray700,
     iconSecondary = DarkColorTokens.colorGray900,
     iconSecondaryAlpha = DarkColorTokens.colorAlphaGray900,
-    iconSuccessPrimary = DarkColorTokens.colorGreen900,
+    iconSuccessPrimary = Color(0xFF2FD159),
     iconTertiary = DarkColorTokens.colorGray800,
     iconTertiaryAlpha = DarkColorTokens.colorAlphaGray800,
     textActionAccent = DarkColorTokens.colorGreen900,

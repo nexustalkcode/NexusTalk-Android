@@ -28,6 +28,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 默认摇一摇检测 Presenter
+ *
+ * RageshakeDetectionPresenter 接口的实现，负责呈现摇一摇检测功能的状态。
+ * 管理摇一摇检测的启动、停止、截图和对话框显示。
+ *
+ * @property screenshotHolder 截图持有者
+ * @property rageShake 摇一摇服务
+ * @property preferencesPresenter 偏好设置 Presenter
+ */
 @ContributesBinding(AppScope::class)
 class DefaultRageshakeDetectionPresenter(
     private val screenshotHolder: ScreenshotHolder,

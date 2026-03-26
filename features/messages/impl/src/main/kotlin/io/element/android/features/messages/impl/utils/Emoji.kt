@@ -17,7 +17,12 @@ import com.sigpwned.emoji4j.core.GraphemeMatcher
 import io.element.android.features.messages.impl.timeline.model.event.AN_EMOJI_ONLY_TEXT
 
 /**
- * Returns true if the string consists exclusively of "emoji or pictographic graphemes".
+ * 检查字符串是否只包含表情符号或象形文字
+ *
+ * 此函数用于判断一个字符串是否完全由表情符号（emoji）或象形图形组成。
+ * 常用于判断消息是否只包含表情符号，据此可以显示特殊的大号表情消息样式。
+ *
+ * @return 如果字符串只包含表情符号或象形文字返回true，否则返回false
  */
 @Composable
 fun String.containsOnlyEmojis(): Boolean {

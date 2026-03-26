@@ -43,9 +43,11 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(projects.libraries.featureflag.api)
     implementation(projects.features.createroom.api)
+    implementation(projects.libraries.uiCommon)
+    implementation(projects.libraries.qrcode)
     api(projects.features.startchat.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.services.analytics.test)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.mediapickers.test)

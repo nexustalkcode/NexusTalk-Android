@@ -30,6 +30,18 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 被屏蔽用户页面 Presenter
+ *
+ * 负责处理被屏蔽用户页面的业务逻辑，包括：
+ * - 获取被屏蔽用户列表
+ * - 显示用户详细信息（如果功能启用）
+ * - 处理用户解封操作
+ *
+ * @property matrixClient Matrix 客户端
+ * @property featureFlagService 功能标志服务
+ * @see BlockedUsersState 被屏蔽用户状态
+ */
 @Inject
 class BlockedUsersPresenter(
     private val matrixClient: MatrixClient,

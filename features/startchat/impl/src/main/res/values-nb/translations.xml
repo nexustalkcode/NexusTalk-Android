@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"Matchende rom funnet"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Rom ikke funnet"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"f.eks. #rom-navn:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"Skann QR-kode"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Skann QR-koden for å legge til en kontakt"</string>
+  <string name="screen_scan_user_qr_code_success">"QR-koden ble skannet"</string>
 </resources>

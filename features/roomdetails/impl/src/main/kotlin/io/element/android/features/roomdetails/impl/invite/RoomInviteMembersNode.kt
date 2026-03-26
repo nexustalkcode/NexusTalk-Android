@@ -25,16 +25,38 @@ import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.matrix.api.room.JoinedRoom
 import io.element.android.services.analytics.api.AnalyticsService
 
+/**
+ * 房间邀请成员节点
+ *
+ * 负责显示和管理房间邀请成员界面的节点。
+ * 使用 @ContributesNode 注解将其贡献到 RoomScope 进行依赖注入。
+ * 继承自 Node 基类，处理 UI 渲染和用户交互。
+ *
+ * @see Node 应用节点基类
+ * @see ContributesNode 节点贡献注解
+ * @see AssistedInject 依赖注入注解
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class RoomInviteMembersNode(
+    /** 构建上下文 */
     @Assisted buildContext: BuildContext,
+    /** 插件列表 */
     @Assisted plugins: List<Plugin>,
+    /** 分析服务，用于跟踪用户行为 */
     private val analyticsService: AnalyticsService,
+    /** 邀请人员渲染器 */
     private val invitePeopleRenderer: InvitePeopleRenderer,
+    /** 已加入的房间 */
     room: JoinedRoom,
+    /** 邀请人员 Presenter 工厂 */
     invitePeoplePresenterFactory: InvitePeoplePresenter.Factory,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 初始化订阅生命周期事件
+     *
+     * 订阅节点的生命周期事件，当页面恢复时发送分析屏幕事件。
+     */
     init {
         lifecycle.subscribe(
             onResume = {
@@ -43,16 +65,27 @@ class RoomInviteMembersNode(
         )
     }
 
+    /** 邀请人员 Presenter 实例 */
     private val invitePeoplePresenter = invitePeoplePresenterFactory.create(
         joinedRoom = room,
         roomId = room.roomId,
     )
 
+    /**
+     * 渲染邀请成员视图
+     *
+     * 重写 View 方法，使用 Compose 框架渲染邀请成员界面。
+     * 订阅 Presenter 产生的状态，并根据状态变化执行相应操作。
+     *
+     * @param modifier 视图修饰符
+     * @see Compose Composable 注解
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = invitePeoplePresenter.present()
 
         // Once invites have been sent successfully, close the Invite view.
+        // 当邀请发送成功后，关闭邀请视图
         LaunchedEffect(state.sendInvitesAction) {
             if (state.sendInvitesAction.isReady()) {
                 navigateUp()

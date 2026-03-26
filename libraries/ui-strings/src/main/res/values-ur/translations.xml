@@ -74,7 +74,6 @@
   <string name="action_invite_people_to_app">"لوگوں کو %1$s پر مدعو کریں"</string>
   <string name="action_invites_list">"دعوت نامے"</string>
   <string name="action_join">"شامل ہوں"</string>
-  <string name="action_learn_more">"مزید جانئے"</string>
   <string name="action_leave">"چھوڑ دیں"</string>
   <string name="action_leave_conversation">"گفتگو چھوڑیں"</string>
   <string name="action_leave_room">"کمرہ چھوڑ دیں"</string>
@@ -324,4 +323,9 @@
   <string name="settings_version_number">"نسخہ %1$s (%2$s)"</string>
   <string name="test_language_identifier">"ur"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"آپ کو اس پیغام تک رسائی حاصل نہیں"</string>
+  <string name="common_call_ended">"کال ختم ہو گئی"</string>
+  <string name="action_start_call">"کال شروع کریں"</string>
+  <string name="screen_roomlist_empty_no_call_title">"کوئی کال نہیں"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"کمیونٹیز کے ساتھ جڑے رہیں"</string>
+  <string name="action_create_community">"کمیونٹی بنائیں"</string>
 </resources>

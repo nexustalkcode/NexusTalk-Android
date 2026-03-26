@@ -21,10 +21,24 @@ import io.element.android.libraries.matrix.api.MatrixClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 账户注销 Presenter
+ *
+ * 负责处理账户注销功能的业务逻辑和状态管理。
+ * 管理账户注销表单和注销操作的执行。
+ *
+ * @property matrixClient Matrix 客户端
+ */
 @Inject
 class AccountDeactivationPresenter(
+    /** Matrix 客户端，用于执行账户停用操作 */
     private val matrixClient: MatrixClient,
 ) : Presenter<AccountDeactivationState> {
+    /**
+     * 生成界面状态
+     *
+     * @return AccountDeactivationState 账户注销状态
+     */
     @Composable
     override fun present(): AccountDeactivationState {
         val localCoroutineScope = rememberCoroutineScope()
@@ -34,6 +48,11 @@ class AccountDeactivationPresenter(
 
         val formState = remember { mutableStateOf(DeactivateFormState.Default) }
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 账户注销事件
+         */
         fun handleEvent(event: AccountDeactivationEvents) {
             when (event) {
                 is AccountDeactivationEvents.SetEraseData -> {
@@ -68,10 +87,22 @@ class AccountDeactivationPresenter(
         )
     }
 
+    /**
+     * 更新表单状态
+     *
+     * @param formState 表单状态
+     * @param updateLambda 更新 lambda
+     */
     private fun updateFormState(formState: MutableState<DeactivateFormState>, updateLambda: DeactivateFormState.() -> DeactivateFormState) {
         formState.value = updateLambda(formState.value)
     }
 
+    /**
+     * 执行账户注销操作
+     *
+     * @param formState 注销表单状态
+     * @param action 异步操作状态
+     */
     private fun CoroutineScope.deactivateAccount(
         formState: DeactivateFormState,
         action: MutableState<AsyncAction<Unit>>,

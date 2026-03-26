@@ -6,4 +6,8 @@
   <string name="screen_roomlist_filter_favourites_empty_state_subtitle">"You can add a chat to your favorites in the chat settings.
 For now, you can deselect filters in order to see your other chats"</string>
   <string name="screen_roomlist_filter_favourites_empty_state_title">"You don’t have favorite chats yet"</string>
+  <string name="screen_community_roomlist_empty_message">"Communities bring members together in topic-based groups. Any communities you join will appear here."</string>
+  <string name="screen_community_list_header_count">"%1$d Community"</string>
+  <string name="screen_community_list_header_description">"Communities you create or join"</string>
+  <string name="screen_roomlist_empty_message_new">"This place will only belong to you and your closest ones"</string>
 </resources>

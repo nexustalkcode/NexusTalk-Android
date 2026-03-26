@@ -19,9 +19,23 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 
+/**
+ * Preferences 崩溃数据存储键名
+ */
 private val appHasCrashedKey = booleanPreferencesKey("appHasCrashed")
+
+/**
+ * Preferences 崩溃数据键名
+ */
 private val crashDataKey = stringPreferencesKey("crashData")
 
+/**
+ * 基于 Preferences 的崩溃数据存储实现
+ *
+ * 使用 Android DataStore 存储崩溃相关的数据。
+ *
+ * @property preferenceDataStoreFactory DataStore 工厂
+ */
 @ContributesBinding(AppScope::class)
 class PreferencesCrashDataStore(
     preferenceDataStoreFactory: PreferenceDataStoreFactory,

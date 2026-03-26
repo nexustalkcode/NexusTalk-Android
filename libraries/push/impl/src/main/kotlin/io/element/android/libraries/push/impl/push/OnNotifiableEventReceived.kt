@@ -11,7 +11,6 @@ package io.element.android.libraries.push.impl.push
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import io.element.android.libraries.di.annotations.AppCoroutineScope
-import io.element.android.libraries.push.api.notifications.conversations.NotificationConversationService
 import io.element.android.libraries.push.impl.notifications.DefaultNotificationDrawerManager
 import io.element.android.libraries.push.impl.notifications.model.NotifiableEvent
 import io.element.android.libraries.push.impl.notifications.model.NotifiableRingingCallEvent
@@ -25,13 +24,11 @@ interface OnNotifiableEventReceived {
 @ContributesBinding(AppScope::class)
 class DefaultOnNotifiableEventReceived(
     private val defaultNotificationDrawerManager: DefaultNotificationDrawerManager,
-    private val notificationConversationService: NotificationConversationService,
     @AppCoroutineScope
     private val coroutineScope: CoroutineScope,
 ) : OnNotifiableEventReceived {
     override fun onNotifiableEventsReceived(notifiableEvents: List<NotifiableEvent>) {
         coroutineScope.launch {
-            notificationConversationService.createNotificationShortcut(notifiableEvents)
             defaultNotificationDrawerManager.onNotifiableEventsReceived(notifiableEvents.filter { it !is NotifiableRingingCallEvent })
         }
     }

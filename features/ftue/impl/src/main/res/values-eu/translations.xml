@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Geroago alda ditzakezu ezarpenak."</string>
   <string name="screen_notification_optin_title">"Baimendu jakinarazpenak eta ez galdu inoiz mezurik"</string>
   <string name="screen_session_verification_enter_recovery_key">"Sartu berreskuratze-gakoa"</string>
+  <string name="screen_welcome_agreement">"Ados eta Jarraitu ukituz, gure %s onartzen dituzu"</string>
+  <string name="screen_welcome_privacy_policy_link">"Pribatutasun-politika"</string>
+  <string name="screen_welcome_title">"Ongi etorri %s"</string>
+  <string name="screen_welcome_privacy_notice">"Irakurri gure Pribatutasun-politika"</string>
+  <string name="screen_welcome_agree">"Ados"</string>
 </resources>

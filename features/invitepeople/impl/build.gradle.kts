@@ -39,7 +39,6 @@ dependencies {
     implementation(projects.services.apperror.api)
     api(projects.features.invitepeople.api)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.usersearch.test)
     testImplementation(projects.services.apperror.test)

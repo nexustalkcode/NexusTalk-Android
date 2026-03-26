@@ -16,6 +16,18 @@ import io.element.android.features.login.impl.changeserver.AccountProviderAccess
 import io.element.android.libraries.core.uri.ensureProtocol
 import io.element.android.libraries.wellknown.api.WellknownRetriever
 
+/**
+ * 默认账户提供商访问控制实现
+ *
+ * 提供 AccountProviderAccessControl 接口的默认实现。
+ * 负责验证用户是否有权连接到特定的账户提供商（homeserver）。
+ * 该类会检查是否为 Element Pro 版本，并验证服务器是否在允许列表中。
+ *
+ * @param enterpriseService 企业服务，用于获取企业配置和允许的服务器列表
+ * @param wellknownRetriever WellKnown 信息检索器，用于获取服务器的 Element 配置
+ * @throws AccountProviderAccessException 当连接不被允许时抛出异常
+ * @see AccountProviderAccessControl 访问控制接口
+ */
 @ContributesBinding(AppScope::class)
 class DefaultAccountProviderAccessControl(
     private val enterpriseService: EnterpriseService,
@@ -57,6 +69,12 @@ class DefaultAccountProviderAccessControl(
     }
 
     companion object {
+        /**
+         * Element Pro 应用程序 ID
+         *
+         * 用于标识需要 Element Pro 版本的应用程序包名。
+         * 当服务器要求使用 Element Pro 时，会将此 ID 传递给相关异常。
+         */
         const val ELEMENT_PRO_APPLICATION_ID = "io.element.enterprise"
     }
 }

@@ -27,13 +27,9 @@ android {
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.lib)
-    implementation(projects.schildi.matrixsdk)
-    implementation(projects.schildi.components)
-    implementation(projects.schildi.theme)
-
     implementation(projects.appconfig)
     implementation(projects.libraries.core)
+    implementation(projects.appicon.element)
     implementation(projects.libraries.androidutils)
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.featureflag.api)
@@ -66,7 +62,6 @@ dependencies {
     implementation(projects.libraries.previewutils)
     api(projects.features.home.api)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.features.announcement.test)
     testImplementation(projects.features.invite.test)
     testImplementation(projects.features.logout.test)

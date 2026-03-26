@@ -14,16 +14,13 @@ import androidx.compose.ui.unit.dp
 enum class AvatarSize(val dp: Dp) {
     CurrentUserTopBar(32.dp),
 
-    IncomingCall(140.dp),
+    IncomingCall(160.dp),
     RoomDetailsHeader(96.dp),
     RoomListItem(52.dp),
 
     SpaceListItem(52.dp),
 
     RoomSelectRoomListItem(36.dp),
-    BottomSpaceBar(24.dp),
-    CompactBottomSpaceBar(32.dp),
-    SpaceSwipeIndicator(48.dp),
 
     UserPreference(56.dp),
 

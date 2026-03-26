@@ -16,19 +16,18 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
-import chat.schildi.theme.scBubbleFont
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.messages.impl.timeline.components.layout.ContentAvoidingLayout
 import io.element.android.features.messages.impl.timeline.components.layout.ContentAvoidingLayoutData
 import io.element.android.features.messages.impl.timeline.model.event.TimelineItemTextBasedContent
 import io.element.android.features.messages.impl.timeline.model.event.TimelineItemTextBasedContentProvider
 import io.element.android.features.messages.impl.timeline.model.event.aTimelineItemTextContent
+import io.element.android.features.messages.impl.utils.containsOnlyEmojis
 import io.element.android.libraries.androidutils.text.LinkifyHelper
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
@@ -37,32 +36,27 @@ import io.element.android.libraries.textcomposer.mentions.LocalMentionSpanUpdate
 import io.element.android.wysiwyg.compose.EditorStyledText
 import io.element.android.wysiwyg.link.Link
 
+private val OUTGOING_MESSAGE_TEXT_COLOR = Color(0xFF0A0A0A)
+
 @Composable
 fun TimelineItemTextView(
     content: TimelineItemTextBasedContent,
+    isMine: Boolean = false,
     onLinkClick: (Link) -> Unit,
     onLinkLongClick: (Link) -> Unit,
     modifier: Modifier = Modifier,
     onContentLayoutChange: (ContentAvoidingLayoutData) -> Unit = {},
 ) {
-    if (!ScPrefs.LEGACY_MESSAGE_RENDERING.value()) {
-        ScTimelineItemTextView(
-            content = content,
-            onLinkLongClick = onLinkLongClick,
-            modifier = modifier,
-            onContentLayoutChange = onContentLayoutChange,
-        )
-        return
-    }
-    val emojiOnly = //content.formattedBody.toString() == content.body &&
-        containsOnlyEmojisOrEmotes(content.formattedBodySc.text)
+    val emojiOnly = content.formattedBody.toString() == content.body &&
+        content.body.replace(" ", "").containsOnlyEmojis()
     val textStyle = when {
         emojiOnly -> ElementTheme.typography.fontHeadingXlRegular
-        else -> ElementTheme.typography.scBubbleFont
+        else -> ElementTheme.typography.fontBodyLgRegular
     }
+    val textColor = if (isMine) OUTGOING_MESSAGE_TEXT_COLOR else ElementTheme.colors.textPrimary
     CompositionLocalProvider(
-        LocalContentColor provides ElementTheme.colors.textPrimary,
-        LocalTextStyle provides textStyle,
+        LocalContentColor provides textColor,
+        LocalTextStyle provides textStyle
     ) {
         val text = getTextWithResolvedMentions(content)
         Box(modifier.semantics { contentDescription = content.plainText }) {
@@ -81,11 +75,9 @@ fun TimelineItemTextView(
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 @Composable
 internal fun getTextWithResolvedMentions(content: TimelineItemTextBasedContent): CharSequence {
-    // SC merge conflict canary: duplicated code into extensions!
     val mentionSpanUpdater = LocalMentionSpanUpdater.current
     val bodyWithResolvedMentions = mentionSpanUpdater.rememberMentionSpans(content.formattedBody)
     return SpannedString.valueOf(bodyWithResolvedMentions)
-    // SC merge conflict canary: duplicated code into extensions!
 }
 
 @PreviewsDayNight

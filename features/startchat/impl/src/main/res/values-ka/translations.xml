@@ -3,4 +3,7 @@
   <string name="screen_create_room_action_create_room">"ახალი ოთახი"</string>
   <string name="screen_room_directory_search_title">"ოთახის კატალოგი"</string>
   <string name="screen_start_chat_error_starting_chat">"ჩატის დაწყების მცდელობისას შეცდომა მოხდა"</string>
+  <string name="screen_scan_user_qr_code_title">"QR კოდის სკანირება"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"კონტაქტის დასამატებლად დაასკანირეთ QR კოდი"</string>
+  <string name="screen_scan_user_qr_code_success">"QR კოდი წარმატებით დასკანირდა"</string>
 </resources>

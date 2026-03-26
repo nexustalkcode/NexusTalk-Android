@@ -8,7 +8,13 @@
 
 package io.element.android.appconfig
 
+/**
+ * 引导流程配置 (OnBoarding Configuration)
+ *
+ * 此对象包含用户首次使用应用时的引导流程相关配置项。
+ * 控制新用户是否可以注册新账户等引导功能。
+ */
 object OnBoardingConfig {
-    /** Whether the user can create an account using the app. */
+    /** 是否允许用户通过应用创建新账户。设置为true时，用户可以在应用内注册新账号；设置为false时，用户只能通过现有账号登录 */
     const val CAN_CREATE_ACCOUNT = true
 }

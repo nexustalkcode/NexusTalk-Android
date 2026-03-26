@@ -12,5 +12,10 @@
   <string name="screen_identity_waiting_on_other_device">"Odotetaan toista laitetta…"</string>
   <string name="screen_notification_optin_subtitle">"Voit muuttaa asetuksia myöhemmin."</string>
   <string name="screen_notification_optin_title">"Salli ilmoitukset ja älä koskaan missaa viestejä"</string>
-  <string name="screen_session_verification_enter_recovery_key">"Anna palautusavain"</string>
+  <string name="screen_session_verification_enter_recovery_key">"Syötä palautusavain"</string>
+  <string name="screen_welcome_agreement">"Napauttamalla Hyväksy ja jatka hyväksyt %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Tietosuojakäytäntö"</string>
+  <string name="screen_welcome_title">"Tervetuloa palveluun %s"</string>
+  <string name="screen_welcome_privacy_notice">"Lue tietosuojakäytäntömme"</string>
+  <string name="screen_welcome_agree">"Hyväksy"</string>
 </resources>

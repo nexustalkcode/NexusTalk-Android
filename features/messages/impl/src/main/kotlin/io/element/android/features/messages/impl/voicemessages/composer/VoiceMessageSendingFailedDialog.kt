@@ -13,6 +13,14 @@ import androidx.compose.ui.res.stringResource
 import io.element.android.libraries.designsystem.components.dialogs.ErrorDialog
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 语音消息发送失败对话框
+ *
+ * 当语音消息发送失败时，显示此错误对话框通知用户。
+ * 用户可以点击"确定"关闭对话框。
+ *
+ * @param onDismiss 点击确定按钮或关闭对话框时的回调
+ */
 @Composable
 internal fun VoiceMessageSendingFailedDialog(
     onDismiss: () -> Unit,

@@ -24,6 +24,16 @@ import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.ListItemStyle
 import io.element.android.libraries.designsystem.theme.components.Text
 
+/**
+ * 锁屏设置视图
+ *
+ * 显示锁屏设置界面的可组合组件。
+ *
+ * @param state 锁屏设置状态
+ * @param onChangePinClick 修改 PIN 码点击回调
+ * @param onBackClick 返回点击回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun LockScreenSettingsView(
     state: LockScreenSettingsState,

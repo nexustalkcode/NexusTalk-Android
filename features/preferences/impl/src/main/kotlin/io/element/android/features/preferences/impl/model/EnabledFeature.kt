@@ -10,6 +10,12 @@ package io.element.android.features.preferences.impl.model
 
 import io.element.android.libraries.featureflag.api.Feature
 
+/**
+ * 已启用功能数据类
+ *
+ * @property feature 功能标志
+ * @property isEnabled 是否已启用
+ */
 data class EnabledFeature(
     val feature: Feature,
     val isEnabled: Boolean,

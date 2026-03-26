@@ -16,8 +16,26 @@ import io.element.android.features.viewfolder.api.ViewFolderEntryPoint
 import io.element.android.features.viewfolder.impl.root.ViewFolderFlowNode
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * ViewFolderEntryPoint 的默认实现
+ *
+ * 提供文件夹浏览功能的默认入口点实现，负责创建 ViewFolderFlowNode 节点。
+ * 该实现使用依赖注入方式提供，与应用的组件体系无缝集成。
+ *
+ * @see ViewFolderEntryPoint 入口点接口
+ * @see ViewFolderFlowNode 流程节点实现
+ */
 @ContributesBinding(AppScope::class)
 class DefaultViewFolderEntryPoint : ViewFolderEntryPoint {
+    /**
+     * 创建文件夹浏览节点
+     *
+     * @param parentNode 父节点
+     * @param buildContext 构建上下文
+     * @param params 创建参数
+     * @param callback 回调接口
+     * @return ViewFolderFlowNode 实例
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

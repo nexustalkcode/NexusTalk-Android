@@ -69,12 +69,6 @@ data class RoomInfo(
      * notification settings.
      */
     val numUnreadMentions: Long,
-    // SC: start
-    val spaceChildren: List<MatrixSpaceChildInfo> = emptyList(),
-    val canUserManageSpaces: Boolean = false,
-    val unreadCount: Long = 0,
-    val bridgeState: List<BridgeState> = emptyList(),
-    // SC end
     val heroes: ImmutableList<MatrixUser>,
     val pinnedEventIds: ImmutableList<EventId>,
     val creators: ImmutableList<UserId>,
@@ -82,7 +76,6 @@ data class RoomInfo(
     val successorRoom: SuccessorRoom?,
     val roomVersion: String?,
     val privilegedCreatorRole: Boolean,
-    val isLowPriority: Boolean,
 ) {
     val aliases: List<RoomAlias>
         get() = listOfNotNull(canonicalAlias) + alternativeAliases

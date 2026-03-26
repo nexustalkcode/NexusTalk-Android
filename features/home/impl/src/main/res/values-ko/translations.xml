@@ -13,6 +13,7 @@
   <string name="full_screen_intent_banner_message">"중요한 전화를 놓치지 않으려면 휴대폰이 잠겨 있을 때 전체 화면 알림을 허용하도록 설정을 변경하세요."</string>
   <string name="full_screen_intent_banner_title">"통화 경험을 향상시키세요"</string>
   <string name="screen_home_tab_chats">"채팅"</string>
+  <string name="screen_home_tab_community">"커뮤니티"</string>
   <string name="screen_home_tab_spaces">"스페이스"</string>
   <string name="screen_invites_decline_chat_message">"정말로 %1$s 에 참가하지 않고 초대를 거절하시겠어요?"</string>
   <string name="screen_invites_decline_chat_title">"초대 거절"</string>
@@ -50,4 +51,9 @@
   <string name="screen_roomlist_tombstoned_room_description">"이 방이 업그레이드되었습니다"</string>
   <string name="session_verification_banner_message">"새 장치를 사용 중인 것 같습니다. 다른 디바이스로 인증하여 암호화된 메시지에 액세스하세요."</string>
   <string name="session_verification_banner_title">"본인인지 확인하세요"</string>
+
+  <string name="screen_community_roomlist_empty_message">"커뮤니티는 구성원을 주제 기반 그룹으로 모입니다. 가입한 모든 커뮤니티가 여기에 표시됩니다."</string>
+  <string name="screen_community_list_header_count">"%1$d 커뮤니티"</string>
+  <string name="screen_community_list_header_description">"귀하가 만들거나 가입한 커뮤니티"</string>
+  <string name="screen_roomlist_empty_message_new">"이 장소는 귀하와 귀하와 가장 가까운 사람들에게만 속합니다"</string>
 </resources>

@@ -25,11 +25,13 @@ class LinkNewDeviceRootNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: LinkNewDeviceRootPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    // 页面回调：关闭流程或进入桌面设备流程
     interface Callback : Plugin {
         fun onDone()
         fun linkDesktopDevice()
     }
 
+    // 读取回调实现
     private val callback: Callback = callback()
 
     @Composable

@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Zaxiralashni o\'chirib qo\'ying"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Zaxiralashni yoqing"</string>
-  <string name="screen_chat_backup_key_backup_description">"Kryptografik shaxsiyatingizni va xabar kalitlaringizni serverda xavfsiz saqlang. Bu sizga har qanday yangi qurilmalarda xabar tarixingizni ko\'rish imkonini beradi. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Kryptografik shaxsiyatingizni va xabar kalitlaringizni serverda xavfsiz saqlang. Bu sizga har qanday yangi qurilmalarda xabar tarixingizni ko\'rish imkonini beradi. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Kalitlar ombori"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"Tiklashni sozlash uchun kalitlar xotirasini yoqish kerak."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Bu qurilmadan kalitlarni yuklash"</string>

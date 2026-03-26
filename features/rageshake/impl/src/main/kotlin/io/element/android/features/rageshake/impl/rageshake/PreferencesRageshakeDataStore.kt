@@ -18,9 +18,23 @@ import io.element.android.libraries.preferences.api.store.PreferenceDataStoreFac
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * Preferences 键名定义
+ */
 private val enabledKey = booleanPreferencesKey("enabled")
+
+/**
+ * Preferences 灵敏度键名
+ */
 private val sensitivityKey = floatPreferencesKey("sensitivity")
 
+/**
+ * 基于 Preferences 的摇一摇数据存储实现
+ *
+ * 使用 Android DataStore 存储摇一摇相关的偏好设置。
+ *
+ * @property preferenceDataStoreFactory DataStore 工厂
+ */
 @ContributesBinding(AppScope::class)
 class PreferencesRageshakeDataStore(
     preferenceDataStoreFactory: PreferenceDataStoreFactory,

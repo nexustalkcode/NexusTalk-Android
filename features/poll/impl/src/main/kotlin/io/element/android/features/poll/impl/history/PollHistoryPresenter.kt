@@ -32,6 +32,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+/**
+ * 投票历史 Presenter
+ *
+ * 负责处理投票历史页面的业务逻辑，包括：
+ * - 加载和分页投票历史
+ * - 过滤投票列表（进行中/已结束）
+ * - 发送投票响应
+ * - 结束投票
+ *
+ * @property sessionCoroutineScope 会话协程作用域
+ * @property sendPollResponseAction 发送投票响应操作
+ * @property endPollAction 结束投票操作
+ * @property pollHistoryItemFactory 投票历史项工厂
+ * @property room 已加入的房间
+ * @see PollHistoryState 投票历史状态
+ */
 @Inject
 class PollHistoryPresenter(
     @SessionCoroutineScope

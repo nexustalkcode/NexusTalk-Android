@@ -15,6 +15,11 @@ import com.bumble.appyx.core.node.Node
 import io.element.android.features.lockscreen.api.LockScreenEntryPoint
 import io.element.android.tests.testutils.lambda.lambdaError
 
+/**
+ * 假的锁屏入口点实现
+ *
+ * 用于测试的假实现，所有方法都会抛出错误。
+ */
 class FakeLockScreenEntryPoint : LockScreenEntryPoint {
     override fun createNode(
         parentNode: Node,

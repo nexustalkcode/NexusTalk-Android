@@ -54,6 +54,15 @@ import io.element.android.libraries.maplibre.compose.rememberCameraPositionState
 import io.element.android.libraries.ui.strings.CommonStrings
 import org.maplibre.android.camera.CameraPosition
 
+/**
+ * 发送位置视图
+ *
+ * 负责渲染发送位置功能的界面，包含地图、权限对话框和发送按钮。
+ *
+ * @param state 发送位置状态
+ * @param navigateUp 返回上一层的回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SendLocationView(

@@ -14,7 +14,13 @@ import io.element.android.features.securebackup.impl.setup.views.RecoveryKeyView
 import io.element.android.features.securebackup.impl.setup.views.aFormattedRecoveryKey
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 输入恢复密钥状态提供器
+ *
+ * 用于 Compose Preview 的状态提供器，提供不同状态的 [SecureBackupEnterRecoveryKeyState] 示例。
+ */
 open class SecureBackupEnterRecoveryKeyStateProvider : PreviewParameterProvider<SecureBackupEnterRecoveryKeyState> {
+    /** 预览状态序列 */
     override val values: Sequence<SecureBackupEnterRecoveryKeyState>
         get() = sequenceOf(
             aSecureBackupEnterRecoveryKeyState(recoveryKey = ""),
@@ -25,6 +31,16 @@ open class SecureBackupEnterRecoveryKeyStateProvider : PreviewParameterProvider<
         )
 }
 
+/**
+ * 创建输入恢复密钥状态的辅助函数
+ *
+ * @param recoveryKey 恢复密钥内容
+ * @param isSubmitEnabled 是否允许提交
+ * @param displayTextFieldContents 是否显示文本字段内容
+ * @param submitAction 提交操作状态
+ * @param eventSink 事件处理函数
+ * @return 输入恢复密钥状态实例
+ */
 fun aSecureBackupEnterRecoveryKeyState(
     recoveryKey: String = aFormattedRecoveryKey(),
     isSubmitEnabled: Boolean = recoveryKey.isNotEmpty(),

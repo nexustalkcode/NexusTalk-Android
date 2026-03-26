@@ -41,10 +41,12 @@
   <string name="screen_onboarding_sign_in_manually">"Prijavi se ručno"</string>
   <string name="screen_onboarding_sign_in_to">"Prijavi se na poslužitelj %1$s"</string>
   <string name="screen_onboarding_sign_in_with_qr_code">"Prijavi se pomoću QR koda"</string>
+  <string name="screen_onboarding_sign_in">"Prijavi se"</string>
+  <string name="screen_onboarding_signing_in">"Prijava..."</string>
   <string name="screen_onboarding_sign_up">"Izradi račun"</string>
   <string name="screen_onboarding_welcome_message">"Dobro došli u nikad brži %1$s. Snažniji no ikad za postizanje brzine i jednostavnosti."</string>
   <string name="screen_onboarding_welcome_subtitle">"Dobro došli u %1$s. Snažniji no ikad – za brzinu i jednostavnost."</string>
-  <string name="screen_onboarding_welcome_title">"Budi u elementu"</string>
+  <string name="screen_onboarding_welcome_title">"Budi u %s-u"</string>
   <string name="screen_qr_code_login_connecting_subtitle">"Uspostavljanje sigurne veze"</string>
   <string name="screen_qr_code_login_connection_note_secure_state_description">"Nije moguće uspostaviti sigurnu vezu s novim uređajem. Vaši postojeći uređaji i dalje su sigurni i ne morate se brinuti zbog njih."</string>
   <string name="screen_qr_code_login_connection_note_secure_state_list_header">"Što sad?"</string>

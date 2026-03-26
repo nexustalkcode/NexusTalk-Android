@@ -30,7 +30,6 @@ internal fun aRustNotificationItem(
     hasMention: Boolean? = false,
     threadId: ThreadId? = null,
     actions: List<Action>? = null,
-    rawEvent: String = "",
 ) = NotificationItem(
     event = event,
     senderInfo = senderInfo,
@@ -39,7 +38,6 @@ internal fun aRustNotificationItem(
     hasMention = hasMention,
     threadId = threadId?.value,
     actions = actions,
-    rawEvent = rawEvent,
 )
 
 internal fun aRustBatchNotificationResultOk(

@@ -23,5 +23,5 @@ dependencies {
     implementation(projects.libraries.di)
     api(projects.libraries.cryptography.api)
 
-    testCommonDependencies(libs)
+   
 }

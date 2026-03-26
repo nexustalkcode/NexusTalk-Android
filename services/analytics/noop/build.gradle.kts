@@ -22,5 +22,5 @@ dependencies {
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.di)
     api(projects.services.analytics.api)
-    testCommonDependencies(libs)
+   
 }

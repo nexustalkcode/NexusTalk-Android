@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Borrar almacén de claves"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Activar copia de seguridad"</string>
-  <string name="screen_chat_backup_key_backup_description">"Almacena tu identidad criptográfica y las claves de tus mensajes de forma segura en el servidor. Esto te permitirá ver tu historial de mensajes en cualquier dispositivo nuevo. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Almacena tu identidad criptográfica y las claves de tus mensajes de forma segura en el servidor. Esto te permitirá ver tu historial de mensajes en cualquier dispositivo nuevo. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Almacenamiento de claves"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"El almacenamiento de claves debe estar activado para configurar la recuperación."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Subir claves desde este dispositivo"</string>

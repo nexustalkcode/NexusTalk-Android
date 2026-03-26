@@ -12,11 +12,31 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import io.element.android.appconfig.RageshakeConfig
 
+/**
+ * 问题报告应用名称提供者接口
+ *
+ * 定义获取问题报告时使用的应用名称的接口。
+ */
 fun interface BugReportAppNameProvider {
+    /**
+     * 提供应用名称
+     *
+     * @return String 应用名称
+     */
     fun provide(): String
 }
 
+/**
+ * 默认问题报告应用名称提供者
+ *
+ * 使用配置中的应用名称。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultBugReportAppNameProvider : BugReportAppNameProvider {
+    /**
+     * 提供应用名称
+     *
+     * @return String 从配置中获取的应用名称
+     */
     override fun provide(): String = RageshakeConfig.BUG_REPORT_APP_NAME
 }

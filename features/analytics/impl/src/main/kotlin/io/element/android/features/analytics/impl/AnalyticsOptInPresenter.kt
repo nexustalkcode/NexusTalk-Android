@@ -19,11 +19,29 @@ import io.element.android.services.analytics.api.AnalyticsService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 分析功能选择 Presenter
+ *
+ * 负责处理分析功能选择的业务逻辑，包括：
+ * - 收集用户是否启用分析的选择
+ * - 将选择保存到分析服务
+ * - 设置用户已回答隐私同意询问
+ *
+ * @property buildMeta 构建元信息
+ * @property analyticsService 分析服务
+ * @see AnalyticsOptInState 分析功能选择状态
+ * @see AnalyticsService 分析服务接口
+ */
 @Inject
 class AnalyticsOptInPresenter(
     private val buildMeta: BuildMeta,
     private val analyticsService: AnalyticsService,
 ) : Presenter<AnalyticsOptInState> {
+    /**
+     * 创建视图状态
+     *
+     * @return AnalyticsOptInState 当前分析选择状态
+     */
     @Composable
     override fun present(): AnalyticsOptInState {
         val localCoroutineScope = rememberCoroutineScope()
@@ -44,6 +62,11 @@ class AnalyticsOptInPresenter(
         )
     }
 
+    /**
+     * 设置分析启用状态
+     *
+     * @param enabled 是否启用分析
+     */
     private fun CoroutineScope.setIsEnabled(enabled: Boolean) = launch {
         analyticsService.setUserConsent(enabled)
     }

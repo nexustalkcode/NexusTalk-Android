@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"S-a găsit o cameră"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Nu a putut fi găsită nici o cameră"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"de exemplu #nume-camera:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"Scanează codul QR"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Scanează codul QR pentru a adăuga un contact"</string>
+  <string name="screen_scan_user_qr_code_success">"Cod QR scanat cu succes"</string>
 </resources>

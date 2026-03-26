@@ -39,21 +39,50 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
- * Presenter for room member details screen.
- * Rely on UserProfilePresenter, but override some fields with room member info when available.
+ * 房间成员详情 Presenter
+ *
+ * 负责处理房间成员详情页面的业务逻辑。
+ * 依赖于 UserProfilePresenter，但会使用房间成员信息覆盖某些字段。
+ * 负责获取房间成员信息、加密身份验证状态和用户资料。
+ *
+ * @property roomMemberId 房间成员的 UserID
+ * @property room 已加入的房间
+ * @property encryptionService 加密服务
+ * @property clipboardHelper 剪贴板助手
+ * @property userProfilePresenterFactory 用户资料 Presenter 工厂
+ * @see Presenter Presenter 基类
+ * @see UserProfileState 用户资料状态
+ * @see AssistedInject 依赖注入注解
  */
 @AssistedInject
 class RoomMemberDetailsPresenter(
+    /** 房间成员的 UserID */
     @Assisted private val roomMemberId: UserId,
+    /** 已加入的房间 */
     private val room: JoinedRoom,
+    /** 加密服务 */
     private val encryptionService: EncryptionService,
+    /** 剪贴板助手 */
     private val clipboardHelper: ClipboardHelper,
+    /** 用户资料 Presenter 工厂 */
     userProfilePresenterFactory: UserProfilePresenterFactory,
 ) : Presenter<UserProfileState> {
+    /**
+     * Presenter 工厂接口
+     *
+     * 用于创建 RoomMemberDetailsPresenter 实例。
+     */
     interface Factory {
+        /**
+         * 创建房间成员详情 Presenter
+         *
+         * @param roomMemberId 房间成员的 UserID
+         * @return RoomMemberDetailsPresenter 实例
+         */
         fun create(roomMemberId: UserId): RoomMemberDetailsPresenter
     }
 
+    /** 用户资料 Presenter 实例 */
     private val userProfilePresenter = userProfilePresenterFactory.create(roomMemberId)
 
     @Composable

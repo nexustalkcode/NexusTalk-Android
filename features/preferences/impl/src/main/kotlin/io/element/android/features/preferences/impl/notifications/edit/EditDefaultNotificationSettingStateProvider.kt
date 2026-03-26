@@ -16,6 +16,13 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 编辑默认通知设置状态提供者
+ *
+ * 用于在预览模式下提供编辑默认通知设置页面的示例状态数据。
+ *
+ * @see EditDefaultNotificationSettingState 编辑默认通知设置状态
+ */
 open class EditDefaultNotificationSettingStateProvider : PreviewParameterProvider<EditDefaultNotificationSettingState> {
     override val values: Sequence<EditDefaultNotificationSettingState>
         get() = sequenceOf(
@@ -27,6 +34,14 @@ open class EditDefaultNotificationSettingStateProvider : PreviewParameterProvide
         )
 }
 
+/**
+ * 创建示例编辑默认通知设置状态
+ *
+ * @param isOneToOne 是否为一对一房间
+ * @param changeNotificationSettingAction 更改设置操作状态
+ * @param displayMentionsOnlyDisclaimer 是否显示仅提及免责声明
+ * @return 编辑默认通知设置状态
+ */
 private fun anEditDefaultNotificationSettingsState(
     isOneToOne: Boolean = false,
     changeNotificationSettingAction: AsyncAction<Unit> = AsyncAction.Uninitialized,
@@ -43,6 +58,12 @@ private fun anEditDefaultNotificationSettingsState(
     eventSink = {}
 )
 
+/**
+ * 创建示例编辑通知设置房间信息
+ *
+ * @param name 房间名称
+ * @return 房间信息
+ */
 private fun anEditNotificationSettingRoomInfo(
     name: String?,
 ) = EditNotificationSettingRoomInfo(

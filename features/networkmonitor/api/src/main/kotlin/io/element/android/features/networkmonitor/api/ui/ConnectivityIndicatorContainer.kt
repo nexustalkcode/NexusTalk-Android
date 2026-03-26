@@ -30,10 +30,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 
+/** 指示器垂直内边距常量 */
 private val INDICATOR_VERTICAL_PADDING = 6.dp
 
 /**
- * A view that displays a connectivity indicator when the device is offline.
+ * 网络连接指示器容器组件
+ *
+ * 使用 Jetpack Compose 实现网络连接指示器的容器。
+ * 当设备离线时显示连接指示器，并提供平滑的动画效果。
+ * 容器内部会消耗窗口边距，避免重复的内边距。
+ *
+ * @param isOnline 是否在线
+ * @param modifier 修饰符
+ * @param content 子内容组件
  */
 @Composable
 fun ConnectivityIndicatorContainer(

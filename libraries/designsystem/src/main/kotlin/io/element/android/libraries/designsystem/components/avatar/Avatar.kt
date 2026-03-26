@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.element.android.libraries.designsystem.components.avatar.internal.InitialOrImageAvatar
 import io.element.android.libraries.designsystem.components.avatar.internal.RoomAvatar
 import io.element.android.libraries.designsystem.components.avatar.internal.SpaceAvatar
 import io.element.android.libraries.designsystem.components.avatar.internal.UserAvatar
@@ -39,14 +38,6 @@ fun Avatar(
     hideImage: Boolean = false,
 ) {
     when (avatarType) {
-        is AvatarType.Sc -> InitialOrImageAvatar(
-            avatarData = avatarData,
-            hideAvatarImage = hideImage,
-            avatarShape = avatarType.avatarShape(forcedAvatarSize ?: avatarData.size.dp),
-            forcedAvatarSize = forcedAvatarSize,
-            modifier = modifier,
-            contentDescription = contentDescription,
-        )
         is AvatarType.Room -> RoomAvatar(
             avatarData = avatarData,
             avatarType = avatarType,

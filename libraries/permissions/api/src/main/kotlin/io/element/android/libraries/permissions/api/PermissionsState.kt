@@ -9,13 +9,18 @@
 package io.element.android.libraries.permissions.api
 
 data class PermissionsState(
-    // For instance Manifest.permission.POST_NOTIFICATIONS
+    // 权限字符串，例如 Manifest.permission.POST_NOTIFICATIONS
     val permission: String,
+    // 当前权限是否已授予
     val permissionGranted: Boolean,
+    // 是否应向用户展示权限申请说明（rationale）
     val shouldShowRationale: Boolean,
+    // 是否展示应用内权限引导对话框
     val showDialog: Boolean,
+    // 该权限是否已经向用户发起过请求
     val permissionAlreadyAsked: Boolean,
-    // If true, there is no need to ask again, the system dialog will not be displayed
+    // 为 true 时表示无需再次请求，系统权限弹窗将不再显示
     val permissionAlreadyDenied: Boolean,
+    // 事件分发入口，用于处理权限相关交互事件
     val eventSink: (PermissionsEvent) -> Unit
 )

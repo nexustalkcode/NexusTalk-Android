@@ -35,6 +35,8 @@
   <string name="screen_edit_profile_error">"Se encontró un error desconocido y no se pudo cambiar la información."</string>
   <string name="screen_edit_profile_error_title">"No se puede actualizar el perfil"</string>
   <string name="screen_edit_profile_title">"Editar perfil"</string>
+  <string name="screen_edit_profile_change_avatar">"Cambiar avatar"</string>
+  <string name="screen_edit_profile_username">"Nombre de usuario"</string>
   <string name="screen_edit_profile_updating_details">"Actualizando perfil…"</string>
   <string name="screen_notification_settings_additional_settings_section_title">"Ajustes adicionales"</string>
   <string name="screen_notification_settings_calls_label">"Llamadas de audio y vídeo"</string>
@@ -63,6 +65,8 @@ Si continúas, es posible que algunos de tus ajustes cambien."</string>
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"ajustes del sistema"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Notificaciones del sistema desactivadas"</string>
   <string name="screen_notification_settings_title">"Notificaciones"</string>
+  <string name="screen_preferences_section_customization">"Personalización"</string>
+  <string name="screen_preferences_section_security">"Seguridad"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Historial de notificaciones push"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Solucionar problemas"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Solucionar problemas con las notificaciones"</string>

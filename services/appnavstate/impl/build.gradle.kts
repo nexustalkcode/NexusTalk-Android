@@ -30,7 +30,7 @@ dependencies {
 
     api(projects.services.appnavstate.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.services.appnavstate.test)
 }

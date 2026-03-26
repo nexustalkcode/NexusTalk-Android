@@ -15,8 +15,23 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.rageshake.api.bugreport.BugReportEntryPoint
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * 默认问题报告入口点
+ *
+ * BugReportEntryPoint 接口的默认实现，负责创建问题报告流程节点。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultBugReportEntryPoint : BugReportEntryPoint {
+    /**
+     * 创建问题报告节点
+     *
+     * 创建一个 BugReportFlowNode 来管理问题报告的完整流程。
+     *
+     * @param parentNode 父节点
+     * @param buildContext 构建上下文
+     * @param callback 回调接口
+     * @return Node 问题报告流程节点
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

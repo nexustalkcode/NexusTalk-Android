@@ -6,11 +6,33 @@
   <string name="screen_create_room_private_option_description">"Лише запрошені люди мають доступ до цієї кімнати. Усі повідомлення захищені наскрізним шифруванням."</string>
   <string name="screen_create_room_public_option_description">"Будь-хто може знайти цю кімнату. 
 Ви можете змінити це в будь-який час у налаштуваннях кімнати."</string>
+  <string name="screen_create_room_public_option_title">"Публічна кімната"</string>
   <string name="screen_create_room_room_access_section_knocking_option_description">"Будь-хто може попросити приєднатися до кімнати, але адміністратор або модератор повинен буде прийняти запит"</string>
   <string name="screen_create_room_room_access_section_knocking_option_title">"Запросити приєднатися"</string>
   <string name="screen_create_room_room_access_section_public_option_description">"Будь-хто може приєднатися до цієї кімнати"</string>
+  <string name="screen_create_room_room_access_section_public_option_title">"Кожний"</string>
   <string name="screen_create_room_room_address_section_footer">"Щоб цю кімнату було видно в каталозі загальнодоступних кімнат, вам знадобиться її адреса."</string>
   <string name="screen_create_room_room_address_section_title">"Адреса кімнати"</string>
   <string name="screen_create_room_room_visibility_section_title">"Видимість кімнати"</string>
   <string name="screen_create_room_topic_label">"Тема (необов\'язково)"</string>
+
+  <string name="screen_create_room_error_creating_space">"Не вдалося створити простір через невідому помилку. Повторіть спробу пізніше."</string>
+  <string name="screen_create_room_name_label">"Ім'я"</string>
+  <string name="screen_create_room_avatar_photo">"фото"</string>
+  <string name="screen_create_room_name_placeholder">"Додайте назву…"</string>
+  <string name="screen_create_room_new_room_title">"Нова кімната"</string>
+  <string name="screen_create_room_new_space_title">"Новий простір"</string>
+  <string name="screen_create_room_private_option_title">"Private"</string>
+  <string name="screen_create_room_public_option_short_description">"Будь-хто може приєднатися."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_description">"Anyone in %1$s can join but everyone else must request access."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_title">"Попросіть приєднатися"</string>
+  <string name="screen_create_room_room_access_section_private_option_description">"Лише запрошені люди можуть приєднатися."</string>
+  <string name="screen_create_room_room_access_section_private_option_title">"Private"</string>
+  <string name="screen_create_room_room_access_section_restricted_option_description">"Будь-хто в %1$s може приєднатися."</string>
+  <string name="screen_create_room_room_access_section_restricted_option_title">"Стандартний"</string>
+  <string name="screen_create_room_room_access_section_title">"Хто має доступ"</string>
+  <string name="screen_create_room_space_selection_no_space_description">"(немає місця)"</string>
+  <string name="screen_create_room_space_selection_no_space_title">"додому"</string>
+  <string name="screen_create_room_space_selection_sheet_title">"Додати в простір"</string>
+  <string name="screen_create_room_topic_placeholder">"Додати опис…"</string>
 </resources>

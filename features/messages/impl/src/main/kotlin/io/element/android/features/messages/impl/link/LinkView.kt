@@ -24,6 +24,16 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.ui.strings.CommonStrings
 import io.element.android.wysiwyg.link.Link
 
+/**
+ * 链接视图组件
+ *
+ * 负责显示链接处理的确认对话框。
+ * 当用户点击的链接未通过安全检查时，会显示确认对话框让用户决定是否继续打开链接。
+ *
+ * @param state 当前链接状态，包含链接点击的异步操作状态
+ * @param onLinkValid 当链接确认后调用的回调，传入确认的链接
+ * @param modifier 视图修饰符
+ */
 @Composable
 fun LinkView(
     state: LinkState,
@@ -46,10 +56,10 @@ fun LinkView(
                     ),
                     submitText = stringResource(CommonStrings.action_continue),
                     onSubmitClick = {
-                        state.eventSink(LinkEvent.Confirm)
+                        state.eventSink(LinkEvents.Confirm)
                     },
                     onDismiss = {
-                        state.eventSink(LinkEvent.Cancel)
+                        state.eventSink(LinkEvents.Cancel)
                     },
                 )
             }
@@ -58,7 +68,7 @@ fun LinkView(
             val latestOnLinkValid by rememberUpdatedState(onLinkValid)
             LaunchedEffect(state.linkClick.data) {
                 latestOnLinkValid(state.linkClick.data)
-                state.eventSink(LinkEvent.Cancel)
+                state.eventSink(LinkEvents.Cancel)
             }
         }
     }

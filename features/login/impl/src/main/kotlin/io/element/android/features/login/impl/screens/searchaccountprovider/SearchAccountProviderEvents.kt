@@ -8,10 +8,19 @@
 
 package io.element.android.features.login.impl.screens.searchaccountprovider
 
+/**
+ * 搜索账户提供商事件接口
+ *
+ * 定义搜索账户提供商流程中触发的事件。
+ */
 sealed interface SearchAccountProviderEvents {
     /**
-     * The user has typed something, expect to get a list of matching account provider results
-     * in the state.
+     * 用户输入事件
+     *
+     * 用户在搜索框中输入内容时触发。
+     * 期望在状态中获取匹配的账户提供商结果列表。
+     *
+     * @property input 用户输入的搜索文本
      */
     data class UserInput(val input: String) : SearchAccountProviderEvents
 }

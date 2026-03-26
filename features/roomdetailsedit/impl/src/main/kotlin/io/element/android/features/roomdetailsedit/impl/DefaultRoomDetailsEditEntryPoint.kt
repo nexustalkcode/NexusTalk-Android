@@ -15,8 +15,20 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.roomdetailsedit.api.RoomDetailsEditEntryPoint
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * 房间详情编辑功能的默认入口点实现
+ *
+ * 实现 [RoomDetailsEditEntryPoint] 接口，提供创建编辑页面节点的功能
+ */
 @ContributesBinding(AppScope::class)
 class DefaultRoomDetailsEditEntryPoint : RoomDetailsEditEntryPoint {
+    /**
+     * 创建房间详情编辑节点
+     *
+     * @param parentNode 父节点，用于构建节点层级
+     * @param buildContext 构建上下文，包含必要的配置信息
+     * @return 创建的 [RoomDetailsEditNode] 实例
+     */
     override fun createNode(parentNode: Node, buildContext: BuildContext): Node {
         return parentNode.createNode<RoomDetailsEditNode>(buildContext)
     }

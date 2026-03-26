@@ -26,6 +26,11 @@ import io.element.android.libraries.di.annotations.AppCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 锁屏设置Presenter
+ *
+ * 负责管理锁屏设置界面的业务逻辑和状态。
+ */
 @Inject
 class LockScreenSettingsPresenter(
     private val lockScreenConfig: LockScreenConfig,

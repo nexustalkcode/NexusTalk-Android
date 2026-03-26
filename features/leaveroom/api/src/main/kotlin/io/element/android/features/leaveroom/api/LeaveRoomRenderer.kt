@@ -12,7 +12,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.element.android.libraries.matrix.api.core.RoomId
 
+/**
+ * 离开房间渲染器函数式接口
+ *
+ * 定义离开房间功能的渲染接口，使用 Jetpack Compose 实现 UI 渲染。
+ * 该接口支持在需要选择新房间所有者的场景下传递回调。
+ *
+ * @param state 当前离开房间状态
+ * @param onSelectNewOwners 选择新所有者时的回调，参数为房间 ID
+ * @param modifier 修饰符
+ */
 fun interface LeaveRoomRenderer {
+    /**
+     * 渲染离开房间 UI
+     *
+     * @param state 离开房间状态
+     * @param onSelectNewOwners 选择新所有者回调
+     * @param modifier 修饰符
+     */
     @Composable
     fun Render(
         state: LeaveRoomState,

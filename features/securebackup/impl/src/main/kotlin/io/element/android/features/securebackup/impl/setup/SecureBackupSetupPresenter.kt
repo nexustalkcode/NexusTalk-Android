@@ -33,6 +33,20 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 安全备份设置 Presenter
+ *
+ * 负责处理安全备份设置页面的业务逻辑，包括：
+ * - 创建或更改恢复密钥
+ * - 观察加密服务状态
+ * - 管理设置流程状态机
+ * - 处理用户保存密钥的确认
+ *
+ * @property isChangeRecoveryKeyUserStory 是否为更改恢复密钥流程
+ * @property stateMachine 安全备份设置状态机
+ * @property encryptionService 加密服务
+ * @see SecureBackupSetupState 安全备份设置状态
+ */
 @AssistedInject
 class SecureBackupSetupPresenter(
     @Assisted private val isChangeRecoveryKeyUserStory: Boolean,

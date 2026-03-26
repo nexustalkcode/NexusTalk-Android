@@ -18,6 +18,13 @@ import io.element.android.libraries.pushproviders.api.Distributor
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 通知设置状态提供者
+ *
+ * 用于在预览模式下提供通知设置页面的示例状态数据。
+ *
+ * @see NotificationSettingsState 通知设置状态
+ */
 open class NotificationSettingsStateProvider : PreviewParameterProvider<NotificationSettingsState> {
     override val values: Sequence<NotificationSettingsState>
         get() = sequenceOf(
@@ -48,6 +55,22 @@ open class NotificationSettingsStateProvider : PreviewParameterProvider<Notifica
         )
 }
 
+/**
+ * 创建有效的通知设置状态示例
+ *
+ * @param changeNotificationSettingAction 更改设置操作状态
+ * @param atRoomNotificationsEnabled 房间提及通知是否启用
+ * @param callNotificationsEnabled 通话通知是否启用
+ * @param inviteForMeNotificationsEnabled 邀请通知是否启用
+ * @param systemNotificationsEnabled 系统通知是否启用
+ * @param appNotificationEnabled 应用通知是否启用
+ * @param currentPushDistributor 当前推送分发器
+ * @param availablePushDistributors 可用推送分发器列表
+ * @param showChangePushProviderDialog 是否显示更改推送提供商对话框
+ * @param fullScreenIntentPermissionsState 全屏意图权限状态
+ * @param eventSink 事件处理函数
+ * @return 有效的通知设置状态
+ */
 fun aValidNotificationSettingsState(
     changeNotificationSettingAction: AsyncAction<Unit> = AsyncAction.Uninitialized,
     atRoomNotificationsEnabled: Boolean = true,
@@ -83,6 +106,13 @@ fun aValidNotificationSettingsState(
     eventSink = eventSink,
 )
 
+/**
+ * 创建无效的通知设置状态示例
+ *
+ * @param fixFailed 修复是否失败
+ * @param eventSink 事件处理函数
+ * @return 无效的通知设置状态
+ */
 fun aInvalidNotificationSettingsState(
     fixFailed: Boolean = false,
     eventSink: (NotificationSettingsEvents) -> Unit = {},
@@ -102,6 +132,13 @@ fun aInvalidNotificationSettingsState(
     eventSink = eventSink,
 )
 
+/**
+ * 创建示例推送分发器
+ *
+ * @param name 分发器名称
+ * @param value 分发器值
+ * @return 推送分发器
+ */
 fun aDistributor(
     name: String = "Name",
     value: String = "$name Value",

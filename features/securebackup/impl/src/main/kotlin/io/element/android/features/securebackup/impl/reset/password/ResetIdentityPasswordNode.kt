@@ -22,6 +22,16 @@ import io.element.android.libraries.core.coroutine.CoroutineDispatchers
 import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.encryption.IdentityPasswordResetHandle
 
+/**
+ * 重置身份密码节点
+ *
+ * 负责显示重置身份密码页面的节点。
+ * 用户需要输入密码来完成身份重置流程。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property coroutineDispatchers 协程调度器
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class ResetIdentityPasswordNode(
@@ -29,6 +39,11 @@ class ResetIdentityPasswordNode(
     @Assisted plugins: List<Plugin>,
     coroutineDispatchers: CoroutineDispatchers,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 重置身份密码节点输入数据
+     *
+     * @property handle 身份密码重置句柄
+     */
     data class Inputs(val handle: IdentityPasswordResetHandle) : NodeInputs
 
     private val presenter = ResetIdentityPasswordPresenter(

@@ -34,7 +34,7 @@ dependencies {
     implementation(projects.services.toolbox.api)
     api(projects.libraries.eventformatter.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.services.toolbox.impl)
     testImplementation(projects.libraries.matrix.test)
 }

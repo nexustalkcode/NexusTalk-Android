@@ -10,12 +10,16 @@ package io.element.android.libraries.matrix.ui.messages.reply
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -33,8 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.core.extensions.toSafeLength
 import io.element.android.libraries.designsystem.atomic.atoms.PlaceholderAtom
@@ -50,6 +53,10 @@ import io.element.android.libraries.matrix.ui.components.AttachmentThumbnail
 import io.element.android.libraries.matrix.ui.messages.sender.SenderName
 import io.element.android.libraries.matrix.ui.messages.sender.SenderNameMode
 import io.element.android.libraries.ui.strings.CommonStrings
+
+private val REPLY_ACCENT_BAR_WIDTH = 5.dp
+private val REPLY_CONTAINER_CORNER_RADIUS = 6.dp
+private val REPLY_ACCENT_BAR_COLOR = Color(0xFFD42A66)
 
 @Composable
 fun InReplyToView(
@@ -87,9 +94,22 @@ private fun ReplyToReadyContent(
     }
     Row(
         modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(paddings)
+            .height(IntrinsicSize.Min)
+            .background(ElementTheme.colors.bgSubtleSecondary)
     ) {
+        Box(
+            modifier = Modifier
+                .width(REPLY_ACCENT_BAR_WIDTH)
+                .fillMaxHeight()
+                .background(
+                    color = REPLY_ACCENT_BAR_COLOR,
+                    shape = RoundedCornerShape(
+                        topStart = REPLY_CONTAINER_CORNER_RADIUS,
+                        bottomStart = REPLY_CONTAINER_CORNER_RADIUS
+                    )
+                )
+        )
+        Row(modifier = Modifier.padding(paddings)) {
         if (metadata is InReplyToMetadata.Thumbnail) {
             AttachmentThumbnail(
                 info = metadata.attachmentThumbnailInfo,
@@ -117,6 +137,7 @@ private fun ReplyToReadyContent(
             )
             ReplyToContentText(metadata)
         }
+        }
     }
 }
 
@@ -127,12 +148,26 @@ private fun ReplyToLoadingContent(
     val paddings = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
     Row(
         modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(paddings)
+            .height(IntrinsicSize.Min)
+            .background(ElementTheme.colors.bgSubtleSecondary)
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            PlaceholderAtom(width = 80.dp, height = 12.dp)
-            PlaceholderAtom(width = 140.dp, height = 14.dp)
+        Box(
+            modifier = Modifier
+                .width(REPLY_ACCENT_BAR_WIDTH)
+                .fillMaxHeight()
+                .background(
+                    color = REPLY_ACCENT_BAR_COLOR,
+                    shape = RoundedCornerShape(
+                        topStart = REPLY_CONTAINER_CORNER_RADIUS,
+                        bottomStart = REPLY_CONTAINER_CORNER_RADIUS
+                    )
+                )
+        )
+        Row(modifier = Modifier.padding(paddings)) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                PlaceholderAtom(width = 80.dp, height = 12.dp)
+                PlaceholderAtom(width = 140.dp, height = 14.dp)
+            }
         }
     }
 }
@@ -145,16 +180,30 @@ private fun ReplyToErrorContent(
     val paddings = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
     Row(
         modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(paddings)
+            .height(IntrinsicSize.Min)
+            .background(ElementTheme.colors.bgSubtleSecondary)
     ) {
-        Text(
-            text = data.message,
-            style = ElementTheme.typography.fontBodyMdRegular,
-            color = ElementTheme.colors.textCriticalPrimary,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
+        Box(
+            modifier = Modifier
+                .width(REPLY_ACCENT_BAR_WIDTH)
+                .fillMaxHeight()
+                .background(
+                    color = REPLY_ACCENT_BAR_COLOR,
+                    shape = RoundedCornerShape(
+                        topStart = REPLY_CONTAINER_CORNER_RADIUS,
+                        bottomStart = REPLY_CONTAINER_CORNER_RADIUS
+                    )
+                )
         )
+        Row(modifier = Modifier.padding(paddings)) {
+            Text(
+                text = data.message,
+                style = ElementTheme.typography.fontBodyMdRegular,
+                color = ElementTheme.colors.textCriticalPrimary,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
@@ -200,7 +249,7 @@ private fun ReplyToContentText(metadata: InReplyToMetadata?) {
             fontStyle = fontStyle,
             textAlign = TextAlign.Start,
             color = ElementTheme.colors.textSecondary,
-            maxLines = ScPrefs.REPLY_PREVIEW_LINE_COUNT.value(),
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
     }

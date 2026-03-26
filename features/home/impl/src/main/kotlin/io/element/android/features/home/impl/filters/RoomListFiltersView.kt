@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
@@ -48,6 +49,7 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
+import io.element.android.libraries.designsystem.theme.homeIconBackground
 import io.element.android.libraries.testtags.TestTags
 import io.element.android.libraries.testtags.testTag
 
@@ -60,11 +62,11 @@ fun RoomListFiltersView(
     modifier: Modifier = Modifier
 ) {
     fun onClearFiltersClick() {
-        state.eventSink(RoomListFiltersEvent.ClearSelectedFilters)
+        state.eventSink(RoomListFiltersEvents.ClearSelectedFilters)
     }
 
     fun onToggleFilter(filter: RoomListFilter) {
-        state.eventSink(RoomListFiltersEvent.ToggleFilter(filter))
+        state.eventSink(RoomListFiltersEvents.ToggleFilter(filter))
     }
 
     var scrollToStart by remember { mutableIntStateOf(0) }
@@ -146,17 +148,17 @@ private fun RoomListClearFiltersButton(
 ) {
     Box(
         modifier = modifier
+            .size(34.dp)
             .clip(CircleShape)
-            .background(ElementTheme.colors.bgActionPrimaryRest)
+            .background(Color(0xFFCFFEF8))
             .clickable(onClick = onClick)
-            .padding(4.dp)
     ) {
         Icon(
             modifier = Modifier
                 .align(Alignment.Center)
-                .size(16.dp),
+                .padding(6.dp),
             imageVector = CompoundIcons.Close(),
-            tint = ElementTheme.colors.iconOnSolidPrimary,
+            tint = Color.Black,
             contentDescription = stringResource(id = R.string.screen_roomlist_clear_filters),
         )
     }
@@ -170,12 +172,12 @@ private fun RoomListFilterView(
     modifier: Modifier = Modifier
 ) {
     val background = animateColorAsState(
-        targetValue = if (selected) ElementTheme.colors.bgActionPrimaryRest else ElementTheme.colors.bgCanvasDefault,
+        targetValue = if (selected) Color(0xFFCFFEF8) else ElementTheme.colors.homeIconBackground,
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
         label = "chip background colour",
     )
     val textColour = animateColorAsState(
-        targetValue = if (selected) ElementTheme.colors.textOnSolidPrimary else ElementTheme.colors.textPrimary,
+        targetValue = if (selected) Color(0xFF15603E) else ElementTheme.colors.textPrimary.copy(alpha = 0.5f),
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
         label = "chip text colour",
     )
@@ -188,7 +190,7 @@ private fun RoomListFilterView(
     FilterChip(
         selected = selected,
         onClick = { onClick(roomListFilter) },
-        modifier = modifier.height(32.dp),
+        modifier = modifier.height(34.dp),
         shape = CircleShape,
         colors = FilterChipDefaults.filterChipColors(
             containerColor = background.value,
@@ -199,13 +201,13 @@ private fun RoomListFilterView(
         label = {
             Text(
                 text = stringResource(id = roomListFilter.stringResource),
-                style = ElementTheme.typography.fontBodyMdRegular,
+                style = ElementTheme.typography.fontBodyLgMedium.copy(fontSize = 14.sp),
             )
         },
         border = FilterChipDefaults.filterChipBorder(
             enabled = true,
             selected = selected,
-            borderColor = borderColour.value,
+            borderColor = Color.Transparent,
         ),
     )
 }

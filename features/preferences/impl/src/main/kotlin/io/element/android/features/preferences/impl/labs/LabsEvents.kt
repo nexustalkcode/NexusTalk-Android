@@ -10,6 +10,12 @@ package io.element.android.features.preferences.impl.labs
 
 import io.element.android.libraries.featureflag.ui.model.FeatureUiModel
 
+/**
+ * 实验室功能页面事件密封接口
+ *
+ * 定义实验室功能页面中可能发生的各种用户交互事件。
+ */
 sealed interface LabsEvents {
+    /** 切换功能启用状态 */
     data class ToggleFeature(val feature: FeatureUiModel) : LabsEvents
 }

@@ -29,7 +29,7 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     api(projects.features.licenses.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(libs.coroutines.core)
     testImplementation(projects.libraries.matrix.test)
 }

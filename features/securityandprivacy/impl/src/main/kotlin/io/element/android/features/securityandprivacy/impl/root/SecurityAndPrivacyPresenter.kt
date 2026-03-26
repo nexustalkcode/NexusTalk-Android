@@ -56,16 +56,49 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+/**
+ * 安全与隐私 Presenter
+ *
+ * 负责处理安全与隐私页面的业务逻辑，包括：
+ * - 管理和显示房间访问规则（加入规则）
+ * - 管理加密状态
+ * - 管理房间历史可见性
+ * - 管理房间在房间目录中的可见性
+ * - 管理授权空间的选择
+ * - 保存安全与隐私设置
+ *
+ * @property navigator 安全与隐私导航器，用于页面跳转
+ * @property spaceSelectionStateHolder 空间选择状态持有者，用于共享空间选择状态
+ * @property matrixClient Matrix 客户端，用于与服务器通信
+ * @property room 已加入的房间
+ * @property featureFlagService 功能标志服务，用于控制功能开关
+ * @see SecurityAndPrivacyState 安全与隐私状态
+ * @see Presenter Presenter 基类
+ */
 @AssistedInject
 class SecurityAndPrivacyPresenter(
     @Assisted private val navigator: SecurityAndPrivacyNavigator,
+    /** 空间选择状态持有者，用于共享空间选择状态 */
     private val spaceSelectionStateHolder: SpaceSelectionStateHolder,
+    /** Matrix 客户端，用于与服务器通信 */
     private val matrixClient: MatrixClient,
+    /** 已加入的房间 */
     private val room: JoinedRoom,
+    /** 功能标志服务，用于控制功能开关 */
     private val featureFlagService: FeatureFlagService,
 ) : Presenter<SecurityAndPrivacyState> {
+    /**
+     * Presenter 工厂接口
+     *
+     * 用于依赖注入创建 SecurityAndPrivacyPresenter 实例。
+     */
     @AssistedFactory
     interface Factory {
+        /**
+         * 创建 SecurityAndPrivacyPresenter 实例
+         * @param navigator 导航器
+         * @return SecurityAndPrivacyPresenter 实例
+         */
         fun create(
             navigator: SecurityAndPrivacyNavigator,
         ): SecurityAndPrivacyPresenter
@@ -472,6 +505,7 @@ private fun JoinRule?.map(): SecurityAndPrivacyRoomAccess {
         JoinRule.Invite -> SecurityAndPrivacyRoomAccess.InviteOnly
         // All other cases are not supported so we default to InviteOnly
         is JoinRule.Custom,
+        JoinRule.Private,
         null -> SecurityAndPrivacyRoomAccess.InviteOnly
     }
 }
@@ -480,7 +514,7 @@ private fun SecurityAndPrivacyRoomAccess.map(): JoinRule? {
     return when (this) {
         SecurityAndPrivacyRoomAccess.Anyone -> JoinRule.Public
         SecurityAndPrivacyRoomAccess.AskToJoin -> JoinRule.Knock
-        SecurityAndPrivacyRoomAccess.InviteOnly -> JoinRule.Invite
+        SecurityAndPrivacyRoomAccess.InviteOnly -> JoinRule.Private
         is SecurityAndPrivacyRoomAccess.SpaceMember -> JoinRule.Restricted(
             rules = this.spaceIds.map { AllowRule.RoomMembership(it) }.toImmutableList()
         )

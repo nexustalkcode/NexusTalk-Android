@@ -27,12 +27,33 @@ import io.element.android.services.toolbox.api.sdk.BuildVersionSdkIntProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+/**
+ * FTUE 服务默认实现类
+ *
+ * 该类是 FtueService 接口的默认实现，负责管理首次用户体验流程的核心逻辑。
+ * 使用 @ContributesBinding 注解将其绑定到 SessionScope，
+ * 使用 @SingleIn 注解确保每个会话只有一个实例。
+ *
+ * 主要职责：
+ * - 监听会话验证状态，确定是否需要进行会话验证
+ * - 计算并更新 FTUE 流程的当前步骤
+ * - 判断是否需要请求通知权限
+ * - 判断是否需要设置锁屏
+ * - 管理 FTUE 完成状态
+ *
+ * @param sdkVersionProvider SDK 版本提供者，用于判断 Android 版本
+ * @param sessionCoroutineScope 会话级别的协程作用域
+ * @param analyticsService 分析服务
+ * @param permissionStateProvider 权限状态提供者
+ * @param lockScreenService 锁屏服务
+ * @param sessionVerificationService 会话验证服务
+ * @param sessionPreferencesStore 会话偏好设置存储
+ */
 @ContributesBinding(SessionScope::class)
 @SingleIn(SessionScope::class)
 class DefaultFtueService(
@@ -44,10 +65,27 @@ class DefaultFtueService(
     private val sessionVerificationService: SessionVerificationService,
     private val sessionPreferencesStore: SessionPreferencesStore,
 ) : FtueService {
+    /**
+     * 用户是否需要确认会话验证成功
+     *
+     * 用于确保用户在会话验证屏幕确认后再继续 FTUE 流程。
+     * 当会话未验证时设置为 true，验证完成后设置为 false。
+     */
     private val userNeedsToConfirmSessionVerificationSuccess = MutableStateFlow(false)
 
+    /**
+     * FTUE 步骤状态流
+     *
+     * 存储当前 FTUE 流程的内部状态，用于驱动导航流程。
+     */
     val ftueStepStateFlow = MutableStateFlow<InternalFtueState>(InternalFtueState.Unknown)
 
+    /**
+     * FTUE 公开状态
+     *
+     * 将内部 FTUE 状态映射为公开的 FtueState 状态。
+     * 这是 FtueService 接口要求的公开状态属性。
+     */
     override val state = ftueStepStateFlow
         .mapState {
             when (it) {
@@ -66,21 +104,63 @@ class DefaultFtueService(
                 }
             },
             userNeedsToConfirmSessionVerificationSuccess,
-            analyticsService.didAskUserConsentFlow.distinctUntilChanged(),
         ) {
             updateFtueStep()
         }
             .launchIn(sessionCoroutineScope)
     }
 
+    /**
+     * 更新 FTUE 步骤（带完成步骤参数）
+     *
+     * 当用户完成某个 FTUE 步骤后调用此方法，计算下一步应该显示什么。
+     * 如果没有更多步骤，则将 FTUE 标记为完成。
+     *
+     * @param completedStep 用户刚完成的 FTUE 步骤
+     */
+    fun updateFtueStep(completedStep: FtueStep) = sessionCoroutineScope.launch {
+        val step = getNextStep(completedStep)
+        if (step == null) {
+            // 跳过分析页时视为已询问过用户（不展示即不收集）
+            analyticsService.setDidAskUserConsent()
+            sessionPreferencesStore.setFtueCompleted(true)
+            ftueStepStateFlow.value = InternalFtueState.Complete
+        } else {
+            ftueStepStateFlow.value = InternalFtueState.Incomplete(step)
+        }
+    }
+
+    /**
+     * 更新 FTUE 步骤（无参数版本）
+     *
+     * 无参数版本，用于在状态变化时自动重新计算下一步。
+     * 只有当状态不是 Complete 时才更新。
+     * 当没有更多步骤时，标记分析权限已询问并将 FTUE 标记为完成。
+     */
     fun updateFtueStep() = sessionCoroutineScope.launch {
+        // 如果已经是完成状态，不再更新
+        if (ftueStepStateFlow.value is InternalFtueState.Complete) {
+            return@launch
+        }
         val step = getNextStep(null)
         ftueStepStateFlow.value = when (step) {
             null -> InternalFtueState.Complete
             else -> InternalFtueState.Incomplete(step)
         }
+        if (step == null) {
+            analyticsService.setDidAskUserConsent()
+            sessionPreferencesStore.setFtueCompleted(true)
+        }
     }
 
+    /**
+     * 获取下一步 FTUE 步骤
+     *
+     * 根据当前已完成的步骤和系统状态，计算下一步应该显示的 FTUE 步骤。
+     *
+     * @param completedStep 已完成的步骤，null 表示首次计算
+     * @return 下一个 FtueStep，如果没有更多步骤则返回 null
+     */
     private suspend fun getNextStep(completedStep: FtueStep? = null): FtueStep? =
         when (completedStep) {
             null -> if (!isSessionVerificationStateReady()) {
@@ -88,12 +168,19 @@ class DefaultFtueService(
             } else {
                 getNextStep(FtueStep.WaitingForInitialState)
             }
-            FtueStep.WaitingForInitialState -> if (isSessionNotVerified() || userNeedsToConfirmSessionVerificationSuccess.value) {
-                FtueStep.SessionVerification
+            FtueStep.WaitingForInitialState -> if (sessionPreferencesStore.isFtueCompleted().first()) {
+                null
             } else {
-                getNextStep(FtueStep.SessionVerification)
+                FtueStep.Welcome
             }
-            FtueStep.SessionVerification -> if (shouldAskNotificationPermissions()) {
+            // Even when FTUE has already been completed for this account, we still want to
+            // prompt session verification after a fresh login if the session is not verified.
+            FtueStep.SessionVerification -> if (sessionPreferencesStore.isFtueCompleted().first()) {
+                null
+            } else {
+                FtueStep.Welcome
+            }
+            FtueStep.Welcome -> if (shouldAskNotificationPermissions()) {
                 FtueStep.NotificationsOptIn
             } else {
                 getNextStep(FtueStep.NotificationsOptIn)
@@ -103,33 +190,47 @@ class DefaultFtueService(
             } else {
                 getNextStep(FtueStep.LockscreenSetup)
             }
-            FtueStep.LockscreenSetup -> if (needsAnalyticsOptIn()) {
-                FtueStep.AnalyticsOptIn
-            } else {
-                getNextStep(FtueStep.AnalyticsOptIn)
-            }
-            FtueStep.AnalyticsOptIn -> {
-                ftueStepStateFlow.emit(InternalFtueState.Complete) // SC: fix login flow getting stuck, again...
-                null
-            }
+            // 引导中不再展示分析页，锁屏设置完成后直接结束 FTUE
+            FtueStep.LockscreenSetup -> null
+            FtueStep.AnalyticsOptIn -> null
         }
 
+    /**
+     * 检查会话验证状态是否已准备好
+     *
+     * @return 如果会话验证状态不是 Unknown，返回 true
+     */
     private fun isSessionVerificationStateReady(): Boolean {
         return sessionVerificationService.sessionVerifiedStatus.value != SessionVerifiedStatus.Unknown
     }
 
-    private suspend fun isSessionNotVerified(): Boolean {
-        return sessionVerificationService.sessionVerifiedStatus.value == SessionVerifiedStatus.NotVerified && !canSkipVerification()
-    }
-
-    private suspend fun canSkipVerification(): Boolean {
-        return sessionPreferencesStore.isSessionVerificationSkipped().first()
-    }
-
+    /**
+     * 检查会话是否未验证
+     *
+     * @return 如果会话状态为 NotVerified 且不能跳过验证，返回 true
+     */
+    /**
+     * 检查是否可以跳过会话验证
+     *
+     * @return 如果用户之前选择跳过验证，返回 true
+     */
+    /**
+     * 检查是否需要进行分析权限请求
+     *
+     * @return 如果用户还未被询问过分析权限，返回 true
+     */
     private suspend fun needsAnalyticsOptIn(): Boolean {
         return analyticsService.didAskUserConsentFlow.first().not()
     }
 
+    /**
+     * 检查是否应该请求通知权限
+     *
+     * 仅在 Android 13+ (API 33) 上检查，因为 POST_NOTIFICATIONS 是 13+ 才有的权限。
+     * 如果权限未授予且未被拒绝，则返回 true。
+     *
+     * @return 是否应该显示通知权限请求
+     */
     private suspend fun shouldAskNotificationPermissions(): Boolean {
         return if (sdkVersionProvider.isAtLeast(Build.VERSION_CODES.TIRAMISU)) {
             val permission = Manifest.permission.POST_NOTIFICATIONS
@@ -141,19 +242,82 @@ class DefaultFtueService(
         }
     }
 
+    /**
+     * 检查是否应该显示锁屏设置
+     *
+     * @return 如果需要设置锁屏功能，返回 true
+     */
     private suspend fun shouldDisplayLockscreenSetup(): Boolean {
         return lockScreenService.isSetupRequired().first()
     }
 
+    /**
+     * 用户完成会话验证回调
+     *
+     * 当用户成功完成会话验证后调用此方法，
+     * 将 userNeedsToConfirmSessionVerificationSuccess 设置为 false，
+     * 允许 FTUE 流程继续进行。
+     */
     fun onUserCompletedSessionVerification() {
         userNeedsToConfirmSessionVerificationSuccess.value = false
     }
 }
 
+/**
+ * FTUE 步骤密封接口
+ *
+ * 定义首次用户体验流程中的各个步骤。
+ * 每个 FtueStep 代表引导流程中的一个独立阶段。
+ *
+ * 步骤顺序：
+ * 1. WaitingForInitialState - 等待初始状态
+ * 2. Welcome - 欢迎页面
+ * 3. SessionVerification - 会话验证
+ * 4. NotificationsOptIn - 通知权限请求
+ * 5. AnalyticsOptIn - 分析权限请求（已不再使用）
+ * 6. LockscreenSetup - 锁屏设置
+ */
 sealed interface FtueStep {
+    /**
+     * 等待初始状态
+     *
+     * 用于等待 FtueService 初始化完成，确定下一步骤。
+     */
     data object WaitingForInitialState : FtueStep
+
+    /**
+     * 欢迎页面
+     *
+     * 显示应用欢迎界面，介绍 NexusTalk 应用。
+     */
+    data object Welcome : FtueStep
+
+    /**
+     * 会话验证
+     *
+     * 引导用户验证会话安全性，确认设备信任关系。
+     */
     data object SessionVerification : FtueStep
+
+    /**
+     * 通知权限请求
+     *
+     * 引导用户选择是否接收应用通知。
+     */
     data object NotificationsOptIn : FtueStep
+
+    /**
+     * 分析权限请求
+     *
+     * 引导用户选择是否允许发送匿名使用统计数据以改进产品。
+     * 注意：当前版本中此步骤已被跳过，不再显示。
+     */
     data object AnalyticsOptIn : FtueStep
+
+    /**
+     * 锁屏设置
+     *
+     * 引导用户设置应用内锁屏功能，增强隐私保护。
+     */
     data object LockscreenSetup : FtueStep
 }

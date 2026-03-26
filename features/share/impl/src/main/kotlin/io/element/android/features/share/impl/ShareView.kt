@@ -15,6 +15,24 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.matrix.api.core.RoomId
 
+/**
+ * 分享视图组件
+ *
+ * 使用 Jetpack Compose 实现分享状态的用户界面。
+ * 展示分享操作的加载、成功和错误状态。
+ *
+ * @param state 当前视图状态
+ * @param onShareSuccess 分享成功回调
+ */
+/**
+ * Share view component.
+ *
+ * Implements the user interface for share state using Jetpack Compose.
+ * Displays loading, success, and error states of the share operation.
+ *
+ * @param state Current view state
+ * @param onShareSuccess Callback for share success
+ */
 @Composable
 fun ShareView(
     state: ShareState,
@@ -31,6 +49,20 @@ fun ShareView(
     )
 }
 
+/**
+ * 分享视图预览组件
+ *
+ * 用于在 Android Studio 预览中展示分享视图 UI。
+ *
+ * @param state 预览状态
+ */
+/**
+ * Share view preview component.
+ *
+ * Used to preview the share view UI in Android Studio.
+ *
+ * @param state Preview state
+ */
 @PreviewsDayNight
 @Composable
 internal fun ShareViewPreview(@PreviewParameter(ShareStateProvider::class) state: ShareState) = ElementPreview {

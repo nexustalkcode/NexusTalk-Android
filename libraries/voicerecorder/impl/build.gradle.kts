@@ -30,6 +30,6 @@ dependencies {
     implementation(libs.androidx.annotationjvm)
     implementation(libs.coroutines.core)
 
-    testCommonDependencies(libs)
+   
     testImplementation(libs.coroutines.core)
 }

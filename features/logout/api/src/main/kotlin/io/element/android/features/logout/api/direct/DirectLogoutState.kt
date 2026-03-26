@@ -10,6 +10,15 @@ package io.element.android.features.logout.api.direct
 
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 直接退出登录状态数据类
+ *
+ * 表示直接退出登录界面的状态，包含是否可以执行直接退出以及退出操作的异步状态。
+ *
+ * @property canDoDirectSignOut 是否可以执行直接退出登录
+ * @property logoutAction 退出登录操作的异步状态
+ * @property eventSink 事件处理函数
+ */
 data class DirectLogoutState(
     val canDoDirectSignOut: Boolean,
     val logoutAction: AsyncAction<Unit>,

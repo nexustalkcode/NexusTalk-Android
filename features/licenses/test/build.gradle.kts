@@ -16,5 +16,5 @@ android {
 dependencies {
     implementation(projects.features.licenses.api)
     implementation(projects.libraries.architecture)
-    implementation(projects.tests.testutils)
+    
 }

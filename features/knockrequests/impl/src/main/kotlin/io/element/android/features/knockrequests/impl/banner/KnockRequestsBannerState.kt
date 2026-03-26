@@ -15,6 +15,17 @@ import io.element.android.features.knockrequests.impl.R
 import io.element.android.features.knockrequests.impl.data.KnockRequestPresentable
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 敲门请求横幅状态数据类
+ *
+ * 表示房间列表中敲门请求横幅的当前状态。
+ *
+ * @property isVisible 横幅是否可见
+ * @property knockRequests 敲门请求列表
+ * @property displayAcceptError 是否显示接受错误
+ * @property canAccept 是否可以接受请求
+ * @property eventSink 事件处理函数
+ */
 data class KnockRequestsBannerState(
     val isVisible: Boolean,
     val knockRequests: ImmutableList<KnockRequestPresentable>,
@@ -22,9 +33,16 @@ data class KnockRequestsBannerState(
     val canAccept: Boolean,
     val eventSink: (KnockRequestsBannerEvents) -> Unit,
 ) {
+    /** 副标题，显示单个请求者的 ID */
     val subtitle = knockRequests.singleOrNull()?.userId?.value
+    /** 敲门原因 */
     val reason = knockRequests.singleOrNull()?.reason
 
+    /**
+     * 获取格式化的标题文本
+     *
+     * @return String 格式化的标题
+     */
     @Composable
     fun formattedTitle(): String {
         return when (knockRequests.size) {

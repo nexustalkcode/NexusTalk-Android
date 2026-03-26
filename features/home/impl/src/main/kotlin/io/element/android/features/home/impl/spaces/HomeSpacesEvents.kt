@@ -8,4 +8,9 @@
 
 package io.element.android.features.home.impl.spaces
 
+/**
+ * 首页空间事件密封接口
+ *
+ * 定义首页空间导航可能发生的用户交互事件。
+ */
 sealed interface HomeSpacesEvents

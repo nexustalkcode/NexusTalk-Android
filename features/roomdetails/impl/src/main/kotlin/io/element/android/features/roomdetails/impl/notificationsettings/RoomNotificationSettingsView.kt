@@ -36,6 +36,18 @@ import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 房间通知设置视图
+ *
+ * Composable 函数，用于渲染房间通知设置页面。
+ * 根据 showUserDefinedSettingStyle 标志显示不同的 UI 样式。
+ *
+ * @param state 通知设置状态
+ * @param onShowGlobalNotifications 显示全局通知设置回调
+ * @param onBackClick 返回按钮回调
+ * @param modifier 视图修饰符
+ * @see RoomNotificationSettingsState 通知设置状态
+ */
 @Composable
 fun RoomNotificationSettingsView(
     state: RoomNotificationSettingsState,
@@ -59,6 +71,18 @@ fun RoomNotificationSettingsView(
     }
 }
 
+/**
+ * 房间特定通知设置视图
+ *
+ * Composable 函数，用于渲染房间特定的通知设置页面。
+ * 包含自定义设置开关、默认设置和自定义设置选项。
+ *
+ * @param state 通知设置状态
+ * @param onShowGlobalNotifications 显示全局通知设置回调
+ * @param onBackClick 返回按钮回调
+ * @param modifier 视图修饰符
+ * @see RoomNotificationSettingsState 通知设置状态
+ */
 @Composable
 private fun RoomSpecificNotificationSettingsView(
     state: RoomNotificationSettingsState,
@@ -85,7 +109,7 @@ private fun RoomSpecificNotificationSettingsView(
             PreferenceSwitch(
                 isChecked = !state.displayIsDefault.orTrue(),
                 onCheckedChange = {
-                    state.eventSink(RoomNotificationSettingsEvent.SetNotificationMode(!it))
+                    state.eventSink(RoomNotificationSettingsEvents.SetNotificationMode(!it))
                 },
                 title = stringResource(id = R.string.screen_room_notification_settings_allow_custom),
                 subtitle = stringResource(id = R.string.screen_room_notification_settings_allow_custom_footnote),
@@ -138,7 +162,7 @@ private fun RoomSpecificNotificationSettingsView(
                         enabled = !state.displayIsDefault.orTrue(),
                         displayMentionsOnlyDisclaimer = state.displayMentionsOnlyDisclaimer,
                         onSelectOption = {
-                            state.eventSink(RoomNotificationSettingsEvent.ChangeRoomNotificationMode(it.mode))
+                            state.eventSink(RoomNotificationSettingsEvents.ChangeRoomNotificationMode(it.mode))
                         },
                     )
                 }
@@ -148,19 +172,27 @@ private fun RoomSpecificNotificationSettingsView(
                 async = state.setNotificationSettingAction,
                 onSuccess = {},
                 errorMessage = { stringResource(R.string.screen_notification_settings_edit_failed_updating_default_mode) },
-                onErrorDismiss = { state.eventSink(RoomNotificationSettingsEvent.ClearSetNotificationError) },
+                onErrorDismiss = { state.eventSink(RoomNotificationSettingsEvents.ClearSetNotificationError) },
             )
 
             AsyncActionView(
                 async = state.restoreDefaultAction,
                 onSuccess = {},
                 errorMessage = { stringResource(R.string.screen_notification_settings_edit_failed_updating_default_mode) },
-                onErrorDismiss = { state.eventSink(RoomNotificationSettingsEvent.ClearRestoreDefaultError) },
+                onErrorDismiss = { state.eventSink(RoomNotificationSettingsEvents.ClearRestoreDefaultError) },
             )
         }
     }
 }
 
+/**
+ * 通知设置顶部导航栏
+ *
+ * Composable 函数，用于渲染通知设置页面的顶部导航栏。
+ *
+ * @param onBackClick 返回按钮点击回调
+ * @see ExperimentalMaterial3Api 实验性 Material3 API
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RoomNotificationSettingsTopBar(

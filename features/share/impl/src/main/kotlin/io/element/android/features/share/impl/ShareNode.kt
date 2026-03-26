@@ -8,6 +8,7 @@
 
 package io.element.android.features.share.impl
 
+import android.content.Intent
 import android.os.Parcelable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -22,7 +23,6 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedInject
 import io.element.android.annotations.ContributesNode
 import io.element.android.features.share.api.ShareEntryPoint
-import io.element.android.features.share.api.ShareIntentData
 import io.element.android.libraries.architecture.NodeInputs
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.architecture.inputs
@@ -32,6 +32,28 @@ import io.element.android.libraries.roomselect.api.RoomSelectEntryPoint
 import io.element.android.libraries.roomselect.api.RoomSelectMode
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 分享节点
+ *
+ * 作为分享功能的父节点，管理房间选择和分享操作的导航。
+ * 使用 PermanentNavModel 保持节点持久化，支持返回时恢复状态。
+ *
+ * @property NavTarget 导航目标类型
+ * @property Inputs 输入数据类，包含分享意图
+ * @see SharePresenter 分享 Presenter
+ * @see ShareView 分享视图
+ */
+/**
+ * Share node.
+ *
+ * Acts as the parent node for the share feature, managing navigation for room selection and share operations.
+ * Uses PermanentNavModel to keep the node persistent, supporting state restoration when returning.
+ *
+ * @property NavTarget Navigation target type
+ * @property Inputs Input data class containing the share intent
+ * @see SharePresenter Share Presenter
+ * @see ShareView Share view
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class ShareNode(
@@ -47,15 +69,41 @@ class ShareNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /** 导航目标 */
+    /** Navigation target */
     @Parcelize
     object NavTarget : Parcelable
 
-    data class Inputs(val shareIntentData: ShareIntentData) : NodeInputs
+    /**
+     * 节点输入数据
+     *
+     * @property intent 分享意图
+     */
+    /**
+     * Node input data.
+     *
+     * @property intent The share intent
+     */
+    data class Inputs(val intent: Intent) : NodeInputs
 
     private val inputs = inputs<Inputs>()
-    private val presenter = presenterFactory.create(inputs.shareIntentData)
+    private val presenter = presenterFactory.create(inputs.intent)
     private val callback: ShareEntryPoint.Callback = callback()
 
+    /**
+     * 解析导航目标并创建对应的节点
+     *
+     * @param navTarget 导航目标
+     * @param buildContext 构建上下文
+     * @return 解析后的节点实例
+     */
+    /**
+     * Resolves the navigation target and creates the corresponding node.
+     *
+     * @param navTarget The navigation target
+     * @param buildContext The build context
+     * @return The resolved node instance
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         val callback = object : RoomSelectEntryPoint.Callback {
             override fun onRoomSelected(roomIds: List<RoomId>) {
@@ -75,6 +123,16 @@ class ShareNode(
         )
     }
 
+    /**
+     * 渲染分享节点的视图
+     *
+     * @param modifier 修饰符
+     */
+    /**
+     * Renders the view of the share node.
+     *
+     * @param modifier The modifier
+     */
     @Composable
     override fun View(modifier: Modifier) {
         Box(modifier = modifier) {

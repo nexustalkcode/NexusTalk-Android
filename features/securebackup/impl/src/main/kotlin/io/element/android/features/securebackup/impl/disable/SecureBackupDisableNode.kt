@@ -18,6 +18,16 @@ import dev.zacsweers.metro.AssistedInject
 import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 禁用安全备份节点
+ *
+ * 负责显示禁用安全备份页面的节点。
+ * 使用 [SecureBackupDisablePresenter] 处理业务逻辑，并使用 [SecureBackupDisableView] 渲染界面。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenter 禁用安全备份业务逻辑处理 presenter
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class SecureBackupDisableNode(

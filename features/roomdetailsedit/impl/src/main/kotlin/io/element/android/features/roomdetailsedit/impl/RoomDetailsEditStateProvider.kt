@@ -16,6 +16,11 @@ import io.element.android.libraries.permissions.api.PermissionsState
 import io.element.android.libraries.permissions.api.aPermissionsState
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 房间详情编辑状态的预览参数提供者
+ *
+ * 用于在Compose预览中提供多种状态的 [RoomDetailsEditState] 实例
+ */
 open class RoomDetailsEditStateProvider : PreviewParameterProvider<RoomDetailsEditState> {
     override val values: Sequence<RoomDetailsEditState>
         get() = sequenceOf(
@@ -32,6 +37,24 @@ open class RoomDetailsEditStateProvider : PreviewParameterProvider<RoomDetailsEd
         )
 }
 
+/**
+ * 创建用于测试和预览的 [RoomDetailsEditState] 实例的便捷函数
+ *
+ * @param roomId 房间ID，默认值为测试用房间ID
+ * @param roomRawName 房间原始名称
+ * @param canChangeName 是否可以修改名称
+ * @param roomTopic 房间主题
+ * @param canChangeTopic 是否可以修改主题
+ * @param roomAvatarUrl 房间头像URL
+ * @param canChangeAvatar 是否可以修改头像
+ * @param avatarActions 头像操作列表
+ * @param saveButtonEnabled 保存按钮是否可用
+ * @param saveAction 保存操作状态
+ * @param cameraPermissionState 相机权限状态
+ * @param isSpace 是否为空间
+ * @param eventSink 事件处理函数
+ * @return 配置好的 [RoomDetailsEditState] 实例
+ */
 fun aRoomDetailsEditState(
     roomId: RoomId = RoomId("!aRoomId:aDomain"),
     roomRawName: String = "Marketing",

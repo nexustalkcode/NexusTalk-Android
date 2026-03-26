@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Vypnout zálohování"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Zapnout zálohování"</string>
-  <string name="screen_chat_backup_key_backup_description">"Bezpečně uložte svou kryptografickou identitu a klíče zpráv na serveru. To vám umožní zobrazit historii zpráv na všech nových zařízeních. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Bezpečně uložte svou kryptografickou identitu a klíče zpráv na serveru. To vám umožní zobrazit historii zpráv na všech nových zařízeních. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Úložiště klíčů"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"Pro nastavení obnovení musí být zapnuto úložiště klíčů."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Nahrát klíče z tohoto zařízení"</string>

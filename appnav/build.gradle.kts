@@ -48,6 +48,7 @@ dependencies {
 
     implementation(projects.features.announcement.api)
     implementation(projects.features.ftue.api)
+    implementation(project(":features:ftue:impl"))
     implementation(projects.features.linknewdevice.api)
     implementation(projects.features.share.api)
 
@@ -55,9 +56,7 @@ dependencies {
     implementation(projects.services.appnavstate.api)
     implementation(projects.services.analytics.api)
 
-    testCommonDependencies(libs)
     testImplementation(projects.features.login.test)
-    testImplementation(projects.features.share.test)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.oidc.test)
     testImplementation(projects.libraries.preferences.test)

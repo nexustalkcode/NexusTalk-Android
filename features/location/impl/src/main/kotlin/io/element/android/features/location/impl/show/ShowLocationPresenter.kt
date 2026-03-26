@@ -27,19 +27,64 @@ import io.element.android.features.location.impl.common.permissions.PermissionsS
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.core.meta.BuildMeta
 
+/**
+ * 显示位置 Presenter
+ *
+ * 负责处理显示位置页面的业务逻辑，包括：
+ * - 管理位置权限状态
+ * - 处理位置分享
+ * - 处理位置跟踪
+ * - 处理权限对话框显示
+ *
+ * @property location 要显示的位置
+ * @property description 位置描述
+ * @property permissionsPresenterFactory 权限 Presenter 工厂
+ * @property locationActions 位置操作
+ * @property buildMeta 构建元信息
+ * @see ShowLocationState 显示位置状态
+ */
+/**
+ * 显示位置 Presenter
+ *
+ * 负责处理显示位置页面的业务逻辑，包括：
+ * - 管理位置权限状态
+ * - 处理位置分享
+ * - 处理位置跟踪
+ * - 处理权限对话框显示
+ *
+ * @property location 要显示的位置
+ * @property description 位置描述
+ * @property permissionsPresenterFactory 权限 Presenter 工厂
+ * @property locationActions 位置操作
+ * @property buildMeta 构建元信息
+ * @see ShowLocationState 显示位置状态
+ */
 @AssistedInject
 class ShowLocationPresenter(
+    /** 要显示的位置 */
     @Assisted private val location: Location,
+    /** 位置描述 */
     @Assisted private val description: String?,
     permissionsPresenterFactory: PermissionsPresenter.Factory,
     private val locationActions: LocationActions,
     private val buildMeta: BuildMeta,
 ) : Presenter<ShowLocationState> {
+    /**
+     * 工厂接口，用于创建 ShowLocationPresenter 实例
+     */
     @AssistedFactory
     fun interface Factory {
+        /**
+         * 创建 ShowLocationPresenter 实例
+         *
+         * @param location 要显示的位置
+         * @param description 位置描述
+         * @return ShowLocationPresenter 显示位置Presenter实例
+         */
         fun create(location: Location, description: String?): ShowLocationPresenter
     }
 
+    /** 权限Presenter实例 */
     private val permissionsPresenter = permissionsPresenterFactory.create(MapDefaults.permissions)
 
     @Composable

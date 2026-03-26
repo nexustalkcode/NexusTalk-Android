@@ -16,9 +16,24 @@ import io.element.android.features.analytics.api.preferences.AnalyticsPreference
 import io.element.android.features.analytics.impl.preferences.AnalyticsPreferencesPresenter
 import io.element.android.libraries.architecture.Presenter
 
+/**
+ * 分析功能依赖注入模块
+ *
+ * 定义分析功能所需的依赖注入绑定，
+ * 用于在应用范围内提供 AnalyticsPreferencesPresenter 实例。
+ *
+ * @see AnalyticsPreferencesPresenter 分析偏好设置 Presenter
+ * @see AnalyticsPreferencesState 分析偏好设置状态
+ */
 @ContributesTo(AppScope::class)
 @BindingContainer
 interface AnalyticsModule {
+    /**
+     * 绑定分析偏好设置 Presenter
+     *
+     * @param presenter AnalyticsPreferencesPresenter 实例
+     * @return Presenter<AnalyticsPreferencesState>
+     */
     @Binds
     fun bindAnalyticsPreferencesPresenter(presenter: AnalyticsPreferencesPresenter): Presenter<AnalyticsPreferencesState>
 }

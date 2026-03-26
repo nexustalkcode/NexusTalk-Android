@@ -28,7 +28,7 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     implementation(projects.libraries.push.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(libs.coroutines.core)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.push.test)

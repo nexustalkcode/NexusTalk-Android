@@ -16,6 +16,11 @@ import io.element.android.features.location.api.SendLocationEntryPoint
 import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.matrix.api.timeline.Timeline
 
+/**
+ * 默认发送位置入口点实现
+ *
+ * 实现 SendLocationEntryPoint 接口，负责创建发送位置功能的节点。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultSendLocationEntryPoint : SendLocationEntryPoint {
     override fun createNode(

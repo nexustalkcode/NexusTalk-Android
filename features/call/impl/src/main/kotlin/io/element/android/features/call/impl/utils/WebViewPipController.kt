@@ -13,12 +13,26 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 /**
- * Documentation about the `controls` command can be found here:
- * https://github.com/element-hq/element-call/blob/livekit/docs/controls.md#picture-in-picture
+ * WebView 画中画控制器
+ *
+ * 通过 JavaScript 与 Element Call WebView 通信，控制画中画模式。
+ * 调用 WebView 中的 controls 对象方法来管理画中画状态。
+ *
+ * @param webView WebView 实例，用于执行 JavaScript
+ *
+ * @see PipController 画中画控制器接口
+ * @see <a href="https://github.com/element-hq/element-call/blob/livekit/docs/controls.md#picture-in-picture">Element Call Controls 文档</a>
  */
 class WebViewPipController(
     private val webView: WebView,
 ) : PipController {
+    /**
+     * 检查是否可以进入画中画模式
+     *
+     * 调用 WebView 中的 controls.canEnterPip() 方法。
+     *
+     * @return Boolean 如果可以进入画中画则返回 true
+     */
     override suspend fun canEnterPip(): Boolean {
         return suspendCoroutine { continuation ->
             webView.evaluateJavascript("controls.canEnterPip()") { result ->
@@ -28,10 +42,20 @@ class WebViewPipController(
         }
     }
 
+    /**
+     * 进入画中画模式
+     *
+     * 调用 WebView 中的 controls.enablePip() 方法。
+     */
     override fun enterPip() {
         webView.evaluateJavascript("controls.enablePip()", null)
     }
 
+    /**
+     * 退出画中画模式
+     *
+     * 调用 WebView 中的 controls.disablePip() 方法。
+     */
     override fun exitPip() {
         webView.evaluateJavascript("controls.disablePip()", null)
     }

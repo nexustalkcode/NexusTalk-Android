@@ -14,7 +14,12 @@ import io.element.android.features.messages.impl.timeline.aTimelineItemEvent
 import io.element.android.features.messages.impl.timeline.model.event.aTimelineItemPollContent
 import io.element.android.libraries.designsystem.preview.ElementPreviewLight
 
-// Note: no need for light/dark variant for this preview, we only look at the timestamp position
+/**
+ * 时间线事件时间戳在下方预览
+ *
+ * 预览时间戳显示在内容下方的样式（用于投票等场景）。
+ * 注意：此预览不需要浅色/深色变体，因为我们只关注时间戳位置。
+ */
 @Preview
 @Composable
 internal fun TimelineItemEventTimestampBelowPreview() = ElementPreviewLight {

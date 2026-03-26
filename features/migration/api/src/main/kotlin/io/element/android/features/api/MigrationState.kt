@@ -10,6 +10,13 @@ package io.element.android.features.api
 
 import io.element.android.libraries.architecture.AsyncData
 
+/**
+ * 迁移状态数据类
+ *
+ * 表示应用数据迁移的状态。
+ *
+ * @property migrationAction 迁移操作的异步状态
+ */
 data class MigrationState(
     val migrationAction: AsyncData<Unit>,
 )

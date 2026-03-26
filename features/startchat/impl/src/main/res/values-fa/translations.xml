@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"اتاق مطابق پیدا شد"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"اتاق پیدا نشد"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"نمونه: ‪#room-name:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"اسکن کد QR"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"برای افزودن مخاطب، کد QR را اسکن کنید"</string>
+  <string name="screen_scan_user_qr_code_success">"کد QR با موفقیت اسکن شد"</string>
 </resources>

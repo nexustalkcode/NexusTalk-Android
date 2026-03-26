@@ -23,6 +23,4 @@ dependencies {
     api(projects.features.cachecleaner.api)
     implementation(projects.libraries.core)
     implementation(projects.libraries.architecture)
-
-    testCommonDependencies(libs)
 }

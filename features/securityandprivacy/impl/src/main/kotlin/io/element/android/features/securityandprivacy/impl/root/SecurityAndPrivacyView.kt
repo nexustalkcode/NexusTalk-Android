@@ -57,6 +57,21 @@ import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 安全与隐私视图
+ *
+ * 负责渲染安全与隐私设置的完整界面，包含：
+ * - 房间访问权限设置区块
+ * - 房间可见性设置区块（包括房间地址和目录可见性）
+ * - 加密设置区块
+ * - 历史可见性设置区块
+ * - 保存/取消操作的对话框
+ *
+ * @param state 页面状态
+ * @param onLinkClick 链接点击事件处理（用于"了解更多"链接）
+ * @param modifier 样式修饰符
+ * @see SecurityAndPrivacyState 页面状态数据类
+ */
 @Composable
 fun SecurityAndPrivacyView(
     state: SecurityAndPrivacyState,
@@ -152,6 +167,16 @@ fun SecurityAndPrivacyView(
     )
 }
 
+/**
+ * 安全与隐私页面顶部导航栏
+ *
+ * 包含页面标题、返回按钮和保存按钮。
+ *
+ * @param isSaveActionEnabled 保存按钮是否可用
+ * @param onBackClick 返回按钮点击事件处理
+ * @param onSaveClick 保存按钮点击事件处理
+ * @param modifier 样式修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SecurityAndPrivacyToolbar(
@@ -174,6 +199,16 @@ private fun SecurityAndPrivacyToolbar(
     )
 }
 
+/**
+ * 安全与隐私区块通用组件
+ *
+ * 用于包装页面中的各个设置区块，提供统一的标题和样式。
+ *
+ * @param title 区块标题
+ * @param modifier 样式修饰符
+ * @param subtitle 区块副标题（可选）
+ * @param content 区块内容
+ */
 @Composable
 private fun SecurityAndPrivacySection(
     title: String,
@@ -203,6 +238,18 @@ private fun SecurityAndPrivacySection(
     }
 }
 
+/**
+ * 房间访问权限设置区块
+ *
+ * 允许用户配置房间的访问权限，包括：
+ * - 任何人可加入
+ * - 仅空间成员可加入
+ * - 需要申请加入
+ * - 仅限邀请
+ *
+ * @param state 页面状态
+ * @param modifier 样式修饰符
+ */
 @Composable
 private fun RoomAccessSection(
     state: SecurityAndPrivacyState,
@@ -233,7 +280,7 @@ private fun RoomAccessSection(
         ListItem(
             headlineContent = { Text(text = stringResource(R.string.screen_security_and_privacy_room_access_anyone_option_title)) },
             supportingContent = { Text(text = stringResource(R.string.screen_security_and_privacy_room_access_anyone_option_description)) },
-            trailingContent = ListItemContent.RadioButton(selected = edited == SecurityAndPrivacyRoomAccess.Anyone),
+            trailingContent = ListItemContent.RadioCheckbox(selected = edited == SecurityAndPrivacyRoomAccess.Anyone),
             leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Public())),
             onClick = { onSelectOption(SecurityAndPrivacyRoomAccess.Anyone) },
         )
@@ -243,7 +290,7 @@ private fun RoomAccessSection(
                 supportingContent = {
                     Text(text = state.spaceMemberDescription())
                 },
-                trailingContent = ListItemContent.RadioButton(selected = state.editedSettings.roomAccess is SecurityAndPrivacyRoomAccess.SpaceMember),
+                trailingContent = ListItemContent.RadioCheckbox(selected = state.editedSettings.roomAccess is SecurityAndPrivacyRoomAccess.SpaceMember),
                 leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Space())),
                 onClick = ::onSpaceMemberAccessClick,
                 enabled = state.isSpaceMemberSelectable,
@@ -253,7 +300,7 @@ private fun RoomAccessSection(
             ListItem(
                 headlineContent = { Text(text = stringResource(R.string.screen_security_and_privacy_ask_to_join_option_title)) },
                 supportingContent = { Text(text = stringResource(R.string.screen_security_and_privacy_ask_to_join_option_description)) },
-                trailingContent = ListItemContent.RadioButton(selected = edited == SecurityAndPrivacyRoomAccess.AskToJoin),
+                trailingContent = ListItemContent.RadioCheckbox(selected = edited == SecurityAndPrivacyRoomAccess.AskToJoin),
                 onClick = { onSelectOption(SecurityAndPrivacyRoomAccess.AskToJoin) },
                 leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.UserAdd())),
                 enabled = state.isAskToJoinSelectable,
@@ -263,7 +310,7 @@ private fun RoomAccessSection(
             ListItem(
                 headlineContent = { Text(text = stringResource(R.string.screen_security_and_privacy_ask_to_join_option_title)) },
                 supportingContent = { Text(text = state.askToJoinWithSpaceMembersDescription()) },
-                trailingContent = ListItemContent.RadioButton(selected = edited is SecurityAndPrivacyRoomAccess.AskToJoinWithSpaceMember),
+                trailingContent = ListItemContent.RadioCheckbox(selected = edited is SecurityAndPrivacyRoomAccess.AskToJoinWithSpaceMember),
                 onClick = ::onAskToJoinWithSpaceMembersClick,
                 leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.UserAdd())),
                 enabled = state.isAskToJoinWithSpaceMembersSelectable,
@@ -272,7 +319,7 @@ private fun RoomAccessSection(
         ListItem(
             headlineContent = { Text(text = stringResource(R.string.screen_security_and_privacy_room_access_invite_only_option_title)) },
             supportingContent = { Text(text = stringResource(R.string.screen_security_and_privacy_room_access_invite_only_option_description)) },
-            trailingContent = ListItemContent.RadioButton(selected = edited == SecurityAndPrivacyRoomAccess.InviteOnly),
+            trailingContent = ListItemContent.RadioCheckbox(selected = edited == SecurityAndPrivacyRoomAccess.InviteOnly),
             leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Lock())),
             onClick = { onSelectOption(SecurityAndPrivacyRoomAccess.InviteOnly) },
         )
@@ -293,6 +340,14 @@ private fun RoomAccessSection(
     }
 }
 
+/**
+ * 房间可见性设置区块
+ *
+ * 显示房间可见性设置的说明信息。
+ *
+ * @param homeserverName 服务器名称，用于显示在说明文本中
+ * @param modifier 样式修饰符
+ */
 @Composable
 private fun RoomVisibilitySection(
     homeserverName: String,
@@ -312,6 +367,20 @@ private fun RoomVisibilitySection(
     }
 }
 
+/**
+ * 房间地址和目录可见性设置区块
+ *
+ * 允许用户：
+ * - 设置或编辑房间地址
+ * - 切换房间在房间目录中的可见性
+ *
+ * @param roomAddress 当前房间地址（null 表示未设置）
+ * @param homeserverName 服务器名称
+ * @param isVisibleInRoomDirectory 目录可见性的异步状态
+ * @param onRoomAddressClick 房间地址点击事件处理
+ * @param onVisibilityChange 可见性切换事件处理
+ * @param modifier 样式修饰符
+ */
 @Composable
 private fun RoomAddressSection(
     roomAddress: String?,
@@ -368,6 +437,21 @@ private fun RoomAddressSection(
     }
 }
 
+/**
+ * 加密设置区块
+ *
+ * 允许用户启用或查看房间加密状态。
+ * 注意：一旦启用加密，将无法禁用。
+ * 启用加密前会显示确认对话框。
+ *
+ * @param isRoomEncrypted 当前是否已加密
+ * @param canToggleEncryption 是否可以切换加密状态（加密后无法切换）
+ * @param showConfirmation 是否显示确认对话框
+ * @param onToggleEncryption 切换加密状态事件处理
+ * @param onConfirmEncryption 确认启用加密事件处理
+ * @param onDismissConfirmation 关闭确认对话框事件处理
+ * @param modifier 样式修饰符
+ */
 @Composable
 private fun EncryptionSection(
     isRoomEncrypted: Boolean,
@@ -403,6 +487,19 @@ private fun EncryptionSection(
     }
 }
 
+/**
+ * 历史可见性设置区块
+ *
+ * 允许用户配置房间消息的历史可见性。
+ * 可选值包括：自邀请起可见、选择后可见、所有人可见。
+ *
+ * @param editedOption 当前编辑的历史可见性选项
+ * @param savedOptions 已保存的历史可见性选项
+ * @param availableOptions 可用的历史可见性选项列表
+ * @param onSelectOption 选择选项事件处理
+ * @param onLinkClick 链接点击事件处理（"了解更多"链接）
+ * @param modifier 样式修饰符
+ */
 @Composable
 private fun HistoryVisibilitySection(
     editedOption: SecurityAndPrivacyHistoryVisibility?,
@@ -441,6 +538,17 @@ private fun HistoryVisibilitySection(
     }
 }
 
+/**
+ * 历史可见性选项组件
+ *
+ * 用于显示单个历史可见性选项，包含单选按钮。
+ *
+ * @param option 历史可见性选项
+ * @param isSelected 是否被选中
+ * @param onSelectOption 选择选项事件处理
+ * @param modifier 样式修饰符
+ * @param isEnabled 是否启用
+ */
 @Composable
 private fun HistoryVisibilityItem(
     option: SecurityAndPrivacyHistoryVisibility,
@@ -456,7 +564,7 @@ private fun HistoryVisibilityItem(
     }
     ListItem(
         headlineContent = { Text(text = headlineText) },
-        trailingContent = ListItemContent.RadioButton(selected = isSelected, enabled = isEnabled),
+        trailingContent = ListItemContent.RadioCheckbox(selected = isSelected, enabled = isEnabled),
         onClick = { onSelectOption(option) },
         enabled = isEnabled,
         modifier = modifier,

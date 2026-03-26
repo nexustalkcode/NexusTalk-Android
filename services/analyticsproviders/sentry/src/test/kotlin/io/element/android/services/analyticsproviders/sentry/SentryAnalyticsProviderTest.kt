@@ -31,6 +31,7 @@ import io.sentry.Sentry
 import io.sentry.SentryTracer
 import io.sentry.protocol.SentryId
 import io.sentry.protocol.SentryTransaction
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -148,7 +149,7 @@ class SentryAnalyticsProviderTest {
                 )
             },
             appNavigationStateService = FakeAppNavigationStateService(
-                initialAppNavigationState = AppNavigationState(navigationState = NavigationState.Session("owner", A_SESSION_ID), isInForeground = true)
+                MutableStateFlow(AppNavigationState(navigationState = NavigationState.Session("owner", A_SESSION_ID), isInForeground = true))
             )
         ).run {
             init()
@@ -181,7 +182,7 @@ class SentryAnalyticsProviderTest {
                 )
             },
             appNavigationStateService = FakeAppNavigationStateService(
-                initialAppNavigationState = AppNavigationState(navigationState = NavigationState.Root, isInForeground = true)
+                MutableStateFlow(AppNavigationState(navigationState = NavigationState.Root, isInForeground = true))
             )
         ).run {
             init()
@@ -202,7 +203,7 @@ class SentryAnalyticsProviderTest {
                 )
             },
             appNavigationStateService = FakeAppNavigationStateService(
-                initialAppNavigationState = AppNavigationState(navigationState = NavigationState.Session("owner", A_SESSION_ID), isInForeground = true)
+                MutableStateFlow(AppNavigationState(navigationState = NavigationState.Session("owner", A_SESSION_ID), isInForeground = true))
             )
         ).run {
             init()
@@ -220,7 +221,7 @@ class SentryAnalyticsProviderTest {
         buildMeta: BuildMeta = aBuildMeta(),
         getDatabaseSizesUseCase: GetDatabaseSizesUseCase = GetDatabaseSizesUseCase { Result.success(SdkStoreSizes(null, null, null, null)) },
         appNavigationStateService: FakeAppNavigationStateService = FakeAppNavigationStateService(
-            initialAppNavigationState = AppNavigationState(NavigationState.Session("owner", A_SESSION_ID), isInForeground = true)
+            MutableStateFlow(AppNavigationState(navigationState = NavigationState.Session("owner", A_SESSION_ID), isInForeground = true))
         )
     ) = SentryAnalyticsProvider(
         context = InstrumentationRegistry.getInstrumentation().targetContext,

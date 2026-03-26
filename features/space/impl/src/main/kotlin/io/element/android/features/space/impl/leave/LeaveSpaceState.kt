@@ -13,10 +13,18 @@ import io.element.android.libraries.architecture.AsyncData
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 离开空间状态数据类
+ *
+ * @property spaceName 空间名称
+ * @property isLastAdmin 是否为最后一个管理员
+ * @property selectableSpaceRooms 可选的空间房间列表的异步数据
+ * @property leaveSpaceAction 离开空间操作的异步状态
+ * @property eventSink 事件处理函数
+ */
 data class LeaveSpaceState(
     val spaceName: String?,
-    val needsOwnerChange: Boolean,
-    val areCreatorsPrivileged: Boolean,
+    val isLastAdmin: Boolean,
     val selectableSpaceRooms: AsyncData<ImmutableList<SelectableSpaceRoom>>,
     val leaveSpaceAction: AsyncAction<Unit>,
     val eventSink: (LeaveSpaceEvents) -> Unit,
@@ -26,7 +34,7 @@ data class LeaveSpaceState(
     private val selectableRooms: ImmutableList<SelectableSpaceRoom>
 
     init {
-        val partition = rooms.partition { it.isLastOwner && it.joinedMembersCount > 1 }
+        val partition = rooms.partition { it.isLastAdmin }
         lastAdminRooms = partition.first.toImmutableList()
         selectableRooms = partition.second.toImmutableList()
     }
@@ -34,12 +42,12 @@ data class LeaveSpaceState(
     /**
      * True if we should show the quick action to select/deselect all rooms.
      */
-    val showQuickAction = needsOwnerChange.not() && selectableRooms.isNotEmpty()
+    val showQuickAction = isLastAdmin.not() && selectableRooms.isNotEmpty()
 
     /**
      * True if we should show the leave button.
      */
-    val showLeaveButton = needsOwnerChange.not() && selectableSpaceRooms is AsyncData.Success
+    val showLeaveButton = isLastAdmin.not() && selectableSpaceRooms is AsyncData.Success
 
     /**
      * True if there all the selectable rooms are selected.

@@ -33,5 +33,12 @@ class DefaultPreferencesEntryPoint : PreferencesEntryPoint {
 internal fun PreferencesEntryPoint.InitialTarget.toNavTarget() = when (this) {
     is PreferencesEntryPoint.InitialTarget.Root -> PreferencesFlowNode.NavTarget.Root
     is PreferencesEntryPoint.InitialTarget.NotificationSettings -> PreferencesFlowNode.NavTarget.NotificationSettings
+    is PreferencesEntryPoint.InitialTarget.LockScreenSettings -> PreferencesFlowNode.NavTarget.LockScreenSettings
+    is PreferencesEntryPoint.InitialTarget.AdvancedSettings -> PreferencesFlowNode.NavTarget.AdvancedSettings
+    is PreferencesEntryPoint.InitialTarget.About -> PreferencesFlowNode.NavTarget.About
+    is PreferencesEntryPoint.InitialTarget.BlockedUsers -> PreferencesFlowNode.NavTarget.BlockedUsers
+    is PreferencesEntryPoint.InitialTarget.SignOut -> PreferencesFlowNode.NavTarget.SignOut
+    is PreferencesEntryPoint.InitialTarget.UserProfile -> PreferencesFlowNode.NavTarget.UserProfile(matrixUser = matrixUser)
+    is PreferencesEntryPoint.InitialTarget.UserQrCode -> PreferencesFlowNode.NavTarget.UserQrCode(matrixUser = matrixUser)
     PreferencesEntryPoint.InitialTarget.NotificationTroubleshoot -> PreferencesFlowNode.NavTarget.TroubleshootNotifications
 }

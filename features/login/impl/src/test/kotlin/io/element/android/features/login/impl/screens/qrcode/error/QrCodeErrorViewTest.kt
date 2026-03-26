@@ -12,9 +12,8 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.element.android.features.login.impl.R
 import io.element.android.features.login.impl.qrcode.QrCodeErrorScreenType
-import io.element.android.libraries.ui.strings.CommonStrings
-import io.element.android.tests.testutils.EnsureNeverCalled
 import io.element.android.tests.testutils.clickOn
 import io.element.android.tests.testutils.ensureCalledOnce
 import io.element.android.tests.testutils.pressBackKey
@@ -29,10 +28,10 @@ class QrCodeErrorViewTest {
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun `on back pressed - calls the onCancel callback`() {
+    fun `on back pressed - calls the onRetry callback`() {
         ensureCalledOnce { callback ->
             rule.setQrCodeErrorView(
-                onCancel = callback,
+                onRetry = callback
             )
             rule.pressBackKey()
         }
@@ -42,25 +41,14 @@ class QrCodeErrorViewTest {
     fun `on try again button clicked - calls the expected callback`() {
         ensureCalledOnce { callback ->
             rule.setQrCodeErrorView(
-                onRetry = callback,
+                onRetry = callback
             )
-            rule.clickOn(CommonStrings.action_try_again)
-        }
-    }
-
-    @Test
-    fun `on cancel button clicked - calls the expected callback`() {
-        ensureCalledOnce { callback ->
-            rule.setQrCodeErrorView(
-                onCancel = callback,
-            )
-            rule.clickOn(CommonStrings.action_cancel)
+            rule.clickOn(R.string.screen_qr_code_login_start_over_button)
         }
     }
 
     private fun <R : TestRule> AndroidComposeTestRule<R, ComponentActivity>.setQrCodeErrorView(
-        onRetry: () -> Unit = EnsureNeverCalled(),
-        onCancel: () -> Unit = EnsureNeverCalled(),
+        onRetry: () -> Unit,
         errorScreenType: QrCodeErrorScreenType = QrCodeErrorScreenType.UnknownError,
         appName: String = "Element X",
     ) {
@@ -68,8 +56,7 @@ class QrCodeErrorViewTest {
             QrCodeErrorView(
                 errorScreenType = errorScreenType,
                 appName = appName,
-                onRetry = onRetry,
-                onCancel = onCancel,
+                onRetry = onRetry
             )
         }
     }

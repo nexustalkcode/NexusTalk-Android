@@ -8,25 +8,30 @@
 
 package io.element.android.features.messages.impl.timeline.components
 
+/**
+ * 时间戳位置枚举
+ *
+ * 定义时间戳在消息气泡中的显示位置。
+ */
 enum class TimestampPosition {
     /**
-     * Timestamp should overlay the timeline event content (eg. image).
+     * 时间戳覆盖在时间线事件内容上（例如图片）。
      */
     Overlay,
 
     /**
-     * Timestamp should be aligned with the timeline event content if this is possible (eg. text).
+     * 时间戳与时间线事件内容对齐（例如文本）。
      */
     Aligned,
 
     /**
-     * Timestamp should always be rendered below the timeline event content (eg. poll).
+     * 时间戳始终显示在时间线事件内容下方（例如投票）。
      */
     Below;
 
     companion object {
         /**
-         * Default timestamp position for timeline event contents.
+         * 时间线事件内容的默认时间戳位置。
          */
         val Default: TimestampPosition = Aligned
     }

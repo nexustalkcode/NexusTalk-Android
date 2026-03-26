@@ -25,10 +25,10 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import im.vector.app.features.analytics.plan.Interaction
 import io.element.android.compound.tokens.generated.CompoundIcons
-import io.element.android.features.messages.impl.actionlist.ActionListEvent
+import io.element.android.features.messages.impl.actionlist.ActionListEvents
 import io.element.android.features.messages.impl.actionlist.ActionListView
 import io.element.android.features.messages.impl.actionlist.model.TimelineItemAction
-import io.element.android.features.messages.impl.link.LinkEvent
+import io.element.android.features.messages.impl.link.LinkEvents
 import io.element.android.features.messages.impl.link.LinkView
 import io.element.android.features.messages.impl.timeline.components.TimelineItemRow
 import io.element.android.features.messages.impl.timeline.components.event.TimelineItemEventContentView
@@ -54,6 +54,25 @@ import io.element.android.services.analytics.compose.LocalAnalyticsService
 import io.element.android.services.analyticsproviders.api.trackers.captureInteraction
 import io.element.android.wysiwyg.link.Link
 
+/**
+ * 固定消息列表视图
+ *
+ * Compose Composable函数，用于渲染固定消息列表界面。
+ * 根据当前状态显示不同的UI：加载中、空状态、错误或消息列表。
+ *
+ * @param state 固定消息列表的当前状态
+ * @param onBackClick 点击返回按钮回调
+ * @param onEventClick 点击事件回调
+ * @param onUserDataClick 点击用户头像回调
+ * @param onLinkClick 点击链接回调
+ * @param onLinkLongClick 长按链接回调
+ * @param modifier Compose修饰符
+ *
+ * @see PinnedMessagesListState 固定消息列表状态
+ * @see TimelineItem.Event 时间线事件
+ * @see MatrixUser Matrix用户
+ * @see Link 链接
+ */
 @Composable
 fun PinnedMessagesListView(
     state: PinnedMessagesListState,
@@ -92,6 +111,16 @@ fun PinnedMessagesListView(
     )
 }
 
+/**
+ * 固定消息列表顶部栏
+ *
+ * 渲染固定消息列表页面的顶部导航栏。
+ * 显示页面标题和返回按钮。
+ *
+ * @param state 固定消息列表状态
+ * @param onBackClick 点击返回按钮回调
+ * @param modifier Compose修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PinnedMessagesListTopBar(
@@ -106,6 +135,23 @@ private fun PinnedMessagesListTopBar(
     )
 }
 
+/**
+ * 固定消息列表内容组件
+ *
+ * 根据状态渲染不同的内容：
+ * - Failed: 显示错误对话框
+ * - Empty: 显示空状态视图
+ * - Filled: 显示消息列表
+ * - Loading: 显示加载指示器
+ *
+ * @param state 固定消息列表状态
+ * @param onEventClick 点击事件回调
+ * @param onUserDataClick 点击用户头像回调
+ * @param onLinkClick 点击链接回调
+ * @param onLinkLongClick 长按链接回调
+ * @param onErrorDismiss 错误对话框关闭回调
+ * @param modifier Compose修饰符
+ */
 @Composable
 private fun PinnedMessagesListContent(
     state: PinnedMessagesListState,
@@ -143,6 +189,15 @@ private fun PinnedMessagesListContent(
     }
 }
 
+/**
+ * 固定消息列表空状态组件
+ *
+ * 当没有置顶消息时显示的空状态视图。
+ * 包含图标、标题和描述文字，
+ * 引导用户如何置顶消息。
+ *
+ * @param modifier Compose修饰符
+ */
 @Composable
 private fun PinnedMessagesListEmpty(
     modifier: Modifier = Modifier,
@@ -163,6 +218,21 @@ private fun PinnedMessagesListEmpty(
     }
 }
 
+/**
+ * 固定消息列表已加载内容组件
+ *
+ * 渲染置顶消息列表的主要视图。
+ * 使用LazyColumn展示所有置顶消息，
+ * 处理长按事件显示操作列表。
+ *
+ * @param state 已填充的固定消息列表状态
+ * @param displayThreadSummaries 是否显示线程摘要
+ * @param onEventClick 点击事件回调
+ * @param onUserDataClick 点击用户头像回调
+ * @param onLinkClick 点击链接回调
+ * @param onLinkLongClick 长按链接回调
+ * @param modifier Compose修饰符
+ */
 @Composable
 private fun PinnedMessagesListLoaded(
     state: PinnedMessagesListState.Filled,
@@ -175,10 +245,10 @@ private fun PinnedMessagesListLoaded(
 ) {
     fun onActionSelected(timelineItemAction: TimelineItemAction, event: TimelineItem.Event) {
         state.actionListState.eventSink(
-            ActionListEvent.Clear
+            ActionListEvents.Clear
         )
         state.eventSink(
-            PinnedMessagesListEvent.HandleAction(
+            PinnedMessagesListEvents.HandleAction(
                 action = timelineItemAction,
                 event = event,
             )
@@ -187,7 +257,7 @@ private fun PinnedMessagesListLoaded(
 
     fun onMessageLongClick(event: TimelineItem.Event) {
         state.actionListState.eventSink(
-            ActionListEvent.ComputeForMessage(
+            ActionListEvents.ComputeForMessage(
                 event = event,
                 userEventPermissions = state.userEventPermissions,
             )
@@ -222,7 +292,7 @@ private fun PinnedMessagesListLoaded(
                 focusedEventId = null,
                 onUserDataClick = onUserDataClick,
                 onLinkClick = { link ->
-                    state.linkState.eventSink(LinkEvent.OnLinkClick(link))
+                    state.linkState.eventSink(LinkEvents.OnLinkClick(link))
                 },
                 onLinkLongClick = onLinkLongClick,
                 onContentClick = onEventClick,
@@ -243,7 +313,7 @@ private fun PinnedMessagesListLoaded(
                         onContentClick = { onEventClick(event) },
                         onLongClick = { onMessageLongClick(event) },
                         onLinkClick = { link ->
-                            state.linkState.eventSink(LinkEvent.OnLinkClick(link))
+                            state.linkState.eventSink(LinkEvents.OnLinkClick(link))
                         },
                         onLinkLongClick = onLinkLongClick,
                         modifier = contentModifier,
@@ -259,6 +329,24 @@ private fun PinnedMessagesListLoaded(
     )
 }
 
+/**
+ * 时间线事件内容视图包装器
+ *
+ * 根据事件内容类型渲染相应的视图：
+ * - 投票内容：使用PollTitleView渲染
+ * - 其他内容：使用TimelineItemEventContentView渲染
+ *
+ * 同时处理媒体保护状态（隐藏/显示敏感内容）。
+ *
+ * @param event 时间线事件
+ * @param timelineProtectionState 时间线保护状态
+ * @param onContentClick 内容点击回调
+ * @param onLinkClick 链接点击回调
+ * @param onLinkLongClick 链接长按回调
+ * @param onLongClick 长按回调
+ * @param onContentLayoutChange 内容布局变化回调
+ * @param modifier Compose修饰符
+ */
 @Composable
 private fun TimelineItemEventContentViewWrapper(
     event: TimelineItem.Event,
@@ -266,7 +354,7 @@ private fun TimelineItemEventContentViewWrapper(
     onContentClick: () -> Unit,
     onLinkClick: (Link) -> Unit,
     onLinkLongClick: (Link) -> Unit,
-    onLongClick: () -> Unit, // SC: non-null
+    onLongClick: (() -> Unit)?,
     onContentLayoutChange: (ContentAvoidingLayoutData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -280,6 +368,7 @@ private fun TimelineItemEventContentViewWrapper(
         TimelineItemEventContentView(
             content = event.content,
             hideMediaContent = timelineProtectionState.hideMediaContent(event.eventId),
+            isMine = event.isMine,
             onShowContentClick = { timelineProtectionState.eventSink(TimelineProtectionEvent.ShowContent(event.eventId)) },
             onLinkClick = onLinkClick,
             onLinkLongClick = onLinkLongClick,
@@ -292,6 +381,15 @@ private fun TimelineItemEventContentViewWrapper(
     }
 }
 
+/**
+ * 固定消息列表视图预览
+ *
+ * 用于Compose预览功能的预览组件。
+ * 使用PinnedMessagesListStateProvider提供多种状态示例。
+ *
+ * @param state 固定消息列表状态
+ * @see PinnedMessagesListStateProvider 状态提供器
+ */
 @PreviewsDayNight
 @Composable
 internal fun PinnedMessagesListViewPreview(@PreviewParameter(PinnedMessagesListStateProvider::class) state: PinnedMessagesListState) =

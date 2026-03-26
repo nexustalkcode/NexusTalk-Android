@@ -8,6 +8,16 @@
 
 package io.element.android.features.location.impl.common.permissions
 
+/**
+ * 权限事件密封接口
+ *
+ * 定义了权限相关的用户交互事件。
+ */
 sealed interface PermissionsEvents {
+    /**
+     * 请求权限事件
+     *
+     * 触发系统权限请求对话框。
+     */
     data object RequestPermissions : PermissionsEvents
 }

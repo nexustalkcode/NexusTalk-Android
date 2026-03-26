@@ -12,7 +12,13 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.encryption.BackupState
 
+/**
+ * 禁用安全备份状态提供器
+ *
+ * 用于 Compose Preview 的状态提供器，提供不同状态的 [SecureBackupDisableState] 示例。
+ */
 open class SecureBackupDisableStateProvider : PreviewParameterProvider<SecureBackupDisableState> {
+    /** 预览状态序列 */
     override val values: Sequence<SecureBackupDisableState>
         get() = sequenceOf(
             aSecureBackupDisableState(),
@@ -23,6 +29,13 @@ open class SecureBackupDisableStateProvider : PreviewParameterProvider<SecureBac
         )
 }
 
+/**
+ * 创建禁用安全备份状态的辅助函数
+ *
+ * @param backupState 备份状态，默认为未知状态
+ * @param disableAction 禁用操作状态，默认为未初始化
+ * @return 禁用安全备份状态实例
+ */
 fun aSecureBackupDisableState(
     backupState: BackupState = BackupState.UNKNOWN,
     disableAction: AsyncAction<Unit> = AsyncAction.Uninitialized,

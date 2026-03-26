@@ -17,7 +17,21 @@ import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.core.RoomId
 
 @ContributesBinding(SessionScope::class)
+/**
+ * 默认接受/拒绝邀请视图实现
+ *
+ * 实现了 AcceptDeclineInviteView 接口，
+ * 委托给 AcceptDeclineInviteView Composable 函数进行渲染。
+ */
 class DefaultAcceptDeclineInviteView : AcceptDeclineInviteView {
+    /**
+     * 渲染接受/拒绝邀请界面
+     *
+     * @param state 界面状态
+     * @param onAcceptInviteSuccess 接受成功回调
+     * @param onDeclineInviteSuccess 拒绝成功回调
+     * @param modifier 修饰符
+     */
     @Composable
     override fun Render(
         state: AcceptDeclineInviteState,

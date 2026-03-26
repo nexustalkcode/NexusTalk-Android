@@ -9,6 +9,7 @@
   <string name="full_screen_intent_banner_message">"Dei garrantzitsurik galduko ez duzula ziurtatzeko, aldatu ezarpenak telefonoa blokeatuta dagoenean pantaila osoko jakinarazpenak baimentzeko."</string>
   <string name="full_screen_intent_banner_title">"Hobetu deien esperientzia"</string>
   <string name="screen_home_tab_chats">"Txatak"</string>
+  <string name="screen_home_tab_community">"Komunitatea"</string>
   <string name="screen_invites_decline_chat_message">"Ziur %1$s(e)ra batzeko gonbidapena baztertu nahi duzula?"</string>
   <string name="screen_invites_decline_chat_title">"Baztertu gonbidapena"</string>
   <string name="screen_invites_decline_direct_chat_message">"Ziur %1$s(r)en txat pribatua baztertu nahi duzula?"</string>
@@ -43,4 +44,9 @@ Ez duzu irakurri gabeko mezurik!"</string>
   <string name="screen_roomlist_mark_as_unread">"Markatu irakurri gabetzat"</string>
   <string name="session_verification_banner_message">"Gailu berri bat erabiltzen ari zarela dirudi. Egiaztatu beste gailu batekin enkriptatutako mezuak atzitzeko."</string>
   <string name="session_verification_banner_title">"Egiaztatu zu zarela"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Komunitateek kideak gaietan oinarritutako taldeetan biltzen dituzte. Sartzen zaren komunitate guztiak hemen agertuko dira."</string>
+  <string name="screen_community_list_header_count">"%1$d komunitatea"</string>
+  <string name="screen_community_list_header_description">"Sortzen dituzun edo sartzen zaren komunitateak"</string>
+  <string name="screen_roomlist_empty_message_new">"Leku hau zurea eta hurbilen duzun jendea baino ez da izango"</string>
 </resources>

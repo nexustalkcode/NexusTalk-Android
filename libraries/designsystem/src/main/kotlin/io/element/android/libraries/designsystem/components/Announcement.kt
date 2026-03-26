@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
+import io.element.android.libraries.designsystem.components.button.GradientButton
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Button
@@ -99,7 +100,7 @@ private fun ActionableAnnouncement(
                 }
             )
             Spacer(Modifier.height(16.dp))
-            Button(
+            GradientButton(
                 text = actionText,
                 size = ButtonSize.Medium,
                 onClick = onActionClick,

@@ -87,6 +87,7 @@ fun UserProfileHeaderSection(
                     },
                 text = userName,
                 style = ElementTheme.typography.fontHeadingLgBold,
+                color = ElementTheme.colors.textPrimary,
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(6.dp))

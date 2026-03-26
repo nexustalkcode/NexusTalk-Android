@@ -40,7 +40,7 @@ dependencies {
     implementation(libs.accompanist.permission)
     implementation(projects.libraries.uiStrings)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.testtags)
     testImplementation(projects.services.analytics.test)

@@ -28,7 +28,7 @@ dependencies {
     api(projects.libraries.usersearch.api)
     implementation(libs.kotlinx.collections.immutable)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.usersearch.test)
 }

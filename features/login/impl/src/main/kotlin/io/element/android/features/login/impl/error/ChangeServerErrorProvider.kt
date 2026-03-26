@@ -10,6 +10,13 @@ package io.element.android.features.login.impl.error
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
+/**
+ * 更改服务器错误预览参数提供者
+ *
+ * 用于在 Compose 预览中提供不同状态的 ChangeServerError 测试数据。
+ *
+ * @see ChangeServerError 更改服务器错误类型
+ */
 class ChangeServerErrorProvider : PreviewParameterProvider<ChangeServerError> {
     override val values: Sequence<ChangeServerError>
         get() = sequenceOf(

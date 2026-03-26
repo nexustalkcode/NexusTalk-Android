@@ -25,6 +25,7 @@ class RoomListBaseRoomSummaryTest {
         )
         assertThat(sut.isHighlighted).isFalse()
         assertThat(sut.hasNewContent).isFalse()
+        assertThat(sut.hasUnreadIndicator).isFalse()
     }
 
     @Test
@@ -34,6 +35,7 @@ class RoomListBaseRoomSummaryTest {
         )
         assertThat(sut.isHighlighted).isFalse()
         assertThat(sut.hasNewContent).isFalse()
+        assertThat(sut.hasUnreadIndicator).isFalse()
     }
 
     @Test
@@ -44,6 +46,7 @@ class RoomListBaseRoomSummaryTest {
         )
         assertThat(sut.isHighlighted).isTrue()
         assertThat(sut.hasNewContent).isTrue()
+        assertThat(sut.hasUnreadIndicator).isTrue()
     }
 
     @Test
@@ -54,6 +57,8 @@ class RoomListBaseRoomSummaryTest {
         )
         assertThat(sut.isHighlighted).isFalse()
         assertThat(sut.hasNewContent).isTrue()
+        assertThat(sut.totalUnreadCount).isEqualTo(1)
+        assertThat(sut.hasUnreadIndicator).isTrue()
     }
 
     @Test
@@ -63,6 +68,7 @@ class RoomListBaseRoomSummaryTest {
         )
         assertThat(sut.isHighlighted).isTrue()
         assertThat(sut.hasNewContent).isTrue()
+        assertThat(sut.hasUnreadIndicator).isTrue()
     }
 
     @Test
@@ -72,6 +78,17 @@ class RoomListBaseRoomSummaryTest {
         )
         assertThat(sut.isHighlighted).isFalse()
         assertThat(sut.hasNewContent).isFalse()
+        assertThat(sut.hasUnreadIndicator).isFalse()
+    }
+
+    @Test
+    fun `mention only room has new content and unread indicator`() {
+        val sut = createRoomListRoomSummary(
+            numberOfUnreadMentions = 1,
+        )
+        assertThat(sut.hasNewContent).isTrue()
+        assertThat(sut.totalUnreadCount).isEqualTo(1)
+        assertThat(sut.hasUnreadIndicator).isTrue()
     }
 }
 

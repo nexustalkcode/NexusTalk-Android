@@ -12,8 +12,9 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import kotlinx.coroutines.flow.SharedFlow
 
 interface SpaceService {
-    val topLevelSpacesFlow: SharedFlow<List<SpaceRoom>>
-    val spaceFiltersFlow: SharedFlow<List<SpaceServiceFilter>>
+    val spaceRoomsFlow: SharedFlow<List<SpaceRoom>>
+    suspend fun joinedSpaces(): Result<List<SpaceRoom>>
+
     suspend fun joinedParents(spaceId: RoomId): Result<List<SpaceRoom>>
 
     suspend fun getSpaceRoom(spaceId: RoomId): SpaceRoom?

@@ -15,10 +15,9 @@ import io.element.android.libraries.core.data.bytes
 import io.element.android.libraries.featureflag.test.FakeFeatureFlagService
 import io.element.android.libraries.matrix.impl.fixtures.fakes.FakeFfiClient
 import io.element.android.libraries.matrix.impl.fixtures.fakes.FakeFfiSyncService
-import io.element.android.libraries.matrix.impl.room.FakeTimelineEventFilterFactory
+import io.element.android.libraries.matrix.impl.room.FakeTimelineEventTypeFilterFactory
 import io.element.android.libraries.matrix.test.AN_AVATAR_URL
 import io.element.android.libraries.matrix.test.A_DEVICE_ID
-import io.element.android.libraries.matrix.test.A_ROOM_ID
 import io.element.android.libraries.matrix.test.A_USER_ID
 import io.element.android.libraries.matrix.test.A_USER_NAME
 import io.element.android.libraries.sessionstorage.api.SessionStore
@@ -36,8 +35,6 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.matrix.rustcomponents.sdk.Client
-import org.matrix.rustcomponents.sdk.CreateRoomParameters
-import org.matrix.rustcomponents.sdk.RoomHistoryVisibility
 import org.matrix.rustcomponents.sdk.StoreSizes
 import org.matrix.rustcomponents.sdk.UserProfile
 import java.io.File
@@ -117,23 +114,6 @@ class RustMatrixClientTest {
         }
     }
 
-    @Test
-    fun `createDM overrides room history visibility to invited`() = runTest {
-        var createParameters: CreateRoomParameters? = null
-        val createRoomLambda = lambdaRecorder<CreateRoomParameters, String> {
-            createParameters = it
-            A_ROOM_ID.value
-        }
-        val client = createRustMatrixClient(
-            client = FakeFfiClient(createRoomResult = createRoomLambda)
-        )
-
-        client.createDM(A_USER_ID)
-
-        createRoomLambda.assertions().isCalledOnce()
-        assertThat(createParameters?.historyVisibilityOverride).isEqualTo(RoomHistoryVisibility.Invited)
-    }
-
     private fun TestScope.createRustMatrixClient(
         client: Client = FakeFfiClient(),
         sessionStore: SessionStore = InMemorySessionStore(
@@ -150,7 +130,7 @@ class RustMatrixClientTest {
         dispatchers = testCoroutineDispatchers(),
         baseCacheDirectory = File(""),
         clock = FakeSystemClock(),
-        timelineEventFilterFactory = FakeTimelineEventFilterFactory(),
+        timelineEventTypeFilterFactory = FakeTimelineEventTypeFilterFactory(),
         featureFlagService = FakeFeatureFlagService(),
         analyticsService = FakeAnalyticsService(),
         workManagerScheduler = FakeWorkManagerScheduler(submitLambda = {}),

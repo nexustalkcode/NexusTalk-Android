@@ -19,13 +19,26 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 重置身份根节点
+ *
+ * 负责显示重置身份根页面的节点。
+ * 页面展示重置身份的风险提示信息。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class ResetIdentityRootNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 重置身份根页面回调接口
+     */
     interface Callback : Plugin {
+        /** 继续回调 */
         fun onContinue()
     }
 

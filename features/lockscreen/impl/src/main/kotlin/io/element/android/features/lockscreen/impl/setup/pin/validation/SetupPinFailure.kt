@@ -8,7 +8,14 @@
 
 package io.element.android.features.lockscreen.impl.setup.pin.validation
 
+/**
+ * 设置 PIN 码失败原因密封接口
+ *
+ * 定义设置 PIN 码过程中可能的失败原因。
+ */
 sealed interface SetupPinFailure {
+    /** PIN 码被禁用（如过于简单） */
     data object ForbiddenPin : SetupPinFailure
+    /** 两次输入的 PIN 码不匹配 */
     data object PinsDoNotMatch : SetupPinFailure
 }

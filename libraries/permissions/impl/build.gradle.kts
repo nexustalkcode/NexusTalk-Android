@@ -41,7 +41,7 @@ dependencies {
     implementation(projects.services.toolbox.api)
     api(projects.libraries.permissions.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.permissions.test)
     testImplementation(projects.libraries.troubleshoot.test)

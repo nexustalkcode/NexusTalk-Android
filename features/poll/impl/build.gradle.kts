@@ -37,7 +37,7 @@ dependencies {
     implementation(projects.libraries.dateformatter.api)
     implementation(projects.libraries.uiStrings)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.services.analytics.test)
     testImplementation(projects.features.messages.test)

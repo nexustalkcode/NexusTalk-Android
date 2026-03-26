@@ -6,5 +6,33 @@
   <string name="screen_create_room_private_option_description">"ამ ოთახში შეტყობინებები დაშიფრულია. შემდგომ დაშიფვრის გამორთვა შეუძლებელია."</string>
   <string name="screen_create_room_public_option_description">"ყველას ამ ოთახის მოძებნა შეუძლია.
 თქვენ ნებისმიერ დროს შეგიძლიათ ამის შეცვლა ოთახის პარამეტრებში."</string>
+  <string name="screen_create_room_public_option_title">"საჯარო ოთახი"</string>
   <string name="screen_create_room_topic_label">"თემა (სურვილისამებრ)"</string>
+
+  <string name="screen_create_room_error_creating_space">"სივრცის შექმნა ვერ მოხერხდა უცნობი შეცდომის გამო. სცადეთ მოგვიანებით."</string>
+  <string name="screen_create_room_name_label">"სახელი"</string>
+  <string name="screen_create_room_avatar_photo">"ფოტო"</string>
+  <string name="screen_create_room_name_placeholder">"სახელის დამატება…"</string>
+  <string name="screen_create_room_new_room_title">"ახალი ოთახი"</string>
+  <string name="screen_create_room_new_space_title">"ახალი ფართი"</string>
+  <string name="screen_create_room_private_option_title">"პირადი"</string>
+  <string name="screen_create_room_public_option_short_description">"ნებისმიერ მსურველს შეუძლია შეუერთდეს."</string>
+  <string name="screen_create_room_room_access_section_knocking_option_description">"ნებისმიერს შეუძლია შეერთების მოთხოვნა, მაგრამ ადმინისტრატორმა ან მოდერატორმა უნდა დაეთანხმოს მოთხოვნას."</string>
+  <string name="screen_create_room_room_access_section_knocking_option_title">"ნება დართეთ შეერთების მოთხოვნა"</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_description">"ნებისმიერს %1$s-ში შეუძლია შეუერთდეს, მაგრამ ყველა დანარჩენმა უნდა მოითხოვოს წვდომა."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_title">"მოითხოვეთ შეერთება"</string>
+  <string name="screen_create_room_room_access_section_private_option_description">"მხოლოდ მოწვეულ ადამიანებს შეუძლიათ შემოერთება."</string>
+  <string name="screen_create_room_room_access_section_private_option_title">"პირადი"</string>
+  <string name="screen_create_room_room_access_section_public_option_description">"ნებისმიერ მსურველს შეუძლია შეუერთდეს."</string>
+  <string name="screen_create_room_room_access_section_public_option_title">"საჯარო"</string>
+  <string name="screen_create_room_room_access_section_restricted_option_description">"ნებისმიერს %1$s-ში შეუძლია შეუერთდეს."</string>
+  <string name="screen_create_room_room_access_section_restricted_option_title">"სტანდარტული"</string>
+  <string name="screen_create_room_room_access_section_title">"ვისაც აქვს წვდომა"</string>
+  <string name="screen_create_room_room_address_section_footer">"თქვენ დაგჭირდებათ მისამართი, რათა ის ხილული გახადოთ საჯარო დირექტორიაში."</string>
+  <string name="screen_create_room_room_address_section_title">"მისამართი"</string>
+  <string name="screen_create_room_room_visibility_section_title">"ოთახის ხილვადობა"</string>
+  <string name="screen_create_room_space_selection_no_space_description">"(სივრცის გარეშე)"</string>
+  <string name="screen_create_room_space_selection_no_space_title">"მთავარი"</string>
+  <string name="screen_create_room_space_selection_sheet_title">"დაამატეთ სივრცეში"</string>
+  <string name="screen_create_room_topic_placeholder">"დაამატე აღწერა…"</string>
 </resources>

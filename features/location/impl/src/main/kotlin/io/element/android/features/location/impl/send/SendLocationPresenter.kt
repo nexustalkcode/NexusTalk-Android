@@ -37,21 +37,56 @@ import io.element.android.libraries.textcomposer.model.MessageComposerMode
 import io.element.android.services.analytics.api.AnalyticsService
 import kotlinx.coroutines.launch
 
+/**
+ * 发送位置 Presenter
+ *
+ * 负责处理发送位置页面的业务逻辑，包括：
+ * - 管理位置权限状态
+ * - 切换发送位置模式（发送者位置或标记位置）
+ * - 发送位置消息
+ * - 跟踪分析事件
+ *
+ * @property permissionsPresenterFactory 权限 Presenter 工厂
+ * @property room 已加入的房间
+ * @property timelineMode 时间线模式
+ * @property analyticsService 分析服务
+ * @property messageComposerContext 消息撰写器上下文
+ * @property locationActions 位置操作
+ * @property buildMeta 构建元信息
+ * @see SendLocationState 发送位置状态
+ */
 @AssistedInject
 class SendLocationPresenter(
+    /** 权限 Presenter 工厂 */
     permissionsPresenterFactory: PermissionsPresenter.Factory,
+    /** 已加入的房间 */
     private val room: JoinedRoom,
+    /** 时间线模式 */
     @Assisted private val timelineMode: Timeline.Mode,
+    /** 分析服务 */
     private val analyticsService: AnalyticsService,
+    /** 消息撰写器上下文 */
     private val messageComposerContext: MessageComposerContext,
+    /** 位置操作 */
     private val locationActions: LocationActions,
+    /** 构建元信息 */
     private val buildMeta: BuildMeta,
 ) : Presenter<SendLocationState> {
+    /**
+     * 工厂接口，用于创建 SendLocationPresenter 实例
+     */
     @AssistedFactory
     fun interface Factory {
+        /**
+         * 创建 SendLocationPresenter 实例
+         *
+         * @param timelineMode 时间线模式
+         * @return SendLocationPresenter 发送位置Presenter实例
+         */
         fun create(timelineMode: Timeline.Mode): SendLocationPresenter
     }
 
+    /** 权限Presenter实例 */
     private val permissionsPresenter = permissionsPresenterFactory.create(MapDefaults.permissions)
 
     @Composable

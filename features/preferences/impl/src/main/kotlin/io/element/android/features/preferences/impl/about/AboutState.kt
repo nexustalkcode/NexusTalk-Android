@@ -10,6 +10,11 @@ package io.element.android.features.preferences.impl.about
 
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 关于页面状态数据类
+ *
+ * @property elementLegals Element 法律信息列表（包含版权、使用政策、隐私政策等链接）
+ */
 data class AboutState(
     val elementLegals: ImmutableList<ElementLegal>,
 )

@@ -43,6 +43,8 @@
   <string name="screen_edit_profile_error">"Une erreur inconnue s’est produite et les informations n’ont pas pu être modifiées."</string>
   <string name="screen_edit_profile_error_title">"Impossible de mettre à jour le profil"</string>
   <string name="screen_edit_profile_title">"Modifier le profil"</string>
+  <string name="screen_edit_profile_change_avatar">"Changer d'avatar"</string>
+  <string name="screen_edit_profile_username">"Nom d'utilisateur"</string>
   <string name="screen_edit_profile_updating_details">"Mise à jour du profil…"</string>
   <string name="screen_labs_enable_threads">"Activez les fils de discussion."</string>
   <string name="screen_labs_enable_threads_description">"Un changement entraînera le redémarrage de l’application."</string>
@@ -76,6 +78,8 @@ Si vous continuez, il est possible que certains de vos paramètres soient modifi
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"paramètres du système"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Les notifications du système sont désactivées"</string>
   <string name="screen_notification_settings_title">"Notifications"</string>
+  <string name="screen_preferences_section_customization">"Personnalisation"</string>
+  <string name="screen_preferences_section_security">"Sécurité"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Historique des Push"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Dépannage"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Dépanner les notifications"</string>

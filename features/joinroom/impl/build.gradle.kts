@@ -40,7 +40,6 @@ dependencies {
     implementation(projects.libraries.preferences.api)
     implementation(projects.appconfig)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.features.invite.test)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.preferences.test)

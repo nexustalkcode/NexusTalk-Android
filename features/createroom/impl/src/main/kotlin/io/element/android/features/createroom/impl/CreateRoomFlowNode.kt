@@ -31,6 +31,15 @@ import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.core.RoomId
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 创建房间流程节点
+ *
+ * 创建房间功能的主流程节点，管理整个创建房间的导航流程。
+ * 包含两个步骤：配置房间 -> 添加人员
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class CreateRoomFlowNode(
@@ -38,26 +47,33 @@ class CreateRoomFlowNode(
     @Assisted plugins: List<Plugin>,
 ) : BaseFlowNode<CreateRoomFlowNode.NavTarget>(
     backstack = BackStack(
-        initialElement = initialElementFromInputs(plugins.filterIsInstance<Inputs>().first()),
+        initialElement = NavTarget.ConfigureRoom(isSpace = plugins.filterIsInstance<Inputs>().first().isSpace),
         savedStateMap = buildContext.savedStateMap,
     ),
     buildContext = buildContext,
     plugins = plugins
 ) {
+    /**
+     * 输入数据类
+     *
+     * @property isSpace 是否创建为空间
+     */
     @Parcelize
     data class Inputs(
-        val isSpace: Boolean,
-        val parentSpaceId: RoomId?,
+        val isSpace: Boolean
     ) : NodeInputs, Parcelable
 
+    /** 创建房间入口点的回调接口 */
     private val callback: CreateRoomEntryPoint.Callback = callback()
+    private val addPeopleCallback = plugins.filterIsInstance<CreateRoomEntryPoint.AddPeopleCallback>().firstOrNull()
 
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             is NavTarget.ConfigureRoom -> {
-                val inputs = ConfigureRoomNode.Inputs(isSpace = navTarget.isSpace, parentSpaceId = navTarget.parentSpaceId)
+                val inputs = ConfigureRoomNode.Inputs(isSpace = navTarget.isSpace)
                 val callback = object : ConfigureRoomNode.Callback {
                     override fun onCreateRoomSuccess(roomId: RoomId) {
+                        addPeopleCallback?.onAddPeopleShown(roomId)
                         backstack.replace(NavTarget.AddPeople(roomId))
                     }
                 }
@@ -80,16 +96,26 @@ class CreateRoomFlowNode(
         BackstackView()
     }
 
+    /**
+     * 导航目标密封接口
+     *
+     * 定义创建房间流程中的各个导航节点
+     */
     sealed interface NavTarget : Parcelable {
+        /**
+         * 配置房间步骤
+         *
+         * @property isSpace 是否创建为空间
+         */
         @Parcelize
-        data class ConfigureRoom(val isSpace: Boolean, val parentSpaceId: RoomId?) : NavTarget
+        data class ConfigureRoom(val isSpace: Boolean) : NavTarget
 
+        /**
+         * 添加人员步骤
+         *
+         * @property roomId 已创建的房间 ID
+         */
         @Parcelize
         data class AddPeople(val roomId: RoomId) : NavTarget
     }
 }
-
-private fun initialElementFromInputs(inputs: CreateRoomFlowNode.Inputs) = CreateRoomFlowNode.NavTarget.ConfigureRoom(
-    isSpace = inputs.isSpace,
-    parentSpaceId = inputs.parentSpaceId,
-)

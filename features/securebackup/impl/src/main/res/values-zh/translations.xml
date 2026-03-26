@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"关闭备份"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"开启备份"</string>
-  <string name="screen_chat_backup_key_backup_description">"将您的密码学身份和消息密钥安全地存储在服务器上。这样您就可以在任何新设备上查看您的消息历史记录。%1$s。"</string>
+  <string name="screen_chat_backup_key_backup_description">"将您的密码学身份和消息密钥安全地存储在服务器上。这样您就可以在任何新设备上查看您的消息历史记录。%1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"密钥存储"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"必须打开密钥存储才能设置恢复。"</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"从此设备上传密钥"</string>
@@ -67,4 +67,16 @@
   <string name="screen_reset_encryption_password_placeholder">"输入……"</string>
   <string name="screen_reset_encryption_password_subtitle">"确认您要重置加密。"</string>
   <string name="screen_reset_encryption_password_title">"输入您的账户密码以继续"</string>
+  <string name="screen_recovery_key_confirm_custom_title">"恢复你的加密历史记录"</string>
+  <string name="screen_recovery_key_confirm_custom_subtitle">"使用你的恢复密钥来解密之前的聊天记录"</string>
+  <string name="screen_recovery_key_confirm_warning_title">"重要提示"</string>
+  <string name="screen_recovery_key_confirm_warning_message">"恢复密钥用于解密你的端到端加密消息。请妥善保管，不要与任何人分享。"</string>
+  <string name="screen_recovery_key_confirm_input_title">"输入恢复密钥"</string>
+  <string name="screen_recovery_key_confirm_why_title">"为什么需要恢复密钥？"</string>
+  <string name="screen_recovery_key_confirm_why_point_1">"恢复密钥用于解密你的端到端加密消息"</string>
+  <string name="screen_recovery_key_confirm_why_point_2">"在新设备上登录时需要使用"</string>
+  <string name="screen_recovery_key_confirm_why_point_3">"如果丢失密钥，将无法访问历史加密消息"</string>
+  <string name="screen_recovery_key_confirm_why_point_4">"建议将密钥安全保存在密码管理器中"</string>
+  <string name="screen_recovery_key_confirm_skip_action">"稍后设置"</string>
+  <string name="screen_recovery_key_confirm_submit_action">"恢复历史记录"</string>
 </resources>

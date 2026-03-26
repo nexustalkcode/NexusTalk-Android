@@ -14,6 +14,9 @@ import io.element.android.features.login.impl.accountprovider.anAccountProvider
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.matrix.api.core.SessionId
 
+/**
+ * 登录密码状态预览参数提供者
+ */
 open class LoginPasswordStateProvider : PreviewParameterProvider<LoginPasswordState> {
     override val values: Sequence<LoginPasswordState>
         get() = sequenceOf(
@@ -25,6 +28,9 @@ open class LoginPasswordStateProvider : PreviewParameterProvider<LoginPasswordSt
         )
 }
 
+/**
+ * 创建测试用登录密码状态
+ */
 fun aLoginPasswordState(
     accountProvider: AccountProvider = anAccountProvider(),
     formState: LoginFormState = LoginFormState.Default,
@@ -37,6 +43,9 @@ fun aLoginPasswordState(
     eventSink = eventSink,
 )
 
+/**
+ * 创建测试用登录表单状态
+ */
 fun aLoginFormState(
     login: String = "",
     password: String = "",

@@ -36,7 +36,6 @@ dependencies {
     implementation(libs.serialization.json)
     api(libs.androidx.browser)
 
-    testCommonDependencies(libs)
     testImplementation(libs.coroutines.core)
     testImplementation(projects.services.toolbox.test)
 }

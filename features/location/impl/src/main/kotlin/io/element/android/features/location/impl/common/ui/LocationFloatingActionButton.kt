@@ -21,7 +21,16 @@ import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.ui.strings.CommonStrings
 
 /**
- * Ref: See design in https://www.figma.com/design/0MMNu7cTOzLOlWb7ctTkv3/Element-X?node-id=3426-141111
+ * 位置悬浮操作按钮
+ *
+ * 一个用于定位功能的悬浮按钮，点击后可以将地图中心移动到用户当前位置。
+ * 按钮图标会根据当前状态显示不同的图标（已定位/未定位）。
+ *
+ * 参考设计：https://www.figma.com/design/0MMNu7cTOzLOlWb7ctTkv3/Element-X?node-id=3426-141111
+ *
+ * @param isMapCenteredOnUser 地图是否已居中于用户位置
+ * @param onClick 点击按钮的回调
+ * @param modifier 修饰符
  */
 @Composable
 internal fun LocationFloatingActionButton(

@@ -13,6 +13,7 @@ import androidx.annotation.ColorInt
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,8 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.QRCodeWriter
@@ -57,22 +61,22 @@ private fun BitMatrix.toBitmap(
 @Composable
 fun QrCodeImage(
     data: String,
+    size: DpSize,
     forceMaxBrightness: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     if (forceMaxBrightness) {
         ForceMaxBrightness()
     }
-    var size by remember { mutableStateOf(IntSize.Zero) }
     Box(
-        modifier = modifier
-            .squareSize()
-            .onSizeChanged {
-                size = it
-            },
+        modifier = modifier.size(size),
     ) {
+        val density = LocalDensity.current
+        val newSize =  with(density) {
+            IntSize(size.width.roundToPx(), size.height.roundToPx())
+        }
         val image = remember(data, size) {
-            val sideSide = maxOf(size.width, size.height).coerceAtLeast(128)
+            val sideSide = maxOf(newSize.width, newSize.height).coerceAtLeast(128)
             data.toBitMatrix(sideSide).toBitmap().asImageBitmap()
         }
         Image(
@@ -88,5 +92,6 @@ internal fun QrCodeViewPreview() {
     QrCodeImage(
         modifier = Modifier.fillMaxHeight(),
         data = "RANDOM_QRCODE_DATA",
+        size = DpSize(width = 180.dp, height = 180.dp)
     )
 }

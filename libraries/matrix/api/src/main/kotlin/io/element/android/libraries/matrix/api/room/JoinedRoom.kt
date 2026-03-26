@@ -65,8 +65,6 @@ interface JoinedRoom : BaseRoom {
 
     suspend fun removeAvatar(): Result<Unit>
 
-    suspend fun setAvatarUrl(url: String): Result<Unit> // SC
-
     suspend fun updateRoomNotificationSettings(): Result<Unit>
 
     /**

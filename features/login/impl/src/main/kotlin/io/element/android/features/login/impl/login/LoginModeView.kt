@@ -27,6 +27,21 @@ import io.element.android.libraries.matrix.api.auth.AuthenticationException
 import io.element.android.libraries.matrix.api.auth.OidcDetails
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 登录模式视图组件
+ *
+ * 根据不同的登录模式状态显示相应的界面：
+ * - 加载状态：显示加载指示器
+ * - 成功状态：根据登录模式类型导航到相应的登录页面
+ * - 失败状态：显示相应的错误对话框
+ *
+ * @param loginMode 当前登录模式状态，包含登录类型或错误信息
+ * @param onClearError 清除错误状态的回调函数
+ * @param onLearnMoreClick 点击"了解更多"按钮的回调函数，用于显示Sliding Sync相关信息
+ * @param onOidcDetails OIDC登录详情回调，当登录模式为OIDC时触发
+ * @param onNeedLoginPassword 需要密码登录回调，当登录模式为密码登录时触发
+ * @param onCreateAccountContinue 继续创建账户回调，当登录模式为账户创建时触发，参数为创建账户的URL
+ */
 @Composable
 fun LoginModeView(
     loginMode: AsyncData<LoginMode>,
@@ -129,6 +144,13 @@ fun LoginModeView(
     }
 }
 
+/**
+ * 登录模式视图预览组件
+ *
+ * 用于在IDE预览中展示登录模式视图的错误状态展示效果
+ *
+ * @param error 用于预览的错误类型，测试不同错误对话框的显示效果
+ */
 @PreviewsDayNight
 @Composable
 internal fun LoginModeViewPreview(@PreviewParameter(LoginModeViewErrorProvider::class) error: Throwable) {

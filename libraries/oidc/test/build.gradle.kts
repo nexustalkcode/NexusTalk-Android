@@ -17,5 +17,5 @@ android {
 dependencies {
     implementation(libs.coroutines.core)
     api(projects.libraries.oidc.api)
-    implementation(projects.tests.testutils)
+    
 }

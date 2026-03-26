@@ -12,7 +12,21 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import io.element.android.features.cachecleaner.api.CacheCleaner
 
+/**
+ * 缓存清理绑定接口
+ *
+ * 提供缓存清理功能的依赖注入绑定接口。
+ * 用于在依赖注入系统中提供 CacheCleaner 实例。
+ *
+ * @see CacheCleaner 缓存清理接口
+ * @see DefaultCacheCleaner 默认实现
+ */
 @ContributesTo(AppScope::class)
 interface CacheCleanerBindings {
+    /**
+     * 获取缓存清理器实例
+     *
+     * @return CacheCleaner 实例
+     */
     fun cacheCleaner(): CacheCleaner
 }

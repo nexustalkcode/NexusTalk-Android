@@ -25,10 +25,19 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
- * A media player for the voice message composer.
+ * 语音消息Composer播放器
  *
- * @param mediaPlayer The [MediaPlayer] to use.
- * @param sessionCoroutineScope
+ * 用于在语音消息录制预览阶段播放录制的音频。
+ * 提供播放、暂停、跳转等功能。
+ *
+ * 使用OGG格式的音频文件（MimeTypes.Ogg）。
+ *
+ * @property mediaPlayer 基础媒体播放器
+ * @property sessionCoroutineScope 会话级别的协程作用域，用于管理播放任务
+ *
+ * @see MediaPlayer 媒体播放器基类
+ * @see State 播放状态数据类
+ * @see PlayState 播放状态枚举
  */
 @Inject
 class VoiceMessageComposerPlayer(

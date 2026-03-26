@@ -25,6 +25,8 @@
   <string name="screen_edit_profile_error">"ایک نامعلوم نقص کا سامنا کرنا پڑا اور معلومات کو تبدیل نہیں کیا جا سکا۔"</string>
   <string name="screen_edit_profile_error_title">"نمایہ کی تجدید کرنے سے قاصر"</string>
   <string name="screen_edit_profile_title">"نمایہ میں ترمیم کریں"</string>
+  <string name="screen_edit_profile_change_avatar">"اوتار تبدیل کریں"</string>
+  <string name="screen_edit_profile_username">"صارف نام"</string>
   <string name="screen_edit_profile_updating_details">"نمایہ کی تجدید ہو رہی ہے…"</string>
   <string name="screen_notification_settings_additional_settings_section_title">"اضافی ترتیبات"</string>
   <string name="screen_notification_settings_calls_label">"صوتی اور بصری مکالمات"</string>
@@ -53,6 +55,8 @@
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"نظام کی ترتیبات"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"نظام کی اطلاعات بند کر دی گئیں"</string>
   <string name="screen_notification_settings_title">"اطلاعات"</string>
+  <string name="screen_preferences_section_customization">"حسب ضرورت"</string>
+  <string name="screen_preferences_section_security">"سیکیورٹی"</string>
   <string name="troubleshoot_notifications_entry_point_section">"ازالہ کریں"</string>
   <string name="troubleshoot_notifications_entry_point_title">"اطلاعات کا ازالہ کریں"</string>
 </resources>

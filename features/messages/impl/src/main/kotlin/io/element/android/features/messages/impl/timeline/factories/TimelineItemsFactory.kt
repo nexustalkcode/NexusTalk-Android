@@ -21,6 +21,8 @@ import io.element.android.libraries.androidutils.diff.MutableListDiffCache
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
 import io.element.android.libraries.matrix.api.room.RoomMember
 import io.element.android.libraries.matrix.api.timeline.MatrixTimelineItem
+import io.element.android.libraries.matrix.api.timeline.item.event.ProfileChangeContent
+import io.element.android.libraries.matrix.api.timeline.item.virtual.VirtualTimelineItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
@@ -65,9 +67,10 @@ class TimelineItemsFactory(
         timelineItems: List<MatrixTimelineItem>,
         roomMembers: List<RoomMember>,
     ) = withContext(dispatchers.computation) {
+        val filteredTimelineItems = timelineItems.filterVisibleTimelineItems()
         lock.withLock {
-            diffCacheUpdater.updateWith(timelineItems)
-            buildAndEmitTimelineItemStates(timelineItems, roomMembers)
+            diffCacheUpdater.updateWith(filteredTimelineItems)
+            buildAndEmitTimelineItemStates(filteredTimelineItems, roomMembers)
         }
     }
 
@@ -113,4 +116,50 @@ class TimelineItemsFactory(
         diffCache[index] = timelineItem
         return timelineItem
     }
+}
+
+private fun List<MatrixTimelineItem>.filterVisibleTimelineItems(): List<MatrixTimelineItem> {
+    return filterNot { timelineItem ->
+        timelineItem is MatrixTimelineItem.Event && timelineItem.event.content is ProfileChangeContent
+    }
+        .removeEmptyDayDividers()
+}
+
+private fun List<MatrixTimelineItem>.removeEmptyDayDividers(): List<MatrixTimelineItem> {
+    val result = mutableListOf<MatrixTimelineItem>()
+    var pendingDayDivider: MatrixTimelineItem.Virtual? = null
+    val pendingItemsAfterDivider = mutableListOf<MatrixTimelineItem>()
+
+    fun flushPendingDayDivider(keepDivider: Boolean) {
+        pendingDayDivider?.takeIf { keepDivider }?.let(result::add)
+        result.addAll(pendingItemsAfterDivider)
+        pendingDayDivider = null
+        pendingItemsAfterDivider.clear()
+    }
+
+    for (timelineItem in this) {
+        when {
+            timelineItem.isDayDivider() -> {
+                flushPendingDayDivider(keepDivider = false)
+                pendingDayDivider = timelineItem as MatrixTimelineItem.Virtual
+            }
+            pendingDayDivider != null && timelineItem is MatrixTimelineItem.Event -> {
+                flushPendingDayDivider(keepDivider = true)
+                result.add(timelineItem)
+            }
+            pendingDayDivider != null -> {
+                pendingItemsAfterDivider.add(timelineItem)
+            }
+            else -> {
+                result.add(timelineItem)
+            }
+        }
+    }
+
+    flushPendingDayDivider(keepDivider = false)
+    return result
+}
+
+private fun MatrixTimelineItem.isDayDivider(): Boolean {
+    return this is MatrixTimelineItem.Virtual && virtual is VirtualTimelineItem.DayDivider
 }

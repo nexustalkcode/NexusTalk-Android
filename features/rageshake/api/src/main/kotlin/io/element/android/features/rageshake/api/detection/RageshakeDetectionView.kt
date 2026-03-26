@@ -26,6 +26,15 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.utils.OnLifecycleEvent
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 摇一摇检测视图 Composable 函数
+ *
+ * 显示摇一摇检测的用户界面。当检测到摇晃动作时，会显示一个对话框询问用户是否报告问题。
+ * 支持截图功能，可以在用户同意时截取当前屏幕。
+ *
+ * @param state 摇一摇检测状态
+ * @param onOpenBugReport 打开问题报告页面的回调函数
+ */
 @Composable
 fun RageshakeDetectionView(
     state: RageshakeDetectionState,
@@ -57,6 +66,13 @@ fun RageshakeDetectionView(
     }
 }
 
+/**
+ * 截图 Composable 函数
+ *
+ * 使用系统API截取当前屏幕的截图。
+ *
+ * @param onScreenshot 截图完成后的回调函数，传递截图结果
+ */
 @Composable
 private fun TakeScreenshot(
     onScreenshot: (ImageResult) -> Unit
@@ -70,6 +86,15 @@ private fun TakeScreenshot(
     }
 }
 
+/**
+ * 摇一摇检测对话框内容 Composable 函数
+ *
+ * 显示摇一摇检测触发后的确认对话框，包含是否报告问题、是否禁用功能等选项。
+ *
+ * @param onNoClick 拒绝报告问题的回调函数
+ * @param onDisableClick 禁用摇一摇功能的回调函数
+ * @param onYesClick 同意报告问题的回调函数
+ */
 @Composable
 private fun RageshakeDialogContent(
     onNoClick: () -> Unit = { },

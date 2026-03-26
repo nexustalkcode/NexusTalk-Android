@@ -25,12 +25,25 @@ import io.element.android.features.call.impl.BuildConfig
 import kotlinx.coroutines.flow.MutableSharedFlow
 import timber.log.Timber
 
+/**
+ * WebView 小组件消息拦截器
+ *
+ * 处理 Element X 应用与 Element Call WebView 之间的消息通信。
+ * 负责拦截 WebView 发送的消息并转发给应用，以及将应用的消息发送给 WebView。
+ *
+ * @param webView WebView 实例
+ * @param onUrlLoaded URL 加载完成回调
+ * @param onError 错误回调
+ *
+ * @see WidgetMessageInterceptor 消息拦截器接口
+ */
 class WebViewWidgetMessageInterceptor(
     private val webView: WebView,
     private val onUrlLoaded: (String) -> Unit,
     private val onError: (String?) -> Unit,
 ) : WidgetMessageInterceptor {
     companion object {
+        /** JavaScript 监听器名称，用于在 WebView 中接收消息 */
         // We call both the WebMessageListener and the JavascriptInterface objects in JS with this
         // 'listenerName' so they can both receive the data from the WebView when
         // `${LISTENER_NAME}.postMessage(...)` is called

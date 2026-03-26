@@ -29,6 +29,17 @@ import io.element.android.libraries.designsystem.theme.components.TextButton
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 添加人员视图
+ *
+ * 创建房间流程中"添加人员"步骤的 Compose 视图。
+ * 展示邀请人员界面，包含顶部导航栏、内容区域和底部完成按钮。
+ *
+ * @param state 邀请人员状态，包含搜索结果、选中用户等信息
+ * @param onFinish 完成回调，点击完成按钮时调用
+ * @param modifier 视图修饰符，用于自定义样式和布局
+ * @param invitePeopleView 邀请人员视图的 Composable 表达式，用于渲染搜索和选择用户的界面
+ */
 @Composable
 fun AddPeopleView(
     state: InvitePeopleState,
@@ -59,6 +70,13 @@ fun AddPeopleView(
     )
 }
 
+/**
+ * 添加人员顶部导航栏
+ *
+ * 显示在添加人员页面顶部的导航栏，包含标题和跳过按钮。
+ *
+ * @param onSkipClick 跳过按钮点击回调，点击后跳过添加人员步骤
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddPeopleTopBar(
@@ -75,6 +93,13 @@ private fun AddPeopleTopBar(
     )
 }
 
+/**
+ * 添加人员视图预览
+ *
+ * 用于在预览模式下展示添加人员视图的效果。
+ *
+ * @param state 邀请人员状态，提供预览所需的测试数据
+ */
 @PreviewsDayNight
 @Composable
 internal fun AddPeopleViewPreview(@PreviewParameter(InvitePeopleStateProvider::class) state: InvitePeopleState) = ElementPreview {

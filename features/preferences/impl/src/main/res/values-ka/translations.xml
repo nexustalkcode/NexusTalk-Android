@@ -22,6 +22,8 @@
   <string name="screen_edit_profile_error">"დაფიქსირდა უცნობი შეცდომა და ინფორმაციის შეცვლა ვერ მოხერხდა."</string>
   <string name="screen_edit_profile_error_title">"პროფილის განახლება ვერ მოხერხდა"</string>
   <string name="screen_edit_profile_title">"Პროფილის რედაქტირება"</string>
+  <string name="screen_edit_profile_change_avatar">"ავატარის შეცვლა"</string>
+  <string name="screen_edit_profile_username">"მომხმარებლის სახელი"</string>
   <string name="screen_edit_profile_updating_details">"პროფილის განახლება…"</string>
   <string name="screen_notification_settings_additional_settings_section_title">"დამატებითი პარამეტრები"</string>
   <string name="screen_notification_settings_calls_label">"აუდიო და ვიდეო ზარები"</string>
@@ -50,6 +52,8 @@
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"სისტემის პარამეტრები"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"სისტემის შეტყობინებები გამორთულია"</string>
   <string name="screen_notification_settings_title">"შეტყობინებები"</string>
+  <string name="screen_preferences_section_customization">"მორგება"</string>
+  <string name="screen_preferences_section_security">"უსაფრთხოება"</string>
   <string name="troubleshoot_notifications_entry_point_section">"პრობლემების გადაჭრა"</string>
   <string name="troubleshoot_notifications_entry_point_title">"პრობლემების გადაჭრის შეტყობინებები"</string>
 </resources>

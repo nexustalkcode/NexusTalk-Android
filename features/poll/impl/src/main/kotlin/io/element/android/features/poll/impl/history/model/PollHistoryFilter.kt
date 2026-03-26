@@ -10,7 +10,15 @@ package io.element.android.features.poll.impl.history.model
 
 import io.element.android.features.poll.impl.R
 
+/**
+ * 投票历史过滤器枚举
+ *
+ * 用于过滤投票历史列表的选项。
+ */
 enum class PollHistoryFilter(val stringResource: Int) {
+    /** 进行中投票 - 显示尚未结束的投票 */
     ONGOING(R.string.screen_polls_history_filter_ongoing),
+
+    /** 已结束投票 - 显示已结束的投票 */
     PAST(R.string.screen_polls_history_filter_past),
 }

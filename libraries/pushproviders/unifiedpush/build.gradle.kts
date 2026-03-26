@@ -20,7 +20,6 @@ android {
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.lib)
     implementation(projects.features.enterprise.api)
     implementation(projects.libraries.androidutils)
     implementation(projects.libraries.core)
@@ -45,9 +44,8 @@ dependencies {
 
     // UnifiedPush library
     api(libs.unifiedpush)
-    implementation(libs.unifiedpush.fcm)
 
-    testCommonDependencies(libs)
+   
     testImplementation(libs.kotlinx.collections.immutable)
     testImplementation(projects.features.enterprise.test)
     testImplementation(projects.libraries.matrix.test)

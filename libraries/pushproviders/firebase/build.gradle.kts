@@ -67,10 +67,10 @@ dependencies {
     api("com.google.firebase:firebase-messaging") {
         exclude(group = "com.google.firebase", module = "firebase-core")
         exclude(group = "com.google.firebase", module = "firebase-analytics")
-        exclude(group = "com.google.firebase", module = "firebase-measurement-connector")
+//        exclude(group = "com.google.firebase", module = "firebase-measurement-connector")
     }
 
-    testCommonDependencies(libs)
+   
     testImplementation(libs.kotlinx.collections.immutable)
     testImplementation(projects.features.enterprise.test)
     testImplementation(projects.libraries.matrix.test)
@@ -79,15 +79,4 @@ dependencies {
     testImplementation(projects.libraries.sessionStorage.test)
     testImplementation(projects.libraries.troubleshoot.test)
     testImplementation(projects.services.toolbox.test)
-}
-
-// SC resource override
-android {
-    // Use a flavor for common things that the upstream config will not override by the build type
-    flavorDimensions += "package"
-    productFlavors {
-        create("sc") {
-            dimension = "package"
-        }
-    }
 }

@@ -7,4 +7,32 @@
   <string name="screen_create_room_public_option_description">"کوئی بھی یہ کمرہ ڈھونڈ سکتا ہے۔
 آپ اسے کمرے کی ترتیبات میں کسی بھی وقت تبدیل کرسکتے ہیں۔"</string>
   <string name="screen_create_room_topic_label">"موضوع (اختیاری)"</string>
+
+  <string name="screen_create_room_error_creating_space">"نامعلوم خرابی کی وجہ سے جگہ نہیں بنائی جا سکی۔ بعد میں دوبارہ کوشش کریں۔"</string>
+  <string name="screen_create_room_name_label">"نام"</string>
+  <string name="screen_create_room_avatar_photo">"تصویر"</string>
+  <string name="screen_create_room_name_placeholder">"نام شامل کریں…"</string>
+  <string name="screen_create_room_new_room_title">"نیا کمرہ"</string>
+  <string name="screen_create_room_new_space_title">"نئی جگہ"</string>
+  <string name="screen_create_room_private_option_title">"نجی"</string>
+  <string name="screen_create_room_public_option_short_description">"کوئی بھی شامل ہو سکتا ہے۔"</string>
+  <string name="screen_create_room_public_option_title">"عوامی"</string>
+  <string name="screen_create_room_room_access_section_knocking_option_description">"کوئی بھی شامل ہونے کے لیے کہہ سکتا ہے لیکن منتظم یا ناظم کو درخواست کو قبول کرنا چاہیے۔"</string>
+  <string name="screen_create_room_room_access_section_knocking_option_title">"شامل ہونے کی اجازت دیں۔"</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_description">"%1$s میں کوئی بھی شامل ہوسکتا ہے لیکن باقی سب کو رسائی کی درخواست کرنی ہوگی۔"</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_title">"شامل ہونے کو کہیں۔"</string>
+  <string name="screen_create_room_room_access_section_private_option_description">"صرف مدعو لوگ ہی شامل ہو سکتے ہیں۔"</string>
+  <string name="screen_create_room_room_access_section_private_option_title">"نجی"</string>
+  <string name="screen_create_room_room_access_section_public_option_description">"کوئی بھی شامل ہو سکتا ہے۔"</string>
+  <string name="screen_create_room_room_access_section_public_option_title">"عوامی"</string>
+  <string name="screen_create_room_room_access_section_restricted_option_description">"%1$s میں کوئی بھی شامل ہو سکتا ہے۔"</string>
+  <string name="screen_create_room_room_access_section_restricted_option_title">"معیاری"</string>
+  <string name="screen_create_room_room_access_section_title">"جس کی رسائی ہے۔"</string>
+  <string name="screen_create_room_room_address_section_footer">"اسے عوامی ڈائریکٹری میں مرئی بنانے کے لیے آپ کو ایک پتہ درکار ہوگا۔"</string>
+  <string name="screen_create_room_room_address_section_title">"پتہ"</string>
+  <string name="screen_create_room_room_visibility_section_title">"کمرے کی مرئیت"</string>
+  <string name="screen_create_room_space_selection_no_space_description">"(کوئی جگہ نہیں)"</string>
+  <string name="screen_create_room_space_selection_no_space_title">"گھر"</string>
+  <string name="screen_create_room_space_selection_sheet_title">"خلا میں شامل کریں۔"</string>
+  <string name="screen_create_room_topic_placeholder">"تفصیل شامل کریں…"</string>
 </resources>

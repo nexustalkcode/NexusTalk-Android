@@ -18,6 +18,13 @@ import dev.zacsweers.metro.AssistedInject
 import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 高级设置页面 Node
+ *
+ * 负责显示高级设置页面，包括开发者模式、主题、媒体优化等配置选项。
+ *
+ * @property presenter 高级设置 Presenter
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class AdvancedSettingsNode(

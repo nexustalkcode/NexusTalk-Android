@@ -17,9 +17,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.element.android.features.securebackup.impl.R
 import io.element.android.features.securebackup.impl.setup.views.aFormattedRecoveryKey
 import io.element.android.libraries.architecture.AsyncAction
-import io.element.android.libraries.ui.strings.CommonStrings
 import io.element.android.tests.testutils.EnsureNeverCalled
 import io.element.android.tests.testutils.EventsRecorder
 import io.element.android.tests.testutils.clickOn
@@ -60,14 +60,38 @@ class SecureBackupEnterRecoveryKeyViewTest {
 
     @Test
     @Config(qualifiers = "h1024dp")
-    fun `tapping on Continue when key is valid - calls expected action`() {
+    fun `tapping on Restore history when key is valid - calls expected action`() {
         val recorder = EventsRecorder<SecureBackupEnterRecoveryKeyEvents>()
         rule.setSecureBackupEnterRecoveryKeyView(
             aSecureBackupEnterRecoveryKeyState(isSubmitEnabled = true, eventSink = recorder),
         )
-        rule.clickOn(CommonStrings.action_continue)
+        rule.clickOn(R.string.screen_recovery_key_confirm_submit_action)
 
         recorder.assertSingle(SecureBackupEnterRecoveryKeyEvents.Submit)
+    }
+
+    @Test
+    @Config(qualifiers = "h1024dp")
+    fun `tapping on Set up later - calls onBackClick`() {
+        ensureCalledOnce { callback ->
+            rule.setSecureBackupEnterRecoveryKeyView(
+                aSecureBackupEnterRecoveryKeyState(),
+                onBackClick = callback,
+            )
+            rule.clickOn(R.string.screen_recovery_key_confirm_skip_action)
+        }
+    }
+
+    @Test
+    @Config(qualifiers = "h1024dp")
+    fun `tapping on Lost your recovery key - calls onResetRecoveryKeyClick`() {
+        ensureCalledOnce { callback ->
+            rule.setSecureBackupEnterRecoveryKeyView(
+                aSecureBackupEnterRecoveryKeyState(),
+                onResetRecoveryKeyClick = callback,
+            )
+            rule.clickOn(R.string.screen_recovery_key_confirm_lost_recovery_key)
+        }
     }
 
     @Test
@@ -93,7 +117,9 @@ class SecureBackupEnterRecoveryKeyViewTest {
         // Initially, the text field should be visible
         rule.onNodeWithText(keyValue).assertExists()
 
-        rule.onNodeWithContentDescription(rule.activity.getString(CommonStrings.a11y_hide_password)).performClick()
+        rule.onNodeWithContentDescription(
+            rule.activity.getString(io.element.android.libraries.ui.strings.CommonStrings.a11y_hide_password)
+        ).performClick()
 
         rule.waitForIdle()
 
@@ -125,12 +151,14 @@ class SecureBackupEnterRecoveryKeyViewTest {
         state: SecureBackupEnterRecoveryKeyState,
         onDone: () -> Unit = EnsureNeverCalled(),
         onBackClick: () -> Unit = EnsureNeverCalled(),
+        onResetRecoveryKeyClick: () -> Unit = EnsureNeverCalled(),
     ) {
         setContent {
             SecureBackupEnterRecoveryKeyView(
                 state = state,
                 onSuccess = onDone,
                 onBackClick = onBackClick,
+                onResetRecoveryKeyClick = onResetRecoveryKeyClick,
             )
         }
     }

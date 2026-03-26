@@ -40,6 +40,14 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 private const val SECRET_KEY_ALIAS = "elementx.SECRET_KEY_ALIAS_BIOMETRIC"
 
+/**
+ * 默认生物识别认证管理器实现
+ *
+ * 提供完整的生物识别认证管理功能，包括：
+ * - 检测设备生物识别能力
+ * - 创建解锁和确认用的生物识别认证器
+ * - 管理认证回调
+ */
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
 class DefaultBiometricAuthenticatorManager(
@@ -51,26 +59,29 @@ class DefaultBiometricAuthenticatorManager(
     @AppCoroutineScope
     private val coroutineScope: CoroutineScope,
 ) : BiometricAuthenticatorManager {
+    /** 认证回调列表 */
     private val callbacks = CopyOnWriteArrayList<BiometricAuthenticator.Callback>()
+    /** 生物识别管理器 */
     private val biometricManager = BiometricManager.from(context)
+    /** 设备锁屏管理器 */
     private val keyguardManager: KeyguardManager = context.getSystemService()!!
 
     /**
-     * Returns true if a weak biometric method (i.e.: some face or iris unlock implementations) can be used.
+     * 是否可以使用弱生物识别（如某些面部或虹膜解锁实现）
      */
     private val canUseWeakBiometricAuth: Boolean
         get() = lockScreenConfig.isWeakBiometricsEnabled &&
             biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS
 
     /**
-     * Returns true if a strong biometric method (i.e.: fingerprint, some face or iris unlock implementations) can be used.
+     * 是否可以使用强生物识别（如指纹、某些面部或虹膜解锁实现）
      */
     private val canUseStrongBiometricAuth: Boolean
         get() = lockScreenConfig.isStrongBiometricsEnabled &&
             biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
 
     /**
-     * Returns true if any biometric method (weak or strong) can be used.
+     * 是否可以使用任何生物识别方法（弱或强）
      */
     override val hasAvailableAuthenticator: Boolean
         get() = canUseWeakBiometricAuth || canUseStrongBiometricAuth

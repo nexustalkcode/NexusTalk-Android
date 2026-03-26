@@ -20,18 +20,28 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import dev.zacsweers.metro.Inject
 import io.element.android.libraries.architecture.Presenter
-import io.element.android.libraries.core.meta.BuildMeta
-import io.element.android.libraries.core.meta.isGplayBuild
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.launch
 
+/**
+ * 房间列表搜索 Presenter
+ *
+ * 负责处理房间列表搜索功能的业务逻辑和状态管理。
+ * 管理搜索查询的处理和搜索结果的展示。
+ *
+ * @property dataSourceFactory 房间列表搜索数据源工厂
+ */
 @Inject
 class RoomListSearchPresenter(
     private val dataSourceFactory: RoomListSearchDataSource.Factory,
 ) : Presenter<RoomListSearchState> {
+    /**
+     * 生成界面状态
+     *
+     * @return RoomListSearchState 房间列表搜索状态
+     */
     @Composable
     override fun present(): RoomListSearchState {
-        // Do not use rememberSaveable so that search is not active when the user navigates back to the screen
+        // 不要使用 rememberSaveable，以便用户返回屏幕时搜索不处于活动状态
         var isSearchActive by remember {
             mutableStateOf(false)
         }
@@ -40,21 +50,27 @@ class RoomListSearchPresenter(
         val coroutineScope = rememberCoroutineScope()
         val dataSource = remember { dataSourceFactory.create(coroutineScope) }
 
+        LaunchedEffect(isSearchActive) {
+            dataSource.setIsActive(isSearchActive)
+        }
+
         LaunchedEffect(searchQuery.text) {
             dataSource.setSearchQuery(searchQuery.text.toString())
         }
 
-        fun handleEvent(event: RoomListSearchEvent) {
+        /**
+         * 处理用户事件
+         *
+         * @param event 房间列表搜索事件
+         */
+        fun handleEvent(event: RoomListSearchEvents) {
             when (event) {
-                RoomListSearchEvent.ClearQuery -> {
+                RoomListSearchEvents.ClearQuery -> {
                     searchQuery.clearText()
                 }
-                RoomListSearchEvent.ToggleSearchVisibility -> {
+                RoomListSearchEvents.ToggleSearchVisibility -> {
                     isSearchActive = !isSearchActive
                     searchQuery.clearText()
-                }
-                is RoomListSearchEvent.UpdateVisibleRange -> coroutineScope.launch {
-                    dataSource.updateVisibleRange(visibleRange = event.range)
                 }
             }
         }

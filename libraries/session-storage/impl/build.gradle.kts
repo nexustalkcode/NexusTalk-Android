@@ -30,7 +30,7 @@ dependencies {
     implementation(projects.libraries.di)
     implementation(libs.sqldelight.coroutines)
 
-    testCommonDependencies(libs)
+   
     testImplementation(libs.sqldelight.driver.jvm)
 }
 

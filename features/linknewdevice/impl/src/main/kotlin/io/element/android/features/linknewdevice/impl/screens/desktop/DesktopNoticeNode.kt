@@ -26,7 +26,9 @@ class DesktopNoticeNode(
     private val presenter: DesktopNoticePresenter,
 ) : Node(buildContext, plugins = plugins) {
     interface Callback : Plugin {
+        // 返回上一页
         fun navigateBack()
+        // 进入二维码扫描页
         fun navigateToQrCodeScanner()
     }
 
@@ -34,6 +36,7 @@ class DesktopNoticeNode(
 
     @Composable
     override fun View(modifier: Modifier) {
+        // 生成状态并渲染提示页
         val state = presenter.present()
         DesktopNoticeView(
             state = state,

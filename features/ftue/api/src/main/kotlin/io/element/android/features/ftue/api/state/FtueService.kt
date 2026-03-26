@@ -11,21 +11,27 @@ package io.element.android.features.ftue.api.state
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Service to manage the First Time User Experience state (aka Onboarding).
+ * 首次用户体验服务接口
+ *
+ * 用于管理首次用户体验（又称新手引导）状态的服务接口。
  */
 interface FtueService {
-    /** The current state of the FTUE. */
+    /** FTUE 状态的 StateFlow */
     val state: StateFlow<FtueState>
 }
 
-/** The state of the FTUE. */
+/**
+ * FTUE 状态密封接口
+ *
+ * 定义首次用户体验的不同状态。
+ */
 sealed interface FtueState {
-    /** The FTUE state is unknown, nothing to do for now. */
+    /** 未知状态，暂无操作 */
     data object Unknown : FtueState
 
-    /** The FTUE state is incomplete. The FTUE flow should be displayed. */
+    /** 未完成状态，应显示 FTUE 流程 */
     data object Incomplete : FtueState
 
-    /** The FTUE state is complete. The FTUE flow should not be displayed anymore. */
+    /** 已完成状态，不应再显示 FTUE 流程 */
     data object Complete : FtueState
 }

@@ -21,6 +21,15 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.features.login.impl.util.openLearnMorePage
 import io.element.android.libraries.architecture.callback
 
+/**
+ * 搜索账户提供商节点
+ *
+ * 允许用户搜索和输入自定义账户提供商地址的页面节点。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenter 业务逻辑 presenter
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class SearchAccountProviderNode(
@@ -28,7 +37,11 @@ class SearchAccountProviderNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: SearchAccountProviderPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 搜索账户提供商回调接口
+     */
     interface Callback : Plugin {
+        /** 完成时的回调 */
         fun onDone()
     }
 

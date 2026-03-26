@@ -15,9 +15,6 @@ import androidx.core.net.toUri
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.login.api.LoginParams
 import io.element.android.features.login.test.FakeLoginIntentResolver
-import io.element.android.features.share.api.ShareIntentData
-import io.element.android.features.share.api.UriToShare
-import io.element.android.features.share.test.FakeShareIntentHandler
 import io.element.android.libraries.deeplink.api.DeeplinkData
 import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.matrix.api.permalink.PermalinkData
@@ -242,34 +239,26 @@ class IntentResolverTest {
 
     @Test
     fun `test incoming share simple`() {
-        val shareIntentData = ShareIntentData.PlainText("Hello")
         val sut = createIntentResolver(
             oidcIntentResolverResult = { null },
-            onIncomingShareIntent = { shareIntentData },
         )
         val intent = Intent(RuntimeEnvironment.getApplication(), Activity::class.java).apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "Hello")
         }
         val result = sut.resolve(intent)
-        assertThat(result).isEqualTo(ResolvedIntent.IncomingShare(shareIntentData))
+        assertThat(result).isEqualTo(ResolvedIntent.IncomingShare(intent = intent))
     }
 
     @Test
     fun `test incoming share multiple`() {
-        val fileUri = "content://com.example.app/file1.jpg".toUri()
-        val shareIntentData = ShareIntentData.Uris(text = "Hello", uris = listOf(UriToShare(fileUri, "image/jpg")))
         val sut = createIntentResolver(
             oidcIntentResolverResult = { null },
-            onIncomingShareIntent = { shareIntentData },
         )
         val intent = Intent(RuntimeEnvironment.getApplication(), Activity::class.java).apply {
             action = Intent.ACTION_SEND_MULTIPLE
-            putExtra(Intent.EXTRA_TEXT, "Hello")
-            data = fileUri
         }
         val result = sut.resolve(intent)
-        assertThat(result).isEqualTo(ResolvedIntent.IncomingShare(shareIntentData))
+        assertThat(result).isEqualTo(ResolvedIntent.IncomingShare(intent = intent))
     }
 
     @Test
@@ -307,7 +296,6 @@ class IntentResolverTest {
         permalinkParserResult: (String) -> PermalinkData = { lambdaError() },
         loginIntentResolverResult: (String) -> LoginParams? = { lambdaError() },
         oidcIntentResolverResult: (Intent) -> OidcAction? = { lambdaError() },
-        onIncomingShareIntent: (Intent) -> ShareIntentData? = { null },
     ): IntentResolver {
         return IntentResolver(
             deeplinkParser = { deeplinkParserResult },
@@ -319,9 +307,6 @@ class IntentResolverTest {
             ),
             permalinkParser = FakePermalinkParser(
                 result = permalinkParserResult
-            ),
-            shareIntentHandler = FakeShareIntentHandler(
-                onIncomingShareIntent = onIncomingShareIntent,
             ),
         )
     }

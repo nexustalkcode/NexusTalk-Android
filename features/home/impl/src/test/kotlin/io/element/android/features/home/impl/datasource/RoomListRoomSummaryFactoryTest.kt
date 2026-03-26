@@ -12,11 +12,22 @@ import io.element.android.libraries.dateformatter.api.DateFormatter
 import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.libraries.eventformatter.api.RoomLatestEventFormatter
 import io.element.android.libraries.eventformatter.test.FakeRoomLatestEventFormatter
+import io.element.android.libraries.matrix.api.roomlist.RoomSummary
 
 fun aRoomListRoomSummaryFactory(
     dateFormatter: DateFormatter = FakeDateFormatter { _, _, _ -> "Today" },
     roomLatestEventFormatter: RoomLatestEventFormatter = FakeRoomLatestEventFormatter(),
+    latestEventMentionFormatter: LatestEventMentionFormatter = FakeLatestEventMentionFormatter(),
 ) = RoomListRoomSummaryFactory(
     dateFormatter = dateFormatter,
     roomLatestEventFormatter = roomLatestEventFormatter,
+    latestEventMentionFormatter = latestEventMentionFormatter,
 )
+
+class FakeLatestEventMentionFormatter(
+    private val formatLambda: (CharSequence, RoomSummary) -> CharSequence = { text, _ -> text }
+) : LatestEventMentionFormatter {
+    override fun format(text: CharSequence, roomSummary: RoomSummary): CharSequence {
+        return formatLambda(text, roomSummary)
+    }
+}

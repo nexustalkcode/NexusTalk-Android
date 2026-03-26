@@ -3,4 +3,7 @@
   <string name="screen_create_room_action_create_room">"نیا کمرہ"</string>
   <string name="screen_room_directory_search_title">"کمرے کا راہنامچہ"</string>
   <string name="screen_start_chat_error_starting_chat">"گفتگو شروع کرنے کی کوشش کرتے وقت ایک خرابی واقع ہوگئی"</string>
+  <string name="screen_scan_user_qr_code_title">"QR کوڈ اسکین کریں"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"رابطہ شامل کرنے کے لیے QR کوڈ اسکین کریں"</string>
+  <string name="screen_scan_user_qr_code_success">"QR کوڈ کامیابی سے اسکین ہو گیا"</string>
 </resources>

@@ -29,6 +29,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 媒体预览配置状态数据类
+ *
+ * @property hideInviteAvatars 是否隐藏邀请中的头像
+ * @property timelineMediaPreviewValue 时间线媒体预览值
+ * @property setHideInviteAvatarsAction 设置隐藏邀请头像的操作状态
+ * @property setTimelineMediaPreviewAction 设置时间线媒体预览的操作状态
+ */
 data class MediaPreviewConfigState(
     val hideInviteAvatars: Boolean,
     val timelineMediaPreviewValue: MediaPreviewValue,
@@ -36,13 +44,28 @@ data class MediaPreviewConfigState(
     val setTimelineMediaPreviewAction: AsyncAction<Unit>,
 )
 
+/**
+ * 媒体预览配置状态存储接口
+ */
 interface MediaPreviewConfigStateStore {
+    /** 获取当前媒体预览配置状态 */
     @Composable
     fun state(): MediaPreviewConfigState
+    /** 设置是否隐藏邀请中的头像 */
     fun setHideInviteAvatars(hide: Boolean)
+    /** 设置时间线媒体预览值 */
     fun setTimelineMediaPreviewValue(value: MediaPreviewValue)
 }
 
+/**
+ * 默认媒体预览配置状态存储实现
+ *
+ * 负责管理与媒体预览相关的配置状态，包括隐藏邀请头像和时间线媒体预览设置。
+ *
+ * @property sessionCoroutineScope 会话协程作用域
+ * @property mediaPreviewService 媒体预览服务
+ * @property snackbarDispatcher Snackbar 调度器
+ */
 @ContributesBinding(SessionScope::class)
 @SingleIn(SessionScope::class)
 class DefaultMediaPreviewConfigStateStore(

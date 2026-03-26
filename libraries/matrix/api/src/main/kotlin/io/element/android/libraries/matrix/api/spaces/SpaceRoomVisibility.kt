@@ -14,12 +14,12 @@ import io.element.android.libraries.matrix.api.room.join.JoinRule
 sealed interface SpaceRoomVisibility {
     data object Private : SpaceRoomVisibility
     data object Public : SpaceRoomVisibility
-    data object SpaceMembers : SpaceRoomVisibility
+    data object Restricted : SpaceRoomVisibility
 
     companion object {
         fun fromJoinRule(joinRule: JoinRule?): SpaceRoomVisibility = when (joinRule) {
             JoinRule.Public -> Public
-            is JoinRule.Restricted, is JoinRule.KnockRestricted -> SpaceMembers
+            is JoinRule.Restricted, is JoinRule.KnockRestricted -> Restricted
             // Else fallback to Private
             else -> Private
         }

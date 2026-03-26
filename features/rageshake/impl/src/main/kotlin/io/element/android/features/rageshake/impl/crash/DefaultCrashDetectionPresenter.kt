@@ -21,18 +21,35 @@ import io.element.android.features.rageshake.api.RageshakeFeatureAvailability
 import io.element.android.features.rageshake.api.crash.CrashDetectionEvent
 import io.element.android.features.rageshake.api.crash.CrashDetectionPresenter
 import io.element.android.features.rageshake.api.crash.CrashDetectionState
+import io.element.android.libraries.androidutils.clipboard.ClipboardHelper
 import io.element.android.libraries.core.meta.BuildMeta
+import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatcher
+import io.element.android.libraries.designsystem.utils.snackbar.SnackbarMessage
+import io.element.android.libraries.designsystem.utils.snackbar.collectSnackbarMessageAsState
+import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
+/**
+ * 默认崩溃检测 Presenter
+ *
+ * CrashDetectionPresenter 接口的实现，负责呈现崩溃检测功能的状态。
+ * 监听崩溃数据存储，当检测到崩溃时显示相应的用户界面。
+ *
+ * @property buildMeta 构建元数据
+ * @property crashDataStore 崩溃数据存储
+ * @property rageshakeFeatureAvailability 摇一摇功能可用性
+ */
 @ContributesBinding(AppScope::class)
 class DefaultCrashDetectionPresenter(
     private val buildMeta: BuildMeta,
     private val crashDataStore: CrashDataStore,
     private val rageshakeFeatureAvailability: RageshakeFeatureAvailability,
+    private val clipboardHelper: ClipboardHelper,
+    private val snackbarDispatcher: SnackbarDispatcher,
 ) : CrashDetectionPresenter {
     @Composable
     override fun present(): CrashDetectionState {
@@ -47,9 +64,23 @@ class DefaultCrashDetectionPresenter(
                     }
                 }
         }.collectAsState(false)
+        val crashInfo by remember {
+            crashDataStore.crashInfo()
+        }.collectAsState(initial = "")
+        val snackbarMessage by snackbarDispatcher.collectSnackbarMessageAsState()
 
         fun handleEvent(event: CrashDetectionEvent) {
             when (event) {
+                CrashDetectionEvent.CopyDiagnosticInfo -> {
+                    clipboardHelper.copyPlainText(
+                        formatCrashDiagnosticInfo(
+                            buildMeta = buildMeta,
+                            crashInfo = crashInfo,
+                        )
+                    )
+                    snackbarDispatcher.post(SnackbarMessage(CommonStrings.common_copied_to_clipboard))
+                    localCoroutineScope.resetAppHasCrashed()
+                }
                 CrashDetectionEvent.ResetAllCrashData -> localCoroutineScope.resetAll()
                 CrashDetectionEvent.ResetAppHasCrashed -> localCoroutineScope.resetAppHasCrashed()
             }
@@ -58,6 +89,7 @@ class DefaultCrashDetectionPresenter(
         return CrashDetectionState(
             appName = buildMeta.applicationName,
             crashDetected = crashDetected,
+            snackbarMessage = snackbarMessage,
             eventSink = ::handleEvent,
         )
     }

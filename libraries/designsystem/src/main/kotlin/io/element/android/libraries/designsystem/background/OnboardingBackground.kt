@@ -6,6 +6,16 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 入引导背景组件
+ *
+ * 用于新用户引导（FTUE）页面的渐变背景。
+ * 在屏幕底部显示水平渐变效果，自动适配浅色/深色主题。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.background
 
 import androidx.compose.foundation.Canvas
@@ -23,19 +33,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.LinearGradientShader
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.unit.dp
-import chat.schildi.theme.ScTheme
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.utils.drawWithLayer
 
 /**
- * Gradient background for FTUE (onboarding) screens.
+ * 入引导背景组件
+ *
+ * 创建一个用于新用户引导页面的渐变背景。
+ * 背景在屏幕底部显示水平渐变，支持浅色和深色主题适配。
+ * 渐变使用叠加模式和擦除模式实现特殊效果。
+ *
+ * @return Unit
+ *
+ * @see [ElementTheme.colors.bgCanvasDefault] 背景基础颜色
+ *
+ * @example
+ * ```kotlin
+ * OnboardingBackground()
+ * ```
  */
 @Suppress("ModifierMissing")
 @Composable
 fun OnboardingBackground() {
-    if (ScTheme.yes) return
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -77,6 +98,12 @@ fun OnboardingBackground() {
     }
 }
 
+/**
+ * OnboardingBackground 预览组件
+ *
+ * 用于在设计预览中展示 OnboardingBackground 组件的默认状态。
+ * 此预览函数支持日夜两种主题模式。
+ */
 @PreviewsDayNight
 @Composable
 internal fun OnboardingBackgroundPreview() {

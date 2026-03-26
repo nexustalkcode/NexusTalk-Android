@@ -10,7 +10,15 @@ package io.element.android.features.securebackup.impl.reset.password
 
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 重置身份密码状态数据类
+ *
+ * @property resetAction 重置操作的异步状态
+ * @property eventSink 事件处理函数
+ */
 data class ResetIdentityPasswordState(
+    /** 重置操作的异步状态 */
     val resetAction: AsyncAction<Unit>,
+    /** 事件处理函数 */
     val eventSink: (ResetIdentityPasswordEvent) -> Unit,
 )

@@ -16,11 +16,30 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 房间通知设置项数据类
+ *
+ * 表示一个通知设置选项，包含通知模式和显示标题。
+ *
+ * @property mode 通知模式
+ * @property title 显示标题
+ * @see RoomNotificationMode 房间通知模式
+ */
 data class RoomNotificationSettingsItem(
     val mode: RoomNotificationMode,
     val title: String,
 )
 
+/**
+ * 获取所有通知设置项
+ *
+ * Composable 函数，返回所有可用的通知设置选项列表。
+ * 包括全部消息、仅提及和关键词、静音三种模式。
+ *
+ * @return 通知设置项的不可变列表
+ * @see ImmutableList 不可变列表
+ * @see RoomNotificationSettingsItem 通知设置项
+ */
 @Composable
 fun roomNotificationSettingsItems(): ImmutableList<RoomNotificationSettingsItem> {
     return RoomNotificationMode.entries

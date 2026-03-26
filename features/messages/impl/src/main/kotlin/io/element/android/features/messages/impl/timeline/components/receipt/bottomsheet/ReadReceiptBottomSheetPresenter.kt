@@ -23,13 +23,13 @@ class ReadReceiptBottomSheetPresenter : Presenter<ReadReceiptBottomSheetState> {
     override fun present(): ReadReceiptBottomSheetState {
         var selectedEvent: TimelineItem.Event? by remember { mutableStateOf(null) }
 
-        fun handleEvent(event: ReadReceiptBottomSheetEvent) {
+        fun handleEvent(event: ReadReceiptBottomSheetEvents) {
             @Suppress("LiftReturnOrAssignment")
             when (event) {
-                is ReadReceiptBottomSheetEvent.EventSelected -> {
+                is ReadReceiptBottomSheetEvents.EventSelected -> {
                     selectedEvent = event.event
                 }
-                ReadReceiptBottomSheetEvent.Dismiss -> {
+                ReadReceiptBottomSheetEvents.Dismiss -> {
                     selectedEvent = null
                 }
             }

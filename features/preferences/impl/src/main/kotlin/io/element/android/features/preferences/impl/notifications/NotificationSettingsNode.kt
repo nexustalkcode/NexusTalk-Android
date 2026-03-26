@@ -19,6 +19,14 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 通知设置页面 Node
+ *
+ * 负责显示通知设置页面，包括系统通知、应用通知、推送提供商等配置。
+ *
+ * @property presenter 通知设置 Presenter
+ * @see Callback 页面回调接口
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class NotificationSettingsNode(
@@ -26,8 +34,13 @@ class NotificationSettingsNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: NotificationSettingsPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 通知设置页面回调接口
+     */
     interface Callback : Plugin {
+        /** 导航到编辑默认通知设置页面 */
         fun navigateToEditDefaultNotificationSetting(isOneToOne: Boolean)
+        /** 导航到通知故障排除页面 */
         fun navigateToTroubleshootNotifications()
     }
 

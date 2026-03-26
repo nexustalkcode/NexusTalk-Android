@@ -27,6 +27,16 @@ import io.element.android.libraries.di.annotations.ApplicationContext
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 应用导航结构的根节点。
+ *
+ * 继承自 ParentNode，使用 PermanentNavModel 保持持久的导航状态。
+ * 作为整个应用 UI 结构的根节点，负责托管 RootFlowNode。
+ * 同时实现 DependencyInjectionGraphOwner 接口，
+ * 使其能够访问全局依赖注入图。
+ *
+ * 负责接收并转发 Intent 到子节点（RootFlowNode）进行处理。
+ */
 class MainNode(
     buildContext: BuildContext,
     plugins: List<Plugin>,

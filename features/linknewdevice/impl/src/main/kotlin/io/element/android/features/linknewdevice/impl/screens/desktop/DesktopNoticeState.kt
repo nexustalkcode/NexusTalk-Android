@@ -9,6 +9,13 @@ package io.element.android.features.linknewdevice.impl.screens.desktop
 
 import io.element.android.libraries.permissions.api.PermissionsState
 
+/**
+ * 桌面通知状态数据类
+ *
+ * @property cameraPermissionState 相机权限状态
+ * @property canContinue 是否可以继续
+ * @property eventSink 事件处理函数
+ */
 data class DesktopNoticeState(
     val cameraPermissionState: PermissionsState,
     val canContinue: Boolean,

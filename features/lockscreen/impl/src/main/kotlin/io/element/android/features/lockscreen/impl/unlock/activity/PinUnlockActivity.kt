@@ -33,17 +33,33 @@ import io.element.android.libraries.designsystem.theme.ElementThemeApp
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
 import kotlinx.coroutines.launch
 
+/**
+ * PIN 解锁 Activity
+ *
+ * 用于在应用外部进行 PIN 码解锁的 Activity。
+ */
 class PinUnlockActivity : AppCompatActivity() {
     internal companion object {
+        /**
+         * 创建启动 PIN 解锁 Activity 的意图
+         *
+         * @param context 上下文
+         * @return 启动意图
+         */
         fun newIntent(context: Context): Intent {
             return Intent(context, PinUnlockActivity::class.java)
         }
     }
 
+    /** PIN 解锁 Presenter */
     @Inject lateinit var presenter: PinUnlockPresenter
+    /** 锁屏服务 */
     @Inject lateinit var lockScreenService: LockScreenService
+    /** 应用偏好设置存储 */
     @Inject lateinit var appPreferencesStore: AppPreferencesStore
+    /** 企业服务 */
     @Inject lateinit var enterpriseService: EnterpriseService
+    /** 构建元数据 */
     @Inject lateinit var buildMeta: BuildMeta
 
     override fun onCreate(savedInstanceState: Bundle?) {

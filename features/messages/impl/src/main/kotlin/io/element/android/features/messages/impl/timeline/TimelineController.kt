@@ -39,8 +39,21 @@ import java.io.Closeable
 import java.util.Optional
 
 /**
- * This controller is responsible of using the right timeline to display messages and make associated actions.
- * It can be focused on the live timeline or on a detached timeline (focusing an unknown event).
+ * 时间线控制器类
+ *
+ * 负责管理正确的时间线以显示消息并执行相关操作。
+ * 支持实时时间线和分离时间线（聚焦未知事件）两种模式。
+ *
+ * 使用 @SingleIn 注解确保每个 RoomScope 只有一个实例，
+ * 使用 @ContributesBinding 注解绑定到 TimelineProvider。
+ *
+ * @property room 已加入的房间
+ * @property liveTimeline 实时时间线
+ *
+ * @see Closeable 可关闭接口
+ * @see TimelineProvider 时间线提供器
+ * @see Timeline 时间线
+ * @see JoinedRoom 已加入的房间
  */
 @SingleIn(RoomScope::class)
 @ContributesBinding(RoomScope::class, binding = binding<TimelineProvider>())
@@ -142,7 +155,19 @@ class TimelineController(
     }
 }
 
+/**
+ * 事件聚焦结果密封接口
+ *
+ * 定义事件聚焦操作的结果类型。
+ */
 sealed interface EventFocusResult {
+    /** 已聚焦到实时消息 */
     data object FocusedOnLive : EventFocusResult
+
+    /**
+     * 在线程中
+     *
+     * @property threadId 线程ID
+     */
     data class IsInThread(val threadId: ThreadId) : EventFocusResult
 }

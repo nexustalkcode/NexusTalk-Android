@@ -33,6 +33,15 @@ import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 网络连接指示器组件
+ *
+ * 使用 Jetpack Compose 实现网络离线状态的视觉指示器。
+ * 显示离线图标和"离线"文字提示。
+ *
+ * @param verticalPadding 垂直内边距
+ * @param modifier 修饰符
+ */
 @Composable
 internal fun ConnectivityIndicator(
     verticalPadding: Dp,
@@ -62,6 +71,11 @@ internal fun ConnectivityIndicator(
     }
 }
 
+/**
+ * 网络连接指示器预览组件
+ *
+ * 用于在 Android Studio 预览中展示离线指示器 UI。
+ */
 @PreviewsDayNight
 @Composable
 internal fun ConnectivityIndicatorPreview() = ElementPreview {

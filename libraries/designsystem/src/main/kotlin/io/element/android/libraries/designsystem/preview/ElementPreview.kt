@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.res.ResourcesCompat
-import chat.schildi.theme.ScTheme
 import coil3.annotation.ExperimentalCoilApi
 import coil3.asImage
 import coil3.compose.AsyncImagePreviewHandler
@@ -39,7 +38,7 @@ fun ElementPreview(
             ResourcesCompat.getDrawable(context.resources, drawableFallbackForImages, null)!!.asImage()
         }
     ) {
-        ScTheme(darkTheme = darkTheme) {
+        ElementTheme(darkTheme = darkTheme) {
             if (showBackground) {
                 // If we have a proper contentColor applied we need a Surface instead of a Box
                 Surface(content = content)

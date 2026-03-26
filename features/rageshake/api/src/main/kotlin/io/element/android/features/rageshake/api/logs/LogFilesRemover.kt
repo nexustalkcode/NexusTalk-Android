@@ -10,10 +10,18 @@ package io.element.android.features.rageshake.api.logs
 
 import java.io.File
 
+/**
+ * 日志文件删除器接口
+ *
+ * 定义了删除日志文件的操作接口，用于清理过期的日志文件。
+ */
 interface LogFilesRemover {
     /**
-     * Perform the log files removal.
-     * @param predicate a predicate to filter the files to remove. By default, all files are removed.
+     * 执行日志文件删除操作
+     *
+     * 根据谓词条件删除日志文件。默认情况下会删除所有文件。
+     *
+     * @param predicate 用于过滤要删除的文件的谓词函数。默认删除所有文件。
      */
     suspend fun perform(predicate: (File) -> Boolean = { true })
 }

@@ -39,6 +39,21 @@ import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.matrix.ui.model.getAvatarData
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 管理授权空间视图
+ *
+ * 负责渲染管理授权空间的界面，包含：
+ * - 页面标题和说明
+ * - 可选空间列表（带复选框）
+ * - 未知空间列表（无法获取详细信息的空间）
+ * - 完成按钮
+ *
+ * Figma 设计参考: https://www.figma.com/design/kcnHxunG1LDWXsJhaNuiHz/ER-145--Spaces-on-Element-X?node-id=6361-86274&m=dev
+ *
+ * @param state 页面状态
+ * @param modifier 样式修饰符
+ * @see ManageAuthorizedSpacesState 页面状态数据类
+ */
 // Figma design: https://www.figma.com/design/kcnHxunG1LDWXsJhaNuiHz/ER-145--Spaces-on-Element-X?node-id=6361-86274&m=dev
 @Composable
 fun ManageAuthorizedSpacesView(
@@ -129,6 +144,19 @@ private fun LazyListScope.headerItem() {
     }
 }
 
+/**
+ * 可勾选的空间列表项组件
+ *
+ * 用于显示空间信息，并提供复选框供用户选择。
+ *
+ * @param headlineText 主标题文本（空间名称）
+ * @param supportingText 辅助文本（空间别名）
+ * @param avatarData 头像数据
+ * @param checked 是否被选中
+ * @param onCheckedChange 选中状态变化回调
+ * @param modifier 样式修饰符
+ * @param enabled 是否启用
+ */
 @Composable
 private fun CheckableSpaceListItem(
     headlineText: String,
@@ -166,6 +194,16 @@ private fun CheckableSpaceListItem(
     )
 }
 
+/**
+ * 管理授权空间页面顶部导航栏
+ *
+ * 包含页面标题、返回按钮和完成按钮。
+ *
+ * @param isDoneButtonEnabled 完成按钮是否可用
+ * @param onBackClick 返回按钮点击事件处理
+ * @param onDoneClick 完成按钮点击事件处理
+ * @param modifier 样式修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ManageAuthorizedSpacesTopBar(

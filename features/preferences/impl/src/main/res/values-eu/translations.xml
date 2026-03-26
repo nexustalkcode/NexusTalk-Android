@@ -31,6 +31,8 @@
   <string name="screen_edit_profile_error">"Errore ezezagun bat aurkitu da eta ezin izan da informazioa aldatu."</string>
   <string name="screen_edit_profile_error_title">"Ezin da profila eguneratu"</string>
   <string name="screen_edit_profile_title">"Editatu profila"</string>
+  <string name="screen_edit_profile_change_avatar">"Aldatu avatarra"</string>
+  <string name="screen_edit_profile_username">"Erabiltzaile-izena"</string>
   <string name="screen_edit_profile_updating_details">"Profila eguneratzen…"</string>
   <string name="screen_notification_settings_additional_settings_section_title">"Ezarpen gehiago"</string>
   <string name="screen_notification_settings_calls_label">"Audio eta bideo deiak"</string>
@@ -55,4 +57,6 @@
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"sistemaren ezarpenak"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Sistemaren jakinarazpenak desaktibatuta daude"</string>
   <string name="screen_notification_settings_title">"Jakinarazpenak"</string>
+  <string name="screen_preferences_section_customization">"Pertsonalizazioa"</string>
+  <string name="screen_preferences_section_security">"Segurtasuna"</string>
 </resources>

@@ -2,6 +2,7 @@ import extension.buildConfigFieldStr
 import extension.readLocalProperty
 import extension.setupDependencyInjection
 import extension.testCommonDependencies
+import extension.ValidateElementCallEmbeddedDistTask
 
 /*
  * Copyright (c) 2025 Element Creations Ltd.
@@ -26,6 +27,12 @@ android {
 
     testOptions {
         unitTests.isIncludeAndroidResources = true
+    }
+
+    sourceSets {
+        getByName("main") {
+            assets.srcDir(layout.buildDirectory.dir("generated/element-call-assets"))
+        }
     }
 
     defaultConfig {
@@ -78,6 +85,7 @@ dependencies {
     implementation(projects.libraries.network)
     implementation(projects.libraries.preferences.api)
     implementation(projects.libraries.push.api)
+    implementation(projects.libraries.push.impl)
     implementation(projects.libraries.uiStrings)
     implementation(projects.services.analytics.api)
     implementation(projects.services.appnavstate.api)
@@ -86,13 +94,9 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.network.retrofit)
     implementation(libs.serialization.json)
-    implementation(libs.element.call.embedded)
+//    implementation(libs.element.call.embedded)
     api(projects.features.call.api)
 
-    implementation(projects.schildi.lib)
-    implementation(projects.schildi.theme)
-
-    testCommonDependencies(libs, true)
     testImplementation(projects.features.call.test)
     testImplementation(projects.libraries.featureflag.test)
     testImplementation(projects.libraries.preferences.test)
@@ -103,4 +107,24 @@ dependencies {
     testImplementation(projects.services.appnavstate.impl)
     testImplementation(projects.services.appnavstate.test)
     testImplementation(projects.services.toolbox.test)
+}
+
+// Element Call 嵌入式前端：从仓库根目录 element-call 的 Vite 产物复制到 assets（替代 Maven AAR）
+// 校验使用 plugins 模块中的 Task 子类 + @Input Property，满足 Configuration Cache
+val elementCallDistPath = rootProject.projectDir.resolve("element-call/dist").canonicalFile.absolutePath
+val elementCallDistIndexPath = rootProject.projectDir.resolve("element-call/dist/index.html").canonicalFile.absolutePath
+
+tasks.register<ValidateElementCallEmbeddedDistTask>("validateElementCallEmbeddedDist") {
+    indexHtmlPath.set(elementCallDistIndexPath)
+}
+
+val copyElementCallEmbeddedAssets by tasks.registering(Copy::class) {
+    dependsOn("validateElementCallEmbeddedDist")
+    from(elementCallDistPath)
+    into(layout.buildDirectory.dir("generated/element-call-assets/element-call"))
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.named("preBuild").configure {
+    dependsOn(copyElementCallEmbeddedAssets)
 }

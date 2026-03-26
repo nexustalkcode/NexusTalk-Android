@@ -16,9 +16,21 @@ import io.element.android.features.logout.impl.direct.DirectLogoutPresenter
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 退出登录模块依赖注入配置
+ *
+ * 定义了退出登录功能所需的依赖绑定关系，
+ * 供 Dagger/Metro 依赖注入框架使用。
+ */
 @ContributesTo(SessionScope::class)
 @BindingContainer
 interface LogoutModule {
+    /**
+     * 绑定直接退出登录Presenter
+     *
+     * @param presenter DirectLogoutPresenter 实例
+     * @return Presenter<DirectLogoutState> 泛型Presenter接口
+     */
     @Binds
     fun bindDirectLogoutPresenter(presenter: DirectLogoutPresenter): Presenter<DirectLogoutState>
 }

@@ -15,8 +15,21 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.poll.api.history.PollHistoryEntryPoint
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * 默认投票历史入口点实现类
+ *
+ * 实现了 PollHistoryEntryPoint 接口，提供投票历史功能的入口点。
+ * 负责创建 PollHistoryFlowNode 节点。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultPollHistoryEntryPoint : PollHistoryEntryPoint {
+    /**
+     * 创建投票历史节点
+     *
+     * @param parentNode 父节点
+     * @param buildContext 构建上下文
+     * @return 创建的投票历史节点
+     */
     override fun createNode(parentNode: Node, buildContext: BuildContext): Node {
         return parentNode.createNode<PollHistoryFlowNode>(buildContext)
     }

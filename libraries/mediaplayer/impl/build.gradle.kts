@@ -28,7 +28,7 @@ dependencies {
 
     implementation(libs.coroutines.core)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.audio.test)
     testImplementation(libs.coroutines.core)
 }

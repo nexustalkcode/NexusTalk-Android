@@ -46,7 +46,6 @@ dependencies {
     implementation(projects.features.invitepeople.api)
     api(projects.features.createroom.api)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.services.analytics.test)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.mediapickers.test)

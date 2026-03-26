@@ -38,6 +38,27 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.plus
 import java.io.File
 
+/**
+ * 应用依赖注入模块。
+ *
+ * 使用 @BindingContainer 和 @ContributesTo 注解标记，
+ * 提供应用级别依赖的绑定方法。
+ *
+ * 提供以下全局单例依赖：
+ * - @BaseDirectory：应用基础目录（sessions 文件夹）
+ * - @CacheDirectory：应用缓存目录
+ * - Resources：应用资源对象
+ * - @AppCoroutineScope：应用级协程作用域
+ * - BuildType：构建类型
+ * - BuildMeta：构建元数据
+ * - SharedPreferences：共享偏好设置
+ * - CoroutineDispatchers：协程调度器
+ * - SnackbarDispatcher：消息提示分发器
+ * - EmojibaseProvider：表情符号提供者
+ *
+ * 所有使用 @SingleIn(AppScope::class) 注解的方法
+ * 确保提供的实例在应用范围内是单例。
+ */
 @BindingContainer
 @ContributesTo(AppScope::class)
 object AppModule {
@@ -68,12 +89,7 @@ object AppModule {
     @Provides
     @SingleIn(AppScope::class)
     fun providesBuildType(): BuildType {
-        return when (val type = BuildType.valueOf(BuildConfig.BUILD_TYPE.uppercase())) {
-            BuildType.NIGHTLY,
-            BuildType.RELEASE -> BuildType.RELEASE_SC
-            BuildType.DEBUG -> BuildType.DEBUG_SC
-            else -> type
-        }
+        return BuildType.valueOf(BuildConfig.BUILD_TYPE.uppercase())
     }
 
     @Provides
@@ -83,9 +99,8 @@ object AppModule {
         buildType: BuildType,
         enterpriseService: EnterpriseService,
     ): BuildMeta {
-        val applicationName = ApplicationConfig.APPLICATION_NAME.takeIf { it.isNotEmpty() } ?: context.getString(R.string.app_name)
+        val applicationName = ApplicationConfig.APPLICATION_NAME.takeIf { it.isNotEmpty() } ?: context.getString(io.element.android.appconfig.R.string.app_name)
         return BuildMeta(
-            scBuildMeta = createScBuildMeta(),
             isDebuggable = BuildConfig.DEBUG,
             buildType = buildType,
             applicationName = applicationName,
@@ -93,7 +108,7 @@ object AppModule {
             desktopApplicationName = if (enterpriseService.isEnterpriseBuild) applicationName else ApplicationConfig.DESKTOP_APPLICATION_NAME,
             applicationId = BuildConfig.APPLICATION_ID,
             isEnterpriseBuild = enterpriseService.isEnterpriseBuild,
-            // TODO EAx Config.LOW_PRIVACY_LOG_ENABLE,
+            // TODO EAx Config.LOW_PRIVACY_LOG_ENABLE，低隐私日志启用配置，
             lowPrivacyLoggingEnabled = false,
             versionName = BuildConfig.VERSION_NAME,
             versionCode = context.getVersionCodeFromManifest(),

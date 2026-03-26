@@ -1,4 +1,3 @@
-import extension.buildConfigFieldStr
 import extension.setupDependencyInjection
 import extension.testCommonDependencies
 
@@ -24,36 +23,11 @@ android {
             isIncludeAndroidResources = true
         }
     }
-
-    buildFeatures {
-        buildConfig = true
-    }
-
-    buildTypes {
-        val elementClassicPackageKey = "elementClassicPackage"
-        val elementClassicPackage = "im.vector.app"
-        val elementClassicPackageDebug = "$elementClassicPackage.debug"
-        val elementClassicPackageNightly = "$elementClassicPackage.nightly"
-        getByName("release") {
-            manifestPlaceholders[elementClassicPackageKey] = elementClassicPackage
-            buildConfigFieldStr(elementClassicPackageKey, elementClassicPackage)
-        }
-        getByName("debug") {
-            manifestPlaceholders[elementClassicPackageKey] = elementClassicPackageDebug
-            buildConfigFieldStr(elementClassicPackageKey, elementClassicPackageDebug)
-        }
-        register("nightly") {
-            matchingFallbacks += listOf("release")
-            manifestPlaceholders[elementClassicPackageKey] = elementClassicPackageNightly
-            buildConfigFieldStr(elementClassicPackageKey, elementClassicPackageNightly)
-        }
-    }
 }
 
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.lib)
     implementation(projects.appconfig)
     implementation(projects.features.enterprise.api)
     implementation(projects.features.rageshake.api)
@@ -77,7 +51,7 @@ dependencies {
     implementation(libs.serialization.json)
     api(projects.features.login.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.features.login.test)
     testImplementation(projects.features.enterprise.test)
     testImplementation(projects.libraries.featureflag.test)

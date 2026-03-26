@@ -24,12 +24,29 @@ import kotlinx.coroutines.flow.map
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
+/**
+ * 默认问题报告URL提供者
+ *
+ * BugReporterUrlProvider 接口的实现，根据企业配置和用户会话提供问题报告URL。
+ *
+ * @property bugReportAppNameProvider 应用名称提供者
+ * @property enterpriseService 企业服务
+ * @property sessionStore 会话存储
+ */
 @ContributesBinding(AppScope::class)
 class DefaultBugReporterUrlProvider(
     private val bugReportAppNameProvider: BugReportAppNameProvider,
     private val enterpriseService: EnterpriseService,
     private val sessionStore: SessionStore,
 ) : BugReporterUrlProvider {
+    /**
+     * 提供问题报告URL
+     *
+     * 根据企业配置和当前会话返回问题报告URL。
+     * 支持自定义URL、默认URL和禁用三种状态。
+     *
+     * @return Flow<HttpUrl?> 问题报告URL的可空流
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun provide(): Flow<HttpUrl?> {
         if (bugReportAppNameProvider.provide().isEmpty()) return flowOf(null)

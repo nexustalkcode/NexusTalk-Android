@@ -53,6 +53,17 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 投票历史视图 Composable
+ *
+ * 用于显示投票历史列表的完整 UI 组件。
+ * 支持按进行中/已结束过滤，支持分页加载。
+ *
+ * @param state 投票历史状态
+ * @param onEditPoll 编辑投票回调
+ * @param goBack 返回回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PollHistoryView(
@@ -125,6 +136,13 @@ fun PollHistoryView(
     }
 }
 
+/**
+ * 投票历史过滤器按钮 Composable（私有）
+ *
+ * @param activeFilter 当前活动的过滤器
+ * @param onSelectFilter 选择过滤器回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PollHistoryFilterButtons(
@@ -145,6 +163,21 @@ private fun PollHistoryFilterButtons(
     }
 }
 
+/**
+ * 投票历史列表 Composable（私有）
+ *
+ * 显示投票历史列表，包含空状态提示和加载更多功能。
+ *
+ * @param filter 过滤器
+ * @param pollHistoryItems 投票历史项列表
+ * @param hasMoreToLoad 是否还有更多可加载
+ * @param isLoading 是否正在加载
+ * @param onSelectAnswer 选择答案回调
+ * @param onEditPoll 编辑投票回调
+ * @param onEndPoll 结束投票回调
+ * @param onLoadMore 加载更多回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun PollHistoryList(
     filter: PollHistoryFilter,
@@ -210,6 +243,12 @@ private fun PollHistoryList(
 }
 
 @Composable
+/**
+ * 加载更多按钮 Composable（私有）
+ *
+ * @param isLoading 是否正在加载
+ * @param onClick 点击回调
+ */
 private fun LoadMoreButton(isLoading: Boolean, onClick: () -> Unit) {
     Button(
         text = stringResource(CommonStrings.action_load_more),
@@ -219,6 +258,17 @@ private fun LoadMoreButton(isLoading: Boolean, onClick: () -> Unit) {
     )
 }
 
+/**
+ * 投票历史项行 Composable（私有）
+ *
+ * 显示单个投票历史项，包含日期和投票内容。
+ *
+ * @param pollHistoryItem 投票历史项
+ * @param onSelectAnswer 选择答案回调
+ * @param onEditPoll 编辑投票回调
+ * @param onEndPoll 结束投票回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun PollHistoryItemRow(
     pollHistoryItem: PollHistoryItem,

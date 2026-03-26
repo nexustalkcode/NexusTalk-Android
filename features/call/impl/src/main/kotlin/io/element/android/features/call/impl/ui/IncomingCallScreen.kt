@@ -8,8 +8,10 @@
 
 package io.element.android.features.call.impl.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +20,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Text
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
@@ -30,14 +34,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.call.impl.R
 import io.element.android.features.call.impl.notifications.CallNotificationData
-import io.element.android.libraries.designsystem.background.OnboardingBackground
 import io.element.android.libraries.designsystem.components.avatar.Avatar
 import io.element.android.libraries.designsystem.components.avatar.AvatarData
 import io.element.android.libraries.designsystem.components.avatar.AvatarSize
@@ -46,10 +49,24 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
+import io.element.android.libraries.matrix.api.core.EventId
+import io.element.android.libraries.matrix.api.core.RoomId
+import io.element.android.libraries.matrix.api.core.SessionId
+import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.ui.strings.CommonStrings
 
 /**
- * Ref: https://www.figma.com/design/0MMNu7cTOzLOlWb7ctTkv3/Element-X?node-id=16501-5740
+ * 来电界面 Composable
+ *
+ * 显示来电信息界面，包含来电者头像、名称以及接听和拒绝按钮。
+ * 用户可以点击按钮选择接听或拒绝来电。
+ *
+ * @param notificationData 来电通知数据，包含来电者信息和房间信息
+ * @param onAnswer 接听通话的回调函数
+ * @param onCancel 拒绝通话的回调函数
+ *
+ * @see CallNotificationData 通话通知数据
+ * @see IncomingCallActivity 使用此界面的 Activity
  */
 @Composable
 internal fun IncomingCallScreen(
@@ -57,16 +74,47 @@ internal fun IncomingCallScreen(
     onAnswer: (CallNotificationData) -> Unit,
     onCancel: () -> Unit,
 ) {
-    OnboardingBackground()
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF0D1217)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
+        // 顶部标题栏
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 16.dp),
+        ) {
+            // 返回按钮
+            FilledIconButton(
+                onClick = onCancel,
+                modifier = Modifier.size(42.dp),
+                colors = IconButtonDefaults.filledIconButtonColors(
+                    containerColor = Color(0x1AFFFFFF),
+                    contentColor = Color.White
+                )
+            ) {
+                Icon(
+                    imageVector = CompoundIcons.ArrowLeft(),
+                    contentDescription = "返回",
+                    tint = Color.White
+                )
+            }
+            // 中间标题
+            Text(
+                text = "",
+                modifier = Modifier.align(Alignment.Center),
+                color = Color.White,
+                fontSize = 22.sp,
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 124.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 80.dp)
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -82,7 +130,7 @@ internal fun IncomingCallScreen(
             Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = notificationData.senderName ?: notificationData.senderId.value,
-                style = ElementTheme.typography.fontHeadingMdBold,
+                style = ElementTheme.typography.fontHeadingMdBold.copy(color = Color(0xFFFFFFFF)),
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -100,10 +148,10 @@ internal fun IncomingCallScreen(
             ActionButton(
                 size = 64.dp,
                 onClick = { onAnswer(notificationData) },
-                icon = if (notificationData.audioOnly) CompoundIcons.VoiceCallSolid() else CompoundIcons.VideoCallSolid(),
+                icon = CompoundIcons.VoiceCallSolid(),
                 title = stringResource(CommonStrings.action_accept),
                 backgroundColor = ElementTheme.colors.iconSuccessPrimary,
-                borderColor = ElementTheme.colors.borderSuccessSubtle
+                borderColor = Color(0xFFFFFFFF)
             )
             ActionButton(
                 size = 64.dp,
@@ -111,12 +159,26 @@ internal fun IncomingCallScreen(
                 icon = CompoundIcons.EndCall(),
                 title = stringResource(CommonStrings.action_reject),
                 backgroundColor = ElementTheme.colors.iconCriticalPrimary,
-                borderColor = ElementTheme.colors.borderCriticalSubtle
+                borderColor = Color(0xFFFFFFFF)
             )
         }
     }
 }
 
+/**
+ * 来电界面操作按钮 Composable
+ *
+ * 显示接听或拒绝通话的圆形按钮。
+ *
+ * @param size 按钮大小
+ * @param onClick 点击回调
+ * @param icon 图标
+ * @param title 标题文字
+ * @param backgroundColor 背景颜色
+ * @param borderColor 边框颜色
+ * @param contentDescription 内容描述（可选）
+ * @param borderSize 边框大小（默认 1.33.dp）
+ */
 @Composable
 private fun ActionButton(
     size: Dp,
@@ -134,8 +196,7 @@ private fun ActionButton(
     ) {
         FilledIconButton(
             modifier = Modifier
-                .size(size + borderSize)
-                .border(borderSize, borderColor, CircleShape),
+                .size(size + borderSize),
             onClick = onClick,
             colors = IconButtonDefaults.filledIconButtonColors(
                 containerColor = backgroundColor,
@@ -145,14 +206,15 @@ private fun ActionButton(
             Icon(
                 modifier = Modifier.size(32.dp),
                 imageVector = icon,
-                contentDescription = contentDescription
+                contentDescription = contentDescription,
+                tint = Color(0xFFFFFFFF)
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = title,
             style = ElementTheme.typography.fontBodyLgMedium,
-            color = ElementTheme.colors.textPrimary,
+            color = Color(0xFFFFFFFF),
             overflow = TextOverflow.Ellipsis,
         )
     }
@@ -160,11 +222,21 @@ private fun ActionButton(
 
 @PreviewsDayNight
 @Composable
-internal fun IncomingCallScreenPreview(
-    @PreviewParameter(CallNotificationDataProvider::class) state: CallNotificationData,
-) = ElementPreview {
+internal fun IncomingCallScreenPreview() = ElementPreview {
     IncomingCallScreen(
-        notificationData = state,
+        notificationData = CallNotificationData(
+            sessionId = SessionId("@alice:matrix.org"),
+            roomId = RoomId("!1234:matrix.org"),
+            eventId = EventId("\$asdadadsad:matrix.org"),
+            senderId = UserId("@bob:matrix.org"),
+            roomName = "A room",
+            senderName = "Bob",
+            avatarUrl = null,
+            notificationChannelId = "incoming_call",
+            timestamp = 0L,
+            textContent = null,
+            expirationTimestamp = 1000L,
+        ),
         onAnswer = {},
         onCancel = {},
     )

@@ -15,6 +15,14 @@ import io.element.android.features.securityandprivacy.api.SecurityAndPrivacyEntr
 import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.di.RoomScope
 
+/**
+ * 安全与隐私功能的默认实现
+ *
+ * 实现 SecurityAndPrivacyEntryPoint 接口，提供创建安全与隐私设置节点的功能。
+ * 使用 @ContributesBinding 注解将其绑定到 RoomScope，以便依赖注入系统使用。
+ *
+ * @see SecurityAndPrivacyEntryPoint 安全与隐私入口点接口
+ */
 @ContributesBinding(RoomScope::class)
 class DefaultSecurityAndPrivacyEntryPoint : SecurityAndPrivacyEntryPoint {
     override fun createNode(

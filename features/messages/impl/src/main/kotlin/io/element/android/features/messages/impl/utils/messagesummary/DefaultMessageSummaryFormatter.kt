@@ -32,6 +32,28 @@ import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.di.annotations.ApplicationContext
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 默认消息摘要格式化器实现类
+ *
+ * 实现 MessageSummaryFormatter 接口，根据消息内容类型生成摘要文本：
+ * - 文本消息：显示消息文本内容
+ * - 位置消息：显示"共享位置"
+ * - 加密消息：显示"无法解密"
+ * - 已删除消息：显示"消息已移除"
+ * - 投票消息：显示投票问题
+ * - 语音消息：显示"语音消息"
+ * - 图片消息：显示"图片"
+ * - 贴纸消息：显示"贴纸"
+ * - 视频消息：显示"视频"
+ * - 文件消息：显示"文件"
+ * - 音频消息：显示"音频"
+ * - 通话邀请：显示"不支持的通话"
+ * - 通话通知：显示"通话已开始"
+ *
+ * 使用 @ContributesBinding 注解绑定到 RoomScope。
+ *
+ * @property context Android上下文
+ */
 @ContributesBinding(RoomScope::class)
 class DefaultMessageSummaryFormatter(
     @ApplicationContext private val context: Context,

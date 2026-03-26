@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +43,6 @@ import io.element.android.libraries.designsystem.theme.components.SearchBar
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.theme.components.TextButton
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
-import io.element.android.libraries.designsystem.utils.OnVisibleRangeChangeEffect
 import io.element.android.libraries.matrix.ui.components.SelectedRoom
 import io.element.android.libraries.matrix.ui.model.SelectRoomInfo
 import io.element.android.libraries.matrix.ui.model.getAvatarData
@@ -60,15 +58,14 @@ fun AddRoomToSpaceView(
     onRoomsAdded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    fun onRoomToggled(room: SelectRoomInfo) {
-        state.eventSink(AddRoomToSpaceEvent.ToggleRoom(room))
+    fun onRoomRemoved(roomInfo: SelectRoomInfo) {
+        state.eventSink(AddRoomToSpaceEvent.ToggleRoom(roomInfo))
     }
 
     fun onBack() {
         if (state.isSearchActive) {
             state.eventSink(AddRoomToSpaceEvent.OnSearchActiveChanged(false))
         } else {
-            state.eventSink(AddRoomToSpaceEvent.Dismiss)
             onBackClick()
         }
     }
@@ -117,22 +114,18 @@ fun AddRoomToSpaceView(
                     if (state.selectedRooms.isNotEmpty()) {
                         SelectedRoomsRow(
                             selectedRooms = state.selectedRooms,
-                            onRemoveRoom = ::onRoomToggled,
+                            onRemoveRoom = ::onRoomRemoved,
                             modifier = Modifier.padding(vertical = 16.dp)
                         )
                     }
                 },
             ) { rooms ->
-                val lazyListState = rememberLazyListState()
-                OnVisibleRangeChangeEffect(lazyListState) { visibleRange ->
-                    state.eventSink(AddRoomToSpaceEvent.UpdateSearchVisibleRange(visibleRange))
-                }
                 LazyColumn {
-                    items(rooms, key = { it.roomId }) { roomInfo ->
+                    items(rooms, key = { it.roomId.value }) { roomInfo ->
                         RoomListItem(
                             roomInfo = roomInfo,
                             isSelected = state.selectedRooms.any { it.roomId == roomInfo.roomId },
-                            onToggle = ::onRoomToggled
+                            onToggle = { state.eventSink(AddRoomToSpaceEvent.ToggleRoom(it)) }
                         )
                     }
                 }
@@ -149,7 +142,7 @@ fun AddRoomToSpaceView(
                 if (state.selectedRooms.isNotEmpty()) {
                     SelectedRoomsRow(
                         selectedRooms = state.selectedRooms,
-                        onRemoveRoom = ::onRoomToggled,
+                        onRemoveRoom = ::onRoomRemoved,
                         modifier = Modifier.padding(vertical = 16.dp)
                     )
                 }
@@ -166,7 +159,7 @@ fun AddRoomToSpaceView(
                             RoomListItem(
                                 roomInfo = roomInfo,
                                 isSelected = state.selectedRooms.any { it.roomId == roomInfo.roomId },
-                                onToggle = ::onRoomToggled
+                                onToggle = { state.eventSink(AddRoomToSpaceEvent.ToggleRoom(it)) }
                             )
                         }
                     }
@@ -212,8 +205,8 @@ private fun SelectedRoomsRow(
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        items(selectedRooms, key = { it.roomId }) { roomInfo ->
-            SelectedRoom(roomInfo = roomInfo, onRemoveRoom = { onRemoveRoom(roomInfo) })
+        items(selectedRooms, key = { it.roomId.value }) { roomInfo ->
+            SelectedRoom(roomInfo = roomInfo, onRemoveRoom = onRemoveRoom)
         }
     }
 }

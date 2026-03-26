@@ -6,11 +6,33 @@
   <string name="screen_create_room_private_option_description">"Tylko zaproszone osoby mogą dołączyć do tego pokoju. Wszystkie wiadomości są szyfrowane end-to-end."</string>
   <string name="screen_create_room_public_option_description">"Każdy może znaleźć ten pokój.
 Możesz to zmienić w ustawieniach pokoju."</string>
+  <string name="screen_create_room_public_option_title">"Pokój publiczny"</string>
   <string name="screen_create_room_room_access_section_knocking_option_description">"Każdy może poprosić o dołączenie do pokoju, ale administrator lub moderator będzie musiał zatwierdzić prośbę"</string>
   <string name="screen_create_room_room_access_section_knocking_option_title">"Poproś o dołączenie"</string>
   <string name="screen_create_room_room_access_section_public_option_description">"Każdy może dołączyć do tego pokoju"</string>
+  <string name="screen_create_room_room_access_section_public_option_title">"Wszyscy"</string>
   <string name="screen_create_room_room_address_section_footer">"Aby ten pokój był widoczny w katalogu pomieszczeń publicznych, będziesz potrzebował adres pokoju."</string>
   <string name="screen_create_room_room_address_section_title">"Adres pokoju"</string>
   <string name="screen_create_room_room_visibility_section_title">"Widoczność pomieszczenia"</string>
   <string name="screen_create_room_topic_label">"Temat (opcjonalnie)"</string>
+
+  <string name="screen_create_room_error_creating_space">"Nie można utworzyć przestrzeni z powodu nieznanego błędu. Spróbuj ponownie później."</string>
+  <string name="screen_create_room_name_label">"Nazwa"</string>
+  <string name="screen_create_room_avatar_photo">"zdjęcie"</string>
+  <string name="screen_create_room_name_placeholder">"Dodaj nazwę…"</string>
+  <string name="screen_create_room_new_room_title">"Nowy pokój"</string>
+  <string name="screen_create_room_new_space_title">"Nowa przestrzeń"</string>
+  <string name="screen_create_room_private_option_title">"Prywatny"</string>
+  <string name="screen_create_room_public_option_short_description">"Każdy może dołączyć."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_description">"Każdy w %1$s może dołączyć, ale wszyscy inni muszą poprosić o dostęp."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_title">"Poproś o dołączenie"</string>
+  <string name="screen_create_room_room_access_section_private_option_description">"Mogą dołączyć tylko osoby zaproszone."</string>
+  <string name="screen_create_room_room_access_section_private_option_title">"Prywatny"</string>
+  <string name="screen_create_room_room_access_section_restricted_option_description">"Każdy w %1$s może dołączyć."</string>
+  <string name="screen_create_room_room_access_section_restricted_option_title">"Standard"</string>
+  <string name="screen_create_room_room_access_section_title">"Kto ma dostęp"</string>
+  <string name="screen_create_room_space_selection_no_space_description">"(bez spacji)"</string>
+  <string name="screen_create_room_space_selection_no_space_title">"Dom"</string>
+  <string name="screen_create_room_space_selection_sheet_title">"Dodaj do przestrzeni"</string>
+  <string name="screen_create_room_topic_placeholder">"Dodaj opis…"</string>
 </resources>

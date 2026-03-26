@@ -55,7 +55,7 @@ dependencies {
     implementation(projects.libraries.di)
     implementation(projects.libraries.matrix.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.features.enterprise.test)
     testImplementation(projects.libraries.audio.test)
     testImplementation(projects.libraries.dateformatter.test)

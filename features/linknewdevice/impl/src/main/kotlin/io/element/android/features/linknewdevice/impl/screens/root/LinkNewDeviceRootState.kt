@@ -9,6 +9,13 @@ package io.element.android.features.linknewdevice.impl.screens.root
 
 import io.element.android.libraries.architecture.AsyncData
 
+/**
+ * 链接新设备根页面状态数据类
+ *
+ * @property isSupported 是否支持链接新设备
+ * @property qrCodeData 二维码数据的异步状态
+ * @property eventSink 事件处理函数
+ */
 data class LinkNewDeviceRootState(
     val isSupported: AsyncData<Boolean>,
     val qrCodeData: AsyncData<Unit>,

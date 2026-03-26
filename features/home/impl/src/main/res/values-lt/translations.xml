@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_home_tab_chats">"Pokalbiai"</string>
+  <string name="screen_home_tab_community">"Bendrija"</string>
   <string name="screen_invites_decline_chat_message">"Ar tikrai norite atmesti kvietimą prisijungti prie %1$s?"</string>
   <string name="screen_invites_decline_chat_title">"Atmesti kvietimą"</string>
   <string name="screen_invites_decline_direct_chat_message">"Ar tikrai norite atmesti šį privatų pokalbį su %1$s ?"</string>
@@ -13,4 +14,9 @@
   <string name="screen_roomlist_main_space_title">"Pokalbiai"</string>
   <string name="session_verification_banner_message">"Panašu, kad naudojate naują įrenginį. Patvirtinkite naudodami kitą įrenginį, kad galėtumėte pasiekti savo šifruotas žinutes."</string>
   <string name="session_verification_banner_title">"Patvirtinkite, kad tai Jūs"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Bendruomenės suburia narius į temomis pagrįstas grupes. Visos bendruomenės, prie kurių prisijungiate, bus rodomos čia."</string>
+  <string name="screen_community_list_header_count">"%1$d bendruomenė"</string>
+  <string name="screen_community_list_header_description">"Bendruomenės, kurias kuriate arba prie kurių prisijungiate"</string>
+  <string name="screen_roomlist_empty_message_new">"Ši vieta priklausys tik tau ir artimiausiems žmonėms"</string>
 </resources>

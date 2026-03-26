@@ -4,4 +4,8 @@
   <string name="screen_blocked_users_unblock_alert_action">"Atblokuoti"</string>
   <string name="screen_blocked_users_unblock_alert_description">"Vėl galėsite matyti visas iš jų gautas žinutes."</string>
   <string name="screen_blocked_users_unblock_alert_title">"Atblokuoti vartotoją"</string>
+  <string name="screen_edit_profile_change_avatar">"Keisti avatarą"</string>
+  <string name="screen_edit_profile_username">"Naudotojo vardas"</string>
+  <string name="screen_preferences_section_customization">"Tinklinimas"</string>
+  <string name="screen_preferences_section_security">"Saugumas"</string>
 </resources>

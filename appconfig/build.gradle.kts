@@ -45,6 +45,20 @@ android {
             },
         )
     }
+
+    buildTypes {
+        val baseAppName = BuildTimeConfig.APPLICATION_NAME
+        getByName("debug") {
+            resValue("string", "app_name", "$baseAppName dbg")
+        }
+        getByName("release") {
+            resValue("string", "app_name", baseAppName)
+        }
+        register("nightly") {
+            initWith(getByName("release"))
+            resValue("string", "app_name", "$baseAppName nightly")
+        }
+    }
 }
 
 dependencies {

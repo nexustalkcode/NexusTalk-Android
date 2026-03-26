@@ -8,5 +8,6 @@
 package io.element.android.features.linknewdevice.impl.screens.desktop
 
 sealed interface DesktopNoticeEvent {
+    // 点击继续，进入扫码页
     data object Continue : DesktopNoticeEvent
 }

@@ -8,6 +8,15 @@
 
 package io.element.android.features.login.impl.resolver
 
+/**
+ * Homeserver 数据类
+ *
+ * 存储已解析和验证的 homeserver 信息。
+ * URL 可能来自 wellknown 文件检索，也可能是直接验证的有效 URL。
+ *
+ * @property homeserverUrl homeserver 的完整 URL 地址
+ * @see HomeserverResolver 用于解析和验证 homeserver
+ */
 data class HomeserverData(
     // The computed homeserver url, for which a wellknown file has been retrieved, or just a valid Url
     val homeserverUrl: String,

@@ -51,6 +51,24 @@ import io.element.android.libraries.designsystem.theme.components.TextField
 import io.element.android.libraries.designsystem.theme.components.TextFieldValidity
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 问题报告视图 Composable 函数
+ *
+ * 显示问题报告的用户界面，包括：
+ * - 问题描述输入框
+ * - 日志查看入口
+ * - 发送日志开关
+ * - 联系选项开关
+ * - 截图选项（如果有截图）
+ * - 推送规则选项
+ * - 发送按钮
+ *
+ * @param state 问题报告状态
+ * @param onViewLogs 查看日志的回调函数
+ * @param onSuccess 成功提交的回调函数
+ * @param onBackClick 返回的回调函数
+ * @param modifier 修饰符
+ */
 @Composable
 fun BugReportView(
     state: BugReportState,

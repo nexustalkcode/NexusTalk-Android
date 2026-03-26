@@ -15,6 +15,15 @@ import io.element.android.libraries.matrix.api.auth.AuthenticationException
 import io.element.android.libraries.matrix.api.auth.errorCode
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 登录错误格式化函数
+ *
+ * 将认证异常转换为用户友好的字符串资源 ID。
+ * 用于在 UI 层显示适当的错误消息。
+ *
+ * @param throwable 可能是认证异常的 Throwable 对象
+ * @return 对应的字符串资源 ID
+ */
 @StringRes
 fun loginError(
     throwable: Throwable

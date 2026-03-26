@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Απενεργοποίηση αντιγράφων ασφαλείας"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Ενεργοποίηση αντιγράφων ασφαλείας"</string>
-  <string name="screen_chat_backup_key_backup_description">"Αποθήκευσε την κρυπτογραφική σου ταυτότητα και τα κλειδιά μηνυμάτων με ασφάλεια στον διακομιστή. Αυτό θα σου επιτρέψει να δεις το ιστορικό μηνυμάτων σου σε οποιεσδήποτε νέες συσκευές. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Αποθήκευσε την κρυπτογραφική σου ταυτότητα και τα κλειδιά μηνυμάτων με ασφάλεια στον διακομιστή. Αυτό θα σου επιτρέψει να δεις το ιστορικό μηνυμάτων σου σε οποιεσδήποτε νέες συσκευές. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Χώρος αποθήκευσης κλειδιού"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"Η αποθήκευση κλειδιών πρέπει να είναι ενεργοποιημένη για να ρυθμίσεις την ανάκτηση."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Μεταφόρτωση κλειδιών από αυτήν τη συσκευή"</string>

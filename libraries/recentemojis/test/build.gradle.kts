@@ -20,7 +20,7 @@ dependencies {
 
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.coroutines.test)
-    implementation(projects.tests.testutils)
+    
     implementation(projects.libraries.recentemojis.api)
     implementation(libs.matrix.emojibase.bindings)
 }

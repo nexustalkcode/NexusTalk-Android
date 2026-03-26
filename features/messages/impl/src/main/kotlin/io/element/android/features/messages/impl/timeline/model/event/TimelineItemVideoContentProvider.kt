@@ -32,7 +32,6 @@ fun aTimelineItemVideoContent(
     fileSize = 14 * 1024 * 1024L,
     caption = null,
     formattedCaption = null,
-    formattedCaptionSc = null,
     isEdited = false,
     thumbnailSource = null,
     blurHash = blurhash,

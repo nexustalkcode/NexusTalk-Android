@@ -16,7 +16,7 @@ android {
 
 dependencies {
     api(projects.libraries.voicerecorder.api)
-    implementation(projects.tests.testutils)
+    
 
     implementation(libs.coroutines.test)
     implementation(libs.test.truth)

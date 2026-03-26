@@ -21,12 +21,24 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.di.RoomScope
 import io.element.android.services.analytics.api.AnalyticsService
 
+/**
+ * 房间详情编辑页面节点
+ *
+ * 代表房间详情编辑功能的页面节点，负责展示编辑界面并处理用户交互
+ *
+ * @property buildContext 构建上下文，包含节点构建所需的信息
+ * @property plugins 插件列表，用于扩展节点功能
+ * @property presenter 房间详情编辑Presenter，负责业务逻辑处理
+ * @property analyticsService 分析服务，用于追踪页面浏览
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class RoomDetailsEditNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
+    /** 房间详情编辑Presenter，负责管理编辑状态和业务逻辑 */
     private val presenter: RoomDetailsEditPresenter,
+    /** 分析服务，用于记录页面访问事件 */
     private val analyticsService: AnalyticsService,
 ) : Node(buildContext, plugins = plugins) {
     init {

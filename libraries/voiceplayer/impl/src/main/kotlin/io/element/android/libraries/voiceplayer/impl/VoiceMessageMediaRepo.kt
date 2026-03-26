@@ -63,16 +63,16 @@ class DefaultVoiceMessageMediaRepo(
     mxcTools: MxcTools,
     private val matrixMediaLoader: MatrixMediaLoader,
     @Assisted private val mediaSource: MediaSource,
-    @Assisted private val mimeType: String?,
-    @Assisted private val filename: String?,
+    @Assisted("mimeType") private val mimeType: String?,
+    @Assisted("filename") private val filename: String?,
 ) : VoiceMessageMediaRepo {
     @ContributesBinding(RoomScope::class)
     @AssistedFactory
     fun interface Factory : VoiceMessageMediaRepo.Factory {
         override fun create(
             mediaSource: MediaSource,
-            @Assisted mimeType: String?,
-            @Assisted filename: String?,
+            @Assisted("mimeType") mimeType: String?,
+            @Assisted("filename") filename: String?,
         ): DefaultVoiceMessageMediaRepo
     }
 
@@ -95,7 +95,7 @@ class DefaultVoiceMessageMediaRepo(
         }
     }
 
-    private val cachedFile: File? = mxcTools.mxcUri2FilePath(mediaSource.safeUrl)?.let {
+    private val cachedFile: File? = mxcTools.mxcUri2FilePath(mediaSource.url)?.let {
         File("${cacheDir.path}/$CACHE_VOICE_SUBDIR/$it")
     }
 }

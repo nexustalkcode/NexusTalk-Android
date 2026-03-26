@@ -52,6 +52,7 @@ fun ScanQrCodeView(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // 通用步骤页布局：图标 + 标题 + 内容 + 底部按钮
     FlowStepPage(
         modifier = modifier,
         onBackClick = onBackClick,
@@ -70,6 +71,7 @@ private fun Content(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
+        // 根据容器方向动态调整取景框大小
         val modifier = if (constraints.maxWidth > constraints.maxHeight) {
             Modifier.fillMaxHeight()
         } else {
@@ -78,6 +80,7 @@ private fun Content(
             Modifier
                 .padding(start = 20.dp, end = 20.dp, top = 50.dp, bottom = 32.dp)
                 .squareSize()
+                // 取景框外层描边
                 .cornerBorder(
                     strokeWidth = 4.dp,
                     color = ElementTheme.colors.textPrimary,
@@ -90,7 +93,9 @@ private fun Content(
         ) {
             QrCodeCameraView(
                 modifier = Modifier.fillMaxSize(),
+                // 扫码成功后派发事件
                 onScanQrCode = { state.eventSink.invoke(ScanQrCodeEvent.QrCodeScanned(it)) },
+                // 仅在加载状态下允许持续扫描
                 isScanning = state.scanAction.isLoading(),
             )
         }
@@ -104,6 +109,7 @@ private fun ColumnScope.Buttons(
     Column(Modifier.heightIn(min = 130.dp)) {
         when (state.scanAction) {
             is AsyncAction.Failure -> {
+                // 扫描失败时提供重试入口
                 Button(
                     text = stringResource(id = CommonStrings.action_try_again),
                     modifier = Modifier
@@ -144,6 +150,7 @@ private fun ColumnScope.Buttons(
                 }
             }
             is AsyncAction.Success -> {
+                // 扫描完成后展示加载指示器
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally,

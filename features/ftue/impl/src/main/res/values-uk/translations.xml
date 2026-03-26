@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Ви можете змінити свої налаштування пізніше."</string>
   <string name="screen_notification_optin_title">"Дозволити сповіщення і ніколи не пропускати повідомлення"</string>
   <string name="screen_session_verification_enter_recovery_key">"Введіть ключ відновлення"</string>
+  <string name="screen_welcome_agreement">"Натискаючи Погоджуюся і продовжую, ви приймаєте наші %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Політика конфіденційності"</string>
+  <string name="screen_welcome_title">"Ласкаво просимо в %s"</string>
+  <string name="screen_welcome_privacy_notice">"Будь ласка, прочитайте нашу Політику конфіденційності"</string>
+  <string name="screen_welcome_agree">"Погоджуюся"</string>
 </resources>

@@ -13,6 +13,18 @@ import io.element.android.libraries.designsystem.theme.components.SearchBarResul
 import io.element.android.libraries.matrix.ui.model.SelectRoomInfo
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 添加房间到空间状态数据类
+ *
+ * @property searchQuery 搜索查询的文本字段状态
+ * @property isSearchActive 搜索是否处于活动状态
+ * @property searchResults 搜索结果状态
+ * @property selectedRooms 已选中的房间列表
+ * @property suggestions 建议房间列表
+ * @property saveAction 保存操作的异步状态
+ * @property eventSink 事件处理函数
+ * @property canSave 是否可以保存
+ */
 data class AddRoomToSpaceState(
     val searchQuery: TextFieldState,
     val isSearchActive: Boolean,

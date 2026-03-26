@@ -28,6 +28,7 @@ class SecureBackupEnterRecoveryKeyNode(
 ) : Node(buildContext, plugins = plugins) {
     interface Callback : Plugin {
         fun onEnterRecoveryKeySuccess()
+        fun onResetRecoveryKey()
     }
 
     private val callback: Callback = callback()
@@ -40,6 +41,7 @@ class SecureBackupEnterRecoveryKeyNode(
             modifier = modifier,
             onSuccess = callback::onEnterRecoveryKeySuccess,
             onBackClick = ::navigateUp,
+            onResetRecoveryKeyClick = callback::onResetRecoveryKey,
         )
     }
 }

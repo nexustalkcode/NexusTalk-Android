@@ -15,11 +15,13 @@ import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
@@ -61,7 +63,10 @@ class FullScreenIntentPermissionsPresenter(
     @Composable
     override fun present(): FullScreenIntentPermissionsState {
         val coroutineScope = rememberCoroutineScope()
-        val isGranted = notificationManagerCompat.canUseFullScreenIntent()
+        val lifecycleState by LocalLifecycleOwner.current.lifecycle.currentStateFlow.collectAsState()
+        val isGranted = remember(lifecycleState) {
+            notificationManagerCompat.canUseFullScreenIntent()
+        }
         val isBannerDismissed by isFullScreenIntentBannerDismissed.collectAsState(initial = true)
 
         fun handleEvent(event: FullScreenIntentPermissionsEvents) {

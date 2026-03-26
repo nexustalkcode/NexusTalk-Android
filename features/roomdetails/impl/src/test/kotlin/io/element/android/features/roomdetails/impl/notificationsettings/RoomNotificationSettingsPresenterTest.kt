@@ -8,6 +8,9 @@
 
 package io.element.android.features.roomdetails.impl.notificationsettings
 
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.moleculeFlow
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.roomdetails.impl.aJoinedRoom
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
@@ -17,7 +20,6 @@ import io.element.android.libraries.matrix.test.notificationsettings.FakeNotific
 import io.element.android.libraries.matrix.test.room.FakeJoinedRoom
 import io.element.android.tests.testutils.awaitLastSequentialItem
 import io.element.android.tests.testutils.consumeItemsUntilPredicate
-import io.element.android.tests.testutils.test
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -25,7 +27,9 @@ class RoomNotificationSettingsPresenterTest {
     @Test
     fun `present - initial state is created from room info`() = runTest {
         val presenter = createRoomNotificationSettingsPresenter()
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.roomNotificationSettings.dataOrNull()).isNull()
             assertThat(initialState.defaultRoomNotificationMode).isNull()
@@ -38,8 +42,10 @@ class RoomNotificationSettingsPresenterTest {
     @Test
     fun `present - notification mode changed`() = runTest {
         val presenter = createRoomNotificationSettingsPresenter()
-        presenter.test {
-            awaitItem().eventSink(RoomNotificationSettingsEvent.ChangeRoomNotificationMode(RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY))
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
+            awaitItem().eventSink(RoomNotificationSettingsEvents.ChangeRoomNotificationMode(RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY))
             val updatedState = consumeItemsUntilPredicate {
                 it.roomNotificationSettings.dataOrNull()?.mode == RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY
             }.last()
@@ -52,7 +58,9 @@ class RoomNotificationSettingsPresenterTest {
     fun `present - observe notification mode changed`() = runTest {
         val notificationSettingsService = FakeNotificationSettingsService()
         val presenter = createRoomNotificationSettingsPresenter(notificationSettingsService)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             notificationSettingsService.setRoomNotificationMode(A_ROOM_ID, RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY)
             val updatedState = consumeItemsUntilPredicate {
                 it.roomNotificationSettings.dataOrNull()?.mode == RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY
@@ -66,9 +74,11 @@ class RoomNotificationSettingsPresenterTest {
         val notificationSettingsService = FakeNotificationSettingsService()
         notificationSettingsService.givenSetNotificationModeError(AN_EXCEPTION)
         val presenter = createRoomNotificationSettingsPresenter(notificationSettingsService)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
-            initialState.eventSink(RoomNotificationSettingsEvent.SetNotificationMode(false))
+            initialState.eventSink(RoomNotificationSettingsEvents.SetNotificationMode(false))
             val failedState = consumeItemsUntilPredicate {
                 it.setNotificationSettingAction.isFailure()
             }.last()
@@ -77,7 +87,7 @@ class RoomNotificationSettingsPresenterTest {
             assertThat(failedState.pendingSetDefault).isNull()
             assertThat(failedState.setNotificationSettingAction.isFailure()).isTrue()
 
-            failedState.eventSink(RoomNotificationSettingsEvent.ClearSetNotificationError)
+            failedState.eventSink(RoomNotificationSettingsEvents.ClearSetNotificationError)
 
             val errorClearedState = consumeItemsUntilPredicate {
                 it.setNotificationSettingAction.isUninitialized()
@@ -90,9 +100,11 @@ class RoomNotificationSettingsPresenterTest {
     fun `present - notification settings set custom`() = runTest {
         val notificationSettingsService = FakeNotificationSettingsService()
         val presenter = createRoomNotificationSettingsPresenter(notificationSettingsService)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
-            initialState.eventSink(RoomNotificationSettingsEvent.SetNotificationMode(false))
+            initialState.eventSink(RoomNotificationSettingsEvents.SetNotificationMode(false))
             skipItems(3)
             val defaultState = awaitItem()
             assertThat(defaultState.roomNotificationSettings.dataOrNull()?.isDefault).isFalse()
@@ -103,10 +115,12 @@ class RoomNotificationSettingsPresenterTest {
     @Test
     fun `present - notification settings restore default`() = runTest {
         val presenter = createRoomNotificationSettingsPresenter()
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
-            initialState.eventSink(RoomNotificationSettingsEvent.ChangeRoomNotificationMode(RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY))
-            initialState.eventSink(RoomNotificationSettingsEvent.SetNotificationMode(true))
+            initialState.eventSink(RoomNotificationSettingsEvents.ChangeRoomNotificationMode(RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY))
+            initialState.eventSink(RoomNotificationSettingsEvents.SetNotificationMode(true))
             val defaultState = consumeItemsUntilPredicate {
                 it.roomNotificationSettings.dataOrNull()?.mode == RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY
             }.last()
@@ -120,15 +134,17 @@ class RoomNotificationSettingsPresenterTest {
         val notificationSettingsService = FakeNotificationSettingsService()
         notificationSettingsService.givenRestoreDefaultNotificationModeError(AN_EXCEPTION)
         val presenter = createRoomNotificationSettingsPresenter(notificationSettingsService)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
-            initialState.eventSink(RoomNotificationSettingsEvent.ChangeRoomNotificationMode(RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY))
-            initialState.eventSink(RoomNotificationSettingsEvent.SetNotificationMode(true))
+            initialState.eventSink(RoomNotificationSettingsEvents.ChangeRoomNotificationMode(RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY))
+            initialState.eventSink(RoomNotificationSettingsEvents.SetNotificationMode(true))
             val failedState = consumeItemsUntilPredicate {
                 it.restoreDefaultAction.isFailure()
             }.last()
             assertThat(failedState.restoreDefaultAction.isFailure()).isTrue()
-            failedState.eventSink(RoomNotificationSettingsEvent.ClearRestoreDefaultError)
+            failedState.eventSink(RoomNotificationSettingsEvents.ClearRestoreDefaultError)
 
             val errorClearedState = consumeItemsUntilPredicate {
                 it.restoreDefaultAction.isUninitialized()
@@ -145,7 +161,9 @@ class RoomNotificationSettingsPresenterTest {
         }
         val room = aJoinedRoom(notificationSettingsService = notificationService, isEncrypted = true)
         val presenter = createRoomNotificationSettingsPresenter(notificationService, room)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             assertThat(awaitLastSequentialItem().displayMentionsOnlyDisclaimer).isTrue()
         }
     }
@@ -157,7 +175,9 @@ class RoomNotificationSettingsPresenterTest {
         }
         val room = aJoinedRoom(notificationSettingsService = notificationService, isEncrypted = false)
         val presenter = createRoomNotificationSettingsPresenter(notificationService, room)
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             assertThat(awaitLastSequentialItem().displayMentionsOnlyDisclaimer).isFalse()
         }
     }

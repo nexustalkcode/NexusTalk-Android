@@ -14,11 +14,22 @@ import io.element.android.libraries.sessionstorage.api.SessionData
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 当前用户及其相邻用户构建器
+ *
+ * 用于构建包含当前用户及其相邻用户（多账户场景）的列表。
+ * 该列表用于在顶部栏中展示多账户切换功能。
+ */
 class CurrentUserWithNeighborsBuilder {
     /**
-     * Build a list of [MatrixUser] containing the current user. If there are other sessions, the list
-     * will contain 3 users, with the current user in the middle.
-     * If there is only one other session, the list will contain twice the other user, to allow cycling.
+     * 构建包含当前用户的 Matrix 用户列表
+     *
+     * 如果存在其他会话，列表将包含3个用户，当前用户显示在中间位置。
+     * 如果只有一个其他会话，列表将包含两次该其他用户，以允许循环切换。
+     *
+     * @param matrixUser 当前 Matrix 用户
+     * @param sessions 会话数据列表
+     * @return 包含当前用户及相邻用户的不可变列表
      */
     fun build(
         matrixUser: MatrixUser,

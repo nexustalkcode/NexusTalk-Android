@@ -8,15 +8,12 @@
 
 package io.element.android.libraries.matrix.impl.roomlist
 
-import chat.schildi.lib.preferences.ScPreferencesStore
-import chat.schildi.lib.preferences.ScPrefs
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.roomlist.DynamicRoomList
 import io.element.android.libraries.matrix.api.roomlist.RoomList
 import io.element.android.libraries.matrix.api.roomlist.RoomListFilter
 import io.element.android.libraries.matrix.api.roomlist.RoomListService
-import io.element.android.libraries.matrix.api.roomlist.ScSdkInboxSettings
-import io.element.android.libraries.matrix.api.roomlist.ScSdkRoomSortOrder
+import io.element.android.libraries.matrix.api.roomlist.loadAllIncrementally
 import io.element.android.libraries.matrix.impl.room.RoomSyncSubscriber
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -29,27 +26,26 @@ import kotlinx.coroutines.flow.stateIn
 import org.matrix.rustcomponents.sdk.RoomListServiceState
 import org.matrix.rustcomponents.sdk.RoomListServiceSyncIndicator
 import timber.log.Timber
-import java.util.concurrent.atomic.AtomicBoolean
 import org.matrix.rustcomponents.sdk.RoomListService as InnerRustRoomListService
+
+private const val DEFAULT_PAGE_SIZE = 20
 
 internal class RustRoomListService(
     private val innerRoomListService: InnerRustRoomListService,
     private val sessionDispatcher: CoroutineDispatcher,
     private val roomListFactory: RoomListFactory,
     private val roomSyncSubscriber: RoomSyncSubscriber,
-    private val scPreferencesStore: ScPreferencesStore,
     private val sessionCoroutineScope: CoroutineScope,
 ) : RoomListService {
-    private val _isInitialSyncDone = AtomicBoolean(false)
-    override val isInitialSyncDone: Boolean get() = _isInitialSyncDone.get()
-
     override fun createRoomList(
         pageSize: Int,
+        initialFilter: RoomListFilter,
         source: RoomList.Source,
         coroutineScope: CoroutineScope,
     ): DynamicRoomList {
         return roomListFactory.createRoomList(
             pageSize = pageSize,
+            initialFilter = initialFilter,
             coroutineContext = sessionDispatcher,
             coroutineScope = coroutineScope,
         ) {
@@ -63,33 +59,16 @@ internal class RustRoomListService(
         roomSyncSubscriber.batchSubscribe(roomIds)
     }
 
-    override val allRooms: RoomList = roomListFactory.createRoomList(
-        pageSize = Int.MAX_VALUE,
+    override val allRooms: DynamicRoomList = roomListFactory.createRoomList(
+        pageSize = DEFAULT_PAGE_SIZE,
         coroutineContext = sessionDispatcher,
         coroutineScope = sessionCoroutineScope,
-        initialInboxSettings = ScSdkInboxSettings(
-            sortOrder = ScSdkRoomSortOrder(
-                byUnread = scPreferencesStore.getCachedOrDefaultValue(ScPrefs.SORT_BY_UNREAD),
-                pinFavourites = scPreferencesStore.getCachedOrDefaultValue(ScPrefs.PIN_FAVORITES),
-                buryLowPriority = scPreferencesStore.getCachedOrDefaultValue(ScPrefs.BURY_LOW_PRIORITY),
-                clientSideUnreadCounts = scPreferencesStore.getCachedOrDefaultValue(ScPrefs.CLIENT_GENERATED_UNREAD_COUNTS),
-                withSilentUnread = scPreferencesStore.getCachedOrDefaultValue(ScPrefs.SORT_WITH_SILENT_UNREAD),
-            )
-        ),
     ) {
         innerRoomListService.allRooms()
     }
 
-    override val allSpaces: DynamicRoomList = roomListFactory.createRoomList(
-        pageSize = Integer.MAX_VALUE,
-        isSpaceList = true,
-        initialFilter = RoomListFilter.all(
-            RoomListFilter.Category.Space,
-        ),
-        coroutineContext = sessionDispatcher,
-        coroutineScope = sessionCoroutineScope,
-    ) {
-        innerRoomListService.allRooms()
+    init {
+        allRooms.loadAllIncrementally(sessionCoroutineScope)
     }
 
     override val syncIndicator: StateFlow<RoomListService.SyncIndicator> =
@@ -106,9 +85,6 @@ internal class RustRoomListService(
             .map { it.toRoomListState() }
             .onEach { state ->
                 Timber.d("RoomList state=$state")
-                if (state == RoomListService.State.Running) {
-                    _isInitialSyncDone.set(true)
-                }
             }
             .distinctUntilChanged()
             .stateIn(sessionCoroutineScope, SharingStarted.Eagerly, RoomListService.State.Idle)

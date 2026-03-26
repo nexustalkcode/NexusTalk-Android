@@ -24,7 +24,6 @@ import io.element.android.features.startchat.impl.userlist.UserListPresenterArgs
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.core.meta.BuildMeta
-import io.element.android.libraries.core.meta.isGplayBuild
 import io.element.android.libraries.featureflag.api.FeatureFlagService
 import io.element.android.libraries.featureflag.api.FeatureFlags
 import io.element.android.libraries.matrix.api.core.RoomId
@@ -33,23 +32,24 @@ import kotlinx.coroutines.launch
 
 @Inject
 class StartChatPresenter(
-    presenterFactory: UserListPresenter.Factory,
-    userRepository: UserRepository,
-    userListDataStore: UserListDataStore,
+    private val presenterFactory: UserListPresenter.Factory,
+    private val userRepository: UserRepository,
+    private val userListDataStore: UserListDataStore,
     private val startDMAction: StartDMAction,
     private val buildMeta: BuildMeta,
     private val featureFlagService: FeatureFlagService,
 ) : Presenter<StartChatState> {
-    private val presenter = presenterFactory.create(
-        UserListPresenterArgs(
-            selectionMode = SelectionMode.Single,
-        ),
-        userRepository,
-        userListDataStore,
-    )
-
     @Composable
     override fun present(): StartChatState {
+        val dataStoreInitialQuery by userListDataStore.initialQuery.collectAsState(initial = null)
+        val presenter = presenterFactory.create(
+            UserListPresenterArgs(
+                selectionMode = SelectionMode.Single,
+                initialQuery = dataStoreInitialQuery,
+            ),
+            userRepository,
+            userListDataStore,
+        )
         val userListState = presenter.present()
 
         val localCoroutineScope = rememberCoroutineScope()
@@ -76,7 +76,7 @@ class StartChatPresenter(
             applicationName = buildMeta.applicationName,
             userListState = userListState,
             startDmAction = startDmActionState.value,
-            isRoomDirectorySearchEnabled = isRoomDirectorySearchEnabled && !buildMeta.isGplayBuild,
+            isRoomDirectorySearchEnabled = isRoomDirectorySearchEnabled,
             eventSink = ::handleEvent,
         )
     }

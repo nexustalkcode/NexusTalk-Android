@@ -14,10 +14,24 @@ import io.element.android.features.rageshake.api.logs.LogFilesRemover
 import io.element.android.features.rageshake.impl.reporter.DefaultBugReporter
 import java.io.File
 
+/**
+ * 默认日志文件删除器
+ *
+ * LogFilesRemover 接口的实现，使用 DefaultBugReporter 删除日志文件。
+ *
+ * @property bugReporter 问题报告器
+ */
 @ContributesBinding(AppScope::class)
 class DefaultLogFilesRemover(
     private val bugReporter: DefaultBugReporter,
 ) : LogFilesRemover {
+    /**
+     * 执行日志文件删除
+     *
+     * 根据谓词条件删除日志文件。
+     *
+     * @param predicate 用于过滤要删除的文件的谓词函数
+     */
     override suspend fun perform(predicate: (File) -> Boolean) {
         bugReporter.deleteAllFiles(predicate)
     }

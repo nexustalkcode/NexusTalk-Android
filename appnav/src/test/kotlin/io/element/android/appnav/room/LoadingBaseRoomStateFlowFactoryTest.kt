@@ -16,7 +16,6 @@ import io.element.android.libraries.matrix.test.A_SESSION_ID
 import io.element.android.libraries.matrix.test.FakeMatrixClient
 import io.element.android.libraries.matrix.test.room.FakeBaseRoom
 import io.element.android.libraries.matrix.test.room.FakeJoinedRoom
-import io.element.android.libraries.matrix.test.roomlist.FakeDynamicRoomList
 import io.element.android.libraries.matrix.test.roomlist.FakeRoomListService
 import io.element.android.libraries.matrix.ui.room.LoadingRoomState
 import io.element.android.libraries.matrix.ui.room.LoadingRoomStateFlowFactory
@@ -55,8 +54,7 @@ class LoadingBaseRoomStateFlowFactoryTest {
     @Test
     fun `flow should emit Loading and then Loaded when there is a room in cache after SS is loaded`() = runTest {
         val room = FakeJoinedRoom(baseRoom = FakeBaseRoom(sessionId = A_SESSION_ID, roomId = A_ROOM_ID))
-        val roomList = FakeDynamicRoomList()
-        val roomListService = FakeRoomListService(allRooms = roomList)
+        val roomListService = FakeRoomListService()
         val matrixClient = FakeMatrixClient(A_SESSION_ID, roomListService = roomListService)
         val flowFactory = LoadingRoomStateFlowFactory(matrixClient)
         flowFactory
@@ -64,22 +62,21 @@ class LoadingBaseRoomStateFlowFactoryTest {
             .test {
                 assertThat(awaitItem()).isEqualTo(LoadingRoomState.Loading)
                 matrixClient.givenGetRoomResult(A_ROOM_ID, room)
-                roomList.loadingState.emit(RoomList.LoadingState.Loaded(1))
+                roomListService.postAllRoomsLoadingState(RoomList.LoadingState.Loaded(1))
                 assertThat(awaitItem()).isEqualTo(LoadingRoomState.Loaded(room))
             }
     }
 
     @Test
     fun `flow should emit Loading and then Error when there is no room in cache after SS is loaded`() = runTest {
-        val roomList = FakeDynamicRoomList()
-        val roomListService = FakeRoomListService(allRooms = roomList)
+        val roomListService = FakeRoomListService()
         val matrixClient = FakeMatrixClient(A_SESSION_ID, roomListService = roomListService)
         val flowFactory = LoadingRoomStateFlowFactory(matrixClient)
         flowFactory
             .create(lifecycleScope = this, roomId = A_ROOM_ID, joinedRoom = null)
             .test {
                 assertThat(awaitItem()).isEqualTo(LoadingRoomState.Loading)
-                roomList.loadingState.emit(RoomList.LoadingState.Loaded(1))
+                roomListService.postAllRoomsLoadingState(RoomList.LoadingState.Loaded(1))
                 assertThat(awaitItem()).isEqualTo(LoadingRoomState.Error)
             }
     }

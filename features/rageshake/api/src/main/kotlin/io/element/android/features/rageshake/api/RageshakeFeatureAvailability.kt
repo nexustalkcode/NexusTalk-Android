@@ -10,6 +10,16 @@ package io.element.android.features.rageshake.api
 
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * 崩溃检测功能可用性接口
+ *
+ * 用于检查崩溃检测功能是否可用的函数式接口。
+ */
 fun interface RageshakeFeatureAvailability {
+    /**
+     * 检查功能是否可用
+     *
+     * @return Flow<Boolean> 是否可用的布尔值流
+     */
     fun isAvailable(): Flow<Boolean>
 }

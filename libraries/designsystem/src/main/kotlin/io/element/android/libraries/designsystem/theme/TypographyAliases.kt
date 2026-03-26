@@ -9,14 +9,14 @@
 package io.element.android.libraries.designsystem.theme
 
 import androidx.compose.ui.text.TextStyle
-import io.element.android.compound.tokens.sc.ExposedTypographyTokens
+import io.element.android.compound.tokens.generated.TypographyTokens
 
 /*
  * This file contains aliases for TypographyTokens.
  */
 
-val ExposedTypographyTokens.aliasScreenTitle: TextStyle
+val TypographyTokens.aliasScreenTitle: TextStyle
     get() = fontHeadingSmMedium
 
-val ExposedTypographyTokens.aliasButtonText: TextStyle
+val TypographyTokens.aliasButtonText: TextStyle
     get() = fontBodyLgMedium

@@ -63,7 +63,17 @@ import io.element.android.libraries.testtags.testTag
 import io.element.android.libraries.ui.strings.CommonStrings
 
 /**
- * https://www.figma.com/file/o9p34zmiuEpZRyvZXJZAYL/FTUE?type=design&node-id=611-61435
+ * 搜索账户提供商视图组件
+ *
+ * 用于输入和搜索自定义账户提供商地址的可组合组件。
+ * 支持实时搜索和服务器验证。
+ *
+ * @param state 搜索账户提供商状态
+ * @param onBackClick 返回按钮回调
+ * @param onLearnMoreClick 了解更多回调
+ * @param onSuccess 成功回调
+ * @param modifier 修饰符
+ * @see <a href="https://www.figma.com/file/o9p34zmiuEpZRyvZXJZAYL/FTUE?type=design&node-id=611-61435">Figma 设计稿</a>
  */
 @Composable
 fun SearchAccountProviderView(

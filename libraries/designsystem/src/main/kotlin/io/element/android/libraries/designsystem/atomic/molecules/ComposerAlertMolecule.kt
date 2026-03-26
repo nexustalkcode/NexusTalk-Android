@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 撰写框警告分子组件
+ *
+ * 用于在消息撰写框区域显示警告信息的组件。
+ * 支持多种警告级别（默认、信息、关键），带有渐变背景和可选图标。
+ * 常用于身份验证变更提示、敏感操作警告等场景。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.molecules
 
 import androidx.compose.foundation.background
@@ -26,8 +37,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
-import io.element.android.libraries.designsystem.colors.gradientCriticalColors
-import io.element.android.libraries.designsystem.colors.gradientInfoColors
 import io.element.android.libraries.designsystem.components.avatar.Avatar
 import io.element.android.libraries.designsystem.components.avatar.AvatarData
 import io.element.android.libraries.designsystem.components.avatar.AvatarType
@@ -41,7 +50,49 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
 /**
- * Ref: https://www.figma.com/design/G1xy0HDZKJf5TCRFmKb5d5/Compound-Android-Components?node-id=2392-6721
+ * 警告级别枚举
+ *
+ * 定义 ComposerAlertMolecule 组件的不同警告级别。
+ * 每种级别对应不同的颜色方案和图标。
+ */
+enum class ComposerAlertLevel {
+    /** 默认级别 - 使用信息相关的颜色 */
+    Default,
+    /** 信息级别 - 用于一般性提示信息 */
+    Info,
+    /** 关键级别 - 用于需要特别注意的警告或错误 */
+    Critical
+}
+
+/**
+ * 撰写框警告组件
+ *
+ * 创建一个带有警告信息的组件，包含可选头像或图标、文本内容和提交按钮。
+ * 组件顶部有一条彩色分割线，下方使用渐变背景。
+ *
+ * @param avatar AvatarData? 可选的用户头像数据，为 null 时显示图标（如果 showIcon 为 true）
+ * @param content AnnotatedString 警告文本内容，支持富文本
+ * @param onSubmitClick () -> Unit 点击提交按钮时的回调函数
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ * @param level ComposerAlertLevel 警告级别，默认为 Default
+ * @param showIcon Boolean 是否显示图标（当 avatar 为 null 时），默认为 false
+ * @param submitText String 提交按钮文本，默认为"确定"
+ *
+ * @return Unit
+ *
+ * @see [ComposerAlertLevel] 警告级别枚举
+ * @see [Avatar] 头像组件
+ * @see [Button] 按钮组件
+ *
+ * @example
+ * ```kotlin
+ * ComposerAlertMolecule(
+ *     avatar = avatarData,
+ *     content = "用户身份已变更".toAnnotatedString(),
+ *     level = ComposerAlertLevel.Info,
+ *     onSubmitClick = { /* 处理确认 */ }
+ * )
+ * ```
  */
 @Composable
 fun ComposerAlertMolecule(
@@ -49,7 +100,7 @@ fun ComposerAlertMolecule(
     content: AnnotatedString,
     onSubmitClick: () -> Unit,
     modifier: Modifier = Modifier,
-    level: ComposerAlertLevel = ComposerAlertLevel.Info,
+    level: ComposerAlertLevel = ComposerAlertLevel.Default,
     showIcon: Boolean = false,
     submitText: String = stringResource(CommonStrings.action_ok),
 ) {
@@ -57,12 +108,20 @@ fun ComposerAlertMolecule(
         modifier.fillMaxWidth()
     ) {
         val lineColor = when (level) {
+            ComposerAlertLevel.Default -> ElementTheme.colors.borderInfoSubtle
             ComposerAlertLevel.Info -> ElementTheme.colors.borderInfoSubtle
             ComposerAlertLevel.Critical -> ElementTheme.colors.borderCriticalSubtle
         }
 
+        val startColor = when (level) {
+            ComposerAlertLevel.Default -> ElementTheme.colors.bgInfoSubtle
+            ComposerAlertLevel.Info -> ElementTheme.colors.bgInfoSubtle
+            ComposerAlertLevel.Critical -> ElementTheme.colors.bgCriticalSubtle
+        }
+
         val textColor = when (level) {
-            ComposerAlertLevel.Info -> ElementTheme.colors.textPrimary
+            ComposerAlertLevel.Default -> ElementTheme.colors.textPrimary
+            ComposerAlertLevel.Info -> ElementTheme.colors.textInfoPrimary
             ComposerAlertLevel.Critical -> ElementTheme.colors.textCriticalPrimary
         }
 
@@ -72,13 +131,12 @@ fun ComposerAlertMolecule(
                 .height(1.dp)
                 .background(lineColor)
         )
-        val gradientColors = when (level) {
-            ComposerAlertLevel.Info -> gradientInfoColors()
-            ComposerAlertLevel.Critical -> gradientCriticalColors()
-        }
+        val brush = Brush.verticalGradient(
+            listOf(startColor, ElementTheme.colors.bgCanvasDefault),
+        )
         Box(
             modifier = Modifier
-                .background(Brush.verticalGradient(gradientColors))
+                .background(brush)
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
         ) {
             Column(
@@ -94,10 +152,12 @@ fun ComposerAlertMolecule(
                         )
                     } else if (showIcon) {
                         val icon = when (level) {
+                            ComposerAlertLevel.Default -> CompoundIcons.Info()
                             ComposerAlertLevel.Info -> CompoundIcons.Info()
                             ComposerAlertLevel.Critical -> CompoundIcons.Error()
                         }
                         val iconTint = when (level) {
+                            ComposerAlertLevel.Default -> ElementTheme.colors.iconPrimary
                             ComposerAlertLevel.Info -> ElementTheme.colors.iconInfoPrimary
                             ComposerAlertLevel.Critical -> ElementTheme.colors.iconCriticalPrimary
                         }
@@ -126,11 +186,13 @@ fun ComposerAlertMolecule(
     }
 }
 
-enum class ComposerAlertLevel {
-    Info,
-    Critical
-}
 
+/**
+ * ComposerAlertMolecule 预览组件
+ *
+ * 用于在设计预览中展示 ComposerAlertMolecule 组件的各种状态。
+ * 此预览函数支持日夜两种主题模式。
+ */
 @PreviewsDayNight
 @Composable
 internal fun ComposerAlertMoleculePreview(
@@ -138,7 +200,7 @@ internal fun ComposerAlertMoleculePreview(
 ) = ElementPreview {
     ComposerAlertMolecule(
         avatar = params.avatar,
-        content = "Alice’s verified identity has changed. Learn more".toAnnotatedString(),
+        content = "Alice's verified identity has changed. Learn more".toAnnotatedString(),
         level = params.level,
         showIcon = params.showIcon,
         onSubmitClick = {},

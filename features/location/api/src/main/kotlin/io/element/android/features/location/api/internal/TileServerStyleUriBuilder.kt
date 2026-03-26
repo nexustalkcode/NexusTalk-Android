@@ -13,16 +13,28 @@ import androidx.compose.runtime.remember
 import io.element.android.compound.theme.ElementTheme
 
 /**
- * Builds a style URI for a MapLibre compatible tile server.
+ * 地图瓦片服务器样式 URI 构建器接口
  *
- * Used for rendering dynamic maps.
+ * 用于构建 MapLibre 兼容的瓦片服务器样式 URI。
+ * 用于渲染动态地图。
  */
 interface TileServerStyleUriBuilder {
+    /**
+     * 构建瓦片服务器样式 URI
+     *
+     * @param darkMode 是否使用深色模式
+     * @return String 瓦片服务器样式 URI
+     */
     fun build(
         darkMode: Boolean,
     ): String
 }
 
+/**
+ * 创建默认的瓦片服务器样式 URI 构建器
+ *
+ * @return TileServerStyleUriBuilder MapTiler 瓦片服务器样式 URI 构建器实例
+ */
 fun TileServerStyleUriBuilder(): TileServerStyleUriBuilder = MapTilerTileServerStyleUriBuilder()
 
 /**

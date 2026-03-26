@@ -10,7 +10,12 @@ package io.element.android.libraries.fullscreenintent.test
 
 import android.content.Intent
 import android.os.Build
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.moleculeFlow
 import app.cash.turbine.test
@@ -85,6 +90,33 @@ class FullScreenIntentPermissionsPresenterTest {
     }
 
     @Test
+    fun `permission refresh on resume - makes shouldDisplay false after granting permission`() = runTest {
+        var isGranted = false
+        val presenter = createPresenter(
+            notificationManagerCompat = mockk {
+                every { canUseFullScreenIntent() } answers { isGranted }
+            }
+        )
+        val lifecycleOwner = FakeLifecycleOwner(Lifecycle.State.RESUMED)
+        moleculeFlow(RecompositionMode.Immediate) {
+            CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
+                presenter.present()
+            }
+        }.test {
+            skipItems(1)
+            assertThat(awaitItem().shouldDisplayBanner).isTrue()
+
+            isGranted = true
+            lifecycleOwner.registry.currentState = Lifecycle.State.STARTED
+            runCurrent()
+            lifecycleOwner.registry.currentState = Lifecycle.State.RESUMED
+            runCurrent()
+
+            assertThat(awaitItem().shouldDisplayBanner).isFalse()
+        }
+    }
+
+    @Test
     fun `openFullScreenIntentSettings - opens external screen using intent`() = runTest {
         val launchLambda = lambdaRecorder<Intent, Unit> { _ -> }
         val externalIntentLauncher = FakeExternalIntentLauncher(launchLambda)
@@ -132,4 +164,13 @@ class FullScreenIntentPermissionsPresenterTest {
         preferencesDataStoreFactory = dataStoreFactory,
         notificationManagerCompat = notificationManagerCompat,
     )
+
+    private class FakeLifecycleOwner(initialState: Lifecycle.State) : LifecycleOwner {
+        override val lifecycle: Lifecycle
+            get() = registry
+
+        val registry = LifecycleRegistry(this).apply {
+            currentState = initialState
+        }
+    }
 }

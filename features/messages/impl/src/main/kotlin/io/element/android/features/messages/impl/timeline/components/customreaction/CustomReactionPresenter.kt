@@ -54,10 +54,10 @@ class CustomReactionPresenter(
             target.value = CustomReactionState.Target.None
         }
 
-        fun handleEvent(event: CustomReactionEvent) {
+        fun handleEvent(event: CustomReactionEvents) {
             when (event) {
-                is CustomReactionEvent.ShowCustomReactionSheet -> handleShowCustomReactionSheet(event.event)
-                is CustomReactionEvent.DismissCustomReactionSheet -> handleDismissCustomReactionSheet()
+                is CustomReactionEvents.ShowCustomReactionSheet -> handleShowCustomReactionSheet(event.event)
+                is CustomReactionEvents.DismissCustomReactionSheet -> handleDismissCustomReactionSheet()
             }
         }
         val event = (target.value as? CustomReactionState.Target.Success)?.event

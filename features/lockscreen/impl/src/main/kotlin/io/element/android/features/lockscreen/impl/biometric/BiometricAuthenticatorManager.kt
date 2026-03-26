@@ -10,28 +10,48 @@ package io.element.android.features.lockscreen.impl.biometric
 
 import androidx.compose.runtime.Composable
 
+/**
+ * 生物识别认证管理器接口
+ *
+ * 提供设备生物识别能力查询和认证器创建功能。
+ */
 interface BiometricAuthenticatorManager {
     /**
-     * If the device is secured for example with a pin, pattern or password.
+     * 设备是否已启用安全保护（如 PIN、图案或密码）
      */
     val isDeviceSecured: Boolean
 
     /**
-     * If the device has biometric hardware and if the user has enrolled at least one biometric.
+     * 设备是否有可用的生物识别硬件且用户已录入至少一个生物特征
      */
     val hasAvailableAuthenticator: Boolean
 
+    /**
+     * 添加生物识别认证回调
+     *
+     * @param callback 要添加的回调
+     */
     fun addCallback(callback: BiometricAuthenticator.Callback)
+
+    /**
+     * 移除生物识别认证回调
+     *
+     * @param callback 要移除的回调
+     */
     fun removeCallback(callback: BiometricAuthenticator.Callback)
 
     /**
-     * Remember a biometric authenticator ready for unlocking the app.
+     * 创建一个用于解锁应用的生物识别认证器（带记忆）
+     *
+     * @return 生物识别认证器实例
      */
     @Composable
     fun rememberUnlockBiometricAuthenticator(): BiometricAuthenticator
 
     /**
-     * Remember a biometric authenticator ready for confirmation.
+     * 创建一个用于确认的生物识别认证器（带记忆）
+     *
+     * @return 生物识别认证器实例
      */
     @Composable
     fun rememberConfirmBiometricAuthenticator(): BiometricAuthenticator

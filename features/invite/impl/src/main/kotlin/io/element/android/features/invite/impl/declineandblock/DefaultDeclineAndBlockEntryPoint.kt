@@ -17,6 +17,12 @@ import io.element.android.features.invite.api.declineandblock.DeclineInviteAndBl
 import io.element.android.libraries.architecture.createNode
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认拒绝并封禁入口点实现
+ *
+ * 实现了 DeclineInviteAndBlockEntryPoint 接口，
+ * 负责创建拒绝并封禁功能的界面节点。
+ */
 class DefaultDeclineAndBlockEntryPoint : DeclineInviteAndBlockEntryPoint {
     override fun createNode(
         parentNode: Node,

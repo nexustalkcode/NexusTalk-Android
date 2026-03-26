@@ -22,6 +22,7 @@ interface SummaryGroupMessageCreator {
         roomNotifications: List<RoomNotification>,
         invitationNotifications: List<OneShotNotification>,
         simpleNotifications: List<OneShotNotification>,
+        fallbackNotifications: List<OneShotNotification>,
     ): Notification
 }
 
@@ -44,6 +45,7 @@ class DefaultSummaryGroupMessageCreator(
         roomNotifications: List<RoomNotification>,
         invitationNotifications: List<OneShotNotification>,
         simpleNotifications: List<OneShotNotification>,
+        fallbackNotifications: List<OneShotNotification>,
     ): Notification {
         val summaryIsNoisy = roomNotifications.any { it.shouldBing } ||
             invitationNotifications.any { it.isNoisy } ||

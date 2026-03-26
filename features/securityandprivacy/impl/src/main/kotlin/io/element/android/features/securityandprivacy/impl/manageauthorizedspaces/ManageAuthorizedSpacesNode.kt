@@ -21,11 +21,22 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.architecture.appyx.launchMolecule
 import io.element.android.libraries.di.RoomScope
 
+/**
+ * 管理授权空间节点
+ *
+ * 负责显示和管理授权空间的页面。
+ * 用户可以选择哪些空间可以访问当前房间（用于受限房间访问规则）。
+ *
+ * @see Node 基础节点类
+ * @see ManageAuthorizedSpacesPresenter 业务逻辑处理类
+ * @see ManageAuthorizedSpacesView 界面渲染组件
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class ManageAuthorizedSpacesNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
+    /** Presenter，负责处理业务逻辑 */
     presenter: ManageAuthorizedSpacesPresenter,
 ) : Node(buildContext, plugins = plugins) {
     private val stateFlow = launchMolecule { presenter.present() }

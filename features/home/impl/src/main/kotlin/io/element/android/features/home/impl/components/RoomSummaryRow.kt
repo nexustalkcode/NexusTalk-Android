@@ -44,8 +44,7 @@ import io.element.android.features.home.impl.model.LatestEvent
 import io.element.android.features.home.impl.model.RoomListRoomSummary
 import io.element.android.features.home.impl.model.RoomListRoomSummaryProvider
 import io.element.android.features.home.impl.model.RoomSummaryDisplayType
-import io.element.android.features.home.impl.model.hasNewContent
-import io.element.android.features.home.impl.roomlist.RoomListEvent
+import io.element.android.features.home.impl.roomlist.RoomListEvents
 import io.element.android.libraries.core.extensions.orEmpty
 import io.element.android.libraries.core.extensions.toSafeLength
 import io.element.android.libraries.designsystem.atomic.atoms.UnreadIndicatorAtom
@@ -75,7 +74,7 @@ internal fun RoomSummaryRow(
     hideInviteAvatars: Boolean,
     isInviteSeen: Boolean,
     onClick: (RoomListRoomSummary) -> Unit,
-    eventSink: (RoomListEvent) -> Unit,
+    eventSink: (RoomListEvents) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -105,10 +104,10 @@ internal fun RoomSummaryRow(
                     Spacer(modifier = Modifier.height(12.dp))
                     InviteButtonsRowMolecule(
                         onAcceptClick = {
-                            eventSink(RoomListEvent.AcceptInvite(room))
+                            eventSink(RoomListEvents.AcceptInvite(room))
                         },
                         onDeclineClick = {
-                            eventSink(RoomListEvent.ShowDeclineInviteMenu(room))
+                            eventSink(RoomListEvents.ShowDeclineInviteMenu(room))
                         }
                     )
                 }
@@ -118,7 +117,7 @@ internal fun RoomSummaryRow(
                     room = room,
                     onClick = onClick,
                     onLongClick = {
-                        eventSink(RoomListEvent.ShowContextMenu(room))
+                        eventSink(RoomListEvents.ShowContextMenu(room))
                     },
                 ) {
                     NameAndTimestampRow(
@@ -325,9 +324,17 @@ private fun MessagePreviewAndIndicatorRow(
                 }
                 val messagePreview = room.latestEvent.content()
                 val annotatedMessagePreview = messagePreview as? AnnotatedString ?: AnnotatedString(text = messagePreview.orEmpty().toString())
+                // If there's no ongoing call but the message is "Call started", display it as "Call ended"
+                val callStartedText = stringResource(io.element.android.libraries.ui.strings.R.string.common_call_started)
+                val callEndedText = stringResource(io.element.android.libraries.ui.strings.R.string.common_call_ended)
+                val displayMessage = if (!room.hasRoomCall && annotatedMessagePreview.text == callStartedText) {
+                    AnnotatedString(text = callEndedText)
+                } else {
+                    annotatedMessagePreview
+                }
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = annotatedMessagePreview,
+                    text = displayMessage,
                     color = ElementTheme.colors.roomListRoomMessage,
                     style = ElementTheme.typography.fontBodyMdRegular,
                     minLines = 2,
@@ -357,12 +364,16 @@ private fun MessagePreviewAndIndicatorRow(
             } else if (room.numberOfUnreadMentions > 0) {
                 MentionIndicatorAtom()
             }
-            if (room.hasNewContent) {
+            if (room.hasUnreadIndicator) {
                 val contentDescription = stringResource(CommonStrings.a11y_notifications_new_messages)
                 UnreadIndicatorAtom(
                     color = tint,
                     contentDescription = contentDescription,
+                    count = room.totalUnreadCount.toInt(),
                 )
+            }
+            if (room.isFavorite) {
+                PinnedIndicatorAtom()
             }
         }
     }
@@ -421,10 +432,20 @@ private fun NotificationOffIndicatorAtom() {
 @Composable
 private fun MentionIndicatorAtom() {
     Icon(
-        modifier = Modifier.size(16.dp),
+        modifier = Modifier.size(14.dp),
         contentDescription = stringResource(CommonStrings.a11y_notifications_new_mentions),
-        imageVector = CompoundIcons.Mention(),
+        imageVector = CompoundIcons.MentionV1(),
         tint = ElementTheme.colors.unreadIndicator,
+    )
+}
+
+@Composable
+private fun PinnedIndicatorAtom() {
+    Icon(
+        modifier = Modifier.size(16.dp),
+        contentDescription = stringResource(CommonStrings.common_pinned),
+        imageVector = CompoundIcons.PinSolid(),
+        tint = ElementTheme.colors.iconQuaternary,
     )
 }
 

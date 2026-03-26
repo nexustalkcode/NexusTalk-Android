@@ -50,9 +50,18 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 import timber.log.Timber
 
+/** 权限请求回调类型别名 */
 typealias RequestPermissionCallback = (Array<String>) -> Unit
 
+/**
+ * 通话界面导航器接口
+ *
+ * 定义了通话界面的导航操作。
+ */
 interface CallScreenNavigator {
+    /**
+     * 关闭通话界面
+     */
     fun close()
 }
 

@@ -12,10 +12,23 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.libraries.matrix.api.MatrixClient
 import timber.log.Timber
 
+/**
+ * 清理数据库存储用例接口
+ */
 fun interface VacuumStoresUseCase {
+    /**
+     * 执行数据库清理操作
+     */
     suspend operator fun invoke()
 }
 
+/**
+ * 默认清理数据库存储用例实现
+ *
+ * 负责对 Matrix 数据库执行 VACUUM 操作，以回收未使用的空间并优化数据库性能。
+ *
+ * @property matrixClient Matrix 客户端
+ */
 @ContributesBinding(AppScope::class)
 class DefaultVacuumStoresUseCase(
     private val matrixClient: MatrixClient,

@@ -21,6 +21,15 @@ import io.element.android.libraries.matrix.api.encryption.IdentityPasswordResetH
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 重置身份密码 Presenter
+ *
+ * 负责处理重置身份密码页面的业务逻辑。
+ *
+ * @property identityPasswordResetHandle 身份密码重置句柄
+ * @property dispatchers 协程调度器
+ * @see ResetIdentityPasswordState 重置身份密码状态
+ */
 class ResetIdentityPasswordPresenter(
     private val identityPasswordResetHandle: IdentityPasswordResetHandle,
     private val dispatchers: CoroutineDispatchers,

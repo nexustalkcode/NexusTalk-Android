@@ -29,17 +29,41 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 拒绝并封禁 Presenter
+ *
+ * 负责处理拒绝邀请并封禁用户功能的业务逻辑和状态管理。
+ * 管理拒绝操作、举报和封禁的用户交互。
+ *
+ * @property inviteData 邀请数据
+ * @property declineInvite 拒绝邀请服务
+ * @property snackbarDispatcher Snackbar 调度器
+ */
 @AssistedInject
 class DeclineAndBlockPresenter(
     @Assisted private val inviteData: InviteData,
     private val declineInvite: DeclineInvite,
     private val snackbarDispatcher: SnackbarDispatcher,
 ) : Presenter<DeclineAndBlockState> {
+    /**
+     * 工厂接口
+     */
     @AssistedFactory
     fun interface Factory {
+        /**
+         * 创建 Presenter 实例
+         *
+         * @param inviteData 邀请数据
+         * @return DeclineAndBlockPresenter 实例
+         */
         fun create(inviteData: InviteData): DeclineAndBlockPresenter
     }
 
+    /**
+     * 生成界面状态
+     *
+     * @return DeclineAndBlockState 拒绝并封禁状态
+     */
     @Composable
     override fun present(): DeclineAndBlockState {
         var reportReason by rememberSaveable { mutableStateOf("") }
@@ -49,6 +73,11 @@ class DeclineAndBlockPresenter(
 
         val coroutineScope = rememberCoroutineScope()
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 拒绝并封禁事件
+         */
         fun handleEvent(event: DeclineAndBlockEvents) {
             when (event) {
                 DeclineAndBlockEvents.ClearDeclineAction -> declineAction.value = AsyncAction.Uninitialized
@@ -68,6 +97,14 @@ class DeclineAndBlockPresenter(
         )
     }
 
+    /**
+     * 执行拒绝操作
+     *
+     * @param reason 举报原因
+     * @param blockUser 是否封禁用户
+     * @param reportRoom 是否举报房间
+     * @param action 异步操作状态
+     */
     private fun CoroutineScope.decline(
         reason: String,
         blockUser: Boolean,

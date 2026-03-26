@@ -27,6 +27,19 @@ import io.element.android.wysiwyg.display.TextDisplay
 import io.element.android.wysiwyg.utils.HtmlConverter
 import uniffi.wysiwyg_composer.newMentionDetector
 
+/**
+ * 默认 HTML 转换器提供者
+ *
+ * 提供用于将 HTML 转换为可显示文本的转换器。
+ * 支持提及（@mention）处理和富文本显示。
+ *
+ * 使用 @SingleIn 注解确保每个 RoomScope 只有一个实例。
+ * 使用 @ContributesBinding 注解绑定到 HtmlConverterProvider。
+ *
+ * @property mentionSpanProvider 提及跨度提供者
+ * @see HtmlConverter HTML转换器
+ * @see MentionSpanProvider 提及跨度提供者
+ */
 @ContributesBinding(RoomScope::class)
 @SingleIn(RoomScope::class)
 class DefaultHtmlConverterProvider(

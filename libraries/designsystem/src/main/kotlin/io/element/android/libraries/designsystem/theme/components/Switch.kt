@@ -10,9 +10,11 @@ package io.element.android.libraries.designsystem.theme.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -49,16 +51,17 @@ fun Switch(
         enabled = enabled,
         colors = colors,
         interactionSource = interactionSource,
-        thumbContent = thumbContent
+        thumbContent = thumbContent ?: {Box(Modifier.size(SwitchDefaults.IconSize))},
     )
 }
 
 @Composable
 internal fun compoundSwitchColors() = SwitchDefaults.colors(
-    uncheckedThumbColor = ElementTheme.colors.iconSecondary,
-    uncheckedBorderColor = ElementTheme.colors.borderInteractivePrimary,
-    uncheckedTrackColor = Color.Transparent,
-    checkedTrackColor = ElementTheme.colors.bgAccentRest,
+    uncheckedThumbColor = ElementTheme.colors.iconOnSolidPrimary,
+    uncheckedBorderColor = ElementTheme.colors.bgSubtleSecondary,
+    uncheckedTrackColor = ElementTheme.colors.bgSubtleSecondary,
+    checkedTrackColor = ElementTheme.colors.iconPrimary,
+    checkedThumbColor = ElementTheme.colors.iconOnSolidPrimary,
     disabledUncheckedBorderColor = ElementTheme.colors.borderDisabled,
     disabledUncheckedThumbColor = ElementTheme.colors.iconDisabled,
     disabledCheckedTrackColor = ElementTheme.colors.iconDisabled,

@@ -5,6 +5,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 播放速度按钮原子组件
+ *
+ * 用于显示和控制媒体播放速度的按钮组件。
+ * 显示当前播放速度倍数（如 1×、1.5×、2×），点击可触发速度切换。
+ * 常用于音频播放、视频播放等媒体控制场景。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.atoms
 
 import androidx.compose.foundation.background
@@ -25,6 +36,30 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.theme.messageFromMeBackground
 
+/**
+ * 播放速度按钮组件
+ *
+ * 创建一个显示播放速度倍数的可点击按钮。
+ * 按钮显示速度文本（如 0.5×、1×、1.5×、2×），点击时触发 [onClick] 回调。
+ * 支持预设速度值和任意浮点数速度值。
+ *
+ * @param speed Float 当前播放速度倍数
+ * @param onClick () -> Unit 点击按钮时的回调函数
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ *
+ * @return Unit
+ *
+ * @see [ElementTheme.typography.fontBodyXsMedium] 按钮文本样式
+ * @see [ElementTheme.colors.iconSecondary] 按钮文本颜色
+ *
+ * @example
+ * ```kotlin
+ * PlaybackSpeedButton(
+ *     speed = 1.5f,
+ *     onClick = { /* 切换速度 */ }
+ * )
+ * ```
+ */
 @Composable
 fun PlaybackSpeedButton(
     speed: Float,
@@ -56,6 +91,12 @@ fun PlaybackSpeedButton(
     }
 }
 
+/**
+ * PlaybackSpeedButton 预览组件
+ *
+ * 用于在设计预览中展示 PlaybackSpeedButton 组件的各种速度状态。
+ * 此预览函数支持日夜两种主题模式，展示 0.5×、1×、1.5×、2× 和 3× 速度按钮。
+ */
 @PreviewsDayNight
 @Composable
 internal fun PlaybackSpeedButtonPreview() = ElementPreview {

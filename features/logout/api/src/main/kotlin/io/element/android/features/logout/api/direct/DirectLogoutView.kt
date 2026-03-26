@@ -10,7 +10,17 @@ package io.element.android.features.logout.api.direct
 
 import androidx.compose.runtime.Composable
 
+/**
+ * 直接退出登录视图接口
+ *
+ * 定义了直接退出登录界面的渲染函数式接口，
+ * 用于在不同模块中提供统一的退出登录 UI 渲染方式。
+ */
 fun interface DirectLogoutView {
+    /**
+     * 渲染直接退出登录界面
+     * @param state 直接退出登录的当前状态
+     */
     @Composable
     fun Render(state: DirectLogoutState)
 }

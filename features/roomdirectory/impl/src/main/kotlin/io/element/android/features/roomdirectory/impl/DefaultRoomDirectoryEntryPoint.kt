@@ -16,6 +16,12 @@ import io.element.android.features.roomdirectory.api.RoomDirectoryEntryPoint
 import io.element.android.features.roomdirectory.impl.root.RoomDirectoryNode
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * 房间目录默认入口点实现
+ *
+ * 实现了 [RoomDirectoryEntryPoint] 接口，负责创建房间目录的导航节点。
+ * 使用 Appyx 框架的依赖注入机制进行绑定。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultRoomDirectoryEntryPoint : RoomDirectoryEntryPoint {
     override fun createNode(

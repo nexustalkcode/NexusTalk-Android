@@ -4,4 +4,6 @@
   <string name="screen_login_subtitle">"Matrix is an open network for secure, decentralized communication."</string>
   <string name="screen_qr_code_login_connection_note_secure_state_list_item_2">"If you encounter the same problem, try a different Wi-Fi network or use your mobile data instead of Wi-Fi"</string>
   <string name="screen_server_confirmation_message_login_matrix_dot_org">"Matrix is an open network for secure, decentralized communication."</string>
+  <string name="screen_onboarding_signing_in">"Signing in..."</string>
+  <string name="screen_onboarding_sign_in">"Sign in"</string>
 </resources>

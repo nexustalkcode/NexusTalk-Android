@@ -25,6 +25,8 @@
   <string name="screen_edit_profile_error">"Узнікла невядомая памылка, і інфармацыю не ўдалося змяніць."</string>
   <string name="screen_edit_profile_error_title">"Немагчыма абнавіць профіль"</string>
   <string name="screen_edit_profile_title">"Рэдагаваць профіль"</string>
+  <string name="screen_edit_profile_change_avatar">"Змяніць аватар"</string>
+  <string name="screen_edit_profile_username">"Імя карыстальніка"</string>
   <string name="screen_edit_profile_updating_details">"Абнаўленне профілю…"</string>
   <string name="screen_notification_settings_additional_settings_section_title">"Дадатковыя налады"</string>
   <string name="screen_notification_settings_calls_label">"Аўдыя і відэа званкі"</string>
@@ -53,6 +55,8 @@
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"налады сістэмы"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Сістэмныя апавяшчэнні выключаны"</string>
   <string name="screen_notification_settings_title">"Апавяшчэнні"</string>
+  <string name="screen_preferences_section_customization">"Персоналізацыя"</string>
+  <string name="screen_preferences_section_security">"Бяспека"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Выпраўленне непаладак"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Выпраўленне непаладак з апавяшчэннямі"</string>
 </resources>

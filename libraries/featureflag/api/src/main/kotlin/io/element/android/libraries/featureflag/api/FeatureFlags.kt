@@ -74,21 +74,14 @@ enum class FeatureFlags(
         key = "feature.createSpaces",
         title = "Create spaces",
         description = "Allow creating spaces.",
-        defaultValue = { true },
+        defaultValue = { false },
         isFinished = false,
     ),
     SpaceSettings(
         key = "feature.spaceSettings",
         title = "Space settings",
         description = "Allow managing space settings such as details, permissions and privacy.",
-        defaultValue = { true },
-        isFinished = false,
-    ),
-    RoomListSpaceFilters(
-        key = "feature.roomListSpaceFilters",
-        title = "Room list space filters",
-        description = "Allow filtering the room list by space.",
-        defaultValue = { true },
+        defaultValue = { false },
         isFinished = false,
     ),
     PrintLogsToLogcat(
@@ -97,7 +90,7 @@ enum class FeatureFlags(
         description = "Print logs to logcat in addition to log files. Requires an app restart to take effect." +
             "\n\nWARNING: this will make the logs visible in the device logs and may affect performance. " +
             "It's not intended for daily usage in release builds.",
-        defaultValue = { buildMeta -> buildMeta.buildType != BuildType.RELEASE && buildMeta.buildType != BuildType.RELEASE_SC },
+        defaultValue = { buildMeta -> buildMeta.buildType != BuildType.RELEASE },
         // False so it's displayed in the developer options screen
         isFinished = false,
     ),
@@ -130,7 +123,7 @@ enum class FeatureFlags(
         title = "Sync notifications with WorkManager",
         description = "Use WorkManager to schedule notification sync tasks when a push is received." +
             " This should improve reliability and battery usage.",
-        defaultValue = { SC_DEFAULT_ENABLE_NOTIFICATION_WORKER },
+        defaultValue = { true },
         isFinished = false,
     ),
     QrCodeLogin(
@@ -147,12 +140,11 @@ enum class FeatureFlags(
         defaultValue = { false },
         isFinished = false,
     ),
-    ValidateNetworkWhenSchedulingNotificationFetching(
-        key = "feature.validate_network_when_scheduling_notification_fetching",
-        title = "validate internet connectivity when scheduling notification fetching",
-        description = "Only fetch events for push notifications when the device has internet connectivity. " +
-            "Enabling this can be problematic in air-gapped environments.",
-        defaultValue = { true },
+    VideoCall(
+        key = "feature.video_call",
+        title = "Video call",
+        description = "Show video call entry points in the app.",
+        defaultValue = { false },
         isFinished = false,
     ),
 }

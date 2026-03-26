@@ -26,6 +26,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 转发消息 Presenter
+ *
+ * 负责处理消息转发功能的业务逻辑和状态管理。
+ * 管理消息的转发操作和状态更新。
+ *
+ * @property eventId 要转发的事件 ID
+ * @property timelineProvider 时间线提供者
+ * @property sessionCoroutineScope 会话级别的协程作用域
+ */
 @AssistedInject
 class ForwardMessagesPresenter(
     @Assisted eventId: String,
@@ -35,19 +45,46 @@ class ForwardMessagesPresenter(
 ) : Presenter<ForwardMessagesState> {
     private val eventId: EventId = EventId(eventId)
 
+    /**
+     * 工厂接口
+     *
+     * 用于创建 ForwardMessagesPresenter 实例的工厂方法。
+     */
     @AssistedFactory
     fun interface Factory {
+        /**
+         * 创建 Presenter 实例
+         *
+         * @param eventId 要转发的事件 ID
+         * @param timelineProvider 时间线提供者
+         * @return ForwardMessagesPresenter 实例
+         */
         fun create(eventId: String, timelineProvider: TimelineProvider): ForwardMessagesPresenter
     }
 
     private val forwardingActionState: MutableState<AsyncAction<List<RoomId>>> = mutableStateOf(AsyncAction.Uninitialized)
 
+    /**
+     * 处理房间选择事件
+     *
+     * @param roomIds 目标房间 ID 列表
+     */
     fun onRoomSelected(roomIds: List<RoomId>) {
         sessionCoroutineScope.forwardEvent(eventId, roomIds)
     }
 
+    /**
+     * 生成界面状态
+     *
+     * @return ForwardMessagesState 转发消息状态
+     */
     @Composable
     override fun present(): ForwardMessagesState {
+        /**
+         * 处理用户事件
+         *
+         * @param event 转发消息事件
+         */
         fun handleEvent(event: ForwardMessagesEvents) {
             when (event) {
                 ForwardMessagesEvents.ClearError -> forwardingActionState.value = AsyncAction.Uninitialized
@@ -60,6 +97,12 @@ class ForwardMessagesPresenter(
         )
     }
 
+    /**
+     * 执行转发事件
+     *
+     * @param eventId 要转发的事件 ID
+     * @param roomIds 目标房间 ID 列表
+     */
     private fun CoroutineScope.forwardEvent(
         eventId: EventId,
         roomIds: List<RoomId>,

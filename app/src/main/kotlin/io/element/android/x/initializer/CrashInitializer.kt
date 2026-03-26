@@ -14,6 +14,16 @@ import io.element.android.features.rageshake.impl.crash.VectorUncaughtExceptionH
 import io.element.android.features.rageshake.impl.di.RageshakeBindings
 import io.element.android.libraries.architecture.bindings
 
+/**
+ * 崩溃处理初始化器。
+ *
+ * 实现 androidx.startup.Initializer 接口，
+ * 在应用启动时设置全局异常捕获处理器。
+ * 使用 VectorUncaughtExceptionHandler 捕获未处理的异常，
+ * 并将崩溃信息保存到本地存储以便后续分析。
+ *
+ * 此初始化器没有依赖项，会在其他初始化器之前运行。
+ */
 class CrashInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         VectorUncaughtExceptionHandler(

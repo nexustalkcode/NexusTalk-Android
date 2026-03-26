@@ -39,6 +39,15 @@ import io.element.android.libraries.designsystem.utils.CommonDrawables
 import io.element.android.libraries.ui.strings.CommonPlurals
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 投票答案视图 Composable
+ *
+ * 用于在投票中显示单个答案选项的 UI 组件。
+ * 根据答案的状态（选中、未选中、已结束、获胜者）显示不同的样式。
+ *
+ * @param answerItem 投票答案数据项
+ * @param modifier 修饰符
+ */
 @Composable
 internal fun PollAnswerView(
     answerItem: PollAnswerItem,

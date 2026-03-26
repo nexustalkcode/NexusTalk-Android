@@ -30,6 +30,6 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     implementation(projects.services.toolbox.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
 }

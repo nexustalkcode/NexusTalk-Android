@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 圆角图标原子组件
+ *
+ * 用于显示带圆角背景容器的图标组件。
+ * 图标位于圆角矩形背景中央，支持不同尺寸规格。
+ * 适用于用户头像、状态图标或功能入口等场景。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.atoms
 
 import androidx.compose.foundation.background
@@ -29,14 +40,44 @@ import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.temporaryColorBgSpecial
 
 /**
- * RoundedIconAtom is an atom which displays an icon inside a rounded container.
+ * 圆角图标尺寸规格枚举
  *
- * @param modifier the modifier to apply to this layout
- * @param size the size of the icon
- * @param resourceId the resource id of the icon to display, exclusive with [imageVector]
- * @param imageVector the image vector of the icon to display, exclusive with [resourceId]
- * @param tint the tint to apply to the icon
- * @param backgroundTint the tint to apply to the icon background
+ * 定义 RoundedIconAtom 组件的不同尺寸规格。
+ */
+enum class RoundedIconAtomSize {
+    /** 中等尺寸，容器 30dp，图标 16dp */
+    Medium,
+    /** 大尺寸，容器 36dp，图标 24dp */
+    Big,
+}
+
+/**
+ * 圆角图标组件
+ *
+ * 创建一个带圆角背景的图标组件。
+ * 图标位于圆角矩形背景中央，根据 [size] 参数选择不同的尺寸。
+ * [resourceId] 和 [imageVector] 是互斥参数，只能使用其中一个。
+ *
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ * @param size RoundedIconAtomSize 图标尺寸规格，默认为 RoundedIconAtomSize.Big
+ * @param resourceId Int? 图标资源 ID，与 [imageVector] 互斥，默认为 null
+ * @param imageVector ImageVector? 图标向量，与 [resourceId] 互斥，默认为 null
+ * @param tint Color 图标的着色颜色，默认为 [ElementTheme.colors.iconSecondary]
+ * @param backgroundTint Color 背景容器的着色颜色，默认为 [ElementTheme.colors.temporaryColorBgSpecial]
+ *
+ * @return Unit
+ *
+ * @see RoundedIconAtomSize 尺寸规格枚举
+ * @see [ElementTheme.colors.iconSecondary] 默认图标着色
+ * @see [ElementTheme.colors.temporaryColorBgSpecial] 默认背景着色
+ *
+ * @example
+ * ```kotlin
+ * RoundedIconAtom(
+ *     imageVector = CompoundIcons.HomeSolid(),
+ *     size = RoundedIconAtomSize.Big
+ * )
+ * ```
  */
 @Composable
 fun RoundedIconAtom(
@@ -88,6 +129,12 @@ private fun RoundedIconAtomSize.toIconSize(): Dp {
     }
 }
 
+/**
+ * RoundedIconAtom 预览组件
+ *
+ * 用于在设计预览中展示 RoundedIconAtom 组件的不同尺寸状态。
+ * 此预览函数支持日夜两种主题模式。
+ */
 @PreviewsDayNight
 @Composable
 internal fun RoundedIconAtomPreview() = ElementPreview {
@@ -101,9 +148,4 @@ internal fun RoundedIconAtomPreview() = ElementPreview {
             imageVector = CompoundIcons.HomeSolid(),
         )
     }
-}
-
-enum class RoundedIconAtomSize {
-    Medium,
-    Big,
 }

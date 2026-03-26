@@ -8,6 +8,7 @@
 package io.element.android.features.createroom.impl.configureroom
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,7 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import io.element.android.compound.theme.ElementTheme
+import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.createroom.impl.R
 import io.element.android.libraries.designsystem.components.avatar.Avatar
 import io.element.android.libraries.designsystem.components.avatar.AvatarData
@@ -29,9 +30,11 @@ import io.element.android.libraries.designsystem.components.avatar.AvatarType
 import io.element.android.libraries.designsystem.components.list.ListItemContent
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
+import io.element.android.libraries.designsystem.theme.components.IconSource
 import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.ListSectionHeader
 import io.element.android.libraries.designsystem.theme.components.ModalBottomSheet
+import io.element.android.libraries.designsystem.theme.components.RadioCheckbox
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.theme.components.hide
 import io.element.android.libraries.matrix.api.core.RoomAlias
@@ -41,6 +44,17 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 选择父空间选项组件
+ *
+ * 显示可用的空间列表，让用户选择要将房间添加到哪个空间。
+ * 包含一个底部弹出式选择面板。
+ *
+ * @param spaces 可用的空间列表
+ * @param selectedSpace 当前已选中的空间，null 表示不添加到任何空间
+ * @param onSelectSpace 空间选择回调，选中空间时调用
+ * @param modifier 组件修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SelectParentSpaceOptions(
@@ -53,7 +67,6 @@ internal fun SelectParentSpaceOptions(
     var displaySelectSpaceBottomSheet by remember { mutableStateOf(false) }
     ConfigureRoomOptions(
         title = stringResource(CommonStrings.common_space),
-        hasDivider = false,
         modifier = modifier
     ) {
         ListItem(
@@ -61,16 +74,22 @@ internal fun SelectParentSpaceOptions(
                 Text(
                     text = selectedSpace?.displayName
                         ?: stringResource(R.string.screen_create_room_space_selection_no_space_title),
-                    maxLines = 1,
-                    color = ElementTheme.colors.textPrimary
+                    maxLines = 1
                 )
             },
-            supportingContent = selectedSpace?.canonicalAlias?.let { alias ->
-                {
-                    Text(text = alias.value, maxLines = 1)
-                }
+            supportingContent = {
+                Text(
+                    text = if (selectedSpace != null) {
+                        selectedSpace.canonicalAlias?.value.orEmpty()
+                    } else {
+                        stringResource(R.string.screen_create_room_space_selection_no_space_description)
+                    },
+                    maxLines = 1
+                )
             },
-            leadingContent = selectedSpace?.let {
+            leadingContent = if (selectedSpace == null) {
+                ListItemContent.Icon(IconSource.Vector(CompoundIcons.Home()))
+            } else {
                 ListItemContent.Custom({
                     val avatarData = AvatarData(
                         id = selectedSpace.roomId.value,
@@ -111,8 +130,17 @@ internal fun SelectParentSpaceOptions(
     }
 }
 
+/**
+ * 选择父空间底部面板
+ *
+ * 展示在底部的空间选择面板，包含"不添加到空间"选项和所有可用空间。
+ *
+ * @param spaces 可用的空间列表
+ * @param selectedSpace 当前已选中的空间
+ * @param onSelectSpace 空间选择回调，选中后关闭面板并调用此回调
+ */
 @Composable
-private fun SelectParentSpaceBottomSheet(
+private fun ColumnScope.SelectParentSpaceBottomSheet(
     spaces: ImmutableList<SpaceRoom>,
     selectedSpace: SpaceRoom?,
     onSelectSpace: (SpaceRoom?) -> Unit,
@@ -126,13 +154,26 @@ private fun SelectParentSpaceBottomSheet(
             ListItem(
                 headlineContent = {
                     Text(
-                        text = stringResource(R.string.screen_create_room_space_selection_no_space_option),
+                        stringResource(R.string.screen_create_room_space_selection_no_space_title),
                         maxLines = 1
                     )
                 },
-                trailingContent = ListItemContent.RadioButton(
-                    selected = selectedSpace == null
+                supportingContent = {
+                    Text(
+                        stringResource(R.string.screen_create_room_space_selection_no_space_description),
+                        maxLines = 1
+                    )
+                },
+                leadingContent = ListItemContent.Icon(
+                    IconSource.Vector(CompoundIcons.Home())
                 ),
+                trailingContent = ListItemContent.Custom { enabled ->
+                    RadioCheckbox(
+                        selected = selectedSpace == null,
+                        enabled = enabled,
+                        onClick = { onSelectSpace(null) },
+                    )
+                },
                 onClick = { onSelectSpace(null) },
             )
         }
@@ -141,34 +182,36 @@ private fun SelectParentSpaceBottomSheet(
                 ListItem(
                     headlineContent = {
                         Text(
-                            text = space.displayName,
+                            space.displayName,
                             maxLines = 1
                         )
                     },
-                    supportingContent = space.canonicalAlias?.let { alias ->
-                        {
-                            Text(
-                                text = alias.value,
-                                maxLines = 1
-                            )
-                        }
+                    supportingContent = {
+                        Text(
+                            space.canonicalAlias?.value.orEmpty(),
+                            maxLines = 1
+                        )
                     },
                     leadingContent = ListItemContent.Custom({
-                        val avatarData =
-                            AvatarData(
-                                id = space.roomId.value,
-                                name = space.displayName,
-                                url = space.avatarUrl,
-                                size = AvatarSize.SelectParentSpace,
+                            val avatarData =
+                                AvatarData(
+                                    id = space.roomId.value,
+                                    name = space.displayName,
+                                    url = space.avatarUrl,
+                                    size = AvatarSize.SelectParentSpace,
+                                )
+                            Avatar(
+                                avatarData = avatarData,
+                                avatarType = AvatarType.Space()
                             )
-                        Avatar(
-                            avatarData = avatarData,
-                            avatarType = AvatarType.Space()
+                        }),
+                    trailingContent = ListItemContent.Custom { enabled ->
+                        RadioCheckbox(
+                            selected = selectedSpace == space,
+                            enabled = enabled,
+                            onClick = { onSelectSpace(space) },
                         )
-                    }),
-                    trailingContent = ListItemContent.RadioButton(
-                        selected = selectedSpace == space
-                    ),
+                    },
                     onClick = { onSelectSpace(space) },
                 )
             }
@@ -176,6 +219,11 @@ private fun SelectParentSpaceBottomSheet(
     }
 }
 
+/**
+ * 选择父空间底部面板预览
+ *
+ * 用于预览模式下展示选择父空间面板的效果
+ */
 @PreviewsDayNight
 @Composable
 internal fun SelectParentSpaceBottomSheetPreview() =
@@ -187,8 +235,7 @@ internal fun SelectParentSpaceBottomSheetPreview() =
                         canonicalAlias = RoomAlias(
                             "#a-room-alias:example.org"
                         )
-                    ),
-                    aSpaceRoom()
+                    )
                 ),
                 selectedSpace = null,
             ) {}

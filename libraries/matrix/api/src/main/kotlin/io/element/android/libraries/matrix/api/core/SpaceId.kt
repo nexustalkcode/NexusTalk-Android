@@ -9,3 +9,8 @@
 package io.element.android.libraries.matrix.api.core
 
 typealias SpaceId = RoomId
+
+/**
+ * Value to use when no space is selected by the user.
+ */
+val MAIN_SPACE = SpaceId("!mainSpace:local")

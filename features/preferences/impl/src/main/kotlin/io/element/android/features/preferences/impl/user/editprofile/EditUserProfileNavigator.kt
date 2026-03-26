@@ -7,6 +7,10 @@
 
 package io.element.android.features.preferences.impl.user.editprofile
 
+/**
+ * 编辑用户资料导航器接口
+ */
 interface EditUserProfileNavigator {
+    /** 关闭编辑页面 */
     fun close()
 }

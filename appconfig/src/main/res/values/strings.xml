@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 基础 app_name，实际值由 build.gradle.kts 中的 resValue 覆盖 -->
+    <string name="app_name">NexusTalk</string>
+</resources>

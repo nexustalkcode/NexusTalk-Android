@@ -1,3 +1,0 @@
-- Update codebase to Element X v0.4.16
-- Experimental option to show jump-to-unread button
-- Fix possible crash when modifying spaces externally

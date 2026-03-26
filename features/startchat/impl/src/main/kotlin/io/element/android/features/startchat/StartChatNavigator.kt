@@ -16,13 +16,19 @@ import io.element.android.libraries.architecture.overlay.Overlay
 import io.element.android.libraries.architecture.overlay.operation.hide
 import io.element.android.libraries.architecture.overlay.operation.show
 import io.element.android.libraries.matrix.api.core.RoomIdOrAlias
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 interface StartChatNavigator : Plugin {
+    val isStartChatVisible: StateFlow<Boolean>
     fun onRoomCreated(roomIdOrAlias: RoomIdOrAlias, serverNames: List<String>)
     fun onCreateNewRoom()
     fun onShowJoinRoomByAddress()
     fun onDismissJoinRoomByAddress()
     fun onOpenRoomDirectory()
+    fun onShowScanUserQrCode()
+    fun hideStartChat()
 }
 
 class DefaultStartChatNavigator(
@@ -31,13 +37,17 @@ class DefaultStartChatNavigator(
     private val openRoom: (RoomIdOrAlias, List<String>) -> Unit,
     private val openRoomDirectory: () -> Unit,
 ) : StartChatNavigator {
+    private val startChatVisible = MutableStateFlow(true)
+
+    override val isStartChatVisible: StateFlow<Boolean> = startChatVisible.asStateFlow()
+
     override fun onRoomCreated(roomIdOrAlias: RoomIdOrAlias, serverNames: List<String>) =
         openRoom(roomIdOrAlias, serverNames)
 
     override fun onOpenRoomDirectory() = openRoomDirectory()
 
     override fun onCreateNewRoom() {
-        backstack.push(NavTarget.NewRoom)
+        overlay.show(NavTarget.NewRoom)
     }
 
     override fun onShowJoinRoomByAddress() {
@@ -46,5 +56,13 @@ class DefaultStartChatNavigator(
 
     override fun onDismissJoinRoomByAddress() {
         overlay.hide()
+    }
+
+    override fun onShowScanUserQrCode() {
+        overlay.show(NavTarget.ScanUserQrCode)
+    }
+
+    override fun hideStartChat() {
+        startChatVisible.value = false
     }
 }

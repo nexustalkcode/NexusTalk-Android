@@ -8,7 +8,15 @@
 
 package io.element.android.features.securebackup.impl.reset.root
 
+/**
+ * 重置身份根页面状态数据类
+ *
+ * @property displayConfirmationDialog 是否显示确认对话框
+ * @property eventSink 事件处理函数
+ */
 data class ResetIdentityRootState(
+    /** 是否显示确认对话框 */
     val displayConfirmationDialog: Boolean,
+    /** 事件处理函数 */
     val eventSink: (ResetIdentityRootEvent) -> Unit,
 )

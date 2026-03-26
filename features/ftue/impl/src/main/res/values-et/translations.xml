@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Sa võid seadistusi hiljem alati muuta."</string>
   <string name="screen_notification_optin_title">"Luba teavitused ja kunagi ei jää sul sõnumid märkamata"</string>
   <string name="screen_session_verification_enter_recovery_key">"Sisesta taastevõti"</string>
+  <string name="screen_welcome_agreement">"Vajutades Nõustu ja jätka, nõustud meie %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Privaatsuspoliitika"</string>
+  <string name="screen_welcome_title">"Tere tulemast %s"</string>
+  <string name="screen_welcome_privacy_notice">"Palun loe meie Privaatsuspoliitikat"</string>
+  <string name="screen_welcome_agree">"Nõustu"</string>
 </resources>

@@ -43,6 +43,8 @@
   <string name="screen_edit_profile_error">"Ein unbekannter Fehler ist aufgetreten und die Informationen konnten nicht geändert werden."</string>
   <string name="screen_edit_profile_error_title">"Profil kann nicht aktualisiert werden"</string>
   <string name="screen_edit_profile_title">"Profil bearbeiten"</string>
+  <string name="screen_edit_profile_change_avatar">"Avatar ändern"</string>
+  <string name="screen_edit_profile_username">"Benutzername"</string>
   <string name="screen_edit_profile_updating_details">"Profil wird aktualisiert…"</string>
   <string name="screen_labs_enable_threads">"Thread-Antworten aktivieren"</string>
   <string name="screen_labs_enable_threads_description">"Die App wird neu gestartet, um diese Änderung zu übernehmen."</string>
@@ -76,6 +78,8 @@ Wenn du fortfährst, können sich einige deiner Einstellungen ändern."</string>
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"Systemeinstellungen"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Systembenachrichtigungen deaktiviert"</string>
   <string name="screen_notification_settings_title">"Benachrichtigungen"</string>
+  <string name="screen_preferences_section_customization">"Anpassung"</string>
+  <string name="screen_preferences_section_security">"Sicherheit"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Verlauf pushen"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Fehlerbehebung"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Fehlerbehebung für Benachrichtigungen"</string>

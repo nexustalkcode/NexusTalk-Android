@@ -2,4 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_create_room_action_create_room">"Naujas kambarys"</string>
   <string name="screen_start_chat_error_starting_chat">"Bandant pradėti pokalbį įvyko klaida"</string>
+  <string name="screen_scan_user_qr_code_title">"Nuskaityti QR kodą"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Nuskaitykite QR kodą, kad pridėtumėte kontaktą"</string>
+  <string name="screen_scan_user_qr_code_success">"QR kodas sėkmingai nuskaitytas"</string>
 </resources>

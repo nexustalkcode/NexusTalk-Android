@@ -9,35 +9,80 @@
 package io.element.android.features.home.impl.filters
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import dev.zacsweers.metro.Inject
 import io.element.android.features.home.impl.filters.selection.FilterSelectionStrategy
 import io.element.android.libraries.architecture.Presenter
+import io.element.android.libraries.matrix.api.roomlist.RoomListService
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.map
+import io.element.android.libraries.matrix.api.roomlist.RoomListFilter as MatrixRoomListFilter
 
+/**
+ * 房间列表过滤器 Presenter
+ *
+ * 负责处理房间列表过滤器功能的业务逻辑和状态管理。
+ * 管理房间筛选条件的设置和过滤器的应用。
+ *
+ * @property roomListService 房间列表服务
+ * @property filterSelectionStrategy 过滤器选择策略
+ */
 @Inject
 class RoomListFiltersPresenter(
+    private val roomListService: RoomListService,
     private val filterSelectionStrategy: FilterSelectionStrategy,
 ) : Presenter<RoomListFiltersState> {
+    private val initialFilters = filterSelectionStrategy.filterSelectionStates.value.toImmutableList()
+
+    /**
+     * 生成界面状态
+     *
+     * @return RoomListFiltersState 房间列表过滤器状态
+     */
     @Composable
     override fun present(): RoomListFiltersState {
-        fun handleEvent(event: RoomListFiltersEvent) {
+        /**
+         * 处理用户事件
+         *
+         * @param event 房间列表过滤器事件
+         */
+        fun handleEvent(event: RoomListFiltersEvents) {
             when (event) {
-                RoomListFiltersEvent.ClearSelectedFilters -> {
+                RoomListFiltersEvents.ClearSelectedFilters -> {
                     filterSelectionStrategy.clear()
                 }
-                is RoomListFiltersEvent.ToggleFilter -> {
+                is RoomListFiltersEvents.ToggleFilter -> {
                     filterSelectionStrategy.toggle(event.filter)
                 }
             }
         }
 
-        ScClearRoomFiltersEffect(filterSelectionStrategy)
+        val filters by produceState(initialValue = initialFilters) {
+            filterSelectionStrategy.filterSelectionStates
+                .map { filters ->
+                    value = filters.toImmutableList()
+                    filters.mapNotNull { filterState ->
+                        if (!filterState.isSelected) {
+                            return@mapNotNull null
+                        }
+                        when (filterState.filter) {
+                            RoomListFilter.Rooms -> MatrixRoomListFilter.Category.Group
+                            RoomListFilter.People -> MatrixRoomListFilter.Category.People
+                            RoomListFilter.Unread -> MatrixRoomListFilter.Unread
+                            RoomListFilter.Favourites -> MatrixRoomListFilter.Favorite
+                            RoomListFilter.Invites -> MatrixRoomListFilter.Invite
+                        }
+                    }
+                }
+                .collect { filters ->
+                    val result = MatrixRoomListFilter.All(filters)
+                    roomListService.allRooms.updateFilter(result)
+                }
+        }
 
-        val filters by filterSelectionStrategy.filterSelectionStates.collectAsState()
         return RoomListFiltersState(
-            filterSelectionStates = filters.toImmutableList(),
+            filterSelectionStates = filters,
             eventSink = ::handleEvent,
         )
     }

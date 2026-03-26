@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 带标签文本分子组件
+ *
+ * 用于显示标签和对应文本的垂直组合。
+ * 标签使用次要文字颜色和较小字号，文本使用主要文字颜色和标准字号。
+ * 常用于表单字段、详情列表等需要标签说明的场景。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.molecules
 
 import androidx.compose.foundation.layout.Column
@@ -17,13 +28,31 @@ import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.designsystem.theme.components.Text
 
 /**
- * Display a label and a text in a column.
- * @param label the label to display
- * @param text the text to display
- * @param modifier the modifier to apply to this layout
- * @param spellText if true, the text will be spelled out in the content description for accessibility.
- * Useful for deviceId for instance, that the screen reader will read as a list of letters instead of trying to read a
- * word of random characters.
+ * 带标签文本组件
+ *
+ * 创建一个垂直排列的标签和文本组合。
+ * 标签显示在文本上方，使用次要文字颜色和较小字号。
+ * 支持特殊无障碍处理，可逐字符朗读文本内容。
+ *
+ * @param label String 标签文本内容，显示在文本上方
+ * @param text String 主体文本内容，显示在标签下方
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ * @param spellText Boolean 是否逐字符朗读文本（用于无障碍），默认为 false。设置为 true 时，屏幕阅读器会将文本逐字符朗读，而非整体单词
+ *
+ * @return Unit
+ *
+ * @see [ElementTheme.typography.fontBodySmRegular] 标签文本样式
+ * @see [ElementTheme.typography.fontBodyMdRegular] 主体文本样式
+ * @see [ElementTheme.colors.textSecondary] 标签文字颜色
+ * @see [ElementTheme.colors.textPrimary] 主体文字颜色
+ *
+ * @example
+ * ```kotlin
+ * TextWithLabelMolecule(
+ *     label = "用户名",
+ *     text = "user123"
+ * )
+ * ```
  */
 @Composable
 fun TextWithLabelMolecule(

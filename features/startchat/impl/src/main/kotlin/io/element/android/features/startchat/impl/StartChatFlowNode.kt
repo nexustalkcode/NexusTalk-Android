@@ -26,11 +26,14 @@ import io.element.android.features.startchat.DefaultStartChatNavigator
 import io.element.android.features.startchat.api.StartChatEntryPoint
 import io.element.android.features.startchat.impl.joinbyaddress.JoinRoomByAddressNode
 import io.element.android.features.startchat.impl.root.StartChatNode
+import io.element.android.features.startchat.impl.scanuser.ScanUserQrCodeNode
+import io.element.android.features.startchat.impl.userlist.UserListDataStore
 import io.element.android.libraries.architecture.BackstackView
 import io.element.android.libraries.architecture.BaseFlowNode
 import io.element.android.libraries.architecture.OverlayView
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.architecture.createNode
+import io.element.android.libraries.architecture.overlay.operation.hide
 import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.toRoomIdOrAlias
@@ -42,6 +45,7 @@ class StartChatFlowNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val createRoomEntryPoint: CreateRoomEntryPoint,
+    private val userListDataStore: UserListDataStore,
 ) : BaseFlowNode<StartChatFlowNode.NavTarget>(
     backstack = BackStack(
         initialElement = NavTarget.Root,
@@ -59,6 +63,9 @@ class StartChatFlowNode(
 
         @Parcelize
         data object JoinByAddress : NavTarget
+
+        @Parcelize
+        data object ScanUserQrCode : NavTarget
     }
 
     private val callback: StartChatEntryPoint.Callback = callback()
@@ -77,20 +84,36 @@ class StartChatFlowNode(
             NavTarget.NewRoom -> {
                 val callback = object : CreateRoomEntryPoint.Callback {
                     override fun onRoomCreated(roomId: RoomId) {
+                        overlay.hide()
                         navigator.onRoomCreated(roomId.toRoomIdOrAlias(), emptyList())
                     }
                 }
-                createRoomEntryPoint
-                    .builder(
-                        parentNode = this,
-                        buildContext = buildContext,
-                        callback = callback,
-                    )
-                    .setIsSpace(false)
-                    .build()
+                val addPeopleCallback = object : CreateRoomEntryPoint.AddPeopleCallback {
+                    override fun onAddPeopleShown(roomId: RoomId) {
+                        navigator.hideStartChat()
+                    }
+                }
+                createRoomEntryPoint.createNode(
+                    isSpace = false,
+                    parentNode = this,
+                    buildContext = buildContext,
+                    callback = callback,
+                    addPeopleCallback = addPeopleCallback,
+                )
             }
             NavTarget.JoinByAddress -> {
                 createNode<JoinRoomByAddressNode>(buildContext = buildContext, plugins = listOf(navigator))
+            }
+            NavTarget.ScanUserQrCode -> {
+                val callback = object : ScanUserQrCodeNode.Callback {
+                    override fun onUserIdScanned(userId: String) {
+                        userListDataStore.setInitialQuery(userId)
+                    }
+                }
+                createNode<ScanUserQrCodeNode>(
+                    buildContext = buildContext,
+                    plugins = listOf(navigator, callback)
+                )
             }
         }
     }

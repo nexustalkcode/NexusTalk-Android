@@ -23,10 +23,31 @@ import io.element.android.services.appnavstate.api.ActiveRoomsHolder
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 
+/**
+ * 清除缓存用例接口
+ */
 interface ClearCacheUseCase {
+    /**
+     * 清除应用缓存
+     */
     suspend operator fun invoke()
 }
 
+/**
+ * 默认清除缓存用例实现
+ *
+ * 负责清除各种应用缓存，包括 Matrix 缓存、图像缓存、HTTP 缓存等，
+ * 并在完成后通知应用缓存已被清除以便重启。
+ *
+ * @property context 应用上下文
+ * @property matrixClient Matrix 客户端
+ * @property coroutineDispatchers 协程调度器
+ * @property defaultCacheService 默认缓存服务
+ * @property okHttpClient OkHttp 客户端提供者
+ * @property pushService 推送服务
+ * @property seenInvitesStore 已查看邀请存储
+ * @property activeRoomsHolder 活动房间持有者
+ */
 @ContributesBinding(SessionScope::class)
 class DefaultClearCacheUseCase(
     @ApplicationContext private val context: Context,

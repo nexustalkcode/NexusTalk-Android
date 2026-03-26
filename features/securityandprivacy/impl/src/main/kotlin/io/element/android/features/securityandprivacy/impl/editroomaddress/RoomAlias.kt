@@ -11,14 +11,22 @@ package io.element.android.features.securityandprivacy.impl.editroomaddress
 import io.element.android.libraries.matrix.api.core.RoomAlias
 
 /**
- * Returns the local part of the alias.
+ * 获取房间别名的本地部分
+ *
+ * 从完整别名中提取本地名称部分（不含服务器地址）。
+ * 例如：从 "#room:example.com" 中提取 "room"
+ *
+ * @return 房间别名的本地名称部分
  */
 fun RoomAlias.addressName(): String {
     return value.drop(1).split(":").first()
 }
 
 /**
- * Checks if the room alias matches the given server name.
+ * 检查房间别名是否匹配给定的服务器名称
+ *
+ * @param serverName 服务器名称（如 "example.com"）
+ * @return Boolean 是否匹配
  */
 fun RoomAlias.matchesServer(serverName: String): Boolean {
     return value.split(":").last() == serverName

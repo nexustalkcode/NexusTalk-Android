@@ -249,60 +249,6 @@ class RustBaseRoom(
         }
     }
 
-    // SC start
-    override suspend fun addSpaceChild(childId: RoomId): Result<Unit> {
-        return runCatching {
-            innerRoom.addSpaceChild(childId.value)
-        }
-    }
-    override suspend fun removeSpaceChild(childId: RoomId): Result<Unit> {
-        return runCatching {
-            innerRoom.removeSpaceChild(childId.value)
-        }
-    }
-    override suspend fun setIsLowPriority(isLowPriority: Boolean): Result<Unit> = withContext(roomDispatcher) {
-        runCatching {
-            innerRoom.setIsLowPriority(isLowPriority, null)
-        }
-    }
-    override suspend fun forceSendSingleReadReceipt(receiptType: ReceiptType, eventId: EventId): Result<Unit> = withContext(roomDispatcher) {
-        runCatchingExceptions {
-            innerRoom.forceSendSingleReceipt(receiptType.toRustReceiptType(), eventId.value)
-        }
-    }
-    override suspend fun sendRaw(eventType: String, content: String) = withContext(roomDispatcher) {
-        runCatchingExceptions {
-            innerRoom.sendRaw(eventType, content)
-        }
-    }
-    override suspend fun sendRawState(eventType: String, stateKey: String, content: String) = withContext(roomDispatcher) {
-        runCatchingExceptions {
-            innerRoom.sendStateEventRaw(eventType, stateKey, content)
-        }
-    }
-    override suspend fun getRawState(eventType: String, stateKey: String) = withContext(roomDispatcher) {
-        runCatchingExceptions {
-            innerRoom.getStateEventRaw(eventType, stateKey)
-        }
-    }
-    override suspend fun getRawState(eventType: String) = withContext(roomDispatcher) {
-        runCatchingExceptions {
-            innerRoom.getStateEventsRaw(eventType)
-        }
-    }
-    override suspend fun fetchFullRoomState(): Result<List<String>> = withContext(roomDispatcher) {
-        runCatchingExceptions {
-            innerRoom.fetchFullRoomState()
-        }
-    }
-
-    override suspend fun setRoomUserDisplayName(displayName: String?): Result<Unit> = withContext(roomDispatcher) {
-        runCatchingExceptions {
-            innerRoom.setUserDisplayname(displayName)
-        }
-    }
-    // SC end
-
     override suspend fun saveComposerDraft(composerDraft: ComposerDraft, threadRoot: ThreadId?): Result<Unit> = withContext(roomDispatcher) {
         runCatchingExceptions {
             Timber.d("saveComposerDraft: $composerDraft into $roomId for thread root: $threadRoot")

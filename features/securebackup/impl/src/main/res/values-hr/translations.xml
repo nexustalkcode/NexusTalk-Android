@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Brisanje pohrane ključeva"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Uključivanje sigurnosnog kopiranja"</string>
-  <string name="screen_chat_backup_key_backup_description">"Sigurno pohranite svoj kriptografski identitet i ključeve poruka na poslužitelju. To će vam omogućiti pregled povijesti poruka na svim novim uređajima. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Sigurno pohranite svoj kriptografski identitet i ključeve poruka na poslužitelju. To će vam omogućiti pregled povijesti poruka na svim novim uređajima. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Pohrana ključeva"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"Za postavljanje oporavka mora biti uključena pohrana ključeva."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Prenesi ključeve s ovog uređaja"</string>

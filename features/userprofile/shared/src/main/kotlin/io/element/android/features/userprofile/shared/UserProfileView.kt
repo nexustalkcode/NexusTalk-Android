@@ -8,12 +8,15 @@
 
 package io.element.android.features.userprofile.shared
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.startchat.api.ConfirmingStartDmWithMatrixUser
 import io.element.android.features.userprofile.api.UserProfileEvents
@@ -34,6 +38,8 @@ import io.element.android.libraries.designsystem.components.button.BackButton
 import io.element.android.libraries.designsystem.components.list.ListItemContent
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
+import io.element.android.libraries.designsystem.theme.components.CenteredTitleTopBar
+import io.element.android.libraries.designsystem.theme.components.HorizontalDivider
 import io.element.android.libraries.designsystem.theme.components.IconSource
 import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.Scaffold
@@ -43,7 +49,6 @@ import io.element.android.libraries.designsystem.utils.snackbar.SnackbarHost
 import io.element.android.libraries.designsystem.utils.snackbar.rememberSnackbarHostState
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.UserId
-import io.element.android.libraries.matrix.api.notification.CallIntent
 import io.element.android.libraries.matrix.ui.components.CreateDmConfirmationBottomSheet
 import io.element.android.libraries.ui.strings.CommonStrings
 
@@ -53,7 +58,7 @@ fun UserProfileView(
     state: UserProfileState,
     onShareUser: () -> Unit,
     onOpenDm: (RoomId) -> Unit,
-    onStartCall: (RoomId, CallIntent) -> Unit,
+    onStartCall: (RoomId) -> Unit,
     goBack: () -> Unit,
     openAvatarPreview: (username: String, url: String) -> Unit,
     onVerifyClick: (UserId) -> Unit,
@@ -62,16 +67,20 @@ fun UserProfileView(
     val snackbarHostState = rememberSnackbarHostState(snackbarMessage = state.snackbarMessage)
     Scaffold(
         modifier = modifier,
+        containerColor = ElementTheme.colors.bgSubtleSecondary,
         topBar = {
-            TopAppBar(title = { }, navigationIcon = { BackButton(onClick = goBack) })
+            CenteredTitleTopBar(
+                title = "",
+                onBackClick = goBack,
+            )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { padding ->
         Column(
             modifier = Modifier
-                    .padding(padding)
-                    .consumeWindowInsets(padding)
-                    .verticalScroll(rememberScrollState())
+                .padding(padding)
+                .consumeWindowInsets(padding)
+                .verticalScroll(rememberScrollState())
         ) {
             UserProfileHeaderSection(
                 avatarUrl = state.avatarUrl,
@@ -91,12 +100,20 @@ fun UserProfileView(
                 canCall = state.canCall,
                 onShareUser = onShareUser,
                 onStartDM = { state.eventSink(UserProfileEvents.StartDM) },
-                onCall = { intent -> state.dmRoomId?.let { onStartCall(it, intent) } }
+                onCall = { state.dmRoomId?.let { onStartCall(it) } }
             )
             Spacer(modifier = Modifier.height(26.dp))
             if (!state.isCurrentUser) {
                 VerifyUserSection(state, onVerifyClick = { onVerifyClick(state.userId) })
-                BlockUserSection(state)
+                Spacer(modifier = Modifier.height(16.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+                ) {
+                    BlockUserSection(state)
+                }
                 BlockUserDialogs(state)
             }
             AsyncActionView(
@@ -134,11 +151,19 @@ private fun VerifyUserSection(
     onVerifyClick: () -> Unit,
 ) {
     if (state.verificationState == UserProfileVerificationState.UNVERIFIED) {
-        ListItem(
-            headlineContent = { Text(stringResource(CommonStrings.common_verify_user)) },
-            leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Lock())),
-            onClick = onVerifyClick,
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+        ) {
+            ListItem(
+                headlineContent = { Text(stringResource(CommonStrings.common_verify_user)) },
+                leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Lock())),
+                trailingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
+                onClick = onVerifyClick,
+            )
+        }
     }
 }
 
@@ -152,7 +177,7 @@ internal fun UserProfileViewPreview(
         onShareUser = {},
         goBack = {},
         onOpenDm = {},
-        onStartCall = { _, _ -> },
+        onStartCall = {},
         openAvatarPreview = { _, _ -> },
         onVerifyClick = {},
     )

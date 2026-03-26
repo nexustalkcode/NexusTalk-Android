@@ -4,6 +4,7 @@
   <string name="confirm_recovery_key_banner_primary_button_title">"Въведете ключа си за възстановяване"</string>
   <string name="confirm_recovery_key_banner_title">"Хранилището ви за ключове не е синхронизирано"</string>
   <string name="screen_home_tab_chats">"Всички чатове"</string>
+  <string name="screen_home_tab_community">"Общност"</string>
   <string name="screen_home_tab_spaces">"Пространства"</string>
   <string name="screen_invites_decline_chat_message">"Сигурни ли сте, че искате да отхвърлите поканата за присъединяване в %1$s?"</string>
   <string name="screen_invites_decline_chat_title">"Отказване на покана"</string>
@@ -36,4 +37,9 @@
   <string name="screen_roomlist_mark_as_unread">"Отбелязване като непрочетено"</string>
   <string name="session_verification_banner_message">"Изглежда, че използвате ново устройство. Потвърдете с друго устройство за достъп до вашите шифровани съобщения."</string>
   <string name="session_verification_banner_title">"Потвърдете, че сте вие"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Общностите обединяват членовете в групи по теми. Всички общности, към които се присъедините, ще се показват тук."</string>
+  <string name="screen_community_list_header_count">"%1$d Общност"</string>
+  <string name="screen_community_list_header_description">"Общности, които създавате или към които се присъединявате"</string>
+  <string name="screen_roomlist_empty_message_new">"Това място ще принадлежи само на вас и най-близките ви хора"</string>
 </resources>

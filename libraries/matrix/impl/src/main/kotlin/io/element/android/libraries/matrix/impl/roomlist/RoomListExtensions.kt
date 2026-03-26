@@ -9,7 +9,6 @@
 package io.element.android.libraries.matrix.impl.roomlist
 
 import io.element.android.libraries.core.data.tryOrNull
-import io.element.android.libraries.matrix.api.roomlist.ScSdkInboxSettings
 import io.element.android.libraries.matrix.impl.util.cancelAndDestroy
 import io.element.android.libraries.matrix.impl.util.mxCallbackFlow
 import kotlinx.coroutines.channels.Channel
@@ -19,8 +18,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.matrix.rustcomponents.sdk.Room
-import org.matrix.rustcomponents.sdk.RoomListDynamicEntriesController
 import org.matrix.rustcomponents.sdk.RoomListEntriesDynamicFilterKind
 import org.matrix.rustcomponents.sdk.RoomListEntriesListener
 import org.matrix.rustcomponents.sdk.RoomListEntriesUpdate
@@ -57,9 +57,8 @@ fun RoomListInterface.loadingStateFlow(): Flow<RoomListLoadingState> =
 
 internal fun RoomListInterface.entriesFlow(
     pageSize: Int,
-    initialFilterKind: RoomListEntriesDynamicFilterKind,
-    initialInboxSettings: ScSdkInboxSettings? = null,
-    onControllerCreated: (RoomListDynamicEntriesController) -> Unit,
+    roomListDynamicEvents: Flow<RoomListDynamicEvents>,
+    initialFilterKind: RoomListEntriesDynamicFilterKind
 ): Flow<List<RoomListEntriesUpdate>> =
     callbackFlow {
         val listener = object : RoomListEntriesListener {
@@ -73,12 +72,20 @@ internal fun RoomListInterface.entriesFlow(
             listener = listener,
         )
         val controller = result.controller()
-        if (initialInboxSettings == null) {
-            controller.setFilter(initialFilterKind)
-        } else {
-            controller.setScInboxSettings(initialFilterKind, initialInboxSettings.toSdkSettings())
-        }
-        onControllerCreated(controller)
+        controller.setFilter(initialFilterKind)
+        roomListDynamicEvents.onEach { controllerEvents ->
+            when (controllerEvents) {
+                is RoomListDynamicEvents.SetFilter -> {
+                    controller.setFilter(controllerEvents.filter)
+                }
+                is RoomListDynamicEvents.LoadMore -> {
+                    controller.addOnePage()
+                }
+                is RoomListDynamicEvents.Reset -> {
+                    controller.resetToOnePage()
+                }
+            }
+        }.launchIn(this)
         awaitClose {
             result.entriesStream().cancelAndDestroy()
             controller.destroy()

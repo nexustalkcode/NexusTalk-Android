@@ -20,6 +20,6 @@ dependencies {
     implementation(projects.libraries.matrixui)
     implementation(projects.libraries.designsystem)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
 }

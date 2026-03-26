@@ -18,10 +18,28 @@ import io.element.android.libraries.di.annotations.ApplicationContext
 import io.element.android.libraries.matrix.api.MatrixClient
 import kotlinx.coroutines.withContext
 
+/**
+ * 计算缓存大小用例接口
+ */
 interface ComputeCacheSizeUseCase {
+    /**
+     * 计算当前缓存大小
+     *
+     * @return 格式化的缓存大小字符串
+     */
     suspend operator fun invoke(): String
 }
 
+/**
+ * 默认计算缓存大小用例实现
+ *
+ * 负责计算应用当前使用的缓存总大小，包括 Matrix 缓存和应用缓存目录。
+ *
+ * @property context 应用上下文
+ * @property matrixClient Matrix 客户端
+ * @property coroutineDispatchers 协程调度器
+ * @property fileSizeFormatter 文件大小格式化器
+ */
 @ContributesBinding(SessionScope::class)
 class DefaultComputeCacheSizeUseCase(
     @ApplicationContext private val context: Context,

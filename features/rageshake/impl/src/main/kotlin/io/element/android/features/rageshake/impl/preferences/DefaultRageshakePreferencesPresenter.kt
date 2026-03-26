@@ -27,6 +27,19 @@ import io.element.android.features.rageshake.impl.rageshake.RageshakeDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 默认摇一摇反馈偏好设置 Presenter
+ *
+ * 负责处理摇一摇反馈偏好设置页面的业务逻辑，包括：
+ * - 获取摇一摇功能是否可用
+ * - 获取功能是否已启用
+ * - 获取和设置摇一摇灵敏度
+ *
+ * @property rageshake 摇一摇反馈服务
+ * @property rageshakeDataStore 摇一摇反馈数据存储
+ * @property rageshakeFeatureAvailability 摇一摇功能可用性
+ * @see RageshakePreferencesState 摇一摇反馈偏好设置状态
+ */
 @ContributesBinding(AppScope::class)
 class DefaultRageshakePreferencesPresenter(
     private val rageshake: RageShake,

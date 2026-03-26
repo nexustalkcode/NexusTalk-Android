@@ -22,6 +22,16 @@ import io.element.android.appconfig.LearnMoreConfig
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 安全备份根节点
+ *
+ * 负责显示安全备份根页面的节点。
+ * 页面展示安全备份的当前状态，并提供设置、更改、禁用、输入恢复密钥等操作入口。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenter 安全备份根页面业务逻辑处理 presenter
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class SecureBackupRootNode(
@@ -32,10 +42,20 @@ class SecureBackupRootNode(
     buildContext = buildContext,
     plugins = plugins
 ) {
+    /**
+     * 安全备份根页面回调接口
+     */
     interface Callback : Plugin {
+        /** 导航到设置恢复密钥页面 */
         fun navigateToSetup()
+
+        /** 导航到更改恢复密钥页面 */
         fun navigateToChange()
+
+        /** 导航到禁用安全备份页面 */
         fun navigateToDisable()
+
+        /** 导航到输入恢复密钥页面 */
         fun navigateToEnterRecoveryKey()
     }
 

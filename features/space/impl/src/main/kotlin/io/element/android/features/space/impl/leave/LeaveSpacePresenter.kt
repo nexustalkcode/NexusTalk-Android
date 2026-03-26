@@ -69,7 +69,7 @@ class LeaveSpacePresenter(
             // By default select all rooms that can be left
             val otherRoomsExcludingDm = otherRooms.filter { it.spaceRoom.isDirect != true }
             selectedRoomIds = otherRoomsExcludingDm
-                .filter { it.isLastOwner.not() }
+                .filter { it.isLastAdmin.not() }
                 .map { it.spaceRoom.roomId }
             leaveSpaceRooms = rooms.fold(
                 onSuccess = {
@@ -91,8 +91,7 @@ class LeaveSpacePresenter(
                 it.others.map { room ->
                     SelectableSpaceRoom(
                         spaceRoom = room.spaceRoom,
-                        isLastOwner = room.isLastOwner,
-                        joinedMembersCount = room.spaceRoom.numJoinedMembers,
+                        isLastAdmin = room.isLastAdmin,
                         isSelected = selectedRoomIds.contains(room.spaceRoom.roomId),
                     )
                 }.toImmutableList()
@@ -111,7 +110,7 @@ class LeaveSpacePresenter(
                 LeaveSpaceEvents.SelectAllRooms -> {
                     selectedRoomIds = selectableSpaceRooms.dataOrNull()
                         .orEmpty()
-                        .filter { it.isLastOwner.not() }
+                        .filter { it.isLastAdmin.not() }
                         .map { it.spaceRoom.roomId }
                 }
                 is LeaveSpaceEvents.ToggleRoomSelection -> {
@@ -131,11 +130,9 @@ class LeaveSpacePresenter(
             }
         }
 
-        val currentSpaceToLeave = leaveSpaceRooms.dataOrNull()?.current
         return LeaveSpaceState(
-            spaceName = currentSpaceToLeave?.spaceRoom?.displayName,
-            needsOwnerChange = currentSpaceToLeave?.let { it.spaceRoom.numJoinedMembers > 1 && it.isLastOwner } == true,
-            areCreatorsPrivileged = currentSpaceToLeave?.areCreatorsPrivileged == true,
+            spaceName = leaveSpaceRooms.dataOrNull()?.current?.spaceRoom?.displayName,
+            isLastAdmin = leaveSpaceRooms.dataOrNull()?.current?.isLastAdmin == true,
             selectableSpaceRooms = selectableSpaceRooms,
             leaveSpaceAction = leaveSpaceAction.value,
             eventSink = ::handleEvent,

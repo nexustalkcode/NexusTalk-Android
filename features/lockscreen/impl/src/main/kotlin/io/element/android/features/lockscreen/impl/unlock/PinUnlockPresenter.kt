@@ -32,6 +32,15 @@ import io.element.android.libraries.di.annotations.AppCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * PIN 解锁Presenter
+ *
+ * 负责管理 PIN 解锁界面的业务逻辑，包括：
+ * - PIN 码验证
+ * - 生物识别解锁
+ * - 错误处理
+ * - 退出登录处理
+ */
 @Inject
 class PinUnlockPresenter(
     private val pinCodeManager: PinCodeManager,

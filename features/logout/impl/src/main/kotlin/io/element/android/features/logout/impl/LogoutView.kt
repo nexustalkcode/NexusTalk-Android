@@ -41,6 +41,20 @@ import io.element.android.libraries.testtags.TestTags
 import io.element.android.libraries.testtags.testTag
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 退出登录界面 Composable 组件
+ *
+ * 负责渲染退出登录界面的 UI，包含：
+ * - 标题和副标题（根据不同状态显示不同文案）
+ * - 备份上传进度显示
+ * - 退出登录按钮
+ * - 确认对话框
+ *
+ * @param state 退出登录界面的当前状态
+ * @param onChangeRecoveryKeyClick 点击"更改恢复密钥"按钮的回调
+ * @param onBackClick 点击返回按钮的回调
+ * @param modifier 样式修饰符
+ */
 @Composable
 fun LogoutView(
     state: LogoutState,
@@ -83,10 +97,18 @@ fun LogoutView(
     )
 }
 
+/**
+ * 根据当前状态计算退出登录界面的标题
+ *
+ * @param state 退出登录状态
+ * @return 标题字符串
+ */
 @Composable
 private fun title(state: LogoutState): String {
     return when {
+        // 备份正在进行中
         state.backupUploadState.isBackingUp() -> stringResource(id = R.string.screen_signout_key_backup_ongoing_title)
+        // 最后一个设备
         state.isLastDevice -> {
             if (state.recoveryState != RecoveryState.ENABLED) {
                 stringResource(id = R.string.screen_signout_recovery_disabled_title)
@@ -96,21 +118,39 @@ private fun title(state: LogoutState): String {
                 stringResource(id = R.string.screen_signout_save_recovery_key_title)
             }
         }
+        // 普通退出登录
         else -> stringResource(CommonStrings.action_signout)
     }
 }
 
+/**
+ * 根据当前状态计算退出登录界面的副标题
+ *
+ * @param state 退出登录状态
+ * @return 副标题字符串，如果没有副标题则返回 null
+ */
 @Composable
 private fun subtitle(state: LogoutState): String? {
     return when {
+        // 网络连接异常
         (state.backupUploadState as? BackupUploadState.SteadyException)?.exception is SteadyStateException.Connection ->
             stringResource(id = R.string.screen_signout_key_backup_offline_subtitle)
+        // 备份正在进行中
         state.backupUploadState.isBackingUp() -> stringResource(id = R.string.screen_signout_key_backup_ongoing_subtitle)
+        // 最后一个设备且备份未启用
         state.isLastDevice -> stringResource(id = R.string.screen_signout_key_backup_disabled_subtitle)
+        // 其他情况无副标题
         else -> null
     }
 }
 
+/**
+ * 渲染底部按钮区域
+ *
+ * @param state 退出登录状态
+ * @param onLogoutClick 点击退出登录按钮的回调
+ * @param onChangeRecoveryKeyClick 点击更改恢复密钥按钮的回调
+ */
 @Composable
 private fun ColumnScope.Buttons(
     state: LogoutState,
@@ -118,6 +158,7 @@ private fun ColumnScope.Buttons(
     onChangeRecoveryKeyClick: () -> Unit,
 ) {
     val logoutAction = state.logoutAction
+    // 如果是最后一个设备，显示设置按钮
     if (state.isLastDevice) {
         OutlinedButton(
             text = stringResource(id = CommonStrings.common_settings),
@@ -125,6 +166,7 @@ private fun ColumnScope.Buttons(
             onClick = onChangeRecoveryKeyClick,
         )
     }
+    // 根据状态决定按钮文字
     val signOutSubmitRes = when {
         logoutAction is AsyncAction.Loading -> R.string.screen_signout_in_progress_dialog_content
         state.backupUploadState.isBackingUp() -> CommonStrings.action_signout_anyway
@@ -141,6 +183,12 @@ private fun ColumnScope.Buttons(
     )
 }
 
+/**
+ * 渲染备份上传进度内容区域
+ *
+ * @param state 退出登录状态
+ * @param modifier 样式修饰符
+ */
 @Composable
 private fun Content(
     state: LogoutState,
@@ -153,6 +201,7 @@ private fun Content(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         when (state.backupUploadState) {
+            // 正在上传备份
             is BackupUploadState.Uploading -> {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
@@ -165,11 +214,13 @@ private fun Content(
                     style = ElementTheme.typography.fontBodySmRegular,
                 )
             }
+            // 等待备份上传
             BackupUploadState.Waiting -> {
                 LinearProgressIndicator(
                     modifier = Modifier.fillMaxWidth(),
                     trackColor = ElementTheme.colors.progressIndicatorTrackColor,
                 )
+                // 如果已等待很长时间，显示网络连接提示
                 if (state.waitingForALongTime) {
                     Text(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -178,6 +229,7 @@ private fun Content(
                     )
                 }
             }
+            // 其他状态不显示内容
             else -> Unit
         }
     }

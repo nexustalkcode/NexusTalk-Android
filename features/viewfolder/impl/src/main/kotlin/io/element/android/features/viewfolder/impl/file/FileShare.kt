@@ -23,18 +23,48 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 
+/**
+ * 文件分享接口
+ *
+ * 定义文件分享功能的接口，支持通过系统分享面板分享文件。
+ *
+ * @see DefaultFileShare 默认实现
+ */
 interface FileShare {
+    /**
+     * 分享文件
+     *
+     * @param path 要分享的文件路径
+     */
     suspend fun share(
         path: String
     )
 }
 
+/**
+ * FileShare 的默认实现
+ *
+ * 提供实际的文件分享功能，使用 FileProvider 生成内容 URI 并启动分享 Intent。
+ * 支持将文件分享给其他应用。
+ *
+ * @property context 应用上下文
+ * @property dispatchers 协程调度器
+ * @property buildMeta 构建元信息，用于生成 FileProvider 授权
+ * @see FileShare 文件分享接口
+ */
 @ContributesBinding(AppScope::class)
 class DefaultFileShare(
     @ApplicationContext private val context: Context,
     private val dispatchers: CoroutineDispatchers,
     private val buildMeta: BuildMeta,
 ) : FileShare {
+    /**
+     * 分享文件
+     *
+     * 使用系统分享面板分享文件，支持 MIME 类型为 application/octet-stream。
+     *
+     * @param path 要分享的文件路径
+     */
     override suspend fun share(
         path: String,
     ) {
@@ -57,6 +87,11 @@ class DefaultFileShare(
         }
     }
 
+    /**
+     * 将文件转换为可分享的 URI
+     *
+     * @return 文件的内容 URI
+     */
     private fun File.toShareableUri(): Uri {
         val authority = "${buildMeta.applicationId}.fileprovider"
         return FileProvider.getUriForFile(context, authority, this).normalizeScheme()

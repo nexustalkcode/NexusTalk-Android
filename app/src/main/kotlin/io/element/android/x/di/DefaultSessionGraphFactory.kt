@@ -13,6 +13,16 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.appnav.di.SessionGraphFactory
 import io.element.android.libraries.matrix.api.MatrixClient
 
+/**
+ * 默认的会话图工厂实现。
+ *
+ * 实现 SessionGraphFactory 接口，
+ * 负责创建用户会话级别的依赖注入图。
+ * 内部持有 AppGraph 实例，
+ * 通过调用 AppGraph.sessionGraphFactory.create() 方法创建 SessionGraph。
+ *
+ * 通过 @ContributesBinding 注解绑定到 AppScope。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultSessionGraphFactory(
     private val appGraph: AppGraph

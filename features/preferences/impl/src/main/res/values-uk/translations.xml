@@ -42,6 +42,8 @@
   <string name="screen_edit_profile_error">"Виявлена невідома помилка, і не вдалося змінити інформацію."</string>
   <string name="screen_edit_profile_error_title">"Неможливо оновити профіль"</string>
   <string name="screen_edit_profile_title">"Редагувати профіль"</string>
+  <string name="screen_edit_profile_change_avatar">"Змінити аватар"</string>
+  <string name="screen_edit_profile_username">"Ім'я користувача"</string>
   <string name="screen_edit_profile_updating_details">"Оновлення профілю…"</string>
   <string name="screen_notification_settings_additional_settings_section_title">"Додаткові налаштування"</string>
   <string name="screen_notification_settings_calls_label">"Аудіо та відеодзвінки"</string>
@@ -70,6 +72,8 @@
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"системні налаштування"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Системні сповіщення вимкнені"</string>
   <string name="screen_notification_settings_title">"Сповіщення"</string>
+  <string name="screen_preferences_section_customization">"Персоналізація"</string>
+  <string name="screen_preferences_section_security">"Безпека"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Історія push-сповіщень"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Усунення несправностей"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Усунення неполадок сповіщень"</string>

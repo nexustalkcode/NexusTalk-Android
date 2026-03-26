@@ -13,7 +13,13 @@ import io.element.android.features.securebackup.impl.setup.views.RecoveryKeyUser
 import io.element.android.features.securebackup.impl.setup.views.RecoveryKeyViewState
 import io.element.android.features.securebackup.impl.setup.views.aFormattedRecoveryKey
 
+/**
+ * 安全备份设置状态提供器
+ *
+ * 用于 Compose Preview 的状态提供器，提供不同状态的 [SecureBackupSetupState] 示例。
+ */
 open class SecureBackupSetupStateProvider : PreviewParameterProvider<SecureBackupSetupState> {
+    /** 预览状态序列 */
     override val values: Sequence<SecureBackupSetupState>
         get() = sequenceOf(
             aSecureBackupSetupState(setupState = SetupState.Init),
@@ -29,6 +35,13 @@ open class SecureBackupSetupStateProvider : PreviewParameterProvider<SecureBacku
         )
 }
 
+/**
+ * 创建安全备份设置状态的辅助函数
+ *
+ * @param setupState 设置状态
+ * @param showSaveConfirmationDialog 是否显示保存确认对话框
+ * @return 安全备份设置状态实例
+ */
 fun aSecureBackupSetupState(
     setupState: SetupState = SetupState.Init,
     showSaveConfirmationDialog: Boolean = false,
@@ -40,6 +53,11 @@ fun aSecureBackupSetupState(
     eventSink = {}
 )
 
+/**
+ * 将设置状态转换为恢复密钥视图状态
+ *
+ * @return 恢复密钥视图状态
+ */
 private fun SetupState.toRecoveryKeyViewState(): RecoveryKeyViewState {
     return RecoveryKeyViewState(
         recoveryKeyUserStory = RecoveryKeyUserStory.Setup,

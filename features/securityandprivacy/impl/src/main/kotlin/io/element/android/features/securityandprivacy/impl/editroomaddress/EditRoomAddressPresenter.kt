@@ -35,15 +35,43 @@ import io.element.android.libraries.matrix.ui.room.address.RoomAddressValidityEf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 编辑房间地址 Presenter
+ *
+ * 负责处理编辑房间地址页面的业务逻辑，包括：
+ * - 获取当前房间地址
+ * - 验证新地址的有效性
+ * - 保存新地址到服务器
+ *
+ * @property navigator 导航器，用于页面跳转
+ * @property client Matrix 客户端，用于与服务器通信
+ * @property room 已加入的房间
+ * @property roomAliasHelper 房间别名辅助工具
+ * @see EditRoomAddressState 页面状态
+ * @see Presenter Presenter 基类
+ */
 @AssistedInject
 class EditRoomAddressPresenter(
     @Assisted private val navigator: SecurityAndPrivacyNavigator,
+    /** Matrix 客户端，用于与服务器通信 */
     private val client: MatrixClient,
+    /** 已加入的房间 */
     private val room: JoinedRoom,
+    /** 房间别名辅助工具 */
     private val roomAliasHelper: RoomAliasHelper,
 ) : Presenter<EditRoomAddressState> {
+    /**
+     * Presenter 工厂接口
+     *
+     * 用于依赖注入创建 EditRoomAddressPresenter 实例。
+     */
     @AssistedFactory
     interface Factory {
+        /**
+         * 创建 EditRoomAddressPresenter 实例
+         * @param navigator 导航器
+         * @return EditRoomAddressPresenter 实例
+         */
         fun create(navigator: SecurityAndPrivacyNavigator): EditRoomAddressPresenter
     }
 
@@ -139,7 +167,12 @@ class EditRoomAddressPresenter(
 }
 
 /**
- * Returns the first alias that matches the given server name, or null if none match.
+ * 获取第一个匹配服务器名称的房间别名
+ *
+ * 首先检查规范别名是否匹配，然后检查其他别名。
+ *
+ * @param serverName 服务器名称
+ * @return 匹配的 RoomAlias 或 null
  */
 private fun RoomInfo.firstAliasMatching(serverName: String): RoomAlias? {
     // Check if the canonical alias matches the homeserver

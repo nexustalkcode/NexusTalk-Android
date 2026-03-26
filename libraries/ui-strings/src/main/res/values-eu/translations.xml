@@ -89,7 +89,6 @@
   <string name="action_invite_people_to_app">"Gonbidatu jendea %1$s(e)ra"</string>
   <string name="action_invites_list">"Gonbidapenak"</string>
   <string name="action_join">"Elkartu"</string>
-  <string name="action_learn_more">"Informazio gehiago"</string>
   <string name="action_leave">"Atera"</string>
   <string name="action_leave_conversation">"Utzi elkarrizketa"</string>
   <string name="action_leave_room">"Atera gelatik"</string>
@@ -382,4 +381,9 @@ Ziur jarraitu nahi duzula?"</string>
   <string name="test_language_identifier">"eu"</string>
   <string name="timeline_decryption_failure_historical_event_no_key_backup">"Iraganeko mezuak ez daude gailu honetan eskuragarri"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Ezin da mezua deszifratu"</string>
+  <string name="common_call_ended">"Deia bukatu da"</string>
+  <string name="action_start_call">"Deitu hasi"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Deirik ez"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Jarrai komunitateekin konektatuta"</string>
+  <string name="action_create_community">"Komunitatea sortu"</string>
 </resources>

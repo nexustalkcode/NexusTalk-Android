@@ -105,7 +105,6 @@
   <string name="action_invite_people_to_app">"Zaproś ludzi do %1$s"</string>
   <string name="action_invites_list">"Zaproszenia"</string>
   <string name="action_join">"Dołącz"</string>
-  <string name="action_learn_more">"Dowiedz się więcej"</string>
   <string name="action_leave">"Opuść"</string>
   <string name="action_leave_conversation">"Opuść rozmowę"</string>
   <string name="action_leave_room">"Opuść pokój"</string>
@@ -481,4 +480,9 @@ Czy na pewno chcesz kontynuować?"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Nie masz uprawnień do tej wiadomości"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Nie można odszyfrować wiadomości"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Wiadomość została zablokowana, ponieważ urządzenie nie zostało zweryfikowane lub nadawca musi zweryfikować Twoją tożsamość."</string>
+  <string name="common_call_ended">"Połączenie zakończone"</string>
+  <string name="action_start_call">"Rozpocznij połączenie"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Brak połączeń"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Pozostań w kontakcie ze społecznościami"</string>
+  <string name="action_create_community">"Utwórz społeczność"</string>
 </resources>

@@ -25,6 +25,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -59,6 +61,18 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 房间成员列表视图
+ *
+ * Composable 函数，用于渲染房间成员列表页面。
+ * 包含搜索框、成员列表、封禁成员列表和操作菜单。
+ *
+ * @param state 成员列表状态
+ * @param navigator 导航器接口
+ * @param modifier 视图修饰符
+ * @see RoomMemberListState 成员列表状态
+ * @see RoomMemberListNavigator 导航器接口
+ */
 @Composable
 fun RoomMemberListView(
     state: RoomMemberListState,
@@ -66,7 +80,7 @@ fun RoomMemberListView(
     modifier: Modifier = Modifier,
 ) {
     fun onSelectUser(roomMember: RoomMember) {
-        state.eventSink(RoomMemberListEvent.RoomMemberSelected(roomMember))
+        state.eventSink(RoomMemberListEvents.RoomMemberSelected(roomMember))
     }
 
     Scaffold(
@@ -98,13 +112,28 @@ fun RoomMemberListView(
                 selectedSection = state.selectedSection,
                 showBannedSection = state.showBannedSection,
                 searchQuery = state.searchQuery.text.toString(),
-                onSelectedSectionChange = { state.eventSink(RoomMemberListEvent.ChangeSelectedSection(it)) },
+                onSelectedSectionChange = { state.eventSink(RoomMemberListEvents.ChangeSelectedSection(it)) },
                 onSelectUser = ::onSelectUser,
             )
         }
     }
 }
 
+/**
+ * 成员列表组件
+ *
+ * Composable 函数，用于渲染成员列表的核心组件。
+ * 包括分段按钮（成员/封禁）、加载状态、成员列表和搜索结果。
+ *
+ * @param roomMembersData 成员数据（异步）
+ * @param selectedSection 当前选中的区域
+ * @param showBannedSection 是否显示封禁区域
+ * @param searchQuery 搜索关键词
+ * @param onSelectedSectionChange 区域切换回调
+ * @param onSelectUser 用户选择回调
+ * @see AsyncData 异步数据
+ * @see SelectedSection 选中区域
+ */
 @Composable
 private fun RoomMemberList(
     roomMembersData: AsyncData<RoomMembers>,
@@ -164,6 +193,18 @@ private fun RoomMemberList(
     }
 }
 
+/**
+ * 成员列表项
+ *
+ * 扩展 LazyListScope，用于渲染成员列表的列表项。
+ * 根据选中的区域显示不同类型的成员（已邀请/已加入/已封禁）。
+ *
+ * @param roomMembers 房间成员数据
+ * @param selectedSection 选中的区域
+ * @param onSelectUser 用户选择回调
+ * @see LazyListScope Lazy列作用域
+ * @see RoomMembers 房间成员数据
+ */
 private fun LazyListScope.memberItems(
     roomMembers: RoomMembers,
     selectedSection: SelectedSection,
@@ -214,6 +255,14 @@ private fun LazyListScope.memberItems(
     }
 }
 
+/**
+ * 错误信息项
+ *
+ * 扩展 LazyListScope，用于渲染加载失败时的错误信息。
+ *
+ * @param failure 失败原因
+ * @see LazyListScope Lazy列作用域
+ */
 private fun LazyListScope.failureItem(failure: Throwable) {
     item {
         Text(
@@ -227,6 +276,16 @@ private fun LazyListScope.failureItem(failure: Throwable) {
     }
 }
 
+/**
+ * 成员列表区块标题
+ *
+ * 扩展 LazyListScope，用于渲染成员列表的区块标题（如"已邀请"、"已加入"、"已封禁"）。
+ *
+ * @param text 标题文本
+ * @param modifier 修饰符
+ * @param isCritical 是否为关键区域（如封禁列表）
+ * @see LazyListScope Lazy列作用域
+ */
 private fun LazyListScope.roomMemberListSectionHeader(
     text: @Composable (() -> String),
     modifier: Modifier = Modifier,
@@ -242,6 +301,17 @@ private fun LazyListScope.roomMemberListSectionHeader(
     }
 }
 
+/**
+ * 成员列表区块项
+ *
+ * 扩展 LazyListScope，用于渲染成员列表区块中的成员项。
+ *
+ * @param members 成员列表
+ * @param onMemberSelected 成员选择回调
+ * @see LazyListScope Lazy列作用域
+ * @see ImmutableList 不可变列表
+ * @see RoomMemberWithIdentityState 带身份状态的成员
+ */
 private fun LazyListScope.roomMemberListSectionItems(
     members: ImmutableList<RoomMemberWithIdentityState>?,
     onMemberSelected: (RoomMember) -> Unit,
@@ -255,6 +325,14 @@ private fun LazyListScope.roomMemberListSectionItems(
     }
 }
 
+/**
+ * 空搜索结果项
+ *
+ * 扩展 LazyListScope，用于渲染搜索无结果时显示的提示信息。
+ *
+ * @param searchQuery 搜索关键词
+ * @see LazyListScope Lazy列作用域
+ */
 private fun LazyListScope.emptySearchItem(searchQuery: String) {
     item {
         IconTitleSubtitleMolecule(
@@ -271,6 +349,17 @@ private fun LazyListScope.emptySearchItem(searchQuery: String) {
     }
 }
 
+/**
+ * 成员列表项组件
+ *
+ * Composable 函数，用于渲染单个成员列表项。
+ * 显示成员头像、名称、角色标签和身份验证状态。
+ *
+ * @param roomMemberWithIdentity 带身份状态的成员
+ * @param onClick 点击回调
+ * @param modifier 视图修饰符
+ * @see RoomMemberWithIdentityState 带身份状态的成员
+ */
 @Composable
 private fun RoomMemberListItem(
     roomMemberWithIdentity: RoomMemberWithIdentityState,
@@ -329,6 +418,17 @@ private fun RoomMemberListItem(
     )
 }
 
+/**
+ * 成员列表顶部导航栏
+ *
+ * Composable 函数，用于渲染成员列表页面的顶部导航栏。
+ * 包含标题、返回按钮和邀请成员按钮。
+ *
+ * @param canInvite 是否有邀请权限
+ * @param onBackClick 返回按钮点击回调
+ * @param onInviteClick 邀请按钮点击回调
+ * @see ExperimentalMaterial3Api 实验性 Material3 API
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RoomMemberListTopBar(

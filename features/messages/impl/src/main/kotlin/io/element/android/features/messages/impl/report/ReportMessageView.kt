@@ -43,6 +43,18 @@ import io.element.android.libraries.designsystem.theme.components.TextField
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 举报消息视图
+ *
+ * 举报消息页面的Compose UI组件，提供用户界面供用户：
+ * - 输入举报原因（必填）
+ * - 选择是否屏蔽该用户
+ * - 提交举报
+ *
+ * @param state 当前举报消息状态
+ * @param onBackClick 返回按钮点击回调
+ * @param modifier 视图修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportMessageView(
@@ -57,7 +69,7 @@ fun ReportMessageView(
         progressDialog = {},
         onSuccess = { onBackClick() },
         errorMessage = { stringResource(CommonStrings.error_unknown) },
-        onErrorDismiss = { state.eventSink(ReportMessageEvent.ClearError) }
+        onErrorDismiss = { state.eventSink(ReportMessageEvents.ClearError) }
     )
 
     Scaffold(
@@ -84,7 +96,7 @@ fun ReportMessageView(
 
             TextField(
                 value = state.reason,
-                onValueChange = { state.eventSink(ReportMessageEvent.UpdateReason(it)) },
+                onValueChange = { state.eventSink(ReportMessageEvents.UpdateReason(it)) },
                 placeholder = stringResource(R.string.screen_report_content_hint),
                 minLines = 3,
                 enabled = !isSending,
@@ -113,7 +125,7 @@ fun ReportMessageView(
                 Switch(
                     enabled = !isSending,
                     checked = state.blockUser,
-                    onCheckedChange = { state.eventSink(ReportMessageEvent.ToggleBlockUser) },
+                    onCheckedChange = { state.eventSink(ReportMessageEvents.ToggleBlockUser) },
                 )
             }
 
@@ -125,7 +137,7 @@ fun ReportMessageView(
                 showProgress = isSending,
                 onClick = {
                     focusManager.clearFocus(force = true)
-                    state.eventSink(ReportMessageEvent.Report)
+                    state.eventSink(ReportMessageEvents.Report)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

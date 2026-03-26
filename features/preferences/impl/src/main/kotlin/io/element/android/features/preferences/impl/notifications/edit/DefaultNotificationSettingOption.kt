@@ -42,7 +42,7 @@ fun DefaultNotificationSettingOption(
         modifier = modifier,
         headlineContent = { Text(title) },
         supportingContent = subtitle?.let { { Text(it) } },
-        trailingContent = ListItemContent.RadioButton(selected = isSelected),
+        trailingContent = ListItemContent.RadioCheckbox(selected = isSelected),
         onClick = { onSelectOption(mode) },
     )
 }

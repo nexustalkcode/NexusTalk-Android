@@ -45,7 +45,7 @@ dependencies {
     api(projects.services.apperror.api)
     implementation(libs.coil.compose)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.mediaupload.test)
     testImplementation(projects.libraries.mediapickers.test)

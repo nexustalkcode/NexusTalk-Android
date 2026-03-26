@@ -27,15 +27,12 @@ android {
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.lib)
     implementation(libs.androidx.corektx)
     implementation(libs.androidx.datastore.preferences)
     implementation(platform(libs.network.retrofit.bom))
     implementation(libs.network.retrofit)
     implementation(libs.serialization.json)
     implementation(libs.coil)
-
-    implementation(projects.schildi.lib)
 
     implementation(libs.sqldelight.driver.android)
     implementation(libs.sqlcipher)
@@ -72,7 +69,7 @@ dependencies {
     implementation(projects.services.appnavstate.api)
     implementation(projects.services.toolbox.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(libs.coil.test)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.matrixmedia.test)
@@ -89,29 +86,16 @@ dependencies {
     testImplementation(projects.features.networkmonitor.test)
     testImplementation(projects.services.appnavstate.impl)
     testImplementation(projects.services.appnavstate.test)
-    testImplementation(projects.services.analytics.test)
     testImplementation(projects.services.toolbox.impl)
     testImplementation(projects.services.toolbox.test)
     testImplementation(projects.libraries.featureflag.test)
     testImplementation(libs.kotlinx.collections.immutable)
 }
 
-// SC resource override
-android {
-    // Use a flavor for common things that the upstream config will not override by the build type
-    flavorDimensions += "package"
-    productFlavors {
-        create("sc") {
-            dimension = "package"
-        }
-    }
-}
-
 sqldelight {
     databases {
         create("PushDatabase") {
             schemaOutputDirectory = File("src/main/sqldelight/databases")
-            verifyMigrations = true
         }
     }
 }

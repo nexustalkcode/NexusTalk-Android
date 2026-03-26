@@ -13,8 +13,17 @@ import io.element.android.features.messages.impl.timeline.model.event.TimelineIt
 import kotlin.reflect.KClass
 
 /**
- * Annotation to add a factory of type [TimelineItemPresenterFactory] to a
- * dependency injection map multi binding keyed with a subclass of [TimelineItemEventContent].
+ * 时间线项事件内容键注解
+ *
+ * 用于将TimelineItemPresenterFactory添加到依赖注入的多绑定Map中，
+ * 以TimelineItemEventContent子类作为键。
+ *
+ * 使用此注解可以将特定类型的Presenter工厂绑定到对应的内容类型。
+ *
+ * @param value TimelineItemEventContent的子类，用于标识内容类型
+ *
+ * @see TimelineItemPresenterFactory 时间线项Presenter工厂
+ * @see TimelineItemEventContent 时间线项事件内容
  */
 @Retention(AnnotationRetention.RUNTIME)
 @MapKey

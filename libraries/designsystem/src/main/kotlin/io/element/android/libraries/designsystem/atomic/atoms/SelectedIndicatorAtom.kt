@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 选择指示器原子组件
+ *
+ * 用于显示选中状态的指示图标。
+ * 当选中时显示实心勾选圆圈图标，未选中时显示空内容。
+ * 常用于列表项选择、checkbox 状态显示等场景。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.atoms
 
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +35,29 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Icon
 
+/**
+ * 选择指示器组件
+ *
+ * 根据选中状态显示勾选图标或空内容。
+ * 选中时显示实心勾选圆圈，颜色根据启用状态切换。
+ *
+ * @param checked Boolean 是否选中状态
+ * @param enabled Boolean 是否启用状态，禁用时显示灰色
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ *
+ * @return Unit
+ *
+ * @see [ElementTheme.colors.iconAccentPrimary] 选中状态图标颜色
+ * @see [ElementTheme.colors.iconDisabled] 禁用状态图标颜色
+ *
+ * @example
+ * ```kotlin
+ * SelectedIndicatorAtom(
+ *     checked = true,
+ *     enabled = true
+ * )
+ * ```
+ */
 @Composable
 fun SelectedIndicatorAtom(
     checked: Boolean,
@@ -51,6 +85,12 @@ fun SelectedIndicatorAtom(
     }
 }
 
+/**
+ * SelectedIndicatorAtom 预览组件
+ *
+ * 用于在设计预览中展示 SelectedIndicatorAtom 组件的各种状态组合。
+ * 此预览函数支持日夜两种主题模式，展示选中/未选中和启用/禁用状态的组合。
+ */
 @Composable
 @PreviewsDayNight
 internal fun SelectedIndicatorAtomPreview() = ElementPreview {

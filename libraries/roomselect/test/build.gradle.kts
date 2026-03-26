@@ -16,5 +16,5 @@ android {
 dependencies {
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.roomselect.api)
-    implementation(projects.tests.testutils)
+    
 }

@@ -11,23 +11,33 @@ package io.element.android.features.preferences.impl.developer.tracing
 import androidx.compose.runtime.Composable
 import io.element.android.libraries.designsystem.components.preferences.DropdownOption
 
+/**
+ * 日志级别枚举
+ *
+ * 定义追踪日志的不同级别，按严重程度从低到高排列。
+ */
 enum class LogLevelItem : DropdownOption {
+    /** 错误级别 - 仅记录错误信息 */
     ERROR {
         @Composable
         override fun getText(): String = "Error"
     },
+    /** 警告级别 - 记录警告和错误信息 */
     WARN {
         @Composable
         override fun getText(): String = "Warn"
     },
+    /** 信息级别 - 记录一般信息、警告和错误 */
     INFO {
         @Composable
         override fun getText(): String = "Info"
     },
+    /** 调试级别 - 记录调试信息及以上所有级别 */
     DEBUG {
         @Composable
         override fun getText(): String = "Debug"
     },
+    /** 追踪级别 - 记录最详细的追踪信息 */
     TRACE {
         @Composable
         override fun getText(): String = "Trace"

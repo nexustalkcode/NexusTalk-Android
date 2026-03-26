@@ -20,18 +20,28 @@ import io.element.android.libraries.textcomposer.model.Suggestion
 import io.element.android.libraries.textcomposer.model.SuggestionType
 
 /**
- * This class is responsible for processing suggestions when `@`, `/` or `#` are type in the composer.
+ * 建议处理器
+ *
+ * 负责处理消息编辑器中的建议功能。当用户在编辑器中输入 "@"、"/" 或 "#" 时，此类会根据用户输入
+ * 的内容搜索并返回匹配的建议列表，包括房间成员、房间别名、命令和表情符号等建议。
+ *
+ * @see Suggestion 建议类型
+ * @see ResolvedSuggestion 已解析的建议
+ * @see RoomMembersState 房间成员状态
  */
 @Inject
 class SuggestionsProcessor {
     /**
-     *  Process the suggestion.
-     *  @param suggestion The current suggestion input
-     *  @param roomMembersState The room members state, it contains the current users in the room
-     *  @param roomAliasSuggestions The available room alias suggestions
-     *  @param currentUserId The current user id
-     *  @param canSendRoomMention Should return true if the current user can send room mentions
-     *  @return The list of suggestions to display
+     * 处理建议
+     *
+     * 根据当前的建议输入、房间成员状态和房间别名建议列表，返回匹配的建议列表。
+     *
+     * @param suggestion 当前的建议输入
+     * @param roomMembersState 房间成员状态，包含当前房间中的所有用户
+     * @param roomAliasSuggestions 可用的房间别名建议列表
+     * @param currentUserId 当前用户ID
+     * @param canSendRoomMention 判断当前用户是否可以发送@房间提及的函数
+     * @return 要显示的建议列表
      */
     suspend fun process(
         suggestion: Suggestion?,
@@ -78,6 +88,17 @@ class SuggestionsProcessor {
         }
     }
 
+    /**
+     * 获取房间成员建议
+     *
+     * 根据查询字符串在房间成员列表中搜索匹配的用户，返回符合条件且不是自己的已加入成员列表。
+     *
+     * @param query 查询字符串
+     * @param roomMembers 房间成员列表
+     * @param currentUserId 当前用户ID
+     * @param canSendRoomMention 是否可以发送@房间提及
+     * @return 匹配的房间成员建议列表
+     */
     private fun getMemberSuggestions(
         query: String,
         roomMembers: List<RoomMember>?,

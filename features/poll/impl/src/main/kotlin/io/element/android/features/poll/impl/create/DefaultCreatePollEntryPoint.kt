@@ -15,8 +15,22 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.poll.api.create.CreatePollEntryPoint
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * 默认创建投票入口点实现类
+ *
+ * 实现了 CreatePollEntryPoint 接口，提供创建投票功能的入口点。
+ * 负责创建 CreatePollNode 节点。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultCreatePollEntryPoint : CreatePollEntryPoint {
+    /**
+     * 创建投票节点
+     *
+     * @param parentNode 父节点
+     * @param buildContext 构建上下文
+     * @param params 输入参数
+     * @return 创建的投票节点
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

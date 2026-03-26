@@ -49,13 +49,16 @@ fun DesktopNoticeView(
     onReadyToScanClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // 始终持有最新的回调，避免协程捕获旧引用
     val latestOnReadyToScanClick by rememberUpdatedState(onReadyToScanClick)
     LaunchedEffect(state.canContinue) {
+        // 当权限允许继续时触发跳转
         if (state.canContinue) {
             latestOnReadyToScanClick()
         }
     }
 
+    // 读取应用名，用于文案展示
     val appName = LocalBuildMeta.current.applicationName
     FlowStepPage(
         onBackClick = onBackClick,
@@ -65,6 +68,7 @@ fun DesktopNoticeView(
         buttons = {
             Button(
                 text = stringResource(R.string.screen_link_new_device_desktop_submit),
+                // 点击后触发继续事件，进入扫码流程
                 onClick = { state.eventSink(DesktopNoticeEvent.Continue) },
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -91,6 +95,7 @@ fun DesktopNoticeView(
         }
     }
 
+    // 相机权限提示（覆盖在页面之上）
     PermissionsView(
         title = stringResource(R.string.screen_qr_code_login_no_camera_permission_state_title),
         content = stringResource(R.string.screen_qr_code_login_no_camera_permission_state_description, appName),

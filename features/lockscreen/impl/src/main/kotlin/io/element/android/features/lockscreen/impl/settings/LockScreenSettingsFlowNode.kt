@@ -35,6 +35,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 锁屏设置流程节点
+ *
+ * 管理锁屏设置模块的导航流程，包括加载、解锁、设置 PIN 和设置页面。
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class LockScreenSettingsFlowNode(
@@ -49,20 +54,28 @@ class LockScreenSettingsFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 导航目标密封接口
+     */
     sealed interface NavTarget : Parcelable {
+        /** 加载中 */
         @Parcelize
         data object Loading : NavTarget
 
+        /** 解锁页面 */
         @Parcelize
         data object Unlock : NavTarget
 
+        /** 设置 PIN 页面 */
         @Parcelize
         data object SetupPin : NavTarget
 
+        /** 设置页面 */
         @Parcelize
         data object Settings : NavTarget
     }
 
+    /** PIN 码管理器回调 */
     private val pinCodeManagerCallback = object : DefaultPinCodeManagerCallback() {
         override fun onPinCodeRemoved() {
             navigateUp()

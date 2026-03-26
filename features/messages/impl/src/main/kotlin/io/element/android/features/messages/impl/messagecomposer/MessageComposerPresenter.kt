@@ -80,7 +80,10 @@ import io.element.android.services.analytics.api.AnalyticsService
 import io.element.android.services.analyticsproviders.api.trackers.captureInteraction
 import io.element.android.wysiwyg.compose.RichTextEditorState
 import io.element.android.wysiwyg.display.TextDisplay
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import io.element.android.libraries.recentemojis.api.EmojibaseProvider
+import io.element.android.libraries.recentemojis.api.GetRecentEmojis
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -99,6 +102,35 @@ import timber.log.Timber
 import kotlin.time.Duration.Companion.seconds
 import io.element.android.libraries.core.mimetype.MimeTypes.Any as AnyMimeTypes
 
+/**
+ * 消息编辑器 Presenter
+ *
+ * 负责处理消息编辑器的业务逻辑，管理消息发送、附件处理、提及建议、草稿保存等功能。
+ *
+ * @property navigator 消息导航器
+ * @property timelineController 时间线控制器
+ * @property sessionCoroutineScope 会话协程作用域
+ * @property room 已加入的房间
+ * @property mediaPickerProvider 媒体选择器提供者
+ * @property sessionPreferencesStore 会话偏好设置存储
+ * @property localMediaFactory 本地媒体工厂
+ * @property mediaSenderFactory 媒体发送器工厂
+ * @property snackbarDispatcher 提示消息调度器
+ * @property analyticsService 分析服务
+ * @property locationService 位置服务
+ * @property messageComposerContext 消息编辑器上下文
+ * @property richTextEditorStateFactory 富文本编辑器状态工厂
+ * @property roomAliasSuggestionsDataSource 房间别名建议数据源
+ * @property permalinkParser 链接解析器
+ * @property permalinkBuilder 链接构建器
+ * @property permissionsPresenterFactory 权限 Presenter 工厂
+ * @property draftService 草稿服务
+ * @property mentionSpanProvider 提及跨度提供者
+ * @property pillificationHelper 文本 pill 化辅助工具
+ * @property suggestionsProcessor 建议处理器
+ * @property mediaOptimizationConfigProvider 媒体优化配置提供者
+ * @property notificationConversationService 通知对话服务
+ */
 @Suppress("LargeClass")
 @AssistedInject
 class MessageComposerPresenter(
@@ -125,9 +157,21 @@ class MessageComposerPresenter(
     private val suggestionsProcessor: SuggestionsProcessor,
     private val mediaOptimizationConfigProvider: MediaOptimizationConfigProvider,
     private val notificationConversationService: NotificationConversationService,
+    private val emojibaseProvider: EmojibaseProvider,
+    private val getRecentEmojis: GetRecentEmojis,
 ) : Presenter<MessageComposerState> {
+    /**
+     * Presenter 工厂接口
+     */
     @AssistedFactory
     interface Factory {
+        /**
+         * 创建 Presenter 实例
+         *
+         * @param timelineController 时间线控制器
+         * @param navigator 消息导航器
+         * @return MessageComposerPresenter 实例
+         */
         fun create(timelineController: TimelineController, navigator: MessagesNavigator): MessageComposerPresenter
     }
 
@@ -137,12 +181,18 @@ class MessageComposerPresenter(
     private var pendingEvent: MessageComposerEvent? = null
     private val suggestionSearchTrigger = MutableStateFlow<Suggestion?>(null)
 
-    // Used to disable some UI related elements in tests
+    // 用于在测试中禁用某些 UI 相关元素
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal var isTesting: Boolean = false
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal var showTextFormatting: Boolean by mutableStateOf(false)
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal var showEmojiPicker: Boolean by mutableStateOf(false)
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal var recentEmojis: ImmutableList<String> = persistentListOf()
 
     @SuppressLint("UnsafeOptInUsageError")
     @Composable
@@ -200,7 +250,7 @@ class MessageComposerPresenter(
         ResolveSuggestionsEffect(suggestions)
 
         DisposableEffect(Unit) {
-            // Declare that the user is not typing anymore when the composer is disposed
+            // 当编辑器释放时声明用户不再打字
             onDispose {
                 sessionCoroutineScope.launch {
                     if (sendTypingNotifications) {
@@ -221,7 +271,7 @@ class MessageComposerPresenter(
         LaunchedEffect(Unit) {
             val draft = draftService.loadDraft(
                 roomId = room.roomId,
-                // TODO support threads in composer
+                // TODO 支持线程中的草稿
                 threadRoot = null,
                 isVolatile = false
             )
@@ -230,6 +280,11 @@ class MessageComposerPresenter(
             }
         }
 
+        /**
+         * 处理事件
+         *
+         * @param event 事件
+         */
         fun handleEvent(event: MessageComposerEvent) {
             when (event) {
                 MessageComposerEvent.ToggleFullScreenState -> isFullScreen.value = !isFullScreen.value
@@ -262,7 +317,7 @@ class MessageComposerPresenter(
                         inReplyToEventId = inReplyToEventId,
                     )
 
-                    // Reset composer since the attachment has been sent
+                    // 重置编辑器因为附件已发送
                     messageComposerContext.composerMode = MessageComposerMode.Normal
                 }
                 is MessageComposerEvent.SetMode -> {
@@ -300,11 +355,11 @@ class MessageComposerPresenter(
                 }
                 MessageComposerEvent.PickAttachmentSource.Location -> {
                     showAttachmentSourcePicker = false
-                    // Navigation to the location picker screen is done at the view layer
+                    // 导航到位置选择屏幕在视图层处理
                 }
                 MessageComposerEvent.PickAttachmentSource.Poll -> {
                     showAttachmentSourcePicker = false
-                    // Navigation to the create poll screen is done at the view layer
+                    // 导航到创建投票屏幕在视图层处理
                 }
                 is MessageComposerEvent.ToggleTextFormatting -> {
                     showAttachmentSourcePicker = false
@@ -354,6 +409,21 @@ class MessageComposerPresenter(
                     val draft = createDraftFromState(markdownTextEditorState, richTextEditorState)
                     sessionCoroutineScope.updateDraft(draft, isVolatile = false)
                 }
+                is MessageComposerEvent.ToggleEmojiPicker -> {
+                    showEmojiPicker = !showEmojiPicker
+                    if (showEmojiPicker) {
+                        // Load recent emojis when opening the picker
+                        localCoroutineScope.launch {
+                            recentEmojis = getRecentEmojis().getOrNull() ?: persistentListOf()
+                        }
+                    }
+                }
+                is MessageComposerEvent.InsertEmoji -> {
+                    localCoroutineScope.launch {
+                        insertEmoji(event.emoji, markdownTextEditorState, richTextEditorState)
+                    }
+                    showEmojiPicker = false
+                }
             }
         }
 
@@ -381,6 +451,9 @@ class MessageComposerPresenter(
             mode = messageComposerContext.composerMode,
             showAttachmentSourcePicker = showAttachmentSourcePicker,
             showTextFormatting = showTextFormatting,
+            showEmojiPicker = showEmojiPicker,
+            emojibaseStore = emojibaseProvider.emojibaseStore,
+            recentEmojis = recentEmojis,
             canShareLocation = canShareLocation.value,
             suggestions = suggestions.toImmutableList(),
             resolveMentionDisplay = resolveMentionDisplay,
@@ -389,6 +462,13 @@ class MessageComposerPresenter(
         )
     }
 
+    /**
+     * 解析建议效果
+     *
+     * 处理用户输入时的 @ 提及建议搜索和显示逻辑。
+     *
+     * @param suggestions 建议列表状态
+     */
     @OptIn(FlowPreview::class)
     @Composable
     private fun ResolveSuggestionsEffect(
@@ -397,6 +477,9 @@ class MessageComposerPresenter(
         LaunchedEffect(Unit) {
             val currentUserId = room.sessionId
 
+            /**
+             * 检查是否可以发送 @房间 提及
+             */
             suspend fun canSendRoomMention(): Boolean {
                 val userCanSendAtRoom = room.roomPermissions().use(false) { perms ->
                     perms.canOwnUserTriggerRoomNotification()
@@ -404,9 +487,9 @@ class MessageComposerPresenter(
                 return !room.isDm() && userCanSendAtRoom
             }
 
-            // This will trigger a search immediately when `@` is typed
+            // 当输入 @ 时立即触发搜索
             val mentionStartTrigger = suggestionSearchTrigger.filter { it?.text.isNullOrEmpty() }
-            // This will start a search when the user changes the text after the `@` with a debounce to prevent too much wasted work
+            // 当用户更改 @ 后的文本时开始搜索，带有防抖以避免太多浪费的工作
             val mentionCompletionTrigger = suggestionSearchTrigger.debounce(0.3.seconds).filter { !it?.text.isNullOrEmpty() }
 
             val mentionTriggerFlow = merge(mentionStartTrigger, mentionCompletionTrigger)
@@ -430,13 +513,19 @@ class MessageComposerPresenter(
         }
     }
 
+    /**
+     * 发送消息
+     *
+     * @param markdownTextEditorState Markdown 编辑器状态
+     * @param richTextEditorState 富文本编辑器状态
+     */
     private fun CoroutineScope.sendMessage(
         markdownTextEditorState: MarkdownTextEditorState,
         richTextEditorState: RichTextEditorState,
     ) = launch {
         val message = currentComposerMessage(markdownTextEditorState, richTextEditorState, withMentions = true)
         val capturedMode = messageComposerContext.composerMode
-        // Reset composer right away
+        // 立即重置编辑器
         resetComposer(markdownTextEditorState, richTextEditorState, fromEdit = capturedMode is MessageComposerMode.Edit)
         when (capturedMode) {
             is MessageComposerMode.Attachment,
@@ -449,12 +538,12 @@ class MessageComposerPresenter(
             }
             is MessageComposerMode.Edit -> {
                 timelineController.invokeOnCurrentTimeline {
-                    // First try to edit the message in the current timeline
+                    // 首先尝试在当前时间线中编辑消息
                     editMessage(capturedMode.eventOrTransactionId, message.markdown, message.html, message.intentionalMentions)
                         .onFailure { cause ->
                             val eventId = capturedMode.eventOrTransactionId.eventId
                             if (cause is TimelineException.EventNotFound && eventId != null) {
-                                // if the event is not found in the timeline, try to edit the message directly
+                                // 如果事件在时间线中找不到，直接尝试编辑消息
                                 room.editMessage(eventId, message.markdown, message.html, message.intentionalMentions)
                             }
                         }
@@ -499,12 +588,18 @@ class MessageComposerPresenter(
                 inThread = capturedMode.inThread,
                 isEditing = capturedMode.isEditing,
                 isReply = capturedMode.isReply,
-                // Set proper type when we'll be sending other types of messages.
+                // 当我们将发送其他类型的消息时设置正确的类型
                 messageType = Composer.MessageType.Text,
             )
         )
     }
 
+    /**
+     * 发送附件
+     *
+     * @param attachment 附件
+     * @param inReplyToEventId 回复的事件 ID（可选）
+     */
     private fun CoroutineScope.sendAttachment(
         attachment: Attachment,
         inReplyToEventId: EventId?,
@@ -520,6 +615,12 @@ class MessageComposerPresenter(
         }
     }
 
+    /**
+     * 处理选择的媒体
+     *
+     * @param uri 媒体 URI
+     * @param mimeType MIME 类型
+     */
     private fun handlePickedMedia(
         uri: Uri?,
         mimeType: String? = null,
@@ -535,10 +636,17 @@ class MessageComposerPresenter(
         val inReplyToEventId = (messageComposerContext.composerMode as? MessageComposerMode.Reply)?.eventId
         navigator.navigateToPreviewAttachments(persistentListOf(mediaAttachment), inReplyToEventId)
 
-        // Reset composer since the attachment will be sent in a separate flow
+        // 重置编辑器因为附件将在单独流程中发送
         messageComposerContext.composerMode = MessageComposerMode.Normal
     }
 
+    /**
+     * 发送媒体
+     *
+     * @param uri 媒体 URI
+     * @param mimeType MIME 类型
+     * @param inReplyToEventId 回复的事件 ID（可选）
+     */
     private suspend fun sendMedia(
         uri: Uri,
         mimeType: String,
@@ -561,6 +669,12 @@ class MessageComposerPresenter(
             }
         }
 
+    /**
+     * 更新草稿
+     *
+     * @param draft 草稿
+     * @param isVolatile 是否为临时草稿
+     */
     private fun CoroutineScope.updateDraft(
         draft: ComposerDraft?,
         isVolatile: Boolean,
@@ -569,11 +683,18 @@ class MessageComposerPresenter(
             roomId = room.roomId,
             draft = draft,
             isVolatile = isVolatile,
-            // TODO support threads in composer
+            // TODO 支持线程中的草稿
             threadRoot = null,
         )
     }
 
+    /**
+     * 应用草稿
+     *
+     * @param draft 草稿
+     * @param markdownTextEditorState Markdown 编辑器状态
+     * @param richTextEditorState 富文本编辑器状态
+     */
     private suspend fun applyDraft(
         draft: ComposerDraft,
         markdownTextEditorState: MarkdownTextEditorState,
@@ -597,14 +718,14 @@ class MessageComposerPresenter(
             is ComposerDraftType.Reply -> {
                 messageComposerContext.composerMode = MessageComposerMode.Reply(
                     replyToDetails = InReplyToDetails.Loading(draftType.eventId),
-                    // I guess it's fine to always render the image when restoring a draft
+                    // 恢复草稿时始终渲染图片应该没问题
                     hideImage = false
                 )
                 timelineController.invokeOnCurrentTimeline {
                     val replyToDetails = loadReplyDetails(draftType.eventId).map(permalinkParser)
                     messageComposerContext.composerMode = MessageComposerMode.Reply(
                         replyToDetails = replyToDetails,
-                        // I guess it's fine to always render the image when restoring a draft
+                        // 恢复草稿时始终渲染图片应该没问题
                         hideImage = false
                     )
                 }
@@ -612,6 +733,13 @@ class MessageComposerPresenter(
         }
     }
 
+    /**
+     * 根据当前状态创建草稿
+     *
+     * @param markdownTextEditorState Markdown 编辑器状态
+     * @param richTextEditorState 富文本编辑器状态
+     * @return 草稿（如果没有内容则返回 null）
+     */
     private fun createDraftFromState(
         markdownTextEditorState: MarkdownTextEditorState,
         richTextEditorState: RichTextEditorState,
@@ -625,7 +753,7 @@ class MessageComposerPresenter(
             }
             is MessageComposerMode.Reply -> ComposerDraftType.Reply(mode.eventId)
             is MessageComposerMode.EditCaption -> {
-                // TODO Need a new type to save caption in the SDK
+                // TODO 需要 SDK 中的新类型来保存标题
                 null
             }
         }
@@ -640,6 +768,14 @@ class MessageComposerPresenter(
         }
     }
 
+    /**
+     * 获取当前编辑器消息
+     *
+     * @param markdownTextEditorState Markdown 编辑器状态
+     * @param richTextEditorState 富文本编辑器状态
+     * @param withMentions 是否包含提及
+     * @return 消息
+     */
     private fun currentComposerMessage(
         markdownTextEditorState: MarkdownTextEditorState,
         richTextEditorState: RichTextEditorState,
@@ -673,6 +809,13 @@ class MessageComposerPresenter(
         }
     }
 
+    /**
+     * 切换文本格式
+     *
+     * @param enabled 是否启用
+     * @param markdownTextEditorState Markdown 编辑器状态
+     * @param richTextEditorState 富文本编辑器状态
+     */
     private fun CoroutineScope.toggleTextFormatting(
         enabled: Boolean,
         markdownTextEditorState: MarkdownTextEditorState,
@@ -688,12 +831,19 @@ class MessageComposerPresenter(
             val markdown = richTextEditorState.messageMarkdown
             val markdownWithMentions = pillificationHelper.pillify(markdown, false)
             markdownTextEditorState.text.update(markdownWithMentions, true)
-            // Give some time for the focus of the previous editor to be cleared
+            // 给一些时间清除前一个编辑器的焦点
             delay(100)
             markdownTextEditorState.requestFocusAction()
         }
     }
 
+    /**
+     * 设置编辑器模式
+     *
+     * @param newComposerMode 新编辑器模式
+     * @param markdownTextEditorState Markdown 编辑器状态
+     * @param richTextEditorState 富文本编辑器状态
+     */
     private fun CoroutineScope.setMode(
         newComposerMode: MessageComposerMode,
         markdownTextEditorState: MarkdownTextEditorState,
@@ -716,7 +866,7 @@ class MessageComposerPresenter(
                 setText(newComposerMode.content, markdownTextEditorState, richTextEditorState)
             }
             else -> {
-                // When coming from edit, just clear the composer as it'd be weird to reset a volatile draft in this scenario.
+                // 从编辑模式来时，只需清除编辑器，因为在这种情况下重置临时草稿会很奇怪
                 if (currentComposerMode.isEditing) {
                     setText("", markdownTextEditorState, richTextEditorState)
                 }
@@ -725,15 +875,45 @@ class MessageComposerPresenter(
         messageComposerContext.composerMode = newComposerMode
     }
 
+    /**
+     * 插入 emoji 到编辑器
+     *
+     * @param emoji 要插入的 emoji 字符
+     * @param markdownTextEditorState Markdown 编辑器状态
+     * @param richTextEditorState 富文本编辑器状态
+     */
+    private suspend fun insertEmoji(
+        emoji: String,
+        markdownTextEditorState: MarkdownTextEditorState,
+        richTextEditorState: RichTextEditorState,
+    ) {
+        if (showTextFormatting) {
+            // Rich text mode
+            val currentText = richTextEditorState.messageMarkdown
+            richTextEditorState.setMarkdown((currentText + emoji).take(MAX_MESSAGE_LENGTH))
+        } else {
+            // Markdown mode
+            val currentText = markdownTextEditorState.text.value().toString()
+            markdownTextEditorState.text.update((currentText + emoji).take(MAX_MESSAGE_LENGTH), true)
+        }
+    }
+
+    /**
+     * 重置编辑器
+     *
+     * @param markdownTextEditorState Markdown 编辑器状态
+     * @param richTextEditorState 富文本编辑器状态
+     * @param fromEdit 是否来自编辑模式
+     */
     private suspend fun resetComposer(
         markdownTextEditorState: MarkdownTextEditorState,
         richTextEditorState: RichTextEditorState,
         fromEdit: Boolean,
     ) {
-        // Use the volatile draft only when coming from edit mode otherwise.
+        // 仅在来自编辑模式时使用临时草稿
         val draft = draftService.loadDraft(
             roomId = room.roomId,
-            // TODO support threads in composer
+            // TODO 支持线程中的草稿
             threadRoot = null,
             isVolatile = true
         ).takeIf { fromEdit }
@@ -745,6 +925,14 @@ class MessageComposerPresenter(
         }
     }
 
+    /**
+     * 设置文本内容
+     *
+     * @param content 文本内容
+     * @param markdownTextEditorState Markdown 编辑器状态
+     * @param richTextEditorState 富文本编辑器状态
+     * @param requestFocus 是否请求焦点
+     */
     private suspend fun setText(
         content: String,
         markdownTextEditorState: MarkdownTextEditorState,

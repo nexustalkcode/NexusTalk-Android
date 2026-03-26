@@ -20,11 +20,22 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.features.securityandprivacy.impl.SecurityAndPrivacyNavigator
 import io.element.android.libraries.di.RoomScope
 
+/**
+ * 编辑房间地址节点
+ *
+ * 负责显示和处理编辑房间地址的页面。
+ * 使用 Presenter 模式处理业务逻辑，并通过 View 渲染界面。
+ *
+ * @see Node 基础节点类
+ * @see EditRoomAddressPresenter 业务逻辑处理类
+ * @see EditRoomAddressView 界面渲染组件
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class EditRoomAddressNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
+    /** Presenter 工厂，用于创建业务逻辑处理类 */
     presenterFactory: EditRoomAddressPresenter.Factory,
 ) : Node(buildContext, plugins = plugins) {
     private val navigator = plugins<SecurityAndPrivacyNavigator>().first()

@@ -1,5 +1,4 @@
 import extension.setupDependencyInjection
-import extension.testCommonDependencies
 
 /*
  * Copyright (c) 2025 Element Creations Ltd.
@@ -24,8 +23,4 @@ dependencies {
     implementation(projects.libraries.core)
     implementation(projects.libraries.di)
     api(projects.features.networkmonitor.api)
-
-    testCommonDependencies(libs)
-    testImplementation(projects.libraries.matrix.test)
-    testImplementation(projects.features.networkmonitor.test)
 }

@@ -28,6 +28,22 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
+/**
+ * 高级设置页面 Presenter
+ *
+ * 负责处理高级设置页面的业务逻辑，包括：
+ * - 获取和观察开发者模式、分享在线状态等设置
+ * - 管理主题切换
+ * - 处理媒体优化设置
+ * - 管理媒体预览配置
+ *
+ * @property appPreferencesStore 应用偏好存储
+ * @property sessionPreferencesStore 会话偏好存储
+ * @property mediaPreviewConfigStateStore 媒体预览配置状态存储
+ * @property sessionCoroutineScope 会话协程作用域
+ * @property featureFlagService 功能标志服务
+ * @see AdvancedSettingsState 高级设置状态
+ */
 @Inject
 class AdvancedSettingsPresenter(
     private val appPreferencesStore: AppPreferencesStore,

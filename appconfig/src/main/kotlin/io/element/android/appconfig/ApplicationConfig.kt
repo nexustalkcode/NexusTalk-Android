@@ -8,6 +8,12 @@
 
 package io.element.android.appconfig
 
+/**
+ * 应用配置 (Application Configuration)
+ *
+ * 此对象包含应用程序的核心配置项，用于定义应用名称、品牌等全局设置。
+ * 这些配置影响应用在UI中显示的名称以及不同平台间的品牌一致性。
+ */
 object ApplicationConfig {
     /**
      * Application name used in the UI for string. If empty, the value is taken from the resources `R.string.app_name`.

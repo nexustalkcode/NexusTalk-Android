@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Изтриване на хранилището за ключове"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Включване на резервните копия"</string>
-  <string name="screen_chat_backup_key_backup_description">"Съхранявайте сигурно криптографската си самоличност и ключовете за съобщения на сървъра. Това ще ви позволи да преглеждате историята на съобщенията си на всички нови устройства.%1$s ."</string>
+  <string name="screen_chat_backup_key_backup_description">"Съхранявайте сигурно криптографската си самоличност и ключовете за съобщения на сървъра. Това ще ви позволи да преглеждате историята на съобщенията си на всички нови устройства.%1$s "</string>
   <string name="screen_chat_backup_key_backup_title">"Съхранение на ключове"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"За да настроите възстановяването, трябва да включите съхранението на ключове."</string>
   <string name="screen_chat_backup_key_storage_toggle_title">"Разрешаване на съхранението на ключове"</string>

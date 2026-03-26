@@ -12,6 +12,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.features.lockscreen.impl.pin.model.PinEntry
 import io.element.android.features.lockscreen.impl.setup.pin.validation.SetupPinFailure
 
+/**
+ * 设置 PIN 码状态预览参数提供者
+ *
+ * 用于在预览中提供不同状态的设置 PIN 码界面。
+ */
 open class SetupPinStateProvider : PreviewParameterProvider<SetupPinState> {
     override val values: Sequence<SetupPinState>
         get() = sequenceOf(
@@ -36,6 +41,9 @@ open class SetupPinStateProvider : PreviewParameterProvider<SetupPinState> {
         )
 }
 
+/**
+ * 创建设置 PIN 码状态的辅助函数
+ */
 fun aSetupPinState(
     choosePinEntry: PinEntry = PinEntry.createEmpty(4),
     confirmPinEntry: PinEntry = PinEntry.createEmpty(4),

@@ -16,5 +16,5 @@ android {
 
 dependencies {
     implementation(projects.libraries.wellknown.api)
-    implementation(projects.tests.testutils)
+    
 }

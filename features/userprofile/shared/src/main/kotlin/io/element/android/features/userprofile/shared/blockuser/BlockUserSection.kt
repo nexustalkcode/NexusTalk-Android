@@ -8,12 +8,15 @@
 
 package io.element.android.features.userprofile.shared.blockuser
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.progressSemantics
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.userprofile.api.UserProfileEvents
 import io.element.android.features.userprofile.api.UserProfileState
@@ -78,12 +81,13 @@ private fun PreferenceBlockUser(
             strokeWidth = 2.dp
         )
     }
+
     if (isBlocked.orFalse()) {
         ListItem(
             headlineContent = { Text(stringResource(R.string.screen_dm_details_unblock_user)) },
             leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Block())),
             onClick = { if (!isLoading) eventSink(UserProfileEvents.UnblockUser(needsConfirmation = true)) },
-            trailingContent = if (isLoading) ListItemContent.Custom(loadingCurrentValue) else null,
+            trailingContent = if (isLoading) ListItemContent.Custom(loadingCurrentValue) else ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
             style = ListItemStyle.Primary,
         )
     } else {
@@ -92,7 +96,7 @@ private fun PreferenceBlockUser(
             leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Block())),
             style = ListItemStyle.Destructive,
             onClick = { if (!isLoading) eventSink(UserProfileEvents.BlockUser(needsConfirmation = true)) },
-            trailingContent = if (isLoading) ListItemContent.Custom(loadingCurrentValue) else null,
+            trailingContent = if (isLoading) ListItemContent.Custom(loadingCurrentValue) else ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
         )
     }
 }

@@ -16,8 +16,15 @@ import io.element.android.libraries.matrix.api.room.draft.ComposerDraft
 import timber.log.Timber
 
 /**
- * A draft store that persists drafts in the room state.
- * It can be used to store drafts that should be persisted across app restarts.
+ * Matrix消息编辑器草稿存储实现类
+ *
+ * 实现 ComposerDraftStore 接口，使用 Matrix 房间状态持久化草稿。
+ * 草稿内容会跨应用重启持久保存。
+ *
+ * @property client Matrix客户端实例
+ *
+ * @see ComposerDraftStore 草稿存储接口
+ * @see MatrixClient Matrix客户端
  */
 @Inject
 class MatrixComposerDraftStore(

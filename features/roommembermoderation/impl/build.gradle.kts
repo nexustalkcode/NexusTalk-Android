@@ -34,7 +34,7 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     implementation(projects.services.analytics.compose)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.services.analytics.test)
     testImplementation(projects.libraries.testtags)

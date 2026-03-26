@@ -18,17 +18,32 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesBinding
 
+/**
+ * 默认权限Presenter实现
+ *
+ * 使用 Accompanist Permissions 库实现权限状态管理。
+ */
 @Suppress("unused")
 @AssistedInject
 class DefaultPermissionsPresenter(
     @Assisted private val permissions: List<String>
 ) : PermissionsPresenter {
+    /**
+     * 工厂接口，用于创建 DefaultPermissionsPresenter 实例
+     */
     @AssistedFactory
     @ContributesBinding(AppScope::class)
     interface Factory : PermissionsPresenter.Factory {
         override fun create(permissions: List<String>): DefaultPermissionsPresenter
     }
 
+    /**
+     * 生成权限状态
+     *
+     * 使用 Accompanist 权限库管理权限状态，并处理权限请求事件。
+     *
+     * @return PermissionsState 当前权限状态
+     */
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     override fun present(): PermissionsState {

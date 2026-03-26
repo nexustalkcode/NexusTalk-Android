@@ -14,6 +14,11 @@ import androidx.compose.ui.res.stringResource
 import io.element.android.libraries.designsystem.text.toAnnotatedString
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 固定消息横幅状态密封接口
+ *
+ * 定义了固定消息横幅界面的不同状态，包括隐藏和可见状态。
+ */
 @Immutable
 sealed interface PinnedMessagesBannerState {
     data object Hidden : PinnedMessagesBannerState
@@ -41,6 +46,6 @@ sealed interface PinnedMessagesBannerState {
         val currentPinnedMessage: PinnedMessagesBannerItem,
         val currentPinnedMessageIndex: Int,
         val loadedPinnedMessagesCount: Int,
-        val eventSink: (PinnedMessagesBannerEvent) -> Unit
+        val eventSink: (PinnedMessagesBannerEvents) -> Unit
     ) : Visible
 }

@@ -17,9 +17,14 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 /**
- * Represents the state of the poll creation / edit form.
+ * 投票表单状态数据类
  *
- * Save this state using [pollFormStateSaver].
+ * 表示投票创建/编辑表单的状态，包含问题、答案列表和投票类型。
+ * 可通过 pollFormStateSaver 保存和恢复状态。
+ *
+ * @property question 投票问题
+ * @property answers 答案列表
+ * @property isDisclosed 是否公开（true 为公开，false 为匿名）
  */
 data class PollFormState(
     val question: String,
@@ -27,6 +32,7 @@ data class PollFormState(
     val isDisclosed: Boolean,
 ) {
     companion object {
+        /** 空表单状态 - 用于初始化新建投票表单 */
         val Empty = PollFormState(
             question = "",
             answers = MutableList(MIN_ANSWERS) { "" }.toImmutableList(),
@@ -34,6 +40,13 @@ data class PollFormState(
         )
     }
 
+    /**
+     * 投票类型属性
+     *
+     * 根据 isDisclosed 属性返回对应的投票类型。
+     *
+     * @return PollKind 投票类型（Disclosed 或 Undisclosed）
+     */
     val pollKind
         get() = when (isDisclosed) {
             true -> PollKind.Disclosed
@@ -86,23 +99,38 @@ data class PollFormState(
         }.toImmutableList())
 
     /**
-     * Whether a new answer can be added.
+     * 是否可以添加答案
+     *
+     * 当答案数量未达到最大限制时可以添加新答案。
+     *
+     * @return Boolean 是否可以添加
      */
     val canAddAnswer get() = answers.size < PollConstants.MAX_ANSWERS
 
     /**
-     * Whether any answer can be deleted.
+     * 是否可以删除答案
+     *
+     * 当答案数量大于最小限制时可以删除答案。
+     *
+     * @return Boolean 是否可以删除
      */
     val canDeleteAnswer get() = answers.size > MIN_ANSWERS
 
     /**
-     * Whether the form is currently valid.
+     * 表单是否有效
+     *
+     * 有效条件：问题不为空、答案数量不少于最小限制、所有答案都不为空。
+     *
+     * @return Boolean 表单是否有效
      */
     val isValid get() = question.isNotBlank() && answers.size >= MIN_ANSWERS && answers.all { it.isNotBlank() }
 }
 
 /**
- * A [Saver] for [PollFormState].
+ * 投票表单状态保存器
+ *
+ * 用于保存和恢复 PollFormState 的 Compose Saver。
+ * 将表单状态转换为可序列化的格式以便保存。
  */
 internal val pollFormStateSaver = mapSaver(
     save = {

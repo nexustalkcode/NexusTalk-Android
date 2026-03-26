@@ -21,10 +21,20 @@ import java.util.concurrent.ConcurrentHashMap
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
+/**
+ * 默认已查看邀请存储工厂实现
+ *
+ * 实现了 SeenInvitesStoreFactory 接口，负责创建和管理 DefaultSeenInvitesStore 实例。
+ * 使用缓存机制确保每个会话只有一个存储实例。
+ *
+ * @property context Android 上下文
+ * @property sessionObserver 会话观察器
+ */
 class DefaultSeenInvitesStoreFactory(
     @ApplicationContext private val context: Context,
     private val sessionObserver: SessionObserver,
 ) : SeenInvitesStoreFactory {
+    /** 会话 ID 到已查看邀请存储的缓存 */
     // We can have only one class accessing a single data store, so keep a cache of them.
     private val cache = ConcurrentHashMap<SessionId, SeenInvitesStore>()
 

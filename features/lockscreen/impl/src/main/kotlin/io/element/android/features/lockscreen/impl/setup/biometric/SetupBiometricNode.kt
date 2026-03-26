@@ -20,6 +20,11 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 设置生物识别节点
+ *
+ * 显示设置生物识别界面的节点。
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class SetupBiometricNode(
@@ -27,7 +32,11 @@ class SetupBiometricNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: SetupBiometricPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 回调接口
+     */
     interface Callback : Plugin {
+        /** 生物识别设置完成时调用 */
         fun onBiometricSetupDone()
     }
 

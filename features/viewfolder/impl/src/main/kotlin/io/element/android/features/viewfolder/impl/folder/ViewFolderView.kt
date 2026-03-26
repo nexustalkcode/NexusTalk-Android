@@ -39,6 +39,17 @@ import io.element.android.libraries.designsystem.theme.components.Scaffold
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 
+/**
+ * 文件夹视图组件
+ *
+ * 使用 Jetpack Compose 实现文件夹浏览的用户界面。
+ * 展示文件夹内容列表，支持导航到子文件夹和文件查看。
+ *
+ * @param state 当前视图状态，包含标题和内容
+ * @param onNavigateTo 浏览项目时的回调
+ * @param onBackClick 返回按钮点击回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewFolderView(
@@ -91,6 +102,14 @@ fun ViewFolderView(
     )
 }
 
+/**
+ * 项目行组件
+ *
+ * 渲染文件夹中的单个项目（父目录、文件夹或文件）。
+ *
+ * @param item 要渲染的项目
+ * @param onItemClick 项目点击事件
+ */
 @Composable
 private fun ItemRow(
     item: Item,
@@ -140,6 +159,13 @@ private fun ItemRow(
     }
 }
 
+/**
+ * 文件夹视图预览组件
+ *
+ * 用于在 Android Studio 预览中展示文件夹视图 UI。
+ *
+ * @param state 预览状态
+ */
 @PreviewsDayNight
 @Composable
 internal fun ViewFolderViewPreview(@PreviewParameter(ViewFolderStateProvider::class) state: ViewFolderState) = ElementPreview {

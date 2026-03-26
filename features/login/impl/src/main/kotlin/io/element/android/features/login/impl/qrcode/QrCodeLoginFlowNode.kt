@@ -37,7 +37,6 @@ import io.element.android.libraries.architecture.BackstackView
 import io.element.android.libraries.architecture.BaseFlowNode
 import io.element.android.libraries.architecture.NodeInputs
 import io.element.android.libraries.architecture.bindings
-import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
 import io.element.android.libraries.di.DependencyInjectionGraphOwner
@@ -50,6 +49,22 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
+/**
+ * 二维码登录流程节点
+ *
+ * 管理整个二维码登录流程的 Appyx FlowNode。
+ * 负责导航到二维码扫描、确认、错误等各个子页面。
+ * 监听二维码登录状态并根据登录步骤更新界面。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property qrCodeLoginGraphFactory 二维码登录依赖图工厂
+ * @property coroutineDispatchers 协程调度器
+ * @see QrCodeIntroNode 二维码登录介绍页面
+ * @see QrCodeScanNode 二维码扫描页面
+ * @see QrCodeConfirmationNode 二维码确认页面
+ * @see QrCodeErrorNode 二维码错误页面
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class QrCodeLoginFlowNode(
@@ -65,33 +80,45 @@ class QrCodeLoginFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ), DependencyInjectionGraphOwner {
-    interface Callback : Plugin {
-        fun navigateBack()
-    }
-
-    private val callback: Callback = callback()
-
     private var authenticationJob: Job? = null
 
     override val graph = qrCodeLoginGraphFactory.create()
     private val qrCodeLoginManager by lazy { bindings<QrCodeLoginBindings>().qrCodeLoginManager() }
 
+    /**
+     * 二维码登录导航目标密封接口
+     *
+     * 定义二维码登录流程中的各个页面目标。
+     */
     sealed interface NavTarget : Parcelable {
+        /** 初始页面 - 显示二维码登录介绍 */
         @Parcelize
         data object Initial : NavTarget
 
+        /** 二维码扫描页面 */
         @Parcelize
         data object QrCodeScan : NavTarget
 
+        /**
+         * 二维码确认页面
+         *
+         * @property step 确认步骤，包含验证码等信息
+         */
         @Parcelize
         data class QrCodeConfirmation(val step: QrCodeConfirmationStep) : NavTarget
 
+        /**
+         * 错误页面
+         *
+         * @property errorType 错误类型
+         */
         @Parcelize
         data class Error(val errorType: QrCodeErrorScreenType) : NavTarget
     }
 
     override fun onBuilt() {
         super.onBuilt()
+
         observeLoginStep()
     }
 
@@ -119,8 +146,7 @@ class QrCodeLoginFlowNode(
                                 is QrLoginException.Cancelled -> {
                                     backstack.replace(NavTarget.Error(QrCodeErrorScreenType.Cancelled))
                                 }
-                                is QrLoginException.Expired,
-                                is QrLoginException.NotFound -> {
+                                is QrLoginException.Expired -> {
                                     backstack.replace(NavTarget.Error(QrCodeErrorScreenType.Expired))
                                 }
                                 is QrLoginException.Declined -> {
@@ -139,9 +165,7 @@ class QrCodeLoginFlowNode(
                                     Timber.e(error, "OIDC metadata is invalid")
                                     backstack.replace(NavTarget.Error(QrCodeErrorScreenType.UnknownError))
                                 }
-                                QrLoginException.CheckCodeAlreadySent,
-                                QrLoginException.CheckCodeCannotBeSent,
-                                QrLoginException.Unknown -> {
+                                else -> {
                                     Timber.e(error, "Unknown error found")
                                     backstack.replace(NavTarget.Error(QrCodeErrorScreenType.UnknownError))
                                 }
@@ -187,13 +211,7 @@ class QrCodeLoginFlowNode(
             }
             is NavTarget.Error -> {
                 val callback = object : QrCodeErrorNode.Callback {
-                    override fun onRetry() {
-                        reset()
-                    }
-
-                    override fun onCancel() {
-                        callback.navigateBack()
-                    }
+                    override fun onRetry() = reset()
                 }
                 createNode<QrCodeErrorNode>(buildContext, plugins = listOf(navTarget.errorType, callback))
             }
@@ -228,26 +246,39 @@ class QrCodeLoginFlowNode(
     }
 }
 
+/**
+ * 二维码错误屏幕类型密封接口
+ *
+ * 定义二维码登录过程中可能出现的各种错误类型。
+ * 实现 NodeInputs 接口用于节点输入，实现 Parcelable 用于状态保存。
+ */
 @Immutable
 sealed interface QrCodeErrorScreenType : NodeInputs, Parcelable {
+    /** 用户取消登录 */
     @Parcelize
     data object Cancelled : QrCodeErrorScreenType
 
+    /** 二维码已过期 */
     @Parcelize
     data object Expired : QrCodeErrorScreenType
 
+    /** 检测到不安全连接 */
     @Parcelize
     data object InsecureChannelDetected : QrCodeErrorScreenType
 
+    /** 对方设备拒绝了登录请求 */
     @Parcelize
     data object Declined : QrCodeErrorScreenType
 
+    /** 协议不支持 */
     @Parcelize
     data object ProtocolNotSupported : QrCodeErrorScreenType
 
+    /** Sliding Sync 不可用 */
     @Parcelize
     data object SlidingSyncNotAvailable : QrCodeErrorScreenType
 
+    /** 未知错误 */
     @Parcelize
     data object UnknownError : QrCodeErrorScreenType
 }

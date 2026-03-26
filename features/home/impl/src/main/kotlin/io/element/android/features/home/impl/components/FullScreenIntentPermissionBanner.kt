@@ -21,17 +21,27 @@ import io.element.android.libraries.fullscreenintent.api.FullScreenIntentPermiss
 import io.element.android.libraries.fullscreenintent.api.aFullScreenIntentPermissionsState
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 全屏intent权限横幅
+ *
+ * 渲染全屏intent权限请求横幅，当应用需要全屏intent权限来显示来电通知时显示。
+ * 用户可以选择继续授权或关闭横幅。
+ *
+ * @param state 全屏intent权限状态
+ * @param modifier 修饰符
+ */
 @Composable
 fun FullScreenIntentPermissionBanner(
     state: FullScreenIntentPermissionsState,
-    modifier: Modifier = Modifier
+    onDismissClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Announcement(
         title = stringResource(R.string.full_screen_intent_banner_title),
         description = stringResource(R.string.full_screen_intent_banner_message),
         type = AnnouncementType.Actionable(
             actionText = stringResource(CommonStrings.action_continue),
-            onDismissClick = { state.eventSink(FullScreenIntentPermissionsEvents.Dismiss) },
+            onDismissClick = onDismissClick,
             onActionClick = { state.eventSink(FullScreenIntentPermissionsEvents.OpenSettings) },
         ),
         modifier = modifier.roomListBannerPadding(),
@@ -42,6 +52,9 @@ fun FullScreenIntentPermissionBanner(
 @Composable
 internal fun FullScreenIntentPermissionBannerPreview() {
     ElementPreview {
-        FullScreenIntentPermissionBanner(aFullScreenIntentPermissionsState())
+        FullScreenIntentPermissionBanner(
+            state = aFullScreenIntentPermissionsState(),
+            onDismissClick = {},
+        )
     }
 }

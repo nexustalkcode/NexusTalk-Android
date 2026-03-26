@@ -20,6 +20,16 @@ import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.matrix.api.core.EventId
 
+/**
+ * 投票历史节点
+ *
+ * 负责显示投票历史列表界面的节点。
+ * 使用 Presenter 模式处理业务逻辑，并通过 View 显示 UI。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenter 投票历史 Presenter
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class PollHistoryNode(
@@ -30,6 +40,11 @@ class PollHistoryNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 回调接口
+     *
+     * 用于处理节点间的通信。
+     */
     interface Callback : Plugin {
         fun navigateToEditPoll(pollStartEventId: EventId)
     }

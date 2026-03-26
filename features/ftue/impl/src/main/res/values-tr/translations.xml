@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Ayarlarınızı daha sonra değiştirebilirsiniz."</string>
   <string name="screen_notification_optin_title">"Bildirimlere izin verin ve hiçbir mesajı kaçırmayın"</string>
   <string name="screen_session_verification_enter_recovery_key">"Kurtarma anahtarını girin"</string>
+  <string name="screen_welcome_agreement">"Kabul Et ve Devam Et'e dokunarak %s kabul etmiş olursunuz"</string>
+  <string name="screen_welcome_privacy_policy_link">"Gizlilik Politikası"</string>
+  <string name="screen_welcome_title">"%s'e hoş geldiniz"</string>
+  <string name="screen_welcome_privacy_notice">"Lütfen Gizlilik Politikamızı okuyun"</string>
+  <string name="screen_welcome_agree">"Kabul Et"</string>
 </resources>

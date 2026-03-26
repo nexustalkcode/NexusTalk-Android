@@ -63,16 +63,27 @@ class DefaultUserListPresenter(
                 .take(MAX_SUGGESTIONS_COUNT)
                 .toList()
         }
-        var isSearchActive by rememberSaveable { mutableStateOf(false) }
+        val dataStoreInitialQuery by userListDataStore.initialQuery.collectAsState(initial = null)
+        val effectiveInitialQuery = dataStoreInitialQuery ?: args.initialQuery
+        var isSearchActive by rememberSaveable { mutableStateOf(effectiveInitialQuery != null) }
         val selectedUsers by userListDataStore.selectedUsers.collectAsState(emptyList())
-        val queryState = rememberTextFieldState()
+        val queryState = rememberTextFieldState(initialText = effectiveInitialQuery ?: "")
+        LaunchedEffect(effectiveInitialQuery) {
+            if (effectiveInitialQuery != null) {
+                isSearchActive = true
+                queryState.edit { replace(0, length, effectiveInitialQuery) }
+                if (dataStoreInitialQuery != null) {
+                    userListDataStore.setInitialQuery(null)
+                }
+            }
+        }
         var searchResults: SearchBarResultState<ImmutableList<UserSearchResult>> by remember {
             mutableStateOf(SearchBarResultState.Initial())
         }
         var showSearchLoader by remember { mutableStateOf(false) }
 
         val searchQuery = queryState.text.toString()
-        LaunchedEffect(searchQuery) {
+        LaunchedEffect(searchQuery, effectiveInitialQuery) {
             searchResults = SearchBarResultState.Initial()
             showSearchLoader = false
             userRepository.search(searchQuery).onEach { state ->

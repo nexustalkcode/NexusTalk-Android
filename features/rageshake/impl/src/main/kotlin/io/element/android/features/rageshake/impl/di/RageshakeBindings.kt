@@ -12,7 +12,17 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import io.element.android.features.rageshake.impl.crash.PreferencesCrashDataStore
 
+/**
+ * Rageshake 依赖绑定接口
+ *
+ * 定义 Rageshake 模块需要提供的依赖绑定。
+ */
 @ContributesTo(AppScope::class)
 interface RageshakeBindings {
+    /**
+     * 获取偏好设置崩溃数据存储
+     *
+     * @return PreferencesCrashDataStore 崩溃数据存储实例
+     */
     fun preferencesCrashDataStore(): PreferencesCrashDataStore
 }

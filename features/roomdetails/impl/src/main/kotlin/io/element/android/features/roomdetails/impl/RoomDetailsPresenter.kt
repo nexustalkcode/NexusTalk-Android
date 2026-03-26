@@ -60,6 +60,23 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+/**
+ * 房间详情 Presenter
+ *
+ * 负责处理房间详情界面的业务逻辑，管理房间信息展示、设置、通话等功能。
+ *
+ * @property client Matrix 客户端
+ * @property room 已加入的房间
+ * @property featureFlagService 功能标志服务
+ * @property notificationSettingsService 通知设置服务
+ * @property roomMembersDetailsPresenterFactory 房间成员详情 Presenter 工厂
+ * @property leaveRoomPresenter 离开房间 Presenter
+ * @property roomCallStatePresenter 房间通话状态 Presenter
+ * @property dispatchers 协程调度器
+ * @property analyticsService 分析服务
+ * @property clipboardHelper 剪贴板助手
+ * @property appPreferencesStore 应用偏好设置存储
+ */
 @Inject
 class RoomDetailsPresenter(
     private val client: MatrixClient,
@@ -103,6 +120,9 @@ class RoomDetailsPresenter(
         val roomMemberDetailsPresenter = roomMemberDetailsPresenter(dmMember)
         val roomType = getRoomType(dmMember, currentMember)
         val roomCallState = roomCallStatePresenter.present()
+        val isVideoCallEnabled by remember {
+            featureFlagService.isFeatureEnabledFlow(FeatureFlags.VideoCall)
+        }.collectAsState(initial = true)
         val joinedMemberCount by remember { derivedStateOf { roomInfo.joinedMembersCount } }
 
         val topicState = remember(permissions.editDetailsPermissions.canEditTopic, roomTopic, roomType) {
@@ -151,7 +171,6 @@ class RoomDetailsPresenter(
                     }
                 }
                 is RoomDetailsEvent.SetFavorite -> scope.setFavorite(event.isFavorite)
-                is RoomDetailsEvent.SetLowPriority -> scope.launch { room.setIsLowPriority(event.isLowPriority) } // SC
                 is RoomDetailsEvent.CopyToClipboard -> {
                     clipboardHelper.copyPlainText(event.text)
                     snackbarDispatcher.post(SnackbarMessage(CommonStrings.common_copied_to_clipboard))
@@ -169,8 +188,6 @@ class RoomDetailsPresenter(
 
         val canReportRoom by produceState(false) { value = client.canReportRoom() }
 
-        val enableKeyShareOnInvite by featureFlagService.isFeatureEnabledFlow(FeatureFlags.EnableKeyShareOnInvite).collectAsState(initial = false)
-
         return RoomDetailsState(
             roomId = room.roomId,
             roomName = roomName,
@@ -181,13 +198,12 @@ class RoomDetailsPresenter(
             isEncrypted = isEncrypted,
             canInvite = permissions.canInvite,
             canEdit = roomType == RoomDetailsType.Room && permissions.editDetailsPermissions.hasAny,
-            roomCallState = roomCallState,
+            roomCallState = if (isVideoCallEnabled) roomCallState else RoomCallState.Unavailable,
             roomType = roomType,
             roomMemberDetailsState = roomMemberDetailsState,
             leaveRoomState = leaveRoomState,
             roomNotificationSettings = roomNotificationSettingsState.roomNotificationSettings(),
             isFavorite = isFavorite,
-            isLowPriority = remember { derivedStateOf { roomInfo.isLowPriority } }.value, // SC
             displayRolesAndPermissionsSettings = !isDm && permissions.canEditRolesAndPermissions,
             isPublic = joinRule == JoinRule.Public,
             heroes = roomInfo.heroes.toImmutableList(),
@@ -201,8 +217,6 @@ class RoomDetailsPresenter(
             isTombstoned = roomInfo.successorRoom != null,
             showDebugInfo = isDeveloperModeEnabled,
             roomVersion = roomInfo.roomVersion,
-            enableKeyShareOnInvite = enableKeyShareOnInvite,
-            roomHistoryVisibility = roomInfo.historyVisibility,
             eventSink = ::handleEvent,
         )
     }

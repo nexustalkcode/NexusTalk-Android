@@ -98,10 +98,4 @@ class DefaultEnterpriseServiceTest {
             awaitComplete()
         }
     }
-
-    @Test
-    fun `getNoisyNotificationChannelId returns null`() = runTest {
-        val defaultEnterpriseService = DefaultEnterpriseService()
-        assertThat(defaultEnterpriseService.getNoisyNotificationChannelId(A_SESSION_ID)).isNull()
-    }
 }

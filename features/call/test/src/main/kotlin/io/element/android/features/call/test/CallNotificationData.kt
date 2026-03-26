@@ -33,7 +33,6 @@ fun aCallNotificationData(
     timestamp: Long = 0L,
     expirationTimestamp: Long = 30_000L,
     textContent: String? = null,
-    audioOnly: Boolean = false,
 ): CallNotificationData = CallNotificationData(
     sessionId = sessionId,
     roomId = roomId,
@@ -46,5 +45,4 @@ fun aCallNotificationData(
     timestamp = timestamp,
     expirationTimestamp = expirationTimestamp,
     textContent = textContent,
-    audioOnly = audioOnly
 )

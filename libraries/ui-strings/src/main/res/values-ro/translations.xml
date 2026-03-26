@@ -106,7 +106,6 @@
   <string name="action_invite_people_to_app">"Invitați persoane în %1$s"</string>
   <string name="action_invites_list">"Invitații"</string>
   <string name="action_join">"Alăturați-vă"</string>
-  <string name="action_learn_more">"Aflați mai multe"</string>
   <string name="action_leave">"Părăsiți"</string>
   <string name="action_leave_conversation">"Părăsiți conversația"</string>
   <string name="action_leave_room">"Părăsiți camera"</string>
@@ -488,4 +487,9 @@ Sunteți sigur că doriți să continuați?"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Nu aveți acces la acest mesaj"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Nu s-a putut decripta mesajul"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Acest mesaj a fost blocat fie pentru că nu ați verificat dispozitivul, fie pentru că expeditorul trebuie să vă verifice identitatea."</string>
+  <string name="common_call_ended">"Apel încheiat"</string>
+  <string name="action_start_call">"Începe apelul"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Fără apeluri"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Rămâneți conectat la comunități"</string>
+  <string name="action_create_community">"Creează comunitate"</string>
 </resources>

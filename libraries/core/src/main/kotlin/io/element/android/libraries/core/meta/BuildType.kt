@@ -9,8 +9,6 @@
 package io.element.android.libraries.core.meta
 
 enum class BuildType {
-    RELEASE_SC,
-    DEBUG_SC,
     RELEASE,
     NIGHTLY,
     DEBUG

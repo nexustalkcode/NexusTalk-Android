@@ -10,7 +10,12 @@ package io.element.android.features.preferences.impl.notifications.edit
 
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 
+/**
+ * 编辑默认通知设置事件密封接口
+ */
 sealed interface EditDefaultNotificationSettingStateEvents {
+    /** 设置通知模式 */
     data class SetNotificationMode(val mode: RoomNotificationMode) : EditDefaultNotificationSettingStateEvents
+    /** 清除错误 */
     data object ClearError : EditDefaultNotificationSettingStateEvents
 }

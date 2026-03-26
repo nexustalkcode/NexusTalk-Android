@@ -8,7 +8,15 @@
 
 package io.element.android.features.securebackup.impl.reset.root
 
+/**
+ * 重置身份根页面事件密封接口
+ *
+ * 定义了重置身份根页面的用户交互事件。
+ */
 sealed interface ResetIdentityRootEvent {
+    /** 继续事件 */
     data object Continue : ResetIdentityRootEvent
+
+    /** 关闭对话框事件 */
     data object DismissDialog : ResetIdentityRootEvent
 }

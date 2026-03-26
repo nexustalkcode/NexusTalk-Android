@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"Matchende rum fundet"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Rum ikke fundet"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"f.eks. #rummets-navn:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"Scan QR-kode"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Scan QR-koden for at tilføje en kontakt"</string>
+  <string name="screen_scan_user_qr_code_success">"QR-koden blev scannet"</string>
 </resources>

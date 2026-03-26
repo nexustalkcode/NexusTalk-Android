@@ -17,28 +17,40 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+/**
+ * 锁屏服务接口
+ *
+ * 提供锁屏功能的核心接口，包括锁状态查询和 PIN 码设置状态管理。
+ */
 interface LockScreenService {
     /**
-     * The current lock state of the app.
+     * 应用当前的锁定状态
+     *
+     * 返回一个 StateFlow，包含当前应用的锁定状态（已解锁或已锁定）。
      */
     val lockState: StateFlow<LockScreenLockState>
 
     /**
-     * Check if setting up the lock screen is required.
-     * @return true if the lock screen is mandatory and not setup yet, false otherwise.
+     * 检查是否需要设置锁屏
+     *
+     * @return true 如果锁屏是强制的且尚未设置，false 否则
      */
     fun isSetupRequired(): Flow<Boolean>
 
     /**
-     * Check if pin is setup.
-     * @return true if the pin is setup, false otherwise.
+     * 检查 PIN 码是否已设置
+     *
+     * @return true 如果 PIN 码已设置，false 否则
      */
     fun isPinSetup(): Flow<Boolean>
 }
 
 /**
- * Makes sure the secure flag is set on the activity if the pin is setup.
- * @param activity the activity to set the flag on.
+ * 处理安全标志的扩展函数
+ *
+ * 如果已设置 PIN 码，确保在 Activity 上设置安全标志，防止屏幕截图。
+ *
+ * @param activity 要设置标志的 Activity
  */
 fun LockScreenService.handleSecureFlag(activity: ComponentActivity) {
     isPinSetup()

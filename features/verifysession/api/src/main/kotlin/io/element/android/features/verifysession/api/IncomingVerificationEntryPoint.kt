@@ -15,11 +15,30 @@ import io.element.android.libraries.architecture.FeatureEntryPoint
 import io.element.android.libraries.architecture.NodeInputs
 import io.element.android.libraries.matrix.api.verification.VerificationRequest
 
+/**
+ * 传入会话验证功能入口点接口
+ *
+ * 定义了传入会话验证流程的入口，负责创建和管理验证流程的节点。
+ */
 interface IncomingVerificationEntryPoint : FeatureEntryPoint {
+    /**
+     * 输入参数数据类
+     *
+     * @property verificationRequest 传入验证请求
+     */
     data class Params(
         val verificationRequest: VerificationRequest.Incoming,
     ) : NodeInputs
 
+    /**
+     * 创建传入会话验证节点
+     *
+     * @param parentNode 父节点
+     * @param buildContext 构建上下文
+     * @param params 输入参数
+     * @param callback 回调接口
+     * @return Node 传入会话验证节点实例
+     */
     fun createNode(
         parentNode: Node,
         buildContext: BuildContext,
@@ -27,7 +46,11 @@ interface IncomingVerificationEntryPoint : FeatureEntryPoint {
         callback: Callback,
     ): Node
 
+    /**
+     * 传入会话验证回调接口
+     */
     interface Callback : Plugin {
+        /** 验证完成 */
         fun onDone()
     }
 }

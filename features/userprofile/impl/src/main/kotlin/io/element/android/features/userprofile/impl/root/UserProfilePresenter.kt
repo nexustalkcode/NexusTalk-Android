@@ -9,6 +9,7 @@
 package io.element.android.features.userprofile.impl.root
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -31,6 +32,8 @@ import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.core.bool.orFalse
+import io.element.android.libraries.featureflag.api.FeatureFlagService
+import io.element.android.libraries.featureflag.api.FeatureFlags
 import io.element.android.libraries.matrix.api.MatrixClient
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.UserId
@@ -50,6 +53,7 @@ class UserProfilePresenter(
     private val client: MatrixClient,
     private val startDMAction: StartDMAction,
     private val sessionEnterpriseService: SessionEnterpriseService,
+    private val featureFlagService: FeatureFlagService,
 ) : Presenter<UserProfileState> {
     @AssistedFactory
     interface Factory {
@@ -65,11 +69,15 @@ class UserProfilePresenter(
 
     @Composable
     private fun getCanCall(roomId: RoomId?): State<Boolean> {
+        val isVideoCallEnabled by remember {
+            featureFlagService.isFeatureEnabledFlow(FeatureFlags.VideoCall)
+        }.collectAsState(initial = true)
         val isElementCallAvailable by produceState(initialValue = false, roomId) {
             value = sessionEnterpriseService.isElementCallAvailable()
         }
-        return produceState(initialValue = false, isElementCallAvailable, roomId) {
+        return produceState(initialValue = false, isVideoCallEnabled, isElementCallAvailable, roomId) {
             value = when {
+                isVideoCallEnabled.not() -> false
                 isElementCallAvailable.not() -> false
                 client.isMe(userId) -> false
                 else ->

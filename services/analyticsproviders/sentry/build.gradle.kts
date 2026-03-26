@@ -56,7 +56,6 @@ dependencies {
     implementation(projects.services.analyticsproviders.api)
     implementation(projects.services.appnavstate.api)
 
-    testCommonDependencies(libs, false)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.services.appnavstate.test)
 }

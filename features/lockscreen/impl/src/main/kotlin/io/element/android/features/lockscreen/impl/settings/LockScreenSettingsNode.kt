@@ -19,6 +19,11 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 锁屏设置节点
+ *
+ * 显示锁屏设置界面的节点。
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class LockScreenSettingsNode(
@@ -26,7 +31,11 @@ class LockScreenSettingsNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: LockScreenSettingsPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 回调接口
+     */
     interface Callback : Plugin {
+        /** 导航到设置 PIN 页面 */
         fun navigateToSetupPin()
     }
 

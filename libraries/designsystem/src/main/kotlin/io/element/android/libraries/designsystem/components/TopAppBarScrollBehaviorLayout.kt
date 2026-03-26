@@ -18,6 +18,7 @@ import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import io.element.android.compound.theme.ElementTheme
+import kotlin.math.roundToInt
 
 /**
  * A layout that measures its content to set the height offset limit of a [TopAppBarScrollBehavior].
@@ -43,11 +44,13 @@ fun TopAppBarScrollBehaviorLayout(
             measurePolicy = { measurables, constraints ->
                 val placeable = measurables.first().measure(constraints)
                 val contentHeight = placeable.height.toFloat()
-                scrollBehavior.state.heightOffsetLimit = -contentHeight
-                val heightOffset = scrollBehavior.state.heightOffset
-                val layoutHeight = (contentHeight + heightOffset).toInt().coerceAtLeast(0)
+                val heightOffsetLimit = -contentHeight
+                scrollBehavior.state.heightOffsetLimit = heightOffsetLimit
+                // Clamp stale offsets so layout height never becomes negative during remeasure.
+                val heightOffset = scrollBehavior.state.heightOffset.coerceIn(heightOffsetLimit, 0f)
+                val layoutHeight = (contentHeight + heightOffset).roundToInt().coerceAtLeast(0)
                 layout(placeable.width, layoutHeight) {
-                    placeable.place(0, heightOffset.toInt())
+                    placeable.place(0, heightOffset.roundToInt())
                 }
             }
         )

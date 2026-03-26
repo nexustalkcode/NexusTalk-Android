@@ -12,6 +12,13 @@ import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.user.MatrixUser
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 被屏蔽用户页面状态数据类
+ *
+ * @property blockedUsers 被屏蔽的用户列表
+ * @property unblockUserAction 解封用户的操作状态
+ * @property eventSink 事件处理函数
+ */
 data class BlockedUsersState(
     val blockedUsers: ImmutableList<MatrixUser>,
     val unblockUserAction: AsyncAction<Unit>,

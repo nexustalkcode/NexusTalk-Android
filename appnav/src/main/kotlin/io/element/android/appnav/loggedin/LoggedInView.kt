@@ -58,17 +58,17 @@ fun LoggedInView(
                 ?.takeIf { !state.ignoreRegistrationError }
                 ?.getReason()
                 ?.let { reason ->
-                    ErrorDialogWithDoNotShowAgain(
-                        content = stringResource(id = CommonStrings.common_error_registering_pusher_android, reason),
-                        cancelText = stringResource(id = CommonStrings.common_settings),
-                        onDismiss = {
-                            state.eventSink(LoggedInEvents.CloseErrorDialog(it))
-                        },
-                        onCancel = {
-                            state.eventSink(LoggedInEvents.CloseErrorDialog(false))
-                            navigateToNotificationTroubleshoot()
-                        }
-                    )
+//                    ErrorDialogWithDoNotShowAgain(
+//                        content = stringResource(id = CommonStrings.common_error_registering_pusher_android, reason),
+//                        cancelText = stringResource(id = CommonStrings.common_settings),
+//                        onDismiss = {
+//                            state.eventSink(LoggedInEvents.CloseErrorDialog(it))
+//                        },
+//                        onCancel = {
+//                            state.eventSink(LoggedInEvents.CloseErrorDialog(false))
+//                            navigateToNotificationTroubleshoot()
+//                        }
+//                    )
                 }
         }
     }

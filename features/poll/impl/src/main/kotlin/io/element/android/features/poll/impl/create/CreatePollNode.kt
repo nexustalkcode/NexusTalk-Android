@@ -26,6 +26,17 @@ import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.services.analytics.api.AnalyticsService
 import java.util.concurrent.atomic.AtomicBoolean
 
+/**
+ * 创建投票节点
+ *
+ * 负责显示投票创建/编辑界面的节点。
+ * 使用 Presenter 模式处理业务逻辑，并通过 View 显示 UI。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenterFactory Presenter 工厂
+ * @property analyticsService 分析服务
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class CreatePollNode(
@@ -34,6 +45,12 @@ class CreatePollNode(
     presenterFactory: CreatePollPresenter.Factory,
     analyticsService: AnalyticsService,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 节点输入数据类
+     *
+     * @property mode 创建模式（新建或编辑）
+     * @property timelineMode 时间线模式
+     */
     data class Inputs(val mode: CreatePollMode, val timelineMode: Timeline.Mode) : NodeInputs
 
     private val inputs: Inputs = inputs()
@@ -41,7 +58,7 @@ class CreatePollNode(
     private var isNavigatingUp = AtomicBoolean(false)
 
     private val presenter = presenterFactory.create(
-        navigateUp = {
+        backNavigator = {
             if (isNavigatingUp.compareAndSet(false, true)) {
                 navigateUp()
             }

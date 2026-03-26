@@ -18,6 +18,13 @@ import dev.zacsweers.metro.AssistedInject
 import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 被屏蔽用户页面 Node
+ *
+ * 负责显示被屏蔽用户列表页面，允许用户查看和管理被屏蔽的用户。
+ *
+ * @property presenter 被屏蔽用户 Presenter
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class BlockedUsersNode(

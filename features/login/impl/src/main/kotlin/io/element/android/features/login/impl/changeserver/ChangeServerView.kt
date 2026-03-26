@@ -29,6 +29,24 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.LocalBuildMeta
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 更改服务器视图组件
+ *
+ * 用于显示更改服务器操作状态和错误的可组合组件。
+ * 根据不同的服务器错误类型显示相应的对话框：
+ * - 无效服务器
+ * - 不支持的服务器
+ * - 需要 Element Pro
+ * - 未授权的服务器
+ * - Sliding Sync 不支持
+ *
+ * @param state 更改服务器状态
+ * @param onLearnMoreClick 了解更多信息的点击回调
+ * @param onSuccess 成功时的回调
+ * @param modifier 修饰符
+ * @see ChangeServerState UI 状态
+ * @see ChangeServerError 服务器错误类型
+ */
 @Composable
 fun ChangeServerView(
     state: ChangeServerState,

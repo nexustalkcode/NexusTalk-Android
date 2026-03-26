@@ -14,6 +14,13 @@ import io.element.android.libraries.designsystem.theme.components.IconSource
 import io.element.android.libraries.featureflag.ui.model.FeatureUiModel
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 实验室功能状态提供者
+ *
+ * 用于在预览模式下提供实验室功能页面的示例状态数据。
+ *
+ * @see LabsState 实验室功能状态
+ */
 internal class LabsStateProvider : PreviewParameterProvider<LabsState> {
     override val values: Sequence<LabsState>
         get() = sequenceOf(
@@ -22,6 +29,13 @@ internal class LabsStateProvider : PreviewParameterProvider<LabsState> {
         )
 }
 
+/**
+ * 创建示例 LabsState 对象
+ *
+ * @param features 功能列表
+ * @param isApplyingChanges 是否正在应用更改
+ * @return LabsState 示例状态
+ */
 internal fun aLabsState(
     features: List<FeatureUiModel> = emptyList(),
     isApplyingChanges: Boolean = false,
@@ -31,6 +45,11 @@ internal fun aLabsState(
     eventSink = {},
 )
 
+/**
+ * 创建示例功能列表
+ *
+ * @return 功能 UI 模型列表
+ */
 internal fun aFeatureList() = listOf(
     FeatureUiModel(
         key = "feature_1",

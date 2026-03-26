@@ -8,6 +8,7 @@
   <string name="full_screen_intent_banner_message">"اس بات کو یقینی بنانے کے لیے کہ آپ کبھی بھی اہم مکالمہ سے محروم نہ ہوں، براہ کرم اپنی ترتیبات تبدیل کریں تاکہ آپ کا ہاتف مقفل ہونے پر مکمل پردۂ نمائش اطلاعات کی اجازت دی جا سکے۔"</string>
   <string name="full_screen_intent_banner_title">"اپنے مکالمتی تجربے کو احسن کریں"</string>
   <string name="screen_home_tab_chats">"گفتگوئیں"</string>
+  <string name="screen_home_tab_community">"برادری"</string>
   <string name="screen_invites_decline_chat_message">"کیا آپکو یقین ہے کہ آپ %1$s میں شامل ہونے کی درخواست مسترد کرنا چاہتے ہیں؟"</string>
   <string name="screen_invites_decline_chat_title">"دعوت مسترد کریں"</string>
   <string name="screen_invites_decline_direct_chat_message">"کیا آپکو یقین ہے کہ آپ %1$s کیساتھ نجی گفتگو مسترد کرنا چاہتے ہیں؟"</string>
@@ -40,4 +41,9 @@
   <string name="screen_roomlist_mark_as_unread">"بطور غیر مقروءہ نشانزد کریں"</string>
   <string name="session_verification_banner_message">"ایسا لگتا ہے کہ آپ ایک نیا آلہ استعمال کر رہے ہیں۔ اپنے مرموزکردہ پیغامات تک رسائی کیلئے کسی دوسرے آلے سے توثیق کریں۔"</string>
   <string name="session_verification_banner_title">"تصدیق کریں کہ آپ ہی ہیں"</string>
+
+  <string name="screen_community_roomlist_empty_message">"کمیونٹیز اراکین کو موضوع پر مبنی گروپس میں اکٹھا کرتی ہیں۔ آپ جو بھی کمیونٹیز میں شامل ہوں گے وہ یہاں ظاہر ہوں گی۔"</string>
+  <string name="screen_community_list_header_count">"%1$d کمیونٹی"</string>
+  <string name="screen_community_list_header_description">"کمیونٹیز جو آپ بناتے یا شامل ہوتے ہیں۔"</string>
+  <string name="screen_roomlist_empty_message_new">"یہ جگہ صرف آپ اور آپ کے قریب ترین لوگوں کی ہوگی۔"</string>
 </resources>

@@ -14,6 +14,15 @@ import io.element.android.features.logout.impl.R
 import io.element.android.libraries.designsystem.components.dialogs.ConfirmationDialog
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 退出登录确认对话框
+ *
+ * 用于在用户点击退出登录按钮后显示的确认对话框，
+ * 让用户确认是否真的要退出登录。
+ *
+ * @param onSubmitClick 点击确认退出按钮的回调
+ * @param onDismiss 点击取消/关闭按钮的回调
+ */
 @Composable
 fun LogoutConfirmationDialog(
     onSubmitClick: () -> Unit,

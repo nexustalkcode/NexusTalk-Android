@@ -38,14 +38,43 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * 房间通知设置 Presenter
+ *
+ * 负责处理房间通知设置页面的业务逻辑。
+ * 管理通知模式的获取、设置、保存和观察。
+ *
+ * @property room 已加入的房间
+ * @property notificationSettingsService 通知设置服务
+ * @property showUserDefinedSettingStyle 是否显示用户定义设置样式
+ * @see Presenter Presenter 基类
+ * @see RoomNotificationSettingsState 通知设置状态
+ * @see AssistedInject 依赖注入注解
+ */
 @AssistedInject
 class RoomNotificationSettingsPresenter(
+    /** 已加入的房间 */
     private val room: JoinedRoom,
+    /** 通知设置服务 */
     private val notificationSettingsService: NotificationSettingsService,
+    /** 是否显示用户定义设置样式 */
     @Assisted private val showUserDefinedSettingStyle: Boolean,
 ) : Presenter<RoomNotificationSettingsState> {
+    /**
+     * Presenter 工厂接口
+     *
+     * 用于创建 RoomNotificationSettingsPresenter 实例。
+     *
+     * @see AssistedFactory 辅助工厂注解
+     */
     @AssistedFactory
     interface Factory {
+        /**
+         * 创建通知设置 Presenter
+         *
+         * @param showUserDefinedSettingStyle 是否显示用户定义设置样式
+         * @return RoomNotificationSettingsPresenter 实例
+         */
         fun create(showUserDefinedSettingStyle: Boolean): RoomNotificationSettingsPresenter
     }
 
@@ -100,12 +129,12 @@ class RoomNotificationSettingsPresenter(
                 !notificationSettingsService.canHomeServerPushEncryptedEventsToDevice().getOrDefault(true)
         }
 
-        fun handleEvent(event: RoomNotificationSettingsEvent) {
+        fun handleEvent(event: RoomNotificationSettingsEvents) {
             when (event) {
-                is RoomNotificationSettingsEvent.ChangeRoomNotificationMode -> {
+                is RoomNotificationSettingsEvents.ChangeRoomNotificationMode -> {
                     localCoroutineScope.setRoomNotificationMode(event.mode, pendingRoomNotificationMode, pendingSetDefault, setNotificationSettingAction)
                 }
-                is RoomNotificationSettingsEvent.SetNotificationMode -> {
+                is RoomNotificationSettingsEvents.SetNotificationMode -> {
                     if (event.isDefault) {
                         localCoroutineScope.restoreDefaultRoomNotificationMode(restoreDefaultAction, pendingSetDefault)
                     } else {
@@ -114,13 +143,13 @@ class RoomNotificationSettingsPresenter(
                         }
                     }
                 }
-                is RoomNotificationSettingsEvent.DeleteCustomNotification -> {
+                is RoomNotificationSettingsEvents.DeleteCustomNotification -> {
                     localCoroutineScope.restoreDefaultRoomNotificationMode(restoreDefaultAction, pendingSetDefault)
                 }
-                RoomNotificationSettingsEvent.ClearSetNotificationError -> {
+                RoomNotificationSettingsEvents.ClearSetNotificationError -> {
                     setNotificationSettingAction.value = AsyncAction.Uninitialized
                 }
-                RoomNotificationSettingsEvent.ClearRestoreDefaultError -> {
+                RoomNotificationSettingsEvents.ClearRestoreDefaultError -> {
                     restoreDefaultAction.value = AsyncAction.Uninitialized
                 }
             }

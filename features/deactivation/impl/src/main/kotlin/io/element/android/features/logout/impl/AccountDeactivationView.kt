@@ -69,6 +69,16 @@ import io.element.android.libraries.testtags.testTag
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 账户停用主界面
+ *
+ * Compose 界面组件，用于显示账户停用页面。
+ * 包含页面标题、停用说明、选项列表、密码输入和提交按钮。
+ *
+ * @param state 账户停用状态
+ * @param onBackClick 返回按钮点击回调
+ * @param modifier 界面修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountDeactivationView(
@@ -128,6 +138,14 @@ fun AccountDeactivationView(
     )
 }
 
+/**
+ * 底部按钮区域
+ *
+ * 包含账户停用的提交按钮。
+ *
+ * @param state 账户停用状态
+ * @param onSubmitClick 提交按钮点击回调
+ */
 @Composable
 private fun ColumnScope.Buttons(
     state: AccountDeactivationState,
@@ -144,6 +162,14 @@ private fun ColumnScope.Buttons(
     )
 }
 
+/**
+ * 账户停用表单内容区域
+ *
+ * 包含账户停用的详细说明、信息列表、删除消息选项和密码输入框。
+ *
+ * @param state 账户停用状态
+ * @param onSubmitClick 提交按钮点击回调
+ */
 @Composable
 private fun Content(
     state: AccountDeactivationState,
@@ -303,12 +329,25 @@ private fun Content(
 }
 
 /**
- * Ensure that the string does not contain any new line characters, which can happen when pasting values.
+ * 字符串清理函数
+ *
+ * 确保字符串不包含换行符，这可能在粘贴值时发生。
+ * 移除字符串中所有的换行符，防止密码输入时出现格式问题。
+ *
+ * @return 清理后的字符串
  */
 private fun String.sanitize(): String {
     return replace("\n", "")
 }
 
+/**
+ * 账户停用界面预览
+ *
+ * 用于 Compose Preview 功能的预览组件。
+ * 支持日夜两种主题的预览。
+ *
+ * @param state 账户停用状态，由 AccountDeactivationStateProvider 提供
+ */
 @PreviewsDayNight
 @Composable
 internal fun AccountDeactivationViewPreview(

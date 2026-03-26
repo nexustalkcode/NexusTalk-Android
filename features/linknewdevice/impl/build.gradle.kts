@@ -51,7 +51,6 @@ dependencies {
     implementation(libs.serialization.json)
     api(projects.features.linknewdevice.api)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.features.linknewdevice.test)
     testImplementation(projects.features.enterprise.test)
     testImplementation(projects.libraries.featureflag.test)

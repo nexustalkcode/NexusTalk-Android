@@ -34,7 +34,6 @@ interface ActiveNotificationsProvider {
     fun getMembershipNotificationForSession(sessionId: SessionId): List<StatusBarNotification>
     fun getMembershipNotificationForRoom(sessionId: SessionId, roomId: RoomId): List<StatusBarNotification>
     fun getSummaryNotification(sessionId: SessionId): StatusBarNotification?
-    fun getFallbackNotification(sessionId: SessionId): StatusBarNotification?
     fun count(sessionId: SessionId): Int
 }
 
@@ -75,11 +74,6 @@ class DefaultActiveNotificationsProvider(
     override fun getSummaryNotification(sessionId: SessionId): StatusBarNotification? {
         val summaryId = NotificationIdProvider.getSummaryNotificationId(sessionId)
         return getNotificationsForSession(sessionId).find { it.id == summaryId }
-    }
-
-    override fun getFallbackNotification(sessionId: SessionId): StatusBarNotification? {
-        val fallbackId = NotificationIdProvider.getFallbackNotificationId(sessionId)
-        return getNotificationsForSession(sessionId).find { it.id == fallbackId }
     }
 
     override fun count(sessionId: SessionId): Int {

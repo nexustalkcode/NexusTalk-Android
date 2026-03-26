@@ -15,6 +15,15 @@ import io.element.android.libraries.previewutils.room.aSpaceRoom
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 
+/**
+ * 管理授权空间状态提供者
+ *
+ * 用于在预览模式下提供各种状态的 ManageAuthorizedSpacesState 实例。
+ * 继承自 PreviewParameterProvider，用于 Compose 预览功能。
+ *
+ * @see ManageAuthorizedSpacesState 页面状态
+ * @see PreviewParameterProvider 预览参数提供者基类
+ */
 open class ManageAuthorizedSpacesStateProvider : PreviewParameterProvider<ManageAuthorizedSpacesState> {
     override val values: Sequence<ManageAuthorizedSpacesState>
         get() = sequenceOf(

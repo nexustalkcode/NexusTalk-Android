@@ -14,11 +14,19 @@ import io.element.android.libraries.architecture.FeatureEntryPoint
 import io.element.android.libraries.matrix.api.timeline.Timeline
 
 /**
- * The "Send location" screen.
+ * 发送位置功能入口点接口
  *
- * Allows a user to share a location message within a room.
+ * 定义了在房间内发送位置消息的功能入口，负责创建和管理发送位置的节点。
  */
 interface SendLocationEntryPoint : FeatureEntryPoint {
+    /**
+     * 创建发送位置节点
+     *
+     * @param parentNode 父节点
+     * @param buildContext 构建上下文
+     * @param timelineMode 时间线模式
+     * @return Node 发送位置节点实例
+     */
     fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

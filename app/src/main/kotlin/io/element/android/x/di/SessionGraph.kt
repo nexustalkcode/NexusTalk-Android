@@ -14,6 +14,19 @@ import io.element.android.libraries.architecture.NodeFactoriesBindings
 import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.MatrixClient
 
+/**
+ * 会话依赖注入图接口。
+ *
+ * 使用 @GraphExtension 注解标记，扩展自 SessionScope。
+ * 定义了用户会话级别的依赖注入关系。
+ * 继承自 NodeFactoriesBindings，提供节点工厂绑定。
+ *
+ * 包含以下依赖关系：
+ * - roomGraphFactory：房间图的工厂接口，用于创建 RoomGraph
+ *
+ * Factory 接口定义了创建 SessionGraph 实例的工厂方法，
+ * 接收 MatrixClient 作为参数。
+ */
 @GraphExtension(SessionScope::class)
 interface SessionGraph : NodeFactoriesBindings {
     val roomGraphFactory: RoomGraph.Factory

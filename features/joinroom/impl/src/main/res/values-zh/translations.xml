@@ -18,7 +18,7 @@
   <string name="screen_join_room_invited_by">"受邀于"</string>
   <string name="screen_join_room_join_action">"加入"</string>
   <string name="screen_join_room_join_restricted_message">"您可能需要受到邀请或成为某个空间的成员才能加入。"</string>
-  <string name="screen_join_room_knock_action">"加入聊天室"</string>
+  <string name="screen_join_room_knock_action">"加入群聊"</string>
   <string name="screen_join_room_knock_message_characters_count">"允许的字符数量 %2$d中的%1$d"</string>
   <string name="screen_join_room_knock_message_description">"消息（可选）"</string>
   <string name="screen_join_room_knock_sent_description">"如果您的请求被接受，您将收到加入房间的邀请。"</string>
@@ -27,8 +27,8 @@
   <string name="screen_join_room_loading_alert_title">"无法显示此房间预览"</string>
   <string name="screen_join_room_space_not_supported_description">"%1$s 尚不支持空间。您可以通过 Web 端访问空间"</string>
   <string name="screen_join_room_space_not_supported_title">"空间尚不支持"</string>
-  <string name="screen_join_room_subtitle_knock">"点击下面的按钮，系统将通知聊天室管理员。获得批准后将能够加入对话。"</string>
-  <string name="screen_join_room_subtitle_no_preview">"只有聊天室成员才能查看消息历史记录。"</string>
-  <string name="screen_join_room_title_knock">"想加入这个聊天室吗？"</string>
+  <string name="screen_join_room_subtitle_knock">"点击下面的按钮，系统将通知群聊管理员。获得批准后将能够加入对话。"</string>
+  <string name="screen_join_room_subtitle_no_preview">"只有群聊成员才能查看消息历史记录。"</string>
+  <string name="screen_join_room_title_knock">"想加入这个群聊吗？"</string>
   <string name="screen_join_room_title_no_preview">"预览不可用"</string>
 </resources>

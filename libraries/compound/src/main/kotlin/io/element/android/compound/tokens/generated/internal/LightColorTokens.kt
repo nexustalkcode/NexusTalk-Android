@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 Element Creations Ltd.
+ * Copyright (c) 2025 Element Creations Ltd.
  *
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial.
  * Please see LICENSE files in the repository root for full details.
@@ -316,6 +316,8 @@ object LightColorTokens {
     val colorRed900 = Color(0xffd51928)
     val colorThemeBg = Color(0xffffffff)
     val colorTransparent = Color(0x00000000)
+    val colorBrandStart = Color(0xFF4EF4BE)
+    val colorBrandEnd = Color(0xFF018FE7)
     val colorYellow100 = Color(0xfffffcf0)
     val colorYellow1000 = Color(0xff8f4d00)
     val colorYellow1100 = Color(0xff803f00)

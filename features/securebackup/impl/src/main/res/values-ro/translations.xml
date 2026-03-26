@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Dezactivați backupul"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Activați backupul"</string>
-  <string name="screen_chat_backup_key_backup_description">"Stocați identitatea criptografică și cheile de mesaje în siguranță pe server. Acest lucru vă va permite să vizualizați mesajele anterioare pe orice dispozitiv nou. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Stocați identitatea criptografică și cheile de mesaje în siguranță pe server. Acest lucru vă va permite să vizualizați mesajele anterioare pe orice dispozitiv nou. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Backup"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"Stocarea cheilor trebuie activată pentru a configura recuperarea."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Încărcați cheile de pe acest dispozitiv"</string>

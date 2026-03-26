@@ -9,8 +9,10 @@
 package io.element.android.features.messages.impl.timeline.model
 
 /**
- * Model if there is a new event in the timeline and if it is from me or from other.
- * This can be used to scroll to the bottom of the list when a new event is added.
+ * 新事件状态枚举
+ *
+ * 表示时间线中是否有新事件，以及事件是否来自当前用户或其他用户。
+ * 可用于在添加新事件时滚动到列表底部。
  */
 enum class NewEventState {
     None,

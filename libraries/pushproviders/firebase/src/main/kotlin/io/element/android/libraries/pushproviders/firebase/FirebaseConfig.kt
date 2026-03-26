@@ -11,9 +11,9 @@ package io.element.android.libraries.pushproviders.firebase
 object FirebaseConfig {
     /**
      * It is the push gateway for firebase.
-     * Note: pusher_http_url should have path '/_matrix/push/v1/notify' -->
+     * Note: pusher_http_url should have path '/nexus/push/v1/notify' -->
      */
-    const val PUSHER_HTTP_URL: String = "https://sygnal.schildi.chat/_matrix/push/v1/notify"
+    const val PUSHER_HTTP_URL: String = "https://nexustalk.space/_matrix/push/v1/notify"
 
     const val INDEX = 0
     const val NAME = "Firebase"

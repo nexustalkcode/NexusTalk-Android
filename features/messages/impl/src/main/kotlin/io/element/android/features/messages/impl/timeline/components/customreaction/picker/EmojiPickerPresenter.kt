@@ -93,10 +93,10 @@ class EmojiPickerPresenter(
         }
 
         val isInPreview = LocalInspectionMode.current
-        fun handleEvent(event: EmojiPickerEvent) {
+        fun handleEvent(event: EmojiPickerEvents) {
             when (event) {
                 // For some reason, in preview mode the SearchBar emits this event with an `isActive = true` value automatically
-                is EmojiPickerEvent.ToggleSearchActive -> if (!isInPreview) {
+                is EmojiPickerEvents.ToggleSearchActive -> if (!isInPreview) {
                     isSearchActive = event.isActive
                 }
             }

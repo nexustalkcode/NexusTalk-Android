@@ -99,7 +99,6 @@
   <string name="action_invite_people_to_app">"%1$s에 사람 초대"</string>
   <string name="action_invites_list">"초대"</string>
   <string name="action_join">"참가하기"</string>
-  <string name="action_learn_more">"더 알아보기"</string>
   <string name="action_leave">"떠나기"</string>
   <string name="action_leave_conversation">"대화에서 나가기"</string>
   <string name="action_leave_room">"방 떠나기"</string>
@@ -446,4 +445,9 @@
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"이 메시지에 액세스할 수 없습니다"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"메시지를 해독할 수 없습니다."</string>
   <string name="timeline_decryption_failure_withheld_unverified">"이 메시지는 귀하가 기기를 확인하지 않았거나 발신자가 귀하의 신원을 확인해야 하기 때문에 차단되었습니다."</string>
+  <string name="common_call_ended">"통화 종료됨"</string>
+  <string name="action_start_call">"통화 시작"</string>
+  <string name="screen_roomlist_empty_no_call_title">"통화 없음"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"커뮤니티와 연결 유지"</string>
+  <string name="action_create_community">"커뮤니티 만들기"</string>
 </resources>

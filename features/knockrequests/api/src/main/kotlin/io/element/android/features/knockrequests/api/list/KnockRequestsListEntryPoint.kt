@@ -10,4 +10,9 @@ package io.element.android.features.knockrequests.api.list
 
 import io.element.android.libraries.architecture.SimpleFeatureEntryPoint
 
+/**
+ * 敲门请求列表功能入口点接口
+ *
+ * 定义了敲门请求列表功能的入口接口。
+ */
 interface KnockRequestsListEntryPoint : SimpleFeatureEntryPoint

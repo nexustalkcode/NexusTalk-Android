@@ -32,6 +32,20 @@ import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 静态地图占位符组件
+ *
+ * 在静态地图加载过程中或加载失败时显示的占位符。
+ * 显示模糊的背景地图图片，可选的加载指示器，以及在可重新加载时显示的重试按钮。
+ *
+ * @param showProgress 是否显示加载进度指示器
+ * @param canReload 是否可以重新加载地图
+ * @param contentDescription 图片的无障碍描述
+ * @param width 占位符宽度
+ * @param height 占位符高度
+ * @param onLoadMapClick 点击重新加载地图的回调
+ * @param modifier 修饰符
+ */
 @Composable
 internal fun StaticMapPlaceholder(
     showProgress: Boolean,

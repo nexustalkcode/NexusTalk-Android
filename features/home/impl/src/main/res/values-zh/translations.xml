@@ -14,7 +14,8 @@
   <string name="confirm_recovery_key_banner_title">"你的密钥存储已不同步"</string>
   <string name="full_screen_intent_banner_message">"为确保您不会错过重要来电，请更改设置以允许锁屏时的全屏通知。"</string>
   <string name="full_screen_intent_banner_title">"提升通话体验"</string>
-  <string name="screen_home_tab_chats">"全部聊天"</string>
+  <string name="screen_home_tab_chats">"最近"</string>
+  <string name="screen_home_tab_community">"社区"</string>
   <string name="screen_home_tab_spaces">"空间"</string>
   <string name="screen_invites_decline_chat_message">"您确定要拒绝加入 %1$s 的邀请吗？"</string>
   <string name="screen_invites_decline_chat_title">"拒绝邀请"</string>
@@ -24,7 +25,7 @@
   <string name="screen_invites_invited_you">"%1$s （%2$s）邀请了你"</string>
   <string name="screen_migration_message">"这是一个一次性的过程，感谢您的等待。"</string>
   <string name="screen_migration_title">"设置您的账户。"</string>
-  <string name="screen_roomlist_a11y_create_message">"创建新的对话或聊天室"</string>
+  <string name="screen_roomlist_a11y_create_message">"创建新的对话或群聊"</string>
   <string name="screen_roomlist_clear_filters">"清除筛选条件"</string>
   <string name="screen_roomlist_empty_message">"通过向某人发送消息来开始。"</string>
   <string name="screen_roomlist_empty_title">"还没有聊天。"</string>
@@ -40,8 +41,8 @@
   <string name="screen_roomlist_filter_mixed_empty_state_title">"您没有关于此选项的聊天"</string>
   <string name="screen_roomlist_filter_people">"用户"</string>
   <string name="screen_roomlist_filter_people_empty_state_title">"目前您还没有私信"</string>
-  <string name="screen_roomlist_filter_rooms">"聊天室"</string>
-  <string name="screen_roomlist_filter_rooms_empty_state_title">"您尚未进入任何聊天室"</string>
+  <string name="screen_roomlist_filter_rooms">"群聊"</string>
+  <string name="screen_roomlist_filter_rooms_empty_state_title">"您尚未进入任何群聊"</string>
   <string name="screen_roomlist_filter_unreads">"未读"</string>
   <string name="screen_roomlist_filter_unreads_empty_state_title">"恭喜！
 没有任何未读消息！"</string>
@@ -50,7 +51,14 @@
   <string name="screen_roomlist_mark_as_read">"标记为已读"</string>
   <string name="screen_roomlist_mark_as_unread">"标记为未读"</string>
   <string name="screen_roomlist_tombstoned_room_description">"此房间已升级"</string>
-  <string name="screen_roomlist_your_spaces">"您的空间"</string>
   <string name="session_verification_banner_message">"您似乎正在使用新设备。使用另一台设备进行验证以访问您的加密消息。"</string>
   <string name="session_verification_banner_title">"验证是你本人"</string>
+
+  <string name="screen_community_roomlist_empty_message">"社区将成员聚集在以主题为基础的群组中。您加入的任何社区都会显示在这里。"</string>
+  <string name="screen_community_list_header_count">"%1$d社区"</string>
+  <string name="screen_community_list_header_description">"您创建或加入的社区"</string>
+  <string name="screen_roomlist_empty_message_new">"这里将只属于你和最亲密的人"</string>
+  <string name="enter_recovery_key_banner_message">"你的部分消息历史记录已加密。使用恢复密钥来访问这些消息"</string>
+  <string name="enter_recovery_key_banner_submit">"输入恢复密钥"</string>
+  <string name="enter_recovery_key_banner_title">"恢复你的加密历史记录"</string>
 </resources>

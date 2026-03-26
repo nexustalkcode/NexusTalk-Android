@@ -10,7 +10,14 @@ package io.element.android.features.preferences.impl.root
 
 import io.element.android.libraries.matrix.api.core.SessionId
 
+/**
+ * 首选项根页面事件密封接口
+ *
+ * 定义首选项根页面中可能发生的各种用户交互事件。
+ */
 sealed interface PreferencesRootEvents {
+    /** 点击版本信息 */
     data object OnVersionInfoClick : PreferencesRootEvents
+    /** 切换到其他会话 */
     data class SwitchToSession(val sessionId: SessionId) : PreferencesRootEvents
 }

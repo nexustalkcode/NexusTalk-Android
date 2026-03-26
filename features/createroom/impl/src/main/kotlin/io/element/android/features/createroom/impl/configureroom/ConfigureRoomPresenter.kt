@@ -60,10 +60,30 @@ import kotlin.jvm.optionals.getOrDefault
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * 配置房间 Presenter
+ *
+ * 负责处理配置房间界面的业务逻辑，包括：
+ * - 管理房间配置状态（名称、主题、头像等）
+ * - 处理用户输入事件
+ * - 执行创建房间操作
+ * - 上传房间头像
+ * - 管理相机权限
+ *
+ * @property isSpace 是否创建为空间
+ * @property dataStore 配置存储，用于持久化配置
+ * @property matrixClient Matrix 客户端，用于与服务器通信
+ * @property mediaPickerProvider 媒体选择器提供者
+ * @property mediaPreProcessor 媒体预处理器，用于处理头像图片
+ * @property analyticsService 分析服务
+ * @property permissionsPresenterFactory 权限 Presenter 工厂
+ * @property featureFlagService 特性开关服务
+ * @property roomAliasHelper 房间别名辅助工具
+ * @property mediaOptimizationConfigProvider 媒体优化配置提供者
+ */
 @AssistedInject
 class ConfigureRoomPresenter(
     @Assisted private val isSpace: Boolean,
-    @Assisted private val initialParentSpaceId: RoomId?,
     private val dataStore: CreateRoomConfigStore,
     private val matrixClient: MatrixClient,
     private val mediaPickerProvider: PickerProvider,
@@ -74,13 +94,30 @@ class ConfigureRoomPresenter(
     private val roomAliasHelper: RoomAliasHelper,
     private val mediaOptimizationConfigProvider: MediaOptimizationConfigProvider,
 ) : Presenter<ConfigureRoomState> {
+    /**
+     * Presenter 工厂接口
+     *
+     * 用于创建 ConfigureRoomPresenter 实例
+     */
     @AssistedFactory
     interface Factory {
-        fun create(isSpace: Boolean, initialParentSpaceId: RoomId?): ConfigureRoomPresenter
+        /**
+         * 创建 ConfigureRoomPresenter 实例
+         *
+         * @param isSpace 是否创建为空间
+         * @return ConfigureRoomPresenter 实例
+         */
+        fun create(isSpace: Boolean): ConfigureRoomPresenter
     }
 
+    /** 相机权限 Presenter，用于管理相机权限请求 */
     private val cameraPermissionPresenter: PermissionsPresenter = permissionsPresenterFactory.create(android.Manifest.permission.CAMERA)
+    /** 是否有待处理的权限请求 */
     private var pendingPermissionRequest = false
+
+    init {
+        dataStore.setIsSpace(isSpace)
+    }
 
     @Composable
     override fun present(): ConfigureRoomState {
@@ -119,10 +156,6 @@ class ConfigureRoomPresenter(
             } else {
                 persistentListOf()
             }
-            val parentSpace = spaces.find { it.roomId == initialParentSpaceId }
-            parentSpace?.let {
-                dataStore.setParentSpace(parentSpace = parentSpace, updateVisibility = true)
-            }
         }
 
         LaunchedEffect(cameraPermissionState.permissionGranted) {
@@ -149,48 +182,41 @@ class ConfigureRoomPresenter(
         // 2. If it has a parent space.
         // 3. If knocking is enabled.
         val parentSpace = createRoomConfig.parentSpace
-        val availableJoinRules = remember(parentSpace, isSpace, isKnockFeatureEnabled) {
+        val availableJoinRules = remember(createRoomConfig.parentSpace, isSpace, isKnockFeatureEnabled) {
             when {
                 isSpace && parentSpace != null -> TODO("Adding a space to a parent space is not supported yet! How did you get here?")
                 parentSpace == null || parentSpace.joinRule == JoinRule.Public -> listOfNotNull(
                     JoinRuleItem.PublicVisibility.Public,
                     JoinRuleItem.PublicVisibility.AskToJoin.takeIf { !isSpace && isKnockFeatureEnabled },
-                    JoinRuleItem.PrivateVisibility.Private,
+                    JoinRuleItem.Private,
                 ).toImmutableList()
                 else -> listOfNotNull(
-                    JoinRuleItem.PrivateVisibility.Restricted(parentSpace.roomId),
-                    JoinRuleItem.PrivateVisibility.AskToJoinRestricted(parentSpace.roomId).takeIf { isKnockFeatureEnabled },
-                    JoinRuleItem.PrivateVisibility.Private,
+                    JoinRuleItem.PublicVisibility.Restricted(parentSpace.roomId),
+                    JoinRuleItem.PublicVisibility.AskToJoinRestricted(parentSpace.roomId).takeIf { !isSpace && isKnockFeatureEnabled },
+                    JoinRuleItem.Private,
                 ).toImmutableList()
-            }
-        }
-        val currentJoinRule = createRoomConfig.visibilityState.joinRuleItem
-        LaunchedEffect(availableJoinRules, currentJoinRule) {
-            // Find matching rule by type (ignoring parentSpaceId parameter for Restricted types)
-            val matchingRule = when (currentJoinRule) {
-                is JoinRuleItem.PrivateVisibility.Restricted ->
-                    availableJoinRules.filterIsInstance<JoinRuleItem.PrivateVisibility.Restricted>().firstOrNull()
-                is JoinRuleItem.PrivateVisibility.AskToJoinRestricted ->
-                    availableJoinRules.filterIsInstance<JoinRuleItem.PrivateVisibility.AskToJoinRestricted>().firstOrNull()
-                else -> availableJoinRules.find { it == currentJoinRule }
-            }
-            when {
-                matchingRule == null -> {
-                    // No matching type fallback to Private (always available)
-                    dataStore.setJoinRule(JoinRuleItem.PrivateVisibility.Private)
-                }
-                matchingRule != currentJoinRule -> {
-                    // Same type but different params (e.g., different parentSpaceId), update
-                    dataStore.setJoinRule(matchingRule)
-                }
             }
         }
 
+        /**
+         * 创建房间
+         *
+         * 根据配置创建新房间或新空间
+         *
+         * @param config 房间配置信息
+         */
         fun createRoom(config: CreateRoomConfig) {
             createRoomAction.value = AsyncAction.Uninitialized
             localCoroutineScope.createRoom(config, createRoomAction)
         }
 
+        /**
+         * 处理事件
+         *
+         * 根据事件类型调用相应的处理方法
+         *
+         * @param event 配置房间事件
+         */
         fun handleEvent(event: ConfigureRoomEvents) {
             when (event) {
                 is ConfigureRoomEvents.RoomNameChanged -> dataStore.setRoomName(event.name)
@@ -211,7 +237,7 @@ class ConfigureRoomPresenter(
                     }
                 }
                 is ConfigureRoomEvents.SetParentSpace -> {
-                    dataStore.setParentSpace(event.space, false)
+                    dataStore.setParentSpace(event.space)
                 }
                 ConfigureRoomEvents.CancelCreateRoom -> {
                     createRoomAction.value = AsyncAction.Uninitialized
@@ -228,52 +254,57 @@ class ConfigureRoomPresenter(
             roomAddressValidity = roomAddressValidity.value,
             availableJoinRules = availableJoinRules,
             spaces = spaces,
-            isSpace = isSpace,
             eventSink = ::handleEvent,
         )
     }
 
+    /**
+     * 协程作用域内创建房间
+     *
+     * 实际的房间创建逻辑，包括：
+     * - 上传头像
+     * - 构建创建房间参数
+     * - 调用 Matrix API 创建房间
+     * - 如果设置了父空间，将房间添加到父空间
+     *
+     * @param config 房间配置
+     * @param createRoomAction 创建房间的异步操作状态
+     */
     private fun CoroutineScope.createRoom(
         config: CreateRoomConfig,
         createRoomAction: MutableState<AsyncAction<RoomId>>
     ) = launch {
         suspend {
             val avatarUrl = config.avatarUri?.let { uploadAvatar(it.toUri()) }
-            val params = when (config.visibilityState) {
-                is RoomVisibilityState.Public -> {
-                    CreateRoomParameters(
-                        name = config.roomName,
-                        topic = config.topic,
-                        isEncrypted = false,
-                        isDirect = false,
-                        visibility = RoomVisibility.Public,
-                        joinRuleOverride = config.visibilityState.joinRuleItem.toJoinRule()
-                            // No need to specify the public join rule override, since the preset is already PUBLIC_CHAT
-                            .takeIf { it != JoinRule.Public },
-                        preset = RoomPreset.PUBLIC_CHAT,
-                        invite = config.invites.map { it.userId },
-                        avatar = avatarUrl,
-                        roomAliasName = config.visibilityState.roomAddress(),
-                        isSpace = isSpace,
-                    )
-                }
-                is RoomVisibilityState.Private -> {
-                    CreateRoomParameters(
-                        name = config.roomName,
-                        topic = config.topic,
-                        isEncrypted = true,
-                        isDirect = false,
-                        visibility = RoomVisibility.Private,
-                        historyVisibilityOverride = RoomHistoryVisibility.Invited,
-                        joinRuleOverride = config.visibilityState.joinRuleItem.toJoinRule()
-                            // No need to specify the Invite join rule override, since the preset is already PRIVATE_CHAT
-                            .takeIf { it != JoinRule.Invite },
-                        preset = RoomPreset.PRIVATE_CHAT,
-                        invite = config.invites.map { it.userId },
-                        avatar = avatarUrl,
-                        isSpace = isSpace,
-                    )
-                }
+            val params = if (config.visibilityState is RoomVisibilityState.Public) {
+                CreateRoomParameters(
+                    name = config.roomName,
+                    topic = config.topic,
+                    isEncrypted = false,
+                    isDirect = false,
+                    visibility = RoomVisibility.Public,
+                    joinRuleOverride = config.visibilityState.joinRuleItem.toJoinRule()
+                        // No need to specify the public join rule override, since the preset is already PUBLIC_CHAT
+                        .takeIf { it != JoinRule.Public },
+                    preset = RoomPreset.PUBLIC_CHAT,
+                    invite = config.invites.map { it.userId },
+                    avatar = avatarUrl,
+                    roomAliasName = config.visibilityState.roomAddress(),
+                    isSpace = isSpace,
+                )
+            } else {
+                CreateRoomParameters(
+                    name = config.roomName,
+                    topic = config.topic,
+                    isEncrypted = config.visibilityState is RoomVisibilityState.Private,
+                    isDirect = false,
+                    visibility = RoomVisibility.Private,
+                    historyVisibilityOverride = RoomHistoryVisibility.Invited,
+                    preset = RoomPreset.PRIVATE_CHAT,
+                    invite = config.invites.map { it.userId },
+                    avatar = avatarUrl,
+                    isSpace = isSpace,
+                )
             }
             val roomId = matrixClient.createRoom(params)
                 .onFailure { failure ->
@@ -302,6 +333,14 @@ class ConfigureRoomPresenter(
             .onFailure { Timber.e(it, "Could not create room or add it to parent space ${config.parentSpace?.roomId}") }
     }
 
+    /**
+     * 上传头像
+     *
+     * 处理并上传房间头像到 Matrix 服务器
+     *
+     * @param avatarUri 头像的 URI
+     * @return 上传后的头像 URL
+     */
     private suspend fun uploadAvatar(avatarUri: Uri): String {
         val preprocessed = mediaPreProcessor.process(
             uri = avatarUri,

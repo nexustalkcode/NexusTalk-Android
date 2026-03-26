@@ -32,6 +32,11 @@ import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.di.SessionScope
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 锁屏设置流程节点
+ *
+ * 管理首次设置锁屏的流程，包括设置 PIN 码和生物识别。
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class LockScreenSetupFlowNode(
@@ -47,20 +52,30 @@ class LockScreenSetupFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 设置完成回调接口
+     */
     interface Callback : Plugin {
+        /** 设置完成时调用 */
         fun onSetupDone()
     }
 
     private val callback: Callback = callback()
 
+    /**
+     * 导航目标密封接口
+     */
     sealed interface NavTarget : Parcelable {
+        /** 设置 PIN */
         @Parcelize
         data object Pin : NavTarget
 
+        /** 设置生物识别 */
         @Parcelize
         data object Biometric : NavTarget
     }
 
+    /** PIN 码管理器回调 */
     private val pinCodeManagerCallback = object : DefaultPinCodeManagerCallback() {
         override fun onPinCodeCreated() {
             if (biometricAuthenticatorManager.hasAvailableAuthenticator) {

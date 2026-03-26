@@ -51,7 +51,6 @@ import io.element.android.services.toolbox.api.strings.StringProvider
 class DefaultRoomLatestEventFormatter(
     private val sp: StringProvider,
     private val roomMembershipContentFormatter: RoomMembershipContentFormatter,
-    private val profileChangeContentFormatter: ProfileChangeContentFormatter,
     private val stateContentFormatter: StateContentFormatter,
     private val permalinkParser: PermalinkParser,
 ) : RoomLatestEventFormatter {
@@ -101,9 +100,7 @@ class DefaultRoomLatestEventFormatter(
             is RoomMembershipContent -> {
                 roomMembershipContentFormatter.format(content, senderDisambiguatedDisplayName, isOutgoing)
             }
-            is ProfileChangeContent -> {
-                profileChangeContentFormatter.format(content, senderId, senderDisambiguatedDisplayName, isOutgoing)
-            }
+            is ProfileChangeContent -> null
             is StateContent -> {
                 stateContentFormatter.format(content, senderDisambiguatedDisplayName, isOutgoing, RenderingMode.RoomList)
             }

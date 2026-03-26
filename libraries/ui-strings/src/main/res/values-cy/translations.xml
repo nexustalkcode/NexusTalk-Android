@@ -110,7 +110,6 @@
   <string name="action_invite_people_to_app">"Gwahodd pobl i %1$s"</string>
   <string name="action_invites_list">"Gwahoddiadau"</string>
   <string name="action_join">"Ymuno"</string>
-  <string name="action_learn_more">"Dysgu rhagor"</string>
   <string name="action_leave">"Gadael"</string>
   <string name="action_leave_conversation">"Gadael y sgwrs"</string>
   <string name="action_leave_room">"Gadael yr ystafell"</string>
@@ -504,4 +503,9 @@ Ydych chi\'n siŵr eich bod am barhau?"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Does gennych chi ddim mynediad i\'r neges hon"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Methu dadgryptio\'r neges"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Cafodd y neges hon ei rhwystro naill ai oherwydd nad ydych wedi ddilysu\'ch dyfais neu oherwydd bod angen i\'r anfonwr ddilysu\'ch hunaniaeth chi."</string>
+  <string name="common_call_ended">"Galwad wedi dod i ben"</string>
+  <string name="action_start_call">"Dechrau galwad"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Dim galwadau"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Aros mewn cysylltiad â chymunedau"</string>
+  <string name="action_create_community">"Creu cymuned"</string>
 </resources>

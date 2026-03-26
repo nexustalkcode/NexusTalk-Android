@@ -15,8 +15,23 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.login.api.LoginEntryPoint
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * 默认登录入口点实现
+ *
+ * 提供 LoginEntryPoint 接口的默认实现。
+ * 负责创建登录流程节点并管理登录流程的生命周期。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultLoginEntryPoint : LoginEntryPoint {
+    /**
+     * 创建登录节点
+     *
+     * @param parentNode 父节点
+     * @param buildContext 构建上下文
+     * @param params 登录参数
+     * @param callback 回调接口
+     * @return 创建的登录流程节点
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

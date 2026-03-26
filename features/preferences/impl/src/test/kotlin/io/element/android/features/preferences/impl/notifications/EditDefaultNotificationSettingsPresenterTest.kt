@@ -17,12 +17,10 @@ import io.element.android.libraries.matrix.test.A_ROOM_ID
 import io.element.android.libraries.matrix.test.A_ROOM_ID_2
 import io.element.android.libraries.matrix.test.notificationsettings.FakeNotificationSettingsService
 import io.element.android.libraries.matrix.test.room.aRoomSummary
-import io.element.android.libraries.matrix.test.roomlist.FakeDynamicRoomList
 import io.element.android.libraries.matrix.test.roomlist.FakeRoomListService
 import io.element.android.tests.testutils.awaitLastSequentialItem
 import io.element.android.tests.testutils.consumeItemsUntilPredicate
 import io.element.android.tests.testutils.test
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -55,14 +53,10 @@ class EditDefaultNotificationSettingsPresenterTest {
             initialRoomModeIsDefault = false,
             getRoomsWithUserDefinedRulesResult = { Result.success(listOf(A_ROOM_ID)) },
         )
-        val roomList = FakeDynamicRoomList(
-            summaries = MutableStateFlow(listOf(aRoomSummary(userDefinedNotificationMode = RoomNotificationMode.ALL_MESSAGES)))
-        )
-        val roomListService = FakeRoomListService(
-            createRoomListLambda = { roomList }
-        )
+        val roomListService = FakeRoomListService()
         val presenter = createEditDefaultNotificationSettingPresenter(notificationSettingsService, roomListService)
         presenter.test {
+            roomListService.postAllRooms(listOf(aRoomSummary(userDefinedNotificationMode = RoomNotificationMode.ALL_MESSAGES)))
             val loadedState = consumeItemsUntilPredicate { state ->
                 state.roomsWithUserDefinedMode.any { it.notificationMode == RoomNotificationMode.ALL_MESSAGES }
             }.last()
@@ -77,8 +71,10 @@ class EditDefaultNotificationSettingsPresenterTest {
             initialRoomModeIsDefault = false,
             getRoomsWithUserDefinedRulesResult = { Result.success(listOf(A_ROOM_ID, A_ROOM_ID_2)) },
         )
-        val roomList = FakeDynamicRoomList(
-            summaries = MutableStateFlow(
+        val roomListService = FakeRoomListService()
+        val presenter = createEditDefaultNotificationSettingPresenter(notificationSettingsService, roomListService)
+        presenter.test {
+            roomListService.postAllRooms(
                 listOf(
                     aRoomSummary(
                         roomId = A_ROOM_ID,
@@ -90,14 +86,8 @@ class EditDefaultNotificationSettingsPresenterTest {
                         name = "A",
                         userDefinedNotificationMode = RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY,
                     ),
-                )
+                ),
             )
-        )
-        val roomListService = FakeRoomListService(
-            createRoomListLambda = { roomList }
-        )
-        val presenter = createEditDefaultNotificationSettingPresenter(notificationSettingsService, roomListService)
-        presenter.test {
             val loadedState = consumeItemsUntilPredicate { state ->
                 state.roomsWithUserDefinedMode.any { it.notificationMode == RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY }
             }.last()
@@ -113,8 +103,10 @@ class EditDefaultNotificationSettingsPresenterTest {
             initialRoomModeIsDefault = false,
             getRoomsWithUserDefinedRulesResult = { Result.success(listOf(A_ROOM_ID, A_ROOM_ID_2)) },
         )
-        val roomList = FakeDynamicRoomList(
-            summaries = MutableStateFlow(
+        val roomListService = FakeRoomListService()
+        val presenter = createEditDefaultNotificationSettingPresenter(notificationSettingsService, roomListService)
+        presenter.test {
+            roomListService.postAllRooms(
                 listOf(
                     aRoomSummary(
                         roomId = A_ROOM_ID,
@@ -126,14 +118,8 @@ class EditDefaultNotificationSettingsPresenterTest {
                         name = null,
                         userDefinedNotificationMode = RoomNotificationMode.MUTE,
                     ),
-                )
+                ),
             )
-        )
-        val roomListService = FakeRoomListService(
-            createRoomListLambda = { roomList }
-        )
-        val presenter = createEditDefaultNotificationSettingPresenter(notificationSettingsService, roomListService)
-        presenter.test {
             val loadedState = consumeItemsUntilPredicate { state ->
                 state.roomsWithUserDefinedMode.any { it.notificationMode == RoomNotificationMode.MUTE }
             }.last()

@@ -23,6 +23,16 @@ import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 投票标题视图 Composable
+ *
+ * 用于显示投票问题的标题组件。
+ * 根据投票是否已结束显示不同的图标。
+ *
+ * @param title 投票标题（问题）
+ * @param isPollEnded 投票是否已结束
+ * @param modifier 修饰符
+ */
 @Composable
 fun PollTitleView(
     title: String,

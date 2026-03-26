@@ -43,6 +43,8 @@
   <string name="screen_edit_profile_error">"Tekkis tundmatu viga ning teavet ei õnnestunud muuta."</string>
   <string name="screen_edit_profile_error_title">"Profiili uuendamine ei õnnestunud"</string>
   <string name="screen_edit_profile_title">"Muuda profiili"</string>
+  <string name="screen_edit_profile_change_avatar">"Muuda avatarit"</string>
+  <string name="screen_edit_profile_username">"Kasutajanimi"</string>
   <string name="screen_edit_profile_updating_details">"Profiil on muutmisel…"</string>
   <string name="screen_labs_enable_threads">"Võta kasutusele vastamine jutulõngas"</string>
   <string name="screen_labs_enable_threads_description">"Selle muudatuse jõustamiseks käivitub rakendus uuesti."</string>
@@ -76,6 +78,8 @@ Kui sa jätkad muutmist, siis võivad muutuda ka need peidetud eelistused."</str
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"süsteemi seadistusi"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Süsteemi teavitused on välja lülitatud"</string>
   <string name="screen_notification_settings_title">"Teavitused"</string>
+  <string name="screen_preferences_section_customization">"Kohandamine"</string>
+  <string name="screen_preferences_section_security">"Turvalisus"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Tõuketeadete ajalugu"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Veaotsing"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Teavituste veaotsing"</string>

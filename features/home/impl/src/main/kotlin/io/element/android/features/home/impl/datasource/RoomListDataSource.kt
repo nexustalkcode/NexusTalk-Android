@@ -8,58 +8,39 @@
 
 package io.element.android.features.home.impl.datasource
 
-import chat.schildi.features.home.ScInboxSettingsHandler
-import chat.schildi.lib.preferences.ScPreferencesStore
 import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.SingleIn
 import io.element.android.features.home.impl.model.RoomListRoomSummary
 import io.element.android.libraries.androidutils.diff.DiffCacheUpdater
 import io.element.android.libraries.androidutils.diff.MutableListDiffCache
 import io.element.android.libraries.androidutils.system.DateTimeObserver
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
-import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.di.annotations.SessionCoroutineScope
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.notificationsettings.NotificationSettingsService
-import io.element.android.libraries.matrix.api.roomlist.RoomList
-import io.element.android.libraries.matrix.api.roomlist.RoomListFilter
 import io.element.android.libraries.matrix.api.roomlist.RoomListService
 import io.element.android.libraries.matrix.api.roomlist.RoomSummary
-import io.element.android.libraries.matrix.api.roomlist.updateVisibleRange
 import io.element.android.services.analytics.api.AnalyticsService
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.lang.IllegalStateException
 import kotlin.time.Duration.Companion.seconds
 
-private const val PAGE_SIZE = 20
-/*private*/ const val EXTENDED_VISIBILITY_RANGE_SIZE = 40
-/*private*/ const val SUBSCRIBE_TO_VISIBLE_ROOMS_DEBOUNCE_IN_MILLIS = 300L
-/*private*/ const val PAGINATION_THRESHOLD = 3 * PAGE_SIZE
-
 @Inject
-@SingleIn(SessionScope::class)
 class RoomListDataSource(
-    /*private*/ val roomListService: RoomListService,
+    private val roomListService: RoomListService,
     private val roomListRoomSummaryFactory: RoomListRoomSummaryFactory,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val notificationSettingsService: NotificationSettingsService,
-    scPreferencesStore: ScPreferencesStore,
     @SessionCoroutineScope
     private val sessionCoroutineScope: CoroutineScope,
     private val dateTimeObserver: DateTimeObserver,
@@ -70,15 +51,7 @@ class RoomListDataSource(
         observeDateTimeChanges()
     }
 
-    /*private*/ val roomList = roomListService.createRoomList(
-        pageSize = PAGE_SIZE,
-        source = RoomList.Source.All,
-        coroutineScope = sessionCoroutineScope
-    )
-    private val _roomSummariesFlow = MutableSharedFlow<ImmutableList<RoomListRoomSummary>>(replay = 1)
-
-    private val scInboxSettingsHandler = ScInboxSettingsHandler(scPreferencesStore, roomList)
-    private val scInboxFilterFlow = MutableStateFlow(RoomListFilter.all())
+    private val _allRooms = MutableSharedFlow<ImmutableList<RoomListRoomSummary>>(replay = 1)
 
     private val lock = Mutex()
     private val diffCache = MutableListDiffCache<RoomListRoomSummary>()
@@ -86,51 +59,22 @@ class RoomListDataSource(
         old?.roomId == new?.roomId
     }
 
-    val roomSummariesFlow: Flow<ImmutableList<RoomListRoomSummary>> = _roomSummariesFlow.applyInviteFilterSetting(scPreferencesStore)
+    val allRooms: Flow<ImmutableList<RoomListRoomSummary>> = _allRooms
 
-    val loadingState = roomList.loadingState
+    val loadingState = roomListService.allRooms.loadingState
 
     fun launchIn(coroutineScope: CoroutineScope) {
-        scInboxSettingsHandler.launchIn(coroutineScope, scInboxFilterFlow)
-        roomList
-            .summaries
+        roomListService
+            .allRooms
+            .filteredSummaries
             .onEach { roomSummaries ->
                 replaceWith(roomSummaries)
             }
             .launchIn(coroutineScope)
     }
 
-    suspend fun updateFilter(filter: RoomListFilter) {
-        //roomList.updateFilter(filter)
-        scInboxFilterFlow.emit(filter)
-    }
-
-    suspend fun updateVisibleRange(visibleRange: IntRange) = coroutineScope {
-        launch {
-            roomList.updateVisibleRange(visibleRange, PAGINATION_THRESHOLD)
-        }
-        launch {
-            subscribeToVisibleRoomsIfNeeded(visibleRange)
-        }
-    }
-
-    private var currentSubscribeToVisibleRoomsJob: Job? = null
-    private fun CoroutineScope.subscribeToVisibleRoomsIfNeeded(range: IntRange) {
-        currentSubscribeToVisibleRoomsJob?.cancel()
-        currentSubscribeToVisibleRoomsJob = launch {
-            // Debounce the subscription to avoid subscribing to too many rooms
-            delay(SUBSCRIBE_TO_VISIBLE_ROOMS_DEBOUNCE_IN_MILLIS)
-
-            if (range.isEmpty()) return@launch
-            val currentRoomList = roomSummariesFlow.first()
-            // Use extended range to 'prefetch' the next rooms info
-            val midExtendedRangeSize = EXTENDED_VISIBILITY_RANGE_SIZE / 2
-            val extendedRange = range.first until range.last + midExtendedRangeSize
-            val roomIds = extendedRange.mapNotNull { index ->
-                currentRoomList.getOrNull(index)?.roomId
-            }
-            roomListService.subscribeToVisibleRooms(roomIds)
-        }
+    suspend fun subscribeToVisibleRooms(roomIds: List<RoomId>) {
+        roomListService.subscribeToVisibleRooms(roomIds)
     }
 
     @OptIn(FlowPreview::class)
@@ -138,7 +82,7 @@ class RoomListDataSource(
         notificationSettingsService.notificationSettingsChangeFlow
             .debounce(0.5.seconds)
             .onEach {
-                roomList.rebuildSummaries()
+                roomListService.allRooms.rebuildSummaries()
             }
             .launchIn(sessionCoroutineScope)
     }
@@ -156,15 +100,18 @@ class RoomListDataSource(
 
     private suspend fun replaceWith(roomSummaries: List<RoomSummary>) = withContext(coroutineDispatchers.computation) {
         lock.withLock {
-            diffCacheUpdater.updateWith(roomSummaries)
-            buildAndEmitAllRooms(roomSummaries)
+            val sortedRoomSummaries = roomSummaries.sortedWith(
+                compareByDescending<RoomSummary> { it.info.isFavorite }
+                    .thenByDescending { it.latestEventTimestamp }
+            )
+            diffCacheUpdater.updateWith(sortedRoomSummaries)
+            buildAndEmitAllRooms(sortedRoomSummaries)
         }
     }
 
     private suspend fun buildAndEmitAllRooms(roomSummaries: List<RoomSummary>, useCache: Boolean = true) {
         // Used to detect duplicates in the room list summaries - see comment below
         data class CacheResult(val index: Int, val fromCache: Boolean)
-
         val cachingResults = mutableMapOf<RoomId, MutableList<CacheResult>>()
 
         val roomListRoomSummaries = diffCache.indices().mapNotNull { index ->
@@ -201,14 +148,14 @@ class RoomListDataSource(
             analyticsService.trackError(
                 IllegalStateException(
                     "Found duplicates in room summaries after a local UI update: $duplicates. " +
-                        "This could be a race condition/caching issue of some kind"
+                    "This could be a race condition/caching issue of some kind"
                 )
             )
 
             // Remove duplicates before emitting the new values
-            _roomSummariesFlow.emit(roomListRoomSummaries.distinctBy { it.roomId }.toImmutableList())
+            _allRooms.emit(roomListRoomSummaries.distinctBy { it.roomId }.toImmutableList())
         } else {
-            _roomSummariesFlow.emit(roomListRoomSummaries.toImmutableList())
+            _allRooms.emit(roomListRoomSummaries.toImmutableList())
         }
     }
 
@@ -220,7 +167,7 @@ class RoomListDataSource(
 
     private suspend fun rebuildAllRoomSummaries() {
         lock.withLock {
-            roomList.summaries.replayCache.firstOrNull()?.let { roomSummaries ->
+            roomListService.allRooms.filteredSummaries.replayCache.firstOrNull()?.let { roomSummaries ->
                 buildAndEmitAllRooms(roomSummaries, useCache = false)
             }
         }

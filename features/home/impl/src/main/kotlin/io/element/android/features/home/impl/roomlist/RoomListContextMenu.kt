@@ -11,24 +11,15 @@ package io.element.android.features.home.impl.roomlist
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NewReleases
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import chat.schildi.features.home.spaces.SpaceListDataSource
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
-import io.element.android.features.home.impl.LowPriorityRoomListContextMenuItem
-import io.element.android.features.home.impl.ManageSpacesRoomListContextMenuItems
 import io.element.android.features.home.impl.R
 import io.element.android.libraries.designsystem.components.list.ListItemContent
 import io.element.android.libraries.designsystem.preview.ElementPreview
@@ -38,7 +29,6 @@ import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.ListItemStyle
 import io.element.android.libraries.designsystem.theme.components.ModalBottomSheet
 import io.element.android.libraries.designsystem.theme.components.Text
-import io.element.android.libraries.matrix.api.MatrixClient
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.ui.strings.CommonStrings
 
@@ -46,48 +36,42 @@ import io.element.android.libraries.ui.strings.CommonStrings
 @Composable
 fun RoomListContextMenu(
     contextMenu: RoomListState.ContextMenu.Shown,
-    roomListState: RoomListState, // SC
-    matrixClient: MatrixClient?, // SC
     canReportRoom: Boolean,
-    eventSink: (RoomListEvent.ContextMenuEvent) -> Unit,
+    eventSink: (RoomListEvents.ContextMenuEvents) -> Unit,
     onRoomSettingsClick: (roomId: RoomId) -> Unit,
     onReportRoomClick: (roomId: RoomId) -> Unit
 ) {
     ModalBottomSheet(
-        onDismissRequest = { eventSink(RoomListEvent.HideContextMenu) },
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = ScPrefs.FULLY_EXPAND_MESSAGE_MENU.value()),
+        onDismissRequest = { eventSink(RoomListEvents.HideContextMenu) },
     ) {
         RoomListModalBottomSheetContent(
             contextMenu = contextMenu,
-            roomListState = roomListState, // SC
-            matrixClient = matrixClient, // SC
-            onLowPriorityChange = { eventSink(RoomListEvent.SetRoomIsLowPriority(contextMenu.roomId, it))}, // SC
             canReportRoom = canReportRoom,
             onRoomMarkReadClick = {
-                eventSink(RoomListEvent.HideContextMenu)
-                eventSink(RoomListEvent.MarkAsRead(contextMenu.roomId))
+                eventSink(RoomListEvents.HideContextMenu)
+                eventSink(RoomListEvents.MarkAsRead(contextMenu.roomId))
             },
             onRoomMarkUnreadClick = {
-                eventSink(RoomListEvent.HideContextMenu)
-                eventSink(RoomListEvent.MarkAsUnread(contextMenu.roomId))
+                eventSink(RoomListEvents.HideContextMenu)
+                eventSink(RoomListEvents.MarkAsUnread(contextMenu.roomId))
             },
             onRoomSettingsClick = {
-                eventSink(RoomListEvent.HideContextMenu)
+                eventSink(RoomListEvents.HideContextMenu)
                 onRoomSettingsClick(contextMenu.roomId)
             },
             onLeaveRoomClick = {
-                eventSink(RoomListEvent.HideContextMenu)
-                eventSink(RoomListEvent.LeaveRoom(contextMenu.roomId, needsConfirmation = true))
+                eventSink(RoomListEvents.HideContextMenu)
+                eventSink(RoomListEvents.LeaveRoom(contextMenu.roomId, needsConfirmation = true))
             },
             onFavoriteChange = { isFavorite ->
-                eventSink(RoomListEvent.SetRoomIsFavorite(contextMenu.roomId, isFavorite))
+                eventSink(RoomListEvents.SetRoomIsFavorite(contextMenu.roomId, isFavorite))
             },
             onClearCacheRoomClick = {
-                eventSink(RoomListEvent.HideContextMenu)
-                eventSink(RoomListEvent.ClearCacheOfRoom(contextMenu.roomId))
+                eventSink(RoomListEvents.HideContextMenu)
+                eventSink(RoomListEvents.ClearCacheOfRoom(contextMenu.roomId))
             },
             onReportRoomClick = {
-                eventSink(RoomListEvent.HideContextMenu)
+                eventSink(RoomListEvents.HideContextMenu)
                 onReportRoomClick(contextMenu.roomId)
             },
         )
@@ -97,9 +81,6 @@ fun RoomListContextMenu(
 @Composable
 private fun RoomListModalBottomSheetContent(
     contextMenu: RoomListState.ContextMenu.Shown,
-    roomListState: RoomListState, // SC
-    matrixClient: MatrixClient?, // SC
-    onLowPriorityChange: (isLowPriority: Boolean) -> Unit, // SC
     canReportRoom: Boolean,
     onRoomSettingsClick: () -> Unit,
     onLeaveRoomClick: () -> Unit,
@@ -131,8 +112,7 @@ private fun RoomListModalBottomSheetContent(
                 },
                 onClick = onRoomMarkReadClick,
                 leadingContent = ListItemContent.Icon(
-                    //iconSource = IconSource.Vector(CompoundIcons.MarkAsRead())
-                    iconSource = IconSource.Vector(Icons.Default.RemoveRedEye),
+                    iconSource = IconSource.Vector(CompoundIcons.MarkAsRead())
                 ),
                 style = ListItemStyle.Primary,
             )
@@ -146,27 +126,21 @@ private fun RoomListModalBottomSheetContent(
                 },
                 onClick = onRoomMarkUnreadClick,
                 leadingContent = ListItemContent.Icon(
-                    //iconSource = IconSource.Vector(CompoundIcons.MarkAsUnread())
-                    iconSource = IconSource.Vector(Icons.Default.RemoveRedEye),
+                    iconSource = IconSource.Vector(CompoundIcons.MarkAsUnread())
                 ),
                 style = ListItemStyle.Primary,
             )
         }
-        val (textResId, icon) = if (contextMenu.isFavorite) {
-            CommonStrings.common_favourited to CompoundIcons.FavouriteSolid()
-        } else {
-            CommonStrings.common_favourite to CompoundIcons.Favourite()
-        }
         ListItem(
             headlineContent = {
                 Text(
-                    text = stringResource(id = textResId),
+                    text = if (contextMenu.isFavorite) stringResource(id = CommonStrings.action_unpin) else stringResource(id = CommonStrings.action_pin),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             },
             leadingContent = ListItemContent.Icon(
                 iconSource = IconSource.Vector(
-                    icon,
+                    CompoundIcons.Pin(),
                 )
             ),
             trailingContent = ListItemContent.Switch(
@@ -177,7 +151,6 @@ private fun RoomListModalBottomSheetContent(
             },
             style = ListItemStyle.Primary,
         )
-        LowPriorityRoomListContextMenuItem(contextMenu, onLowPriorityChange) // SC
         ListItem(
             headlineContent = {
                 Text(
@@ -193,7 +166,6 @@ private fun RoomListModalBottomSheetContent(
             ),
             style = ListItemStyle.Primary,
         )
-        ManageSpacesRoomListContextMenuItems(contextMenu, roomListState, matrixClient)
         if (canReportRoom) {
             ListItem(
                 headlineContent = {
@@ -245,9 +217,6 @@ internal fun RoomListModalBottomSheetContentPreview(
 ) = ElementPreview {
     RoomListModalBottomSheetContent(
         contextMenu = contextMenu,
-        roomListState = aRoomListState(), // SC
-        matrixClient = null, // SC
-        onLowPriorityChange = {}, // SC
         canReportRoom = true,
         onRoomMarkReadClick = {},
         onRoomMarkUnreadClick = {},

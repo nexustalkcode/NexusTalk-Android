@@ -14,8 +14,21 @@ import io.element.android.libraries.matrix.api.poll.PollKind
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 创建测试用的投票问题
+ *
+ * @return String 测试用问题文本
+ */
 fun aPollQuestion() = "What type of food should we have at the party?"
 
+/**
+ * 创建测试用的投票答案列表
+ *
+ * @param hasVotes 是否有投票
+ * @param isEnded 投票是否已结束
+ * @param showVotes 是否显示投票数
+ * @return ImmutableList<PollAnswerItem> 答案列表
+ */
 fun aPollAnswerItemList(
     hasVotes: Boolean = true,
     isEnded: Boolean = false,
@@ -54,6 +67,18 @@ fun aPollAnswerItemList(
     ),
 )
 
+/**
+ * 创建测试用的单个投票答案项
+ *
+ * @param answer 投票答案对象
+ * @param isSelected 是否被选中
+ * @param isEnabled 是否可用
+ * @param isWinner 是否获胜
+ * @param showVotes 是否显示投票数
+ * @param votesCount 投票数量
+ * @param percentage 投票百分比
+ * @return PollAnswerItem 答案项
+ */
 fun aPollAnswerItem(
     answer: PollAnswer = PollAnswer(
         "option_4",
@@ -75,6 +100,20 @@ fun aPollAnswerItem(
     percentage = percentage
 )
 
+/**
+ * 创建测试用的投票内容状态
+ *
+ * @param eventId 事件 ID
+ * @param isMine 是否由当前用户创建
+ * @param isEnded 投票是否已结束
+ * @param showVotes 是否显示投票数
+ * @param isPollEditable 投票是否可编辑
+ * @param hasVotes 是否有投票
+ * @param question 投票问题
+ * @param pollKind 投票类型
+ * @param answerItems 答案列表
+ * @return PollContentState 投票内容状态
+ */
 fun aPollContentState(
     eventId: EventId? = null,
     isMine: Boolean = false,

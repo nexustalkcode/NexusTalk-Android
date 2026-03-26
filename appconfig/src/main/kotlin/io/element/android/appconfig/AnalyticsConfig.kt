@@ -8,6 +8,13 @@
 
 package io.element.android.appconfig
 
+/**
+ * 分析配置 (Analytics Configuration)
+ *
+ * 此对象包含与应用分析功能相关的配置项。
+ * 用于控制分析策略链接等功能的设置。
+ */
 object AnalyticsConfig {
+    /** 分析策略页面的URL链接，用于向用户展示隐私政策和使用条款 */
     const val POLICY_LINK = BuildConfig.URL_POLICY
 }

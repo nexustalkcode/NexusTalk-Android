@@ -74,6 +74,16 @@ import io.element.android.wysiwyg.display.TextDisplay
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 附件预览视图
+ *
+ * 附件预览界面的主要Composable函数。
+ * 负责渲染附件预览的UI，包括媒体显示、优化选项和发送控制。
+ *
+ * @param state 附件预览状态，包含所有渲染所需数据
+ * @param localMediaRenderer 本地媒体渲染器，用于显示媒体内容
+ * @param modifier 视图修饰符，用于配置布局和样式
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AttachmentsPreviewView(
@@ -81,22 +91,36 @@ fun AttachmentsPreviewView(
     localMediaRenderer: LocalMediaRenderer,
     modifier: Modifier = Modifier,
 ) {
+    /**
+     * 发送附件事件
+     * 将发送操作事件发送到状态处理流程
+     */
     fun postSendAttachment() {
-        state.eventSink(AttachmentsPreviewEvent.SendAttachment)
+        state.eventSink(AttachmentsPreviewEvents.SendAttachment)
     }
 
+    /**
+     * 取消并关闭事件
+     * 将取消操作事件发送到状态处理流程
+     */
     fun postCancel() {
-        state.eventSink(AttachmentsPreviewEvent.CancelAndDismiss)
+        state.eventSink(AttachmentsPreviewEvents.CancelAndDismiss)
     }
 
+    /**
+     * 清除发送状态事件
+     * 将清除状态操作事件发送到状态处理流程
+     */
     fun postClearSendState() {
-        state.eventSink(AttachmentsPreviewEvent.CancelAndClearSendState)
+        state.eventSink(AttachmentsPreviewEvents.CancelAndClearSendState)
     }
 
+    // 处理返回键事件
     BackHandler(enabled = state.sendActionState !is SendActionState.Sending.Uploading && state.sendActionState !is SendActionState.Done) {
         postCancel()
     }
 
+    // 脚手架布局
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -118,6 +142,7 @@ fun AttachmentsPreviewView(
             onSendClick = ::postSendAttachment,
         )
     }
+    // 发送状态视图，显示处理/上传/错误对话框
     AttachmentSendStateView(
         sendActionState = state.sendActionState,
         onDismissClick = ::postClearSendState,
@@ -125,6 +150,16 @@ fun AttachmentsPreviewView(
     )
 }
 
+/**
+ * 发送状态视图
+ *
+ * 根据发送操作的不同状态显示相应的对话框。
+ * 处理进度显示、上传状态和错误提示。
+ *
+ * @param sendActionState 发送操作状态
+ * @param onDismissClick 关闭对话框的回调
+ * @param onRetryClick 重试发送的回调
+ */
 @Composable
 private fun AttachmentSendStateView(
     sendActionState: SendActionState,
@@ -132,6 +167,7 @@ private fun AttachmentSendStateView(
     onRetryClick: () -> Unit
 ) {
     when (sendActionState) {
+        // 处理中状态
         is SendActionState.Sending.Processing -> {
             if (sendActionState.displayProgress) {
                 ProgressDialog(
@@ -142,6 +178,7 @@ private fun AttachmentSendStateView(
                 )
             }
         }
+        // 上传中状态
         is SendActionState.Sending.Uploading -> {
             ProgressDialog(
                 type = ProgressDialogType.Indeterminate,
@@ -150,6 +187,7 @@ private fun AttachmentSendStateView(
                 onDismissRequest = onDismissClick,
             )
         }
+        // 失败状态，显示重试对话框
         is SendActionState.Failure -> {
             RetryDialog(
                 content = stringResource(sendAttachmentError(sendActionState.error)),
@@ -161,6 +199,16 @@ private fun AttachmentSendStateView(
     }
 }
 
+/**
+ * 附件预览内容区域
+ *
+ * 包含媒体预览视图、图片/视频优化选择器和底部操作栏。
+ *
+ * @param state 附件预览状态
+ * @param localMediaRenderer 本地媒体渲染器
+ * @param onSendClick 发送按钮点击回调
+ * @param modifier 视图修饰符
+ */
 @Composable
 private fun AttachmentPreviewContent(
     state: AttachmentsPreviewState,
@@ -173,6 +221,7 @@ private fun AttachmentPreviewContent(
             .fillMaxSize()
             .navigationBarsPadding(),
     ) {
+        // 媒体预览区域
         Box(
             modifier = Modifier
                 .weight(1f),
@@ -184,6 +233,8 @@ private fun AttachmentPreviewContent(
                 }
             }
         }
+
+        // 根据媒体类型显示相应的优化选择器
         val mimeType = (state.attachment as? Attachment.Media)?.localMedia?.info?.mimeType
         if (mimeType?.isMimeTypeImage() == true) {
             ImageOptimizationSelector(state.mediaOptimizationSelectorState)
@@ -191,6 +242,7 @@ private fun AttachmentPreviewContent(
             VideoPresetSelector(state = state.mediaOptimizationSelectorState)
         }
 
+        // 文件太大错误提示对话框
         val sizeFormatter = rememberFileSizeFormatter()
         if (state.displayFileTooLargeError) {
             val maxFileUploadSize = state.mediaOptimizationSelectorState.maxUploadSize.dataOrNull()
@@ -199,11 +251,12 @@ private fun AttachmentPreviewContent(
                 AlertDialog(
                     title = stringResource(CommonStrings.dialog_file_too_large_to_upload_title),
                     content = content,
-                    onDismiss = { state.eventSink(AttachmentsPreviewEvent.CancelAndDismiss) },
+                    onDismiss = { state.eventSink(AttachmentsPreviewEvents.CancelAndDismiss) },
                 )
             }
         }
 
+        // 底部操作栏
         AttachmentsPreviewBottomActions(
             state = state,
             onSendClick = onSendClick,
@@ -216,6 +269,14 @@ private fun AttachmentPreviewContent(
     }
 }
 
+/**
+ * 图片优化选择器
+ *
+ * 显示图片质量优化选项的开关组件。
+ * 允许用户选择是否启用图片压缩优化。
+ *
+ * @param state 媒体优化选择器状态
+ */
 @Composable
 private fun ImageOptimizationSelector(state: MediaOptimizationSelectorState) {
     if (state.displayMediaSelectorViews == true) {
@@ -242,6 +303,14 @@ private fun ImageOptimizationSelector(state: MediaOptimizationSelectorState) {
     }
 }
 
+/**
+ * 视频预设选择器
+ *
+ * 显示视频压缩质量选项的组件。
+ * 允许用户选择不同压缩级别的视频预设（高/标准/低）。
+ *
+ * @param state 媒体优化选择器状态
+ */
 @Composable
 private fun VideoPresetSelector(
     state: MediaOptimizationSelectorState,
@@ -253,6 +322,7 @@ private fun VideoPresetSelector(
 
     val sizeFormatter = rememberFileSizeFormatter()
 
+    // 显示视频质量选择区域
     if (state.displayMediaSelectorViews == true && videoPresets != null && state.selectedVideoPreset != null) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -276,6 +346,7 @@ private fun VideoPresetSelector(
         }
     }
 
+    // 显示视频质量选择对话框
     if (displayDialog) {
         VideoQualitySelectorDialog(
             selectedPreset = selectedPreset ?: VideoCompressionPreset.STANDARD,
@@ -290,6 +361,18 @@ private fun VideoPresetSelector(
     }
 }
 
+/**
+ * 视频质量选择对话框
+ *
+ * 允许用户选择视频压缩预设的对话框。
+ * 显示每种预设的估算文件大小和描述。
+ *
+ * @param selectedPreset 当前选中的视频压缩预设
+ * @param videoSizeEstimations 视频大小估算列表
+ * @param maxFileUploadSize 最大上传大小限制
+ * @param onSubmit 确认选择的回调
+ * @param onDismiss 关闭对话框的回调
+ */
 @Composable
 private fun VideoQualitySelectorDialog(
     selectedPreset: VideoCompressionPreset,
@@ -341,7 +424,7 @@ private fun VideoQualitySelectorDialog(
                             color = ElementTheme.colors.textSecondary,
                         )
                     },
-                    leadingContent = ListItemContent.RadioButton(
+                    leadingContent = ListItemContent.RadioCheckbox(
                         selected = isSelected,
                     ),
                     onClick = {
@@ -354,6 +437,16 @@ private fun VideoQualitySelectorDialog(
     }
 }
 
+/**
+ * 附件预览底部操作栏
+ *
+ * 包含文本输入框和发送按钮的区域。
+ * 允许用户输入附件的说明文字并发送。
+ *
+ * @param state 附件预览状态
+ * @param onSendClick 发送按钮点击回调
+ * @param modifier 视图修饰符
+ */
 @Composable
 private fun AttachmentsPreviewBottomActions(
     state: AttachmentsPreviewState,
@@ -385,6 +478,13 @@ private fun AttachmentsPreviewBottomActions(
 }
 
 // Only preview in dark, dark theme is forced on the Node.
+/**
+ * 附件预览视图预览
+ *
+ * 用于在预览模式下测试 AttachmentsPreviewView 的渲染效果
+ *
+ * @param state 附件预览状态提供器
+ */
 @Preview
 @Composable
 internal fun AttachmentsPreviewViewPreview(@PreviewParameter(AttachmentsPreviewStateProvider::class) state: AttachmentsPreviewState) = ElementPreviewDark {
@@ -403,6 +503,11 @@ internal fun AttachmentsPreviewViewPreview(@PreviewParameter(AttachmentsPreviewS
     )
 }
 
+/**
+ * 视频质量选择对话框预览
+ *
+ * 用于在预览模式下测试 VideoQualitySelectorDialog 的渲染效果
+ */
 @PreviewsDayNight
 @Composable
 internal fun VideoQualitySelectorDialogPreview() {
@@ -421,6 +526,11 @@ internal fun VideoQualitySelectorDialogPreview() {
     }
 }
 
+/**
+ * 获取视频压缩预设的显示标题
+ *
+ * @return 对应质量等级的资源字符串
+ */
 @Composable
 fun VideoCompressionPreset.title(): String {
     return stringResource(
@@ -432,6 +542,11 @@ fun VideoCompressionPreset.title(): String {
     )
 }
 
+/**
+ * 获取视频压缩预设的描述文字
+ *
+ * @return 对应预设描述的资源字符串
+ */
 @Composable
 fun VideoCompressionPreset.subtitle(): String {
     return stringResource(

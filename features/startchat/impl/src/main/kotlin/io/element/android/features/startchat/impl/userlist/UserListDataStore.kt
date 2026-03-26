@@ -9,13 +9,17 @@
 package io.element.android.features.startchat.impl.userlist
 
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.user.MatrixUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @Inject
+@SingleIn(SessionScope::class)
 class UserListDataStore {
     private val _selectedUsers: MutableStateFlow<List<MatrixUser>> = MutableStateFlow(emptyList())
+    private val _initialQuery: MutableStateFlow<String?> = MutableStateFlow(null)
 
     fun selectUser(user: MatrixUser) {
         if (!_selectedUsers.value.contains(user)) {
@@ -27,5 +31,12 @@ class UserListDataStore {
         _selectedUsers.tryEmit(_selectedUsers.value.minus(user))
     }
 
+    fun setInitialQuery(query: String?) {
+        _initialQuery.tryEmit(query)
+    }
+
+    fun getInitialQuery(): String? = _initialQuery.value
+
     val selectedUsers = _selectedUsers.asStateFlow()
+    val initialQuery = _initialQuery.asStateFlow()
 }

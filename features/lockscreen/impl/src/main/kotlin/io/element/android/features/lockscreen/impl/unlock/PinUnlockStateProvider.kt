@@ -16,6 +16,11 @@ import io.element.android.features.lockscreen.impl.pin.model.PinEntry
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.architecture.AsyncData
 
+/**
+ * PIN 解锁状态预览参数提供者
+ *
+ * 用于在预览中提供不同状态的 PIN 解锁界面。
+ */
 open class PinUnlockStateProvider : PreviewParameterProvider<PinUnlockState> {
     override val values: Sequence<PinUnlockState>
         get() = sequenceOf(
@@ -34,6 +39,9 @@ open class PinUnlockStateProvider : PreviewParameterProvider<PinUnlockState> {
         )
 }
 
+/**
+ * 创建 PIN 解锁状态的辅助函数
+ */
 fun aPinUnlockState(
     pinEntry: PinEntry = PinEntry.createEmpty(4),
     remainingAttempts: AsyncData<Int> = AsyncData.Success(3),

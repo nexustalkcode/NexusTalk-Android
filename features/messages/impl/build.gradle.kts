@@ -26,13 +26,6 @@ android {
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.lib)
-    implementation(projects.schildi.components)
-    implementation(projects.schildi.theme)
-    implementation(projects.schildi.matrixsdk)
-
-    api(libs.beeper.messageformat)
-
     api(projects.features.messages.api)
     implementation(projects.appconfig)
     implementation(projects.features.call.api)
@@ -60,7 +53,6 @@ dependencies {
     implementation(projects.libraries.preferences.api)
     implementation(projects.libraries.recentemojis.api)
     implementation(projects.libraries.roomselect.api)
-    implementation(projects.libraries.audio.api)
     implementation(projects.libraries.voiceplayer.api)
     implementation(projects.libraries.voicerecorder.api)
     implementation(projects.libraries.mediaplayer.api)
@@ -76,6 +68,7 @@ dependencies {
     implementation(libs.jsoup)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     implementation(libs.sigpwned.emoji4j)
@@ -85,7 +78,7 @@ dependencies {
     implementation(projects.features.knockrequests.api)
     implementation(projects.features.roommembermoderation.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.dateformatter.test)
     testImplementation(projects.libraries.push.test)
@@ -103,7 +96,6 @@ dependencies {
     testImplementation(projects.libraries.mediapickers.test)
     testImplementation(projects.libraries.permissions.test)
     testImplementation(projects.libraries.preferences.test)
-    testImplementation(projects.libraries.audio.test)
     testImplementation(projects.libraries.voicerecorder.test)
     testImplementation(projects.libraries.mediaplayer.test)
     testImplementation(projects.libraries.mediaviewer.test)

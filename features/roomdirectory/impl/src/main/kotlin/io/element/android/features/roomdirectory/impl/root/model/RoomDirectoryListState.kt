@@ -12,6 +12,12 @@ import io.element.android.features.roomdirectory.api.RoomDescription
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 房间目录列表状态数据类
+ *
+ * @property hasMoreToLoad 是否还有更多内容可以加载
+ * @property items 房间描述列表
+ */
 internal data class RoomDirectoryListState(
     val hasMoreToLoad: Boolean,
     val items: ImmutableList<RoomDescription>,

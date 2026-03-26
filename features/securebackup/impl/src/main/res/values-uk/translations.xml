@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Вимкнути резервне копіювання"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Увімкнути резервне копіювання"</string>
-  <string name="screen_chat_backup_key_backup_description">"Зберігайте свій криптографічний ідентифікатор і ключі повідомлень на сервері. Це дозволить вам переглядати історію повідомлень на будь-яких нових пристроях. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Зберігайте свій криптографічний ідентифікатор і ключі повідомлень на сервері. Це дозволить вам переглядати історію повідомлень на будь-яких нових пристроях. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Резервне копіювання"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"Щоб налаштувати відновлення, потрібно ввімкнути зберігання ключів."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Завантажте ключі з цього пристрою"</string>

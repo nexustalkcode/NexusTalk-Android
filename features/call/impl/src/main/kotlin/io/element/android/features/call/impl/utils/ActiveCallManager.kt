@@ -57,24 +57,46 @@ import timber.log.Timber
 import kotlin.math.min
 
 /**
- * Manages the active call state.
+ * 活动通话管理器接口
+ *
+ * 负责管理当前活动通话的状态，包括来电注册、通话状态更新、挂断等操作。
+ *
+ * @see DefaultActiveCallManager 默认实现
  */
 interface ActiveCallManager {
     /**
-     * The active call state flow, which will be updated when the active call changes.
+     * 活动通话状态流
+     *
+     * 当活动通话发生变化时，此值会自动更新。
      */
     val activeCall: StateFlow<ActiveCall?>
 
     /**
-     * Registers an incoming call if there isn't an existing active call and posts a [CallState.Ringing] notification.
-     * @param notificationData The data for the incoming call notification.
+     * 注册来电
+     *
+     * 如果当前没有活动通话，则注册来电并显示响铃通知。
+     *
+     * @param notificationData 来电通知数据
      */
     suspend fun registerIncomingCall(notificationData: CallNotificationData)
 
     /**
-     * Called to hang up the active call. It will hang up the call and remove any existing UI and the active call.
-     * @param callType The type of call that the user hangs up, either an external url one or a room one.
-     * @param notificationData The data for the incoming call notification.
+     * Clear the currently displayed incoming call notification without changing the call state.
+     */
+    suspend fun clearIncomingCallNotification()
+
+    /**
+     * Notify the manager that an incoming call UI is currently visible.
+     */
+    suspend fun setIncomingCallUiVisible(isVisible: Boolean)
+
+    /**
+     * 挂断通话
+     *
+     * 挂断当前活动通话，并移除任何相关的 UI 和活动通话状态。
+     *
+     * @param callType 通话类型（外部 URL 或房间通话）
+     * @param notificationData 来电通知数据（可选）
      */
     suspend fun hangUpCall(
         callType: CallType,
@@ -82,9 +104,11 @@ interface ActiveCallManager {
     )
 
     /**
-     * Called after the user joined a call. It will remove any existing UI and set the call state as [CallState.InCall].
+     * 用户加入通话后调用
      *
-     * @param callType The type of call that the user joined, either an external url one or a room one.
+     * 移除任何现有的 UI，并将通话状态设置为通话中。
+     *
+     * @param callType 通话类型（外部 URL 或房间通话）
      */
     suspend fun joinedCall(callType: CallType)
 }
@@ -106,6 +130,7 @@ class DefaultActiveCallManager(
 ) : ActiveCallManager {
     private val tag = "ActiveCallManager"
     private var timedOutCallJob: Job? = null
+    private var incomingCallUiVisible = false
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal val activeWakeLock: PowerManager.WakeLock? = context.getSystemService<PowerManager>()
@@ -137,7 +162,13 @@ class DefaultActiveCallManager(
 
             appForegroundStateService.updateHasRingingCall(true)
             Timber.tag(tag).d("Received incoming call for room id: ${notificationData.roomId}, ringDuration(ms): $ringDuration")
-            if (activeCall.value != null) {
+            val currentActiveCall = activeCall.value
+            val currentRingingCall = currentActiveCall?.callState as? CallState.Ringing
+            if (currentRingingCall?.notificationData?.eventId == notificationData.eventId) {
+                Timber.tag(tag).d("Ignoring duplicate incoming call event: ${notificationData.eventId}")
+                return
+            }
+            if (currentActiveCall != null) {
                 displayMissedCallNotification(notificationData)
                 Timber.tag(tag).w("Already have an active call, ignoring incoming call: $notificationData")
                 return
@@ -146,7 +177,6 @@ class DefaultActiveCallManager(
                 callType = CallType.RoomCall(
                     sessionId = notificationData.sessionId,
                     roomId = notificationData.roomId,
-                    isAudioCall = notificationData.audioOnly,
                 ),
                 callState = CallState.Ringing(notificationData),
             )
@@ -165,6 +195,17 @@ class DefaultActiveCallManager(
                 Timber.tag(tag).d("Acquiring partial wakelock")
                 activeWakeLock.acquire(ringDuration)
             }
+        }
+    }
+
+    override suspend fun clearIncomingCallNotification() = mutex.withLock {
+        cancelIncomingCallNotification()
+    }
+
+    override suspend fun setIncomingCallUiVisible(isVisible: Boolean) = mutex.withLock {
+        incomingCallUiVisible = isVisible
+        if (isVisible) {
+            cancelIncomingCallNotification()
         }
     }
 
@@ -261,6 +302,10 @@ class DefaultActiveCallManager(
 
     @SuppressLint("MissingPermission")
     private suspend fun showIncomingCallNotification(notificationData: CallNotificationData) {
+        if (incomingCallUiVisible) {
+            Timber.tag(tag).d("Skipping ringing call notification because incoming call UI is visible")
+            return
+        }
         Timber.tag(tag).d("Displaying ringing call notification")
         val notification = ringingCallNotificationCreator.createNotification(
             sessionId = notificationData.sessionId,
@@ -274,7 +319,6 @@ class DefaultActiveCallManager(
             timestamp = notificationData.timestamp,
             textContent = notificationData.textContent,
             expirationTimestamp = notificationData.expirationTimestamp,
-            audioOnly = notificationData.audioOnly,
         ) ?: return
         runCatchingExceptions {
             notificationManagerCompat.notify(
@@ -401,25 +445,45 @@ class DefaultActiveCallManager(
 }
 
 /**
- * Represents an active call.
+ * 活动通话数据类
+ *
+ * 表示一个活动通话的状态信息。
+ *
+ * @property callType 通话类型
+ * @property callState 通话状态
+ *
+ * @see CallType 通话类型
+ * @see CallState 通话状态
  */
 data class ActiveCall(
+    /** 通话类型 */
     val callType: CallType,
+    /** 通话状态 */
     val callState: CallState,
 )
 
 /**
- * Represents the state of an active call.
+ * 通话状态密封接口
+ *
+ * 表示活动通话的当前状态。
+ *
+ * @see Ringing 响铃状态
+ * @see InCall 通话中状态
  */
 sealed interface CallState {
     /**
-     * The call is in a ringing state.
-     * @param notificationData The data for the incoming call notification.
+     * 响铃状态
+     *
+     * 表示来电正在响铃，等待用户接听。
+     *
+     * @property notificationData 来电通知数据
      */
     data class Ringing(val notificationData: CallNotificationData) : CallState
 
     /**
-     * The call is in an in-call state.
+     * 通话中状态
+     *
+     * 表示用户已接听，通话正在进行中。
      */
     data object InCall : CallState
 }

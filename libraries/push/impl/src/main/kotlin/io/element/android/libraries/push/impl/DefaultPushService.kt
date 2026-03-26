@@ -8,7 +8,6 @@
 
 package io.element.android.libraries.push.impl
 
-import chat.schildi.lib.preferences.ScAppStateStore
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
@@ -42,7 +41,6 @@ class DefaultPushService(
     private val testPush: TestPush,
     private val userPushStoreFactory: UserPushStoreFactory,
     private val pushProviders: Set<@JvmSuppressWildcards PushProvider>,
-    private val scAppStateStore: ScAppStateStore,
     private val getCurrentPushProvider: GetCurrentPushProvider,
     private val sessionObserver: SessionObserver,
     private val pushClientSecretStore: PushClientSecretStore,
@@ -81,12 +79,11 @@ class DefaultPushService(
                 ?.unregister(matrixClient)
                 ?.onFailure {
                     Timber.w(it, "Failed to unregister previous push provider")
-                    //return Result.failure(it)
+                    return Result.failure(it)
                 }
         }
         // Store new value
         userPushStore.setPushProviderName(pushProvider.name)
-        scAppStateStore.setPushDistributor(distributor.value, distributor.name)
         // Then try to register
         return pushProvider.registerWith(matrixClient, distributor)
     }

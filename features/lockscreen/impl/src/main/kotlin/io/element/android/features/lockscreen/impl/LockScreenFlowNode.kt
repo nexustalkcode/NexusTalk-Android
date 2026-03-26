@@ -29,6 +29,11 @@ import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.di.SessionScope
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 锁屏流程节点
+ *
+ * 管理锁屏模块的导航流程，包括设置流程和设置页面。
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class LockScreenFlowNode(
@@ -42,18 +47,35 @@ class LockScreenFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 输入数据类
+     *
+     * @property initialNavTarget 初始导航目标
+     */
     data class Inputs(
         val initialNavTarget: NavTarget,
     ) : NodeInputs
 
+    /**
+     * 导航目标密封接口
+     *
+     * 定义锁屏流程中的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
+        /** 设置流程 */
         @Parcelize
         data object Setup : NavTarget
 
+        /** 设置页面 */
         @Parcelize
         data object Settings : NavTarget
     }
 
+    /**
+     * 设置完成回调
+     *
+     * 当设置流程完成时通知所有注册的回调。
+     */
     private class OnSetupDoneCallback(private val plugins: List<LockScreenEntryPoint.Callback>) : LockScreenSetupFlowNode.Callback {
         override fun onSetupDone() {
             plugins.forEach {

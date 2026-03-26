@@ -11,6 +11,15 @@ package io.element.android.features.invite.api.acceptdecline
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.core.RoomId
 
+/**
+ * 接受/拒绝邀请状态数据类
+ *
+ * 表示接受或拒绝房间邀请的界面状态，包含接受和拒绝操作的异步状态。
+ *
+ * @property acceptAction 接受邀请的异步操作状态
+ * @property declineAction 拒绝邀请的异步操作状态
+ * @property eventSink 事件处理函数
+ */
 data class AcceptDeclineInviteState(
     val acceptAction: AsyncAction<RoomId>,
     val declineAction: AsyncAction<RoomId>,

@@ -50,11 +50,6 @@ import kotlinx.collections.immutable.toImmutableList
 import org.jsoup.nodes.Document
 import kotlin.time.Duration
 
-private const val MIN_IMAGE_SIZE = 1L
-private const val MAX_IMAGE_SIZE = 10_000L
-private const val MIN_ASPECT_RATIO = 0.001f
-private const val MAX_ASPECT_RATIO = 10f
-
 @Inject
 class TimelineItemContentMessageFactory(
     private val fileSizeFormatter: FileSizeFormatter,
@@ -81,7 +76,6 @@ class TimelineItemContentMessageFactory(
                     body = emoteBody,
                     htmlDocument = dom,
                     formattedBody = formattedBody,
-                    formattedBodySc = scFormattedBody(messageType, dom, content.isRoomMention, emoteBody),
                     isEdited = content.isEdited,
                 )
             }
@@ -89,25 +83,21 @@ class TimelineItemContentMessageFactory(
                 val dom = messageType.formattedCaption?.toHtmlDocument(permalinkParser = permalinkParser)
                 val formattedCaption = dom?.let(::parseHtml)
                     ?: messageType.caption?.withLinks()
-                // Coerce the image sizes and prevent invalid aspect ratios, which can cause crashes
-                val width = messageType.info?.width?.coerceIn(MIN_IMAGE_SIZE, MAX_IMAGE_SIZE)
-                val height = messageType.info?.height?.coerceIn(MIN_IMAGE_SIZE, MAX_IMAGE_SIZE)
-                val aspectRatio = aspectRatioOf(width, height)?.coerceIn(MIN_ASPECT_RATIO, MAX_ASPECT_RATIO)
+                val aspectRatio = aspectRatioOf(messageType.info?.width, messageType.info?.height)
                 TimelineItemImageContent(
                     filename = messageType.filename,
                     fileSize = messageType.info?.size ?: 0,
                     caption = messageType.caption?.trimEnd(),
                     formattedCaption = formattedCaption,
-                    formattedCaptionSc = scFormattedBody(messageType, dom, content.isRoomMention),
                     isEdited = content.isEdited,
                     mediaSource = messageType.source,
                     thumbnailSource = messageType.info?.thumbnailSource,
                     mimeType = messageType.info?.mimetype ?: MimeTypes.OctetStream,
                     blurhash = messageType.info?.blurhash,
-                    width = width?.toInt(),
-                    height = height?.toInt(),
-                    thumbnailWidth = messageType.info?.thumbnailInfo?.width?.coerceIn(MIN_IMAGE_SIZE, MAX_IMAGE_SIZE)?.toInt(),
-                    thumbnailHeight = messageType.info?.thumbnailInfo?.height?.coerceIn(MIN_IMAGE_SIZE, MAX_IMAGE_SIZE)?.toInt(),
+                    width = messageType.info?.width?.toInt(),
+                    height = messageType.info?.height?.toInt(),
+                    thumbnailWidth = messageType.info?.thumbnailInfo?.width?.toInt(),
+                    thumbnailHeight = messageType.info?.thumbnailInfo?.height?.toInt(),
                     aspectRatio = aspectRatio,
                     formattedFileSize = fileSizeFormatter.format(messageType.info?.size ?: 0),
                     fileExtension = fileExtensionExtractor.extractFromName(messageType.filename)
@@ -123,7 +113,6 @@ class TimelineItemContentMessageFactory(
                     fileSize = messageType.info?.size ?: 0,
                     caption = messageType.caption?.trimEnd(),
                     formattedCaption = formattedCaption,
-                    formattedCaptionSc = scFormattedBody(messageType, dom, content.isRoomMention),
                     isEdited = content.isEdited,
                     mediaSource = messageType.source,
                     thumbnailSource = messageType.info?.thumbnailSource,
@@ -144,7 +133,6 @@ class TimelineItemContentMessageFactory(
                         body = body,
                         htmlDocument = null,
                         formattedBody = body,
-                        formattedBodySc = scFormattedPlaintextBody(body, content.isRoomMention),
                         isEdited = content.isEdited,
                     )
                 } else {
@@ -165,7 +153,6 @@ class TimelineItemContentMessageFactory(
                     fileSize = messageType.info?.size ?: 0,
                     caption = messageType.caption?.trimEnd(),
                     formattedCaption = formattedCaption,
-                    formattedCaptionSc = scFormattedBody(messageType, dom, content.isRoomMention),
                     isEdited = content.isEdited,
                     thumbnailSource = messageType.info?.thumbnailSource,
                     mediaSource = messageType.source,
@@ -190,7 +177,6 @@ class TimelineItemContentMessageFactory(
                     fileSize = messageType.info?.size ?: 0,
                     caption = messageType.caption?.trimEnd(),
                     formattedCaption = formattedCaption,
-                    formattedCaptionSc = scFormattedBody(messageType, dom, content.isRoomMention),
                     isEdited = content.isEdited,
                     mediaSource = messageType.source,
                     duration = messageType.info?.duration ?: Duration.ZERO,
@@ -209,7 +195,6 @@ class TimelineItemContentMessageFactory(
                     fileSize = messageType.info?.size ?: 0,
                     caption = messageType.caption?.trimEnd(),
                     formattedCaption = formattedCaption,
-                    formattedCaptionSc = scFormattedBody(messageType, dom, content.isRoomMention),
                     isEdited = content.isEdited,
                     mediaSource = messageType.source,
                     duration = messageType.info?.duration ?: Duration.ZERO,
@@ -229,7 +214,6 @@ class TimelineItemContentMessageFactory(
                     fileSize = messageType.info?.size ?: 0,
                     caption = messageType.caption?.trimEnd(),
                     formattedCaption = formattedCaption,
-                    formattedCaptionSc = scFormattedBody(messageType, dom, content.isRoomMention),
                     isEdited = content.isEdited,
                     thumbnailSource = messageType.info?.thumbnailSource,
                     mediaSource = messageType.source,
@@ -248,7 +232,6 @@ class TimelineItemContentMessageFactory(
                     body = body,
                     htmlDocument = htmlDocument,
                     formattedBody = formattedBody,
-                    formattedBodySc = scFormattedBody(messageType, htmlDocument, content.isRoomMention),
                     isEdited = content.isEdited,
                 )
             }
@@ -262,7 +245,6 @@ class TimelineItemContentMessageFactory(
                     body = body,
                     htmlDocument = htmlDocument,
                     formattedBody = formattedBody,
-                    formattedBodySc = scFormattedBody(messageType, htmlDocument, content.isRoomMention),
                     isEdited = content.isEdited,
                 )
             }
@@ -272,7 +254,6 @@ class TimelineItemContentMessageFactory(
                     body = body,
                     htmlDocument = null,
                     formattedBody = textPillificationHelper.pillify(body).safeLinkify(),
-                    formattedBodySc = scFormattedPlaintextBody(body, content.isRoomMention),
                     isEdited = content.isEdited,
                 )
             }

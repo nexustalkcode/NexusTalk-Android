@@ -13,6 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 /**
- * Common padding for RoomList banners.
+ * 房间列表横幅通用内边距
+ *
+ * 为房间列表中的横幅组件提供统一的内边距样式。
+ *
+ * @return 带有内边距的修饰符
  */
 internal fun Modifier.roomListBannerPadding() = padding(horizontal = 16.dp, vertical = 8.dp)

@@ -23,6 +23,17 @@ import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatch
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarMessage
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 安全备份设置节点
+ *
+ * 负责显示安全备份设置页面的节点。
+ * 页面用于创建新恢复密钥或更改现有恢复密钥。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenterFactory 安全备份设置 presenter 工厂
+ * @property snackbarDispatcher Snackbar 调度器
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class SecureBackupSetupNode(
@@ -31,7 +42,13 @@ class SecureBackupSetupNode(
     presenterFactory: SecureBackupSetupPresenter.Factory,
     private val snackbarDispatcher: SnackbarDispatcher,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 安全备份设置节点输入数据
+     *
+     * @property isChangeRecoveryKeyUserStory 是否为更改恢复密钥流程
+     */
     data class Inputs(
+        /** 是否为更改恢复密钥流程 */
         val isChangeRecoveryKeyUserStory: Boolean,
     ) : NodeInputs
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 Element Creations Ltd.
+ * Copyright (c) 2025 Element Creations Ltd.
  *
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial.
  * Please see LICENSE files in the repository root for full details.
@@ -15,6 +15,7 @@
 @file:Suppress("all")
 package io.element.android.compound.tokens.generated
 
+import androidx.compose.ui.graphics.Color
 import io.element.android.compound.annotations.CoreColorToken
 import io.element.android.compound.tokens.generated.internal.DarkHcColorTokens
 
@@ -73,19 +74,23 @@ val compoundColorsHcDark = SemanticColors(
     gradientActionStop2 = DarkHcColorTokens.colorGreen900,
     gradientActionStop3 = DarkHcColorTokens.colorGreen700,
     gradientActionStop4 = DarkHcColorTokens.colorGreen500,
-    gradientCriticalStop1 = DarkHcColorTokens.colorRed200,
-    gradientCriticalStop2 = DarkHcColorTokens.colorThemeBg,
-    gradientInfoStop1 = DarkHcColorTokens.colorBlue200,
-    gradientInfoStop2 = DarkHcColorTokens.colorThemeBg,
+    gradientInfoStop1 = DarkHcColorTokens.colorAlphaBlue500,
+    gradientInfoStop2 = DarkHcColorTokens.colorAlphaBlue400,
+    gradientInfoStop3 = DarkHcColorTokens.colorAlphaBlue300,
+    gradientInfoStop4 = DarkHcColorTokens.colorAlphaBlue200,
+    gradientInfoStop5 = DarkHcColorTokens.colorAlphaBlue100,
+    gradientInfoStop6 = DarkHcColorTokens.colorTransparent,
     gradientSubtleStop1 = DarkHcColorTokens.colorAlphaGreen500,
     gradientSubtleStop2 = DarkHcColorTokens.colorAlphaGreen400,
     gradientSubtleStop3 = DarkHcColorTokens.colorAlphaGreen300,
     gradientSubtleStop4 = DarkHcColorTokens.colorAlphaGreen200,
     gradientSubtleStop5 = DarkHcColorTokens.colorAlphaGreen100,
     gradientSubtleStop6 = DarkHcColorTokens.colorTransparent,
+    gradientBrandStop1 = DarkHcColorTokens.colorBrandStart,
+    gradientBrandStop2 = DarkHcColorTokens.colorBrandEnd,
     iconAccentPrimary = DarkHcColorTokens.colorGreen900,
     iconAccentTertiary = DarkHcColorTokens.colorGreen800,
-    iconCriticalPrimary = DarkHcColorTokens.colorRed900,
+    iconCriticalPrimary = Color(0xFFFF4439),
     iconDisabled = DarkHcColorTokens.colorGray700,
     iconInfoPrimary = DarkHcColorTokens.colorBlue1100,
     iconOnSolidPrimary = DarkHcColorTokens.colorThemeBg,
@@ -95,7 +100,7 @@ val compoundColorsHcDark = SemanticColors(
     iconQuaternaryAlpha = DarkHcColorTokens.colorAlphaGray700,
     iconSecondary = DarkHcColorTokens.colorGray900,
     iconSecondaryAlpha = DarkHcColorTokens.colorAlphaGray900,
-    iconSuccessPrimary = DarkHcColorTokens.colorGreen900,
+    iconSuccessPrimary = Color(0xFF2FD159),
     iconTertiary = DarkHcColorTokens.colorGray800,
     iconTertiaryAlpha = DarkHcColorTokens.colorAlphaGray800,
     textActionAccent = DarkHcColorTokens.colorGreen900,

@@ -12,6 +12,14 @@ import io.element.android.features.login.impl.changeserver.ChangeServerState
 import io.element.android.features.login.impl.resolver.HomeserverData
 import io.element.android.libraries.architecture.AsyncData
 
+/**
+ * 搜索账户提供商状态数据类
+ *
+ * @property userInput 用户输入的搜索文本
+ * @property userInputResult 搜索结果的异步状态
+ * @property changeServerState 服务器切换状态
+ * @property eventSink 事件处理函数
+ */
 data class SearchAccountProviderState(
     val userInput: String,
     val userInputResult: AsyncData<List<HomeserverData>>,

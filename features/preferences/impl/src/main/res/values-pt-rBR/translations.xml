@@ -43,6 +43,8 @@
   <string name="screen_edit_profile_error">"Ocorreu um erro desconhecido e as informações não puderam ser alteradas."</string>
   <string name="screen_edit_profile_error_title">"Não foi possível atualizar o perfil"</string>
   <string name="screen_edit_profile_title">"Editar perfil"</string>
+  <string name="screen_edit_profile_change_avatar">"Alterar avatar"</string>
+  <string name="screen_edit_profile_username">"Nome de usuário"</string>
   <string name="screen_edit_profile_updating_details">"Atualizando o perfil…"</string>
   <string name="screen_labs_enable_threads">"Ativar respostas de tópicos"</string>
   <string name="screen_labs_enable_threads_description">"O app será reiniciado para aplicar esta mudança."</string>
@@ -76,6 +78,8 @@ Se você continuar, algumas de suas configurações poderão mudar."</string>
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"configurações do seu sistema"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Notificações do sistema desativadas"</string>
   <string name="screen_notification_settings_title">"Notificações"</string>
+  <string name="screen_preferences_section_customization">"Personalização"</string>
+  <string name="screen_preferences_section_security">"Segurança"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Histórico de push"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Solução de problemas"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Solucionar problemas de notificações"</string>

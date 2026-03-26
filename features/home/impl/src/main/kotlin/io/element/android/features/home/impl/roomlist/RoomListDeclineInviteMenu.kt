@@ -32,38 +32,58 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.theme.components.TextButton
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 拒绝邀请菜单
+ *
+ * 渲染拒绝房间邀请的底部弹出菜单，提供拒绝和拒绝并阻止用户等选项。
+ *
+ * @param menu 拒绝邀请菜单显示状态
+ * @param canReportRoom 是否可以报告房间
+ * @param onDeclineAndBlockClick 拒绝并阻止用户点击事件
+ * @param eventSink 事件处理函数
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoomListDeclineInviteMenu(
     menu: RoomListState.DeclineInviteMenu.Shown,
     canReportRoom: Boolean,
     onDeclineAndBlockClick: (RoomListRoomSummary) -> Unit,
-    eventSink: (RoomListEvent) -> Unit,
+    eventSink: (RoomListEvents) -> Unit,
 ) {
     ModalBottomSheet(
-        onDismissRequest = { eventSink(RoomListEvent.HideDeclineInviteMenu) },
+        onDismissRequest = { eventSink(RoomListEvents.HideDeclineInviteMenu) },
     ) {
         RoomListDeclineInviteMenuContent(
             roomName = menu.roomSummary.name ?: menu.roomSummary.roomId.value,
             onDeclineClick = {
-                eventSink(RoomListEvent.HideDeclineInviteMenu)
-                eventSink(RoomListEvent.DeclineInvite(menu.roomSummary, false))
+                eventSink(RoomListEvents.HideDeclineInviteMenu)
+                eventSink(RoomListEvents.DeclineInvite(menu.roomSummary, false))
             },
             onDeclineAndBlockClick = {
-                eventSink(RoomListEvent.HideDeclineInviteMenu)
+                eventSink(RoomListEvents.HideDeclineInviteMenu)
                 if (canReportRoom) {
                     onDeclineAndBlockClick(menu.roomSummary)
                 } else {
-                    eventSink(RoomListEvent.DeclineInvite(menu.roomSummary, true))
+                    eventSink(RoomListEvents.DeclineInvite(menu.roomSummary, true))
                 }
             },
             onCancelClick = {
-                eventSink(RoomListEvent.HideDeclineInviteMenu)
+                eventSink(RoomListEvents.HideDeclineInviteMenu)
             }
         )
     }
 }
 
+/**
+ * 拒绝邀请菜单内容
+ *
+ * 渲染拒绝邀请菜单的具体内容，包括标题、描述和操作按钮。
+ *
+ * @param roomName 房间名称
+ * @param onDeclineClick 拒绝点击事件
+ * @param onDeclineAndBlockClick 拒绝并阻止用户点击事件
+ * @param onCancelClick 取消点击事件
+ */
 @Composable
 private fun RoomListDeclineInviteMenuContent(
     roomName: String,

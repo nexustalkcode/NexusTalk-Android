@@ -106,7 +106,6 @@
   <string name="action_invite_people_to_app">"Pozovi osobe u %1$s"</string>
   <string name="action_invites_list">"Pozivnice"</string>
   <string name="action_join">"Pridruži se"</string>
-  <string name="action_learn_more">"Saznajte više"</string>
   <string name="action_leave">"Napusti"</string>
   <string name="action_leave_conversation">"Napusti razgovor"</string>
   <string name="action_leave_room">"Napusti sobu"</string>
@@ -489,4 +488,9 @@ Jeste li sigurni da želite nastaviti?"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Nemate pristup ovoj poruci"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Nije moguće dešifrirati poruku"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Ova je poruka blokirana jer niste potvrdili svoj uređaj ili zato što pošiljatelj treba potvrditi vaš identitet."</string>
+  <string name="common_call_ended">"Poziv je završen"</string>
+  <string name="action_start_call">"Započni poziv"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Nema poziva"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Ostanite povezani s zajednicama"</string>
+  <string name="action_create_community">"Stvori zajednicu"</string>
 </resources>

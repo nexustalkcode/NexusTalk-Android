@@ -9,6 +9,12 @@ package io.element.android.features.linknewdevice.impl.screens.scan
 
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 扫描二维码状态数据类
+ *
+ * @property scanAction 扫描操作的异步状态
+ * @property eventSink 事件处理函数
+ */
 data class ScanQrCodeState(
     val scanAction: AsyncAction<Unit>,
     val eventSink: (ScanQrCodeEvent) -> Unit,

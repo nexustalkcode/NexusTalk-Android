@@ -27,6 +27,14 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Button
 import io.element.android.libraries.designsystem.theme.components.TextButton
 
+/**
+ * 设置生物识别视图
+ *
+ * 显示设置生物识别的可组合界面。
+ *
+ * @param state 设置生物识别状态
+ * @param modifier 修饰符
+ */
 @Composable
 fun SetupBiometricView(
     state: SetupBiometricState,

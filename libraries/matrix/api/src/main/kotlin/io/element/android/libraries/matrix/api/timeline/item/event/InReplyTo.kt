@@ -14,16 +14,15 @@ import io.element.android.libraries.matrix.api.core.UserId
 
 @Immutable
 sealed interface InReplyTo {
-    val eventId: EventId // SC
     /** The event details are not loaded yet. We can fetch them. */
-    data class NotLoaded(override val eventId: EventId) : InReplyTo
+    data class NotLoaded(val eventId: EventId) : InReplyTo
 
     /** The event details are pending to be fetched. We should **not** fetch them again. */
-    data class Pending(override val eventId: EventId) : InReplyTo
+    data class Pending(val eventId: EventId) : InReplyTo
 
     /** The event details are available. */
     data class Ready(
-        override val eventId: EventId,
+        val eventId: EventId,
         val content: EventContent,
         val senderId: UserId,
         val senderProfile: ProfileDetails,
@@ -38,7 +37,7 @@ sealed interface InReplyTo {
      * where we keep trying to fetch the same event.
      * */
     data class Error(
-        override val eventId: EventId,
+        val eventId: EventId,
         val message: String,
     ) : InReplyTo
 }

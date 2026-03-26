@@ -19,6 +19,16 @@ import io.element.android.libraries.matrix.api.core.SessionId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * 二维码登录管理器默认实现
+ *
+ * QrCodeLoginManager 接口的默认实现。
+ * 使用 Matrix 认证服务执行二维码登录流程。
+ * 响应式地更新登录步骤状态，并在登录失败时保存错误信息。
+ *
+ * @param authenticationService Matrix 认证服务
+ * @see QrCodeLoginManager 接口定义
+ */
 @SingleIn(QrCodeLoginScope::class)
 @ContributesBinding(QrCodeLoginScope::class)
 class DefaultQrCodeLoginManager(

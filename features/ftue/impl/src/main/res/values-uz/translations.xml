@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Sozlamalaringizni keyinroq o\'zgartirishingiz mumkin."</string>
   <string name="screen_notification_optin_title">"Bildirishnomalarga ruxsat bering va hech qachon xabarni o\'tkazib yubormang"</string>
   <string name="screen_session_verification_enter_recovery_key">"Tiklash kalitini kiriting"</string>
+  <string name="screen_welcome_agreement">"Qabul qilish va davom ettirishni bosish orqali siz %s qabul qilmoqdasiz"</string>
+  <string name="screen_welcome_privacy_policy_link">"Maxfiylik siyosati"</string>
+  <string name="screen_welcome_title">"%s ga xush kelibsiz"</string>
+  <string name="screen_welcome_privacy_notice">"Iltimos, Maxfiylik siyosatimizni o'qing"</string>
+  <string name="screen_welcome_agree">"Qabul qilish"</string>
 </resources>

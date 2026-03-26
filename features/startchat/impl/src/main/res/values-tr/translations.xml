@@ -8,4 +8,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"Eşleşen oda bulundu"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Oda bulunamadı"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"örn. #room-isim:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"QR kodunu tara"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Kişi eklemek için QR kodunu tara"</string>
+  <string name="screen_scan_user_qr_code_success">"QR kodu başarıyla tarandı"</string>
 </resources>

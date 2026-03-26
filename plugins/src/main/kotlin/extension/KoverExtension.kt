@@ -222,9 +222,9 @@ fun Project.applyKoverPluginToAllSubProjects() = rootProject.subprojects {
 
 fun KoverVariantCreateConfig.defaultVariants(project: Project) {
     if (project.name == "app") {
-        addWithDependencies("fdroidScDefaultDebug")
+        addWithDependencies("gplayDebug")
     } else {
-        addWithDependencies("fdroidScDefaultDebug", "jvm", optional = true)
+        addWithDependencies("debug", "jvm", optional = true)
     }
 }
 

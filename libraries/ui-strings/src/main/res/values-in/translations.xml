@@ -91,7 +91,6 @@
   <string name="action_invite_people_to_app">"Undang orang-orang ke %1$s"</string>
   <string name="action_invites_list">"Undangan"</string>
   <string name="action_join">"Gabung"</string>
-  <string name="action_learn_more">"Pelajari lebih lanjut"</string>
   <string name="action_leave">"Tinggalkan"</string>
   <string name="action_leave_conversation">"Tinggalkan percakapan"</string>
   <string name="action_leave_room">"Tinggalkan ruangan"</string>
@@ -407,4 +406,9 @@ Apakah Anda yakin ingin melanjutkan?"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Anda tidak memiliki akses ke pesan ini"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Tidak dapat mendekripsi pesan"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Pesan ini diblokir karena Anda tidak memverifikasi perangkat Anda atau karena pengirim perlu memverifikasi identitas Anda."</string>
+  <string name="common_call_ended">"Panggilan berakhir"</string>
+  <string name="action_start_call">"Mulai panggilan"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Tidak ada panggilan"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Tetap terhubung dengan komunitas"</string>
+  <string name="action_create_community">"Buat komunitas"</string>
 </resources>

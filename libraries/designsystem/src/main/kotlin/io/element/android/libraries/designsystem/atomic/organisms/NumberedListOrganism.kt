@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 编号列表有机体组件
+ *
+ * 用于在可滚动列表中显示多个编号列表项的复合组件。
+ * 每个列表项包含编号和富文本内容，自动排列。
+ * 适用于条款说明、操作步骤等需要编号的场景。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.organisms
 
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +29,29 @@ import androidx.compose.ui.unit.dp
 import io.element.android.libraries.designsystem.atomic.molecules.NumberedListMolecule
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 编号列表组件
+ *
+ * 创建一个可滚动的编号列表。
+ * 使用 LazyColumn 实现懒加载，支持大量列表项。
+ *
+ * @param items ImmutableList<AnnotatedString> 列表项文本内容列表
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ *
+ * @return Unit
+ *
+ * @see [NumberedListMolecule] 编号列表项组件
+ *
+ * @example
+ * ```kotlin
+ * NumberedListOrganism(
+ *     items = persistentListOf(
+ *         "第一步操作".toAnnotatedString(),
+ *         "第二步操作".toAnnotatedString()
+ *     )
+ * )
+ * ```
+ */
 @Composable
 fun NumberedListOrganism(
     items: ImmutableList<AnnotatedString>,

@@ -11,6 +11,13 @@ package io.element.android.features.preferences.impl.labs
 import io.element.android.libraries.featureflag.ui.model.FeatureUiModel
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 实验室功能页面状态数据类
+ *
+ * @property features 可用的实验功能列表
+ * @property isApplyingChanges 是否正在应用更改
+ * @property eventSink 事件处理函数
+ */
 data class LabsState(
     val features: ImmutableList<FeatureUiModel>,
     val isApplyingChanges: Boolean,

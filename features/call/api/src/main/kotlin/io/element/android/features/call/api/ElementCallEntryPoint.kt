@@ -12,27 +12,31 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.UserId
 
 /**
- * Entry point for the call feature.
+ * 通话功能入口点接口
+ *
+ * 定义了 Element 通话功能的入口接口，负责启动和处理通话。
  */
 interface ElementCallEntryPoint {
     /**
-     * Start a call of the given type.
-     * @param callType The type of call to start.
+     * 启动指定类型的通话
+     *
+     * @param callType 要启动的通话类型
      */
     fun startCall(callType: CallType)
 
     /**
-     * Handle an incoming call.
-     * @param callType The type of call.
-     * @param eventId The event id of the event that started the call.
-     * @param senderId The user id of the sender of the event that started the call.
-     * @param roomName The name of the room the call is in.
-     * @param senderName The name of the sender of the event that started the call.
-     * @param avatarUrl The avatar url of the room or DM.
-     * @param timestamp The timestamp of the event that started the call.
-     * @param expirationTimestamp The timestamp at which the call should stop ringing.
-     * @param notificationChannelId The id of the notification channel to use for the call notification.
-     * @param textContent The text content of the notification. If null the default content from the system will be used.
+     * 处理来电
+     *
+     * @param callType 通话类型
+     * @param eventId 发起通话的事件 ID
+     * @param senderId 发起通话的用户 ID
+     * @param roomName 房间名称
+     * @param senderName 发起者名称
+     * @param avatarUrl 房间或直接消息的头像 URL
+     * @param timestamp 事件的 Unix 时间戳
+     * @param expirationTimestamp 通话停止响铃的过期时间戳
+     * @param notificationChannelId 通话通知的通知通道 ID
+     * @param textContent 通知的文本内容，如果为 null 则使用系统默认内容
      */
     suspend fun handleIncomingCall(
         callType: CallType.RoomCall,

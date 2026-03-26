@@ -18,5 +18,5 @@ dependencies {
     api(projects.features.lockscreen.api)
     implementation(libs.coroutines.core)
     implementation(projects.libraries.architecture)
-    implementation(projects.tests.testutils)
+    
 }

@@ -39,7 +39,7 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     implementation(projects.services.analytics.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.services.analytics.test)
     testImplementation(projects.libraries.matrix.test)
 }

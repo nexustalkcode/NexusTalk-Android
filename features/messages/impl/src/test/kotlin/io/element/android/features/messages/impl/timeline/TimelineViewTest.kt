@@ -30,6 +30,7 @@ import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.libraries.matrix.api.timeline.item.event.MessageShield
 import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.ui.strings.CommonStrings
+import io.element.android.tests.testutils.EnsureNeverCalled
 import io.element.android.tests.testutils.EnsureNeverCalledWithParam
 import io.element.android.tests.testutils.EnsureNeverCalledWithTwoParams
 import io.element.android.tests.testutils.EventsRecorder
@@ -49,7 +50,7 @@ class TimelineViewTest {
 
     @Test
     fun `reaching the end of the timeline with more events to load emits a LoadMore event`() {
-        val eventsRecorder = EventsRecorder<TimelineEvent>()
+        val eventsRecorder = EventsRecorder<TimelineEvents>()
         rule.setTimelineView(
             state = aTimelineState(
                 timelineItems = persistentListOf<TimelineItem>(
@@ -61,12 +62,12 @@ class TimelineViewTest {
                 eventSink = eventsRecorder,
             ),
         )
-        eventsRecorder.assertSingle(TimelineEvent.LoadMore(Timeline.PaginationDirection.BACKWARDS))
+        eventsRecorder.assertSingle(TimelineEvents.LoadMore(Timeline.PaginationDirection.BACKWARDS))
     }
 
     @Test
     fun `reaching the end of the timeline does not send a LoadMore event`() {
-        val eventsRecorder = EventsRecorder<TimelineEvent>(expectEvents = false)
+        val eventsRecorder = EventsRecorder<TimelineEvents>(expectEvents = false)
         rule.setTimelineView(
             state = aTimelineState(
                 eventSink = eventsRecorder,
@@ -76,7 +77,7 @@ class TimelineViewTest {
 
     @Test
     fun `scroll to bottom on live timeline does not emit the Event`() {
-        val eventsRecorder = EventsRecorder<TimelineEvent>(expectEvents = false)
+        val eventsRecorder = EventsRecorder<TimelineEvents>(expectEvents = false)
         rule.setTimelineView(
             state = aTimelineState(
                 isLive = true,
@@ -90,7 +91,7 @@ class TimelineViewTest {
 
     @Test
     fun `scroll to bottom on detached timeline emits the expected Event`() {
-        val eventsRecorder = EventsRecorder<TimelineEvent>()
+        val eventsRecorder = EventsRecorder<TimelineEvents>()
         rule.setTimelineView(
             state = aTimelineState(
                 isLive = false,
@@ -99,12 +100,12 @@ class TimelineViewTest {
         )
         val contentDescription = rule.activity.getString(CommonStrings.a11y_jump_to_bottom)
         rule.onNodeWithContentDescription(contentDescription).performClick()
-        eventsRecorder.assertSingle(TimelineEvent.JumpToLive)
+        eventsRecorder.assertSingle(TimelineEvents.JumpToLive)
     }
 
     @Test
     fun `show shield dialog`() {
-        val eventsRecorder = EventsRecorder<TimelineEvent>()
+        val eventsRecorder = EventsRecorder<TimelineEvents>()
         rule.setTimelineView(
             state = aTimelineState(
                 timelineItems = persistentListOf<TimelineItem>(
@@ -121,15 +122,15 @@ class TimelineViewTest {
         rule.onNodeWithContentDescription(contentDescription).performClick()
         eventsRecorder.assertList(
             listOf(
-                TimelineEvent.OnScrollFinished(0),
-                TimelineEvent.ShowShieldDialog(MessageShieldData(MessageShield.UnverifiedIdentity(true))),
+                TimelineEvents.OnScrollFinished(0),
+                TimelineEvents.ShowShieldDialog(MessageShieldData(MessageShield.UnverifiedIdentity(true))),
             )
         )
     }
 
     @Test
     fun `hide shield dialog`() {
-        val eventsRecorder = EventsRecorder<TimelineEvent>()
+        val eventsRecorder = EventsRecorder<TimelineEvents>()
         rule.setTimelineView(
             state = aTimelineState(
                 isLive = false,
@@ -138,12 +139,12 @@ class TimelineViewTest {
             ),
         )
         rule.clickOn(CommonStrings.action_ok)
-        eventsRecorder.assertSingle(TimelineEvent.HideShieldDialog)
+        eventsRecorder.assertSingle(TimelineEvents.HideShieldDialog)
     }
 
     @Test
     fun `scrolling near to the start of the loaded items triggers a pre-fetch`() {
-        val eventsRecorder = EventsRecorder<TimelineEvent>()
+        val eventsRecorder = EventsRecorder<TimelineEvents>()
         val items = List<TimelineItem>(200) {
             aTimelineItemEvent(
                 eventId = EventId("\$event_$it"),
@@ -166,8 +167,8 @@ class TimelineViewTest {
 
         eventsRecorder.assertList(
             listOf(
-                TimelineEvent.OnScrollFinished(firstIndex = 0),
-                TimelineEvent.LoadMore(Timeline.PaginationDirection.BACKWARDS),
+                TimelineEvents.OnScrollFinished(firstIndex = 0),
+                TimelineEvents.LoadMore(Timeline.PaginationDirection.BACKWARDS),
             )
         )
     }
@@ -185,7 +186,7 @@ private fun <R : TestRule> AndroidComposeTestRule<R, ComponentActivity>.setTimel
     onReactionLongClick: (emoji: String, TimelineItem.Event) -> Unit = EnsureNeverCalledWithTwoParams(),
     onMoreReactionsClick: (TimelineItem.Event) -> Unit = EnsureNeverCalledWithParam(),
     onReadReceiptClick: (TimelineItem.Event) -> Unit = EnsureNeverCalledWithParam(),
-    onJoinCallClick: (Boolean) -> Unit = EnsureNeverCalledWithParam(),
+    onJoinCallClick: () -> Unit = EnsureNeverCalled(),
     forceJumpToBottomVisibility: Boolean = false,
 ) {
     setSafeContent(clearAndroidUiDispatcher = true) {

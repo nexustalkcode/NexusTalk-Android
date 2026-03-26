@@ -34,7 +34,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.coroutines.core)
 
-    testCommonDependencies(libs)
+   
     testImplementation(libs.coroutines.core)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.mediaplayer.test)

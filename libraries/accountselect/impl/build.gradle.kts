@@ -30,7 +30,7 @@ dependencies {
     implementation(projects.libraries.uiStrings)
     api(projects.libraries.accountselect.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.sessionStorage.test)
 }

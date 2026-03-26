@@ -20,14 +20,10 @@ android {
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.lib)
-
     api(projects.libraries.di)
     api(projects.libraries.core)
     api(libs.metro.runtime)
     api(libs.appyx.core)
     api(libs.androidx.lifecycle.runtime)
     api(libs.molecule.runtime)
-
-    testCommonDependencies(libs)
 }

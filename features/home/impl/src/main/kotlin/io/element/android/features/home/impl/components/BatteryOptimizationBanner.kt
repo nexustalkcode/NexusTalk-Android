@@ -20,9 +20,19 @@ import io.element.android.libraries.push.api.battery.BatteryOptimizationEvents
 import io.element.android.libraries.push.api.battery.BatteryOptimizationState
 import io.element.android.libraries.push.api.battery.aBatteryOptimizationState
 
+/**
+ * 电池优化横幅
+ *
+ * 渲染电池优化提示横幅，当应用受到电池优化限制时显示。
+ * 用户可以通过横幅中的操作按钮跳转到系统设置禁用电池优化。
+ *
+ * @param state 电池优化状态
+ * @param modifier 修饰符
+ */
 @Composable
 internal fun BatteryOptimizationBanner(
     state: BatteryOptimizationState,
+    onDismissClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Announcement(
@@ -32,7 +42,7 @@ internal fun BatteryOptimizationBanner(
         type = AnnouncementType.Actionable(
             actionText = stringResource(R.string.banner_battery_optimization_submit_android),
             onActionClick = { state.eventSink(BatteryOptimizationEvents.RequestDisableOptimizations) },
-            onDismissClick = { state.eventSink(BatteryOptimizationEvents.Dismiss) },
+            onDismissClick = onDismissClick,
         ),
     )
 }
@@ -42,5 +52,6 @@ internal fun BatteryOptimizationBanner(
 internal fun BatteryOptimizationBannerPreview() = ElementPreview {
     BatteryOptimizationBanner(
         state = aBatteryOptimizationState(),
+        onDismissClick = {},
     )
 }

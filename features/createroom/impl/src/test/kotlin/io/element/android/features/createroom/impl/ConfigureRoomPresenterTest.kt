@@ -28,7 +28,6 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.room.RoomInfo
 import io.element.android.libraries.matrix.api.room.alias.ResolvedRoomAlias
 import io.element.android.libraries.matrix.api.room.alias.RoomAliasHelper
-import io.element.android.libraries.matrix.api.room.join.JoinRule
 import io.element.android.libraries.matrix.api.room.powerlevels.RoomPowerLevels
 import io.element.android.libraries.matrix.api.room.powerlevels.RoomPowerLevelsValues
 import io.element.android.libraries.matrix.test.AN_AVATAR_URL
@@ -90,7 +89,7 @@ class ConfigureRoomPresenterTest {
             assertThat(initialState.config.topic).isNull()
             assertThat(initialState.config.invites).isEmpty()
             assertThat(initialState.config.avatarUri).isNull()
-            assertThat(initialState.config.visibilityState).isEqualTo(RoomVisibilityState.Private(JoinRuleItem.PrivateVisibility.Private))
+            assertThat(initialState.config.visibilityState).isEqualTo(RoomVisibilityState.Private())
             assertThat(initialState.createRoomAction).isInstanceOf(AsyncAction.Uninitialized::class.java)
             assertThat(initialState.homeserverName).isEqualTo("matrix.org")
         }
@@ -219,7 +218,6 @@ class ConfigureRoomPresenterTest {
     fun `present - when creating a room in a space if the room doesn't receive the power levels value it can't be added to the space`() = runTest {
         val addChildToSpaceResult = lambdaRecorder<RoomId, RoomId, Result<Unit>> { _, _ -> Result.success(Unit) }
         val spaceService = FakeSpaceService(
-            editableSpacesResult = { Result.success(emptyList()) },
             addChildToSpaceResult = addChildToSpaceResult,
         )
         val roomInfoFlow = MutableStateFlow<Optional<RoomInfo>>(Optional.empty())
@@ -236,8 +234,7 @@ class ConfigureRoomPresenterTest {
 
             matrixClient.givenCreateRoomResult(createRoomResult)
 
-            // Use a public parent space so AskToJoin is a valid option
-            val parentSpace = aSpaceRoom(joinRule = JoinRule.Public)
+            val parentSpace = aSpaceRoom()
             initialState.eventSink(ConfigureRoomEvents.SetParentSpace(parentSpace))
             assertThat(awaitItem().config.parentSpace).isEqualTo(parentSpace)
 
@@ -262,7 +259,6 @@ class ConfigureRoomPresenterTest {
     fun `present - creating a room and adding it into a parent space works when all the data is available`() = runTest {
         val addChildToSpaceResult = lambdaRecorder<RoomId, RoomId, Result<Unit>> { _, _ -> Result.success(Unit) }
         val spaceService = FakeSpaceService(
-            editableSpacesResult = { Result.success(emptyList()) },
             addChildToSpaceResult = addChildToSpaceResult,
         )
         val roomInfoFlow = MutableStateFlow<Optional<RoomInfo>>(Optional.empty())
@@ -279,8 +275,7 @@ class ConfigureRoomPresenterTest {
 
             matrixClient.givenCreateRoomResult(createRoomResult)
 
-            // Use a public parent space so AskToJoin is a valid option
-            val parentSpace = aSpaceRoom(joinRule = JoinRule.Public)
+            val parentSpace = aSpaceRoom()
             initialState.eventSink(ConfigureRoomEvents.SetParentSpace(parentSpace))
             assertThat(awaitItem().config.parentSpace).isEqualTo(parentSpace)
 
@@ -489,19 +484,16 @@ class ConfigureRoomPresenterTest {
             assertThat(awaitItem().config.visibilityState).isInstanceOf(RoomVisibilityState.Public::class.java)
 
             // Then check changing the parent space resets it to private
-            // (via LaunchedEffect fallback since Public is not in availableJoinRules for non-public parent)
             initialState.eventSink(ConfigureRoomEvents.SetParentSpace(aSpaceRoom()))
-            skipItems(1) // Skip intermediate state
-            assertThat(awaitItem().config.visibilityState).isEqualTo(RoomVisibilityState.Private(JoinRuleItem.PrivateVisibility.Private))
+            assertThat(awaitItem().config.visibilityState).isEqualTo(RoomVisibilityState.Private())
 
             // If we change the join rule back to public
             initialState.eventSink(ConfigureRoomEvents.JoinRuleChanged(JoinRuleItem.PublicVisibility.Public))
-            skipItems(1) // Skip intermediate state (Public is still invalid)
-            assertThat(awaitItem().config.visibilityState).isEqualTo(RoomVisibilityState.Private(JoinRuleItem.PrivateVisibility.Private))
+            assertThat(awaitItem().config.visibilityState).isInstanceOf(RoomVisibilityState.Public::class.java)
 
-            // Then remove the parent space, the join rule stays private
+            // Then remove the parent space, it'll be private again
             initialState.eventSink(ConfigureRoomEvents.SetParentSpace(null))
-            assertThat(awaitItem().config.visibilityState).isEqualTo(RoomVisibilityState.Private(JoinRuleItem.PrivateVisibility.Private))
+            assertThat(awaitItem().config.visibilityState).isEqualTo(RoomVisibilityState.Private())
         }
     }
 
@@ -524,9 +516,7 @@ class ConfigureRoomPresenterTest {
 
     private fun createMatrixClient(
         isAliasAvailable: Boolean = true,
-        spaceService: FakeSpaceService = FakeSpaceService(
-            editableSpacesResult = { Result.success(emptyList()) }
-        ),
+        spaceService: FakeSpaceService = FakeSpaceService(),
     ) = FakeMatrixClient(
         userIdServerNameLambda = { "matrix.org" },
         resolveRoomAliasResult = {
@@ -542,7 +532,6 @@ class ConfigureRoomPresenterTest {
 
     private fun createConfigureRoomPresenter(
         isSpace: Boolean = false,
-        initialParenSpaceId: RoomId? = null,
         roomAliasHelper: RoomAliasHelper = FakeRoomAliasHelper(),
         dataStore: CreateRoomConfigStore = CreateRoomConfigStore(roomAliasHelper),
         matrixClient: MatrixClient = createMatrixClient(),
@@ -554,7 +543,6 @@ class ConfigureRoomPresenterTest {
         mediaOptimizationConfigProvider: FakeMediaOptimizationConfigProvider = FakeMediaOptimizationConfigProvider(),
     ) = ConfigureRoomPresenter(
         isSpace = isSpace,
-        initialParentSpaceId = initialParenSpaceId,
         dataStore = dataStore,
         matrixClient = matrixClient,
         mediaPickerProvider = pickerProvider,

@@ -16,7 +16,17 @@ import io.element.android.features.login.impl.screens.onboarding.classic.aLoginW
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.designsystem.R
 
+/**
+ * 初始页面状态提供者
+ *
+ * 为预览和测试提供 OnBoardingState 示例数据。
+ *
+ * @see OnBoardingState 初始页面状态
+ */
 open class OnBoardingStateProvider : PreviewParameterProvider<OnBoardingState> {
+    /**
+     * 提供预览状态序列
+     */
     override val values: Sequence<OnBoardingState>
         get() = sequenceOf(
             anOnBoardingState(),
@@ -34,6 +44,23 @@ open class OnBoardingStateProvider : PreviewParameterProvider<OnBoardingState> {
         )
 }
 
+/**
+ * 创建示例初始页面状态
+ *
+ * @param isAddingAccount 是否正在添加账户
+ * @param productionApplicationName 生产环境应用名称
+ * @param defaultAccountProvider 默认账户提供商
+ * @param mustChooseAccountProvider 是否必须选择账户提供商
+ * @param canLoginWithQrCode 是否支持二维码登录
+ * @param canCreateAccount 是否支持创建账户
+ * @param canReportBug 是否可以报告问题
+ * @param version 版本号
+ * @param customLogoResId 自定义 Logo 资源 ID
+ * @param loginMode 登录模式
+ * @param loginWithClassicState 经典登录状态
+ * @param eventSink 事件处理函数
+ * @return OnBoardingState 示例实例
+ */
 fun anOnBoardingState(
     isAddingAccount: Boolean = false,
     productionApplicationName: String = "Element",

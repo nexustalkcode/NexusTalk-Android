@@ -14,10 +14,27 @@ import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.ui.strings.CommonStrings
 import io.element.android.services.toolbox.api.strings.StringProvider
 
+/**
+ * 版本格式化器接口
+ */
 interface VersionFormatter {
+    /**
+     * 获取格式化的版本字符串
+     *
+     * @return 格式化的版本信息
+     */
     fun get(): String
 }
 
+/**
+ * 默认版本格式化器实现
+ *
+ * 根据构建信息生成格式化的版本字符串。对于非 main 分支的构建，
+ * 还会显示分支名称和提交版本号。
+ *
+ * @property stringProvider 字符串提供者
+ * @property buildMeta 构建元数据
+ */
 @ContributesBinding(AppScope::class)
 class DefaultVersionFormatter(
     private val stringProvider: StringProvider,

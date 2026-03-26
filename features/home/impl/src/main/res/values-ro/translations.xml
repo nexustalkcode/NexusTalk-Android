@@ -15,6 +15,7 @@
   <string name="full_screen_intent_banner_message">"Pentru a vă asigura că nu pierdeți niciodată un apel important, vă rugăm să modificați setările pentru a permite notificări fullscreen atunci când telefonul este blocat."</string>
   <string name="full_screen_intent_banner_title">"Îmbunătățiți-vă experiența in timpul unui apel"</string>
   <string name="screen_home_tab_chats">"Toate conversatiile"</string>
+  <string name="screen_home_tab_community">"Comunitate"</string>
   <string name="screen_home_tab_spaces">"Spații"</string>
   <string name="screen_invites_decline_chat_message">"Sigur doriți să refuzați alăturarea la %1$s?"</string>
   <string name="screen_invites_decline_chat_title">"Refuzați invitația"</string>
@@ -52,4 +53,9 @@ Nu aveți mesaje necitite!"</string>
   <string name="screen_roomlist_tombstoned_room_description">"Această cameră a fost modernizată."</string>
   <string name="session_verification_banner_message">"Se pare că folosiți un dispozitiv nou. Verificați-vă identitatea cu un alt dispozitiv pentru a accesa mesajele dumneavoastră criptate."</string>
   <string name="session_verification_banner_title">"Verificați că sunteți dumneavoastră"</string>
+
+  <string name="screen_community_roomlist_empty_message">"社区将成员聚集在以主题为基础的群组中。您加入的任何社区都会显示在这里。"</string>
+  <string name="screen_community_list_header_count">"%1$d Comunitate"</string>
+  <string name="screen_community_list_header_description">"Comunitățile la care creați sau vă alăturați"</string>
+  <string name="screen_roomlist_empty_message_new">"Acest loc vă va aparține numai dvs. și celor mai apropiați"</string>
 </resources>

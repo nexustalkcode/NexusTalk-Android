@@ -26,14 +26,17 @@ class ShowQrCodeNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
 ) : Node(buildContext, plugins = plugins) {
+    // 页面输入参数：二维码内容
     class Inputs(
         val data: String,
     ) : NodeInputs
 
+    // 页面回调：返回上一层
     interface Callback : Plugin {
         fun navigateBack()
     }
 
+    // 读取构建时传入的输入与回调
     private val inputs: Inputs = inputs<Inputs>()
     private val callback: Callback = callback()
 

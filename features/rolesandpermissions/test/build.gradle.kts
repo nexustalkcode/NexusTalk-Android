@@ -18,5 +18,5 @@ dependencies {
     implementation(projects.features.rolesandpermissions.api)
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.matrix.api)
-    implementation(projects.tests.testutils)
+    
 }

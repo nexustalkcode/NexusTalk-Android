@@ -61,6 +61,15 @@ import io.element.android.libraries.designsystem.theme.components.TextButton
 import io.element.android.libraries.designsystem.utils.OnLifecycleEvent
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * PIN 解锁视图
+ *
+ * 显示 PIN 解锁界面的可组合组件。
+ *
+ * @param state PIN 解锁状态
+ * @param isInAppUnlock 是否为应用内解锁
+ * @param modifier 修饰符
+ */
 @Composable
 fun PinUnlockView(
     state: PinUnlockState,

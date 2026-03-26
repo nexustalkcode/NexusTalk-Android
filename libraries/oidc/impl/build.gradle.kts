@@ -41,7 +41,7 @@ dependencies {
     implementation(libs.serialization.json)
     api(projects.libraries.oidc.api)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.permissions.test)
 }

@@ -15,6 +15,7 @@
   <string name="full_screen_intent_banner_message">"Per non perdere mai una chiamata importante, modifica le impostazioni per consentire le notifiche a schermo intero quando il telefono è bloccato."</string>
   <string name="full_screen_intent_banner_title">"Migliora la tua esperienza di chiamata"</string>
   <string name="screen_home_tab_chats">"Tutte le conversazioni"</string>
+  <string name="screen_home_tab_community">"Comunità"</string>
   <string name="screen_home_tab_spaces">"Spazi"</string>
   <string name="screen_invites_decline_chat_message">"Vuoi davvero rifiutare l\'invito ad entrare in %1$s?"</string>
   <string name="screen_invites_decline_chat_title">"Rifiuta l\'invito"</string>
@@ -52,4 +53,9 @@ Non hai messaggi non letti!"</string>
   <string name="screen_roomlist_tombstoned_room_description">"Questa stanza è stata aggiornata"</string>
   <string name="session_verification_banner_message">"Sembra che tu stia usando un nuovo dispositivo. Verificati con un altro dispositivo per accedere ai tuoi messaggi cifrati."</string>
   <string name="session_verification_banner_title">"Verifica che sei tu"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Le comunità riuniscono i membri in gruppi basati su argomenti. Tutte le comunità a cui partecipi verranno visualizzate qui."</string>
+  <string name="screen_community_list_header_count">"Comunità %1$d"</string>
+  <string name="screen_community_list_header_description">"Comunità che crei o a cui partecipi"</string>
+  <string name="screen_roomlist_empty_message_new">"Questo posto apparterrà solo a te e alle persone a te più vicine"</string>
 </resources>

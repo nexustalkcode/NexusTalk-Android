@@ -23,10 +23,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
- * Broadcast receiver to decline the incoming call.
+ * 拒绝通话广播接收器
+ *
+ * 处理用户点击通知"拒绝"按钮时的事件。
+ * 当用户从通知栏拒绝来电时，此接收器会被触发，
+ * 并调用 ActiveCallManager 挂断该通话。
+ *
+ * @see BroadcastReceiver 广播接收器基类
+ * @see CallNotificationData 通话通知数据
+ * @see ActiveCallManager 活动通话管理器
  */
 class DeclineCallBroadcastReceiver : BroadcastReceiver() {
     companion object {
+        /** 传递通知数据的 Extra 键名 */
         const val EXTRA_NOTIFICATION_DATA = "EXTRA_NOTIFICATION_DATA"
     }
 
@@ -45,8 +54,8 @@ class DeclineCallBroadcastReceiver : BroadcastReceiver() {
                 callType = CallType.RoomCall(
                     sessionId = notificationData.sessionId,
                     roomId = notificationData.roomId,
-                    isAudioCall = notificationData.audioOnly
-                )
+                ),
+                notificationData = notificationData,
             )
         }
     }

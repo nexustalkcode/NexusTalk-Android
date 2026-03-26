@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"A beállításokat később is módosíthatja."</string>
   <string name="screen_notification_optin_title">"Értesítések engedélyezése, hogy soha ne maradjon le egyetlen üzenetről sem"</string>
   <string name="screen_session_verification_enter_recovery_key">"Adja meg a helyreállítási kulcsot"</string>
+  <string name="screen_welcome_agreement">"A Folytatáshoz érintve elfogadja a %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Adatvédelmi szabályzat"</string>
+  <string name="screen_welcome_title">"Üdvözöljük a %s"</string>
+  <string name="screen_welcome_privacy_notice">"Kérjük, olvassa el az Adatvédelmi szabályzatunkat"</string>
+  <string name="screen_welcome_agree">"Elfogadás"</string>
 </resources>

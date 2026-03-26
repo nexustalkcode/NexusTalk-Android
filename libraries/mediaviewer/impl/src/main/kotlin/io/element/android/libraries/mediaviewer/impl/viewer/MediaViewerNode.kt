@@ -13,7 +13,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import chat.schildi.theme.ForcedDarkScTheme
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import com.bumble.appyx.core.plugin.Plugin
@@ -130,15 +129,12 @@ class MediaViewerNode(
 
     @Composable
     override fun View(modifier: Modifier) {
-        /*
         val colors by remember {
             enterpriseService.semanticColorsFlow(sessionId = sessionId)
         }.collectAsState(SemanticColorsLightDark.default)
         ForcedDarkElementTheme(
             colors = colors,
         ) {
-        */
-        ForcedDarkScTheme {
             val state = presenter.present()
             MediaViewerView(
                 state = state,

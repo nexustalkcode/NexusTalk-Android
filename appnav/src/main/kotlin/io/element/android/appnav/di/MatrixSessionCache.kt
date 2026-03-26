@@ -21,6 +21,7 @@ import io.element.android.libraries.matrix.api.auth.MatrixAuthenticationService
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.services.analytics.api.AnalyticsService
 import io.element.android.services.analyticsproviders.api.AnalyticsUserData
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
@@ -76,18 +77,20 @@ class MatrixSessionCache(
     }
 
     @Suppress("UNCHECKED_CAST")
-    suspend fun restoreWithSavedState(state: SavedStateMap?) {
+    fun restoreWithSavedState(state: SavedStateMap?) {
         Timber.d("Restore state")
         if (state == null || sessionIdsToMatrixSession.isNotEmpty()) {
-            Timber.w("No need to restore saved state")
+            Timber.w("Restore with non-empty map")
             return
         }
         val sessionIds = state[SAVE_INSTANCE_KEY] as? Array<SessionId>
         Timber.d("Restore matrix session keys = ${sessionIds?.map { it.value }}")
         if (sessionIds.isNullOrEmpty()) return
         // Not ideal but should only happens in case of process recreation. This ensure we restore all the active sessions before restoring the node graphs.
-        sessionIds.forEach { sessionId ->
-            getOrRestore(sessionId)
+        runBlocking {
+            sessionIds.forEach { sessionId ->
+                getOrRestore(sessionId)
+            }
         }
     }
 

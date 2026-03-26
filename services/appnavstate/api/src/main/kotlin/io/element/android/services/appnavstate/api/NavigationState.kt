@@ -10,6 +10,7 @@ package io.element.android.services.appnavstate.api
 
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
+import io.element.android.libraries.matrix.api.core.SpaceId
 import io.element.android.libraries.matrix.api.core.ThreadId
 
 /**
@@ -28,10 +29,17 @@ sealed class NavigationState(open val owner: String) {
         val sessionId: SessionId,
     ) : NavigationState(owner)
 
+    data class Space(
+        override val owner: String,
+        // Can be fake value, if no space is selected
+        val spaceId: SpaceId,
+        val parentSession: Session,
+    ) : NavigationState(owner)
+
     data class Room(
         override val owner: String,
         val roomId: RoomId,
-        val parentSession: Session,
+        val parentSpace: Space,
     ) : NavigationState(owner)
 
     data class Thread(

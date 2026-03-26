@@ -15,6 +15,20 @@ import io.element.android.libraries.designsystem.components.ProgressDialog
 import io.element.android.libraries.designsystem.components.dialogs.RetryDialog
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 账户停用操作对话框
+ *
+ * 根据异步操作状态显示不同的对话框：
+ * - Confirming: 显示确认对话框
+ * - Loading: 显示加载对话框
+ * - Failure: 显示错误重试对话框
+ * - 其他状态: 不显示对话框
+ *
+ * @param state 异步操作状态
+ * @param onConfirmClick 确认按钮点击回调
+ * @param onRetryClick 重试按钮点击回调
+ * @param onDismissDialog 关闭对话框回调
+ */
 @Composable
 fun AccountDeactivationActionDialog(
     state: AsyncAction<Unit>,

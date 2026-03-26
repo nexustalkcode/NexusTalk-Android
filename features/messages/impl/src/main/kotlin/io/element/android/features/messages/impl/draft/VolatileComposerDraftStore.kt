@@ -14,9 +14,14 @@ import io.element.android.libraries.matrix.api.core.ThreadId
 import io.element.android.libraries.matrix.api.room.draft.ComposerDraft
 
 /**
- * A volatile draft store that keeps drafts in memory only.
- * It can be used to store drafts that should not be persisted across app restarts.
- * Currently it's used to store draft message when moving to edit mode.
+ * 临时消息编辑器草稿存储实现类
+ *
+ * 实现 ComposerDraftStore 接口，仅在内存中保存草稿。
+ * 草稿内容不会跨应用重启持久保存。
+ * 当前主要用于切换到编辑模式时临时存储消息草稿。
+ *
+ * @see ComposerDraftStore 草稿存储接口
+ * @see ComposerDraft 消息编辑器草稿
  */
 @Inject
 class VolatileComposerDraftStore : ComposerDraftStore {

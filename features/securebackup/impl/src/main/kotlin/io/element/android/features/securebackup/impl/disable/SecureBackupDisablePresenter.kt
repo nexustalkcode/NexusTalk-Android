@@ -26,6 +26,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 禁用安全备份 Presenter
+ *
+ * 负责处理禁用安全备份页面的业务逻辑，包括：
+ * - 观察当前备份状态
+ * - 禁用安全备份
+ * - 处理禁用操作的状态
+ *
+ * @property encryptionService 加密服务
+ * @property buildMeta 构建元信息
+ * @see SecureBackupDisableState 禁用安全备份状态
+ */
 @Inject
 class SecureBackupDisablePresenter(
     private val encryptionService: EncryptionService,

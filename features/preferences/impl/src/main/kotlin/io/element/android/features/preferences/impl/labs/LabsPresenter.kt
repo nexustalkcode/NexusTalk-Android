@@ -33,6 +33,19 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
+/**
+ * 实验室功能页面 Presenter
+ *
+ * 负责处理实验室功能页面的业务逻辑，包括：
+ * - 获取可用的实验功能列表
+ * - 处理功能启用/禁用的切换
+ * - 某些功能（如 Threads）需要清除缓存才能生效
+ *
+ * @property stringProvider 字符串提供者
+ * @property featureFlagService 功能标志服务
+ * @property clearCacheUseCase 清除缓存用例
+ * @see LabsState 实验室功能状态
+ */
 @Inject
 class LabsPresenter(
     private val stringProvider: StringProvider,

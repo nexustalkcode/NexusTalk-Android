@@ -12,13 +12,11 @@ import config.PushProvidersConfig
 
 object ModulesConfig {
     val pushProvidersConfig = PushProvidersConfig(
-        //includeFirebase = BuildTimeConfig.PUSH_CONFIG_INCLUDE_FIREBASE,
-        //includeUnifiedPush = BuildTimeConfig.PUSH_CONFIG_INCLUDE_UNIFIED_PUSH,
-        includeFirebase = false,
-        includeUnifiedPush = true,
+        includeFirebase = BuildTimeConfig.PUSH_CONFIG_INCLUDE_FIREBASE,
+        includeUnifiedPush = BuildTimeConfig.PUSH_CONFIG_INCLUDE_UNIFIED_PUSH,
     )
 
-    val analyticsConfig: AnalyticsConfig = if (true) AnalyticsConfig.Disabled else if (isEnterpriseBuild) {
+    val analyticsConfig: AnalyticsConfig = if (isEnterpriseBuild) {
         // Is Posthog configuration available?
         val withPosthog = BuildTimeConfig.SERVICES_POSTHOG_APIKEY.isNullOrEmpty().not() &&
             BuildTimeConfig.SERVICES_POSTHOG_HOST.isNullOrEmpty().not()

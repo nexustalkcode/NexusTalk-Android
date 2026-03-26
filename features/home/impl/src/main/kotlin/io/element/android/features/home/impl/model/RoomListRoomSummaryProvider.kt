@@ -18,7 +18,17 @@ import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 import io.element.android.libraries.matrix.ui.model.InviteSender
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 房间列表摘要提供者
+ *
+ * 为预览和测试提供 RoomListRoomSummary 示例数据。
+ *
+ * @see RoomListRoomSummary 房间列表摘要
+ */
 open class RoomListRoomSummaryProvider : PreviewParameterProvider<RoomListRoomSummary> {
+    /**
+     * 提供预览状态序列
+     */
     override val values: Sequence<RoomListRoomSummary>
         get() = sequenceOf(
             listOf(
@@ -51,6 +61,7 @@ open class RoomListRoomSummaryProvider : PreviewParameterProvider<RoomListRoomSu
                             numberOfUnreadMessages = 0,
                             numberOfUnreadMentions = 0,
                             hasRoomCall = hasCall,
+                            isFavorite = true
                         ),
                         aRoomListRoomSummary(
                             name = roomNotificationMode.name,
@@ -136,6 +147,14 @@ open class RoomListRoomSummaryProvider : PreviewParameterProvider<RoomListRoomSu
         ).flatten()
 }
 
+/**
+ * 创建示例邀请发送者
+ *
+ * @param userId 用户 ID
+ * @param displayName 显示名称
+ * @param avatarData 头像数据
+ * @return 邀请发送者
+ */
 internal fun anInviteSender(
     userId: UserId = UserId("@bob:domain"),
     displayName: String = "Bob",
@@ -147,6 +166,31 @@ internal fun anInviteSender(
     membershipChangeReason = null,
 )
 
+/**
+ * 创建示例房间列表摘要
+ *
+ * @param id 房间唯一标识符
+ * @param name 房间名称
+ * @param numberOfUnreadMessages 未读消息数量
+ * @param numberOfUnreadMentions 未读提及数量
+ * @param numberOfUnreadNotifications 未读通知数量
+ * @param isMarkedUnread 是否被标记为未读
+ * @param latestEvent 最新事件
+ * @param timestamp 时间戳
+ * @param notificationMode 通知模式
+ * @param hasRoomCall 是否有房间通话
+ * @param avatarData 头像数据
+ * @param isDirect 是否为直接消息
+ * @param isDm 是否为 DM
+ * @param isFavorite 是否为收藏
+ * @param inviteSender 邀请发送者
+ * @param displayType 显示类型
+ * @param canonicalAlias 规范别名
+ * @param heroes 房间成员头像列表
+ * @param isTombstoned 是否已被迁移
+ * @param isSpace 是否为空间
+ * @return 房间列表摘要
+ */
 internal fun aRoomListRoomSummary(
     id: String = "!roomId:domain",
     name: String? = "Room name",

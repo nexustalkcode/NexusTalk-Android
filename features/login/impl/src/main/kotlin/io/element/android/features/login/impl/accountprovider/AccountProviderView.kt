@@ -33,7 +33,18 @@ import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
 
 /**
- * https://www.figma.com/file/o9p34zmiuEpZRyvZXJZAYL/FTUE?type=design&node-id=604-60817
+ * 账户提供商视图组件
+ *
+ * 用于在列表中显示单个账户提供商信息的可组合组件。
+ * 根据服务器类型显示不同的图标（Matrix logo 或服务器图标），
+ * 并显示是否为公共服务器以及是否被选中。
+ *
+ * @param item 账户提供商数据
+ * @param onClick 点击回调
+ * @param modifier 修饰符
+ * @param selected 是否被选中
+ * @see AccountProvider 账户提供商数据类
+ * @see <a href="https://www.figma.com/file/o9p34zmiuEpZRyvZXJZAYL/FTUE?type=design&node-id=604-60817">Figma 设计稿</a>
  */
 @Composable
 fun AccountProviderView(

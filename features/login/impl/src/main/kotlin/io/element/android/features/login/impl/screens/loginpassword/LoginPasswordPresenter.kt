@@ -25,6 +25,14 @@ import io.element.android.libraries.matrix.api.core.SessionId
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 登录密码 Presenter
+ *
+ * 负责处理使用用户名和密码登录的业务逻辑。
+ *
+ * @property authenticationService Matrix 认证服务
+ * @property accountProviderDataSource 账户提供商数据源
+ */
 @Inject
 class LoginPasswordPresenter(
     private val authenticationService: MatrixAuthenticationService,

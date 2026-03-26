@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Ezabatu gakoen biltegia"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Aktibatu babeskopia"</string>
-  <string name="screen_chat_backup_key_backup_description">"Gorde zure identitate-kriptografikoa eta mezuen gakoak modu seguruan zerbitzarian. Horrek zure mezuen historia edozein gailu berritan ikusteko aukera emango dizu. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Gorde zure identitate-kriptografikoa eta mezuen gakoak modu seguruan zerbitzarian. Horrek zure mezuen historia edozein gailu berritan ikusteko aukera emango dizu. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Gakoen biltegiratzea"</string>
   <string name="screen_chat_backup_recovery_action_change">"Aldatu berreskuratze-gakoa"</string>
   <string name="screen_chat_backup_recovery_action_confirm">"Sartu berreskuratze-gakoa"</string>

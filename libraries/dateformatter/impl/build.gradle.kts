@@ -43,7 +43,7 @@ dependencies {
     api(projects.libraries.dateformatter.api)
     api(libs.datetime)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.dateformatter.test)
     testImplementation(projects.services.toolbox.test)
 }

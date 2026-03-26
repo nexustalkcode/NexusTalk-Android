@@ -16,5 +16,5 @@ android {
 
 dependencies {
     implementation(projects.features.login.api)
-    implementation(projects.tests.testutils)
+    
 }

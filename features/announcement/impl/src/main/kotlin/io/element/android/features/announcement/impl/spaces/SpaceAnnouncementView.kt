@@ -37,7 +37,16 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.persistentListOf
 
 /**
- * Ref: https://www.figma.com/design/kcnHxunG1LDWXsJhaNuiHz/ER-145--Spaces-on-Element-X?node-id=4593-40181
+ * 空间公告视图
+ *
+ * 渲染空间功能的引导介绍页面，展示新功能的特性和使用方法。
+ * 包含标题、副标题、功能列表说明以及继续按钮。
+ * 使用 Figma 设计稿作为参考实现。
+ *
+ * @param state 空间公告状态，包含事件处理函数
+ * @param modifier 修饰符，用于控制布局和行为
+ * @see SpaceAnnouncementState 空间公告状态
+ * @see <a href="https://www.figma.com/design/kcnHxunG1LDWXsJhaNuiHz/ER-145--Spaces-on-Element-X?node-id=4593-40181">Figma 设计稿</a>
  */
 @Composable
 fun SpaceAnnouncementView(
@@ -71,6 +80,15 @@ fun SpaceAnnouncementView(
     )
 }
 
+/**
+ * 空间公告页面头部组件
+ *
+ * 渲染公告页面的标题区域，包含图标、标题和副标题。
+ * 使用 IconTitleSubtitleMolecule 分子组件实现，支持显示 Beta 标签。
+ *
+ * @param modifier 修饰符，用于控制布局
+ * @see io.element.android.libraries.designsystem.atomic.molecules.IconTitleSubtitleMolecule
+ */
 @Composable
 private fun SpaceAnnouncementHeader(
     modifier: Modifier = Modifier,
@@ -87,6 +105,21 @@ private fun SpaceAnnouncementHeader(
     )
 }
 
+/**
+ * 空间公告内容组件
+ *
+ * 渲染公告页面的主体内容区域，包含功能列表和提示说明。
+ * 使用 InfoListOrganism 展示空间功能的五个核心特性：
+ * 1. 可见性控制
+ * 2. 邮件通知
+ * 3. 搜索功能
+ * 4. 探索功能
+ * 5. 离开功能
+ * 底部包含一条注意事项说明文字。
+ *
+ * @param modifier 修饰符，用于控制布局
+ * @see io.element.android.libraries.designsystem.atomic.organisms.InfoListOrganism
+ */
 @Composable
 private fun SpaceAnnouncementContent(
     modifier: Modifier = Modifier,
@@ -134,8 +167,19 @@ private fun SpaceAnnouncementContent(
     }
 }
 
+/**
+ * 空间公告底部组件
+ *
+ * 渲染公告页面的底部区域，包含继续按钮。
+ * 用户点击继续按钮后，会关闭公告页面并标记为已阅读。
+ *
+ * @param onContinue 继续按钮点击回调函数
+ * @see io.element.android.libraries.designsystem.atomic.molecules.ButtonColumnMolecule
+ * @see io.element.android.libraries.designsystem.theme.components.Button 按钮组件
+ */
 @Composable
 private fun SpaceAnnouncementFooter(
+    /** 继续按钮点击回调函数 */
     onContinue: () -> Unit,
 ) {
     ButtonColumnMolecule(
@@ -149,6 +193,16 @@ private fun SpaceAnnouncementFooter(
     }
 }
 
+/**
+ * 空间公告视图预览
+ *
+ * 使用 PreviewsDayNight 注解提供日夜两种主题的预览效果。
+ * 通过 SpaceAnnouncementStateProvider 提供示例状态数据。
+ *
+ * @param state 空间公告状态，由 PreviewParameterProvider 自动注入
+ * @see SpaceAnnouncementStateProvider 预览参数提供器
+ * @see io.element.android.libraries.designsystem.preview.PreviewsDayNight 日夜预览注解
+ */
 @PreviewsDayNight
 @Composable
 internal fun SpaceAnnouncementViewPreview(@PreviewParameter(SpaceAnnouncementStateProvider::class) state: SpaceAnnouncementState) = ElementPreview {

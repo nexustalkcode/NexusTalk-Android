@@ -23,10 +23,26 @@ import io.element.android.libraries.core.extensions.runCatchingExceptions
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 依赖项许可证列表 Presenter
+ *
+ * 负责处理依赖项许可证列表的业务逻辑，包括：
+ * - 从提供者加载许可证列表
+ * - 实现过滤器功能
+ * - 管理列表状态
+ *
+ * @property licensesProvider 许可证提供者
+ * @see DependencyLicensesListState 许可证列表状态
+ */
 @Inject
 class DependencyLicensesListPresenter(
     private val licensesProvider: LicensesProvider,
 ) : Presenter<DependencyLicensesListState> {
+    /**
+     * 创建视图状态
+     *
+     * @return DependencyLicensesListState 当前列表的状态
+     */
     @Composable
     override fun present(): DependencyLicensesListState {
         var licenses by remember {

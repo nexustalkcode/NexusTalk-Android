@@ -20,7 +20,7 @@ class PosthogEndpointConfigProvider(
     private val enterpriseService: EnterpriseService,
 ) {
     fun provide(): PosthogEndpointConfig? {
-        return if (true) null else if (enterpriseService.isEnterpriseBuild) {
+        return if (enterpriseService.isEnterpriseBuild) {
             PosthogEndpointConfig(
                 host = BuildConfig.POSTHOG_HOST,
                 apiKey = BuildConfig.POSTHOG_APIKEY,

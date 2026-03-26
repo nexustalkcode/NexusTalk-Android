@@ -39,10 +39,14 @@
   <string name="screen_blocked_users_unblock_alert_title">"解封用户"</string>
   <string name="screen_blocked_users_unblocking">"正在解除屏蔽……"</string>
   <string name="screen_edit_profile_display_name">"显示名称"</string>
+  <string name="screen_edit_profile_display_name_new">"昵称"</string>
   <string name="screen_edit_profile_display_name_placeholder">"你的显示名称"</string>
   <string name="screen_edit_profile_error">"遇到未知错误，无法更改信息。"</string>
   <string name="screen_edit_profile_error_title">"无法更新个人资料"</string>
   <string name="screen_edit_profile_title">"编辑个人资料"</string>
+  <string name="screen_edit_profile_title_new">"编辑资料"</string>
+  <string name="screen_edit_profile_change_avatar">"更换头像"</string>
+  <string name="screen_edit_profile_username">"用户名"</string>
   <string name="screen_edit_profile_updating_details">"更新个人资料……"</string>
   <string name="screen_labs_enable_threads">"启用主题回复"</string>
   <string name="screen_labs_enable_threads_description">"应用将重启以应用此更改。"</string>
@@ -56,7 +60,7 @@
 
 如果继续，您的某些设置可能会更改。"</string>
   <string name="screen_notification_settings_direct_chats">"私聊"</string>
-  <string name="screen_notification_settings_edit_custom_settings_section_title">"各聊天室的独立设置"</string>
+  <string name="screen_notification_settings_edit_custom_settings_section_title">"各群聊的独立设置"</string>
   <string name="screen_notification_settings_edit_failed_updating_default_mode">"更新通知设置时出错。"</string>
   <string name="screen_notification_settings_edit_mode_all_messages">"全部消息"</string>
   <string name="screen_notification_settings_edit_mode_mentions_and_keywords">"仅限提及和关键词"</string>
@@ -66,7 +70,7 @@
   <string name="screen_notification_settings_failed_fixing_configuration">"配置尚未更正，请重试。"</string>
   <string name="screen_notification_settings_group_chats">"群聊"</string>
   <string name="screen_notification_settings_invite_for_me_label">"邀请"</string>
-  <string name="screen_notification_settings_mentions_only_disclaimer">"服务器在加密聊天室中不支持此选项，因此在某些聊天室可能无法收到通知。"</string>
+  <string name="screen_notification_settings_mentions_only_disclaimer">"服务器在加密群聊中不支持此选项，因此在某些群聊可能无法收到通知。"</string>
   <string name="screen_notification_settings_mentions_section_title">"提及"</string>
   <string name="screen_notification_settings_mode_all">"全部"</string>
   <string name="screen_notification_settings_mode_mentions">"提及"</string>
@@ -76,6 +80,8 @@
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"系统设置"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"系统通知已关闭"</string>
   <string name="screen_notification_settings_title">"通知"</string>
+  <string name="screen_preferences_section_customization">"自定义"</string>
+  <string name="screen_preferences_section_security">"安全"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"推送历史记录"</string>
   <string name="troubleshoot_notifications_entry_point_section">"排查问题"</string>
   <string name="troubleshoot_notifications_entry_point_title">"排查通知问题"</string>

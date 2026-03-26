@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 信息列表项分子组件
+ *
+ * 用于显示信息列表中的单个条目。
+ * 支持不同的位置样式（顶部、中间、底部、单独），并自动处理圆角效果。
+ * 可选包含图标，图标和消息内容水平排列。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.molecules
 
 import androidx.compose.foundation.background
@@ -27,6 +38,50 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
 
+/**
+ * 列表项位置枚举
+ *
+ * 定义 InfoListItemMolecule 组件在列表中的位置。
+ * 不同位置会影响圆角样式的处理。
+ */
+enum class InfoListItemPosition {
+    /** 列表顶部位置 - 显示顶部圆角 */
+    Top,
+    /** 列表中间位置 - 不显示圆角 */
+    Middle,
+    /** 列表底部位置 - 显示底部圆角 */
+    Bottom,
+    /** 单独项位置 - 显示全圆角 */
+    Single,
+}
+
+/**
+ * 信息列表项组件
+ *
+ * 创建一个信息列表中的单个条目。
+ * 条目包含可选图标和消息内容，水平排列。
+ * 根据 [position] 参数自动应用相应的圆角样式。
+ *
+ * @param message @Composable () -> Unit 消息内容区域
+ * @param position InfoListItemPosition 列表项位置，决定圆角样式
+ * @param backgroundColor Color 背景颜色
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ * @param icon @Composable () -> Unit 图标内容区域，默认为空
+ *
+ * @return Unit
+ *
+ * @see [InfoListItemPosition] 列表项位置枚举
+ *
+ * @example
+ * ```kotlin
+ * InfoListItemMolecule(
+ *     message = { Text("信息内容") },
+ *     icon = { Icon(CompoundIcons.InfoSolid()) },
+ *     position = InfoListItemPosition.Single,
+ *     backgroundColor = ElementTheme.colors.bgSubtleSecondary
+ * )
+ * ```
+ */
 @Composable
 fun InfoListItemMolecule(
     message: @Composable () -> Unit,
@@ -59,6 +114,12 @@ fun InfoListItemMolecule(
     }
 }
 
+/**
+ * InfoListItemMolecule 预览组件
+ *
+ * 用于在设计预览中展示 InfoListItemMolecule 组件的各种位置状态。
+ * 此预览函数支持日夜两种主题模式。
+ */
 @PreviewsDayNight
 @Composable
 internal fun InfoListItemMoleculePreview() {
@@ -94,11 +155,4 @@ internal fun InfoListItemMoleculePreview() {
             )
         }
     }
-}
-
-enum class InfoListItemPosition {
-    Top,
-    Middle,
-    Bottom,
-    Single,
 }

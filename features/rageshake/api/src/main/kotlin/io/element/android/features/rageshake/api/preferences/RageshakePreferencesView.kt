@@ -23,6 +23,17 @@ import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 摇一摇偏好设置视图 Composable 函数
+ *
+ * 显示摇一摇偏好设置的用户界面，包括：
+ * - 摇一摇功能开关
+ * * 灵敏度滑块（当设备支持时）
+ * - 不支持提示（当设备不支持时）
+ *
+ * @param state 摇一摇偏好设置状态
+ * @param modifier 修饰符
+ */
 @Composable
 fun RageshakePreferencesView(
     state: RageshakePreferencesState,

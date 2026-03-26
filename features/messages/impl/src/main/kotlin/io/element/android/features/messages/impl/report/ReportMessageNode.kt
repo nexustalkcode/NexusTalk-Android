@@ -22,6 +22,16 @@ import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.UserId
 
+/**
+ * 举报消息节点
+ *
+ * 这是一个用于举报消息的页面节点，通过Appyx框架管理。
+ * 用户可以在这里填写举报原因并选择是否屏蔽发送者。
+ *
+ * @property buildContext 构建上下文，包含节点的生命周期信息
+ * @property plugins 插件列表，用于扩展节点功能
+ * @property presenterFactory 举报消息Presenter工厂，用于创建Presenter实例
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class ReportMessageNode(

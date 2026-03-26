@@ -55,6 +55,15 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * 创建投票视图 Composable
+ *
+ * 用于显示投票创建/编辑界面的主要 UI 组件。
+ * 包含问题输入、答案列表、投票类型选择和操作按钮。
+ *
+ * @param state 创建投票状态
+ * @param modifier 修饰符
+ */
 @Composable
 fun CreatePollView(
     state: CreatePollState,

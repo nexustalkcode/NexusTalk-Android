@@ -1,3 +1,0 @@
-- Update codebase to Element X v0.4.14
-- Experimental setting to show combined mention/unread count in overview
-- Message rendering bugfixes

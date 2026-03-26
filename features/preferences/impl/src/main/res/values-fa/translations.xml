@@ -35,6 +35,8 @@
   <string name="screen_edit_profile_error">"خطایی ناشناخته رخ داد و اطّلاعات نتوانستند تغییر کنند."</string>
   <string name="screen_edit_profile_error_title">"ناتوان در به‌روز کردن نمایه"</string>
   <string name="screen_edit_profile_title">"ویرایش نمایه"</string>
+  <string name="screen_edit_profile_change_avatar">"تغییر آواتار"</string>
+  <string name="screen_edit_profile_username">"نام کاربری"</string>
   <string name="screen_edit_profile_updating_details">"به‌روز کردن نمایه…"</string>
   <string name="screen_labs_title">"آزمایشگاه‌ها"</string>
   <string name="screen_notification_settings_additional_settings_section_title">"تنظیمات اضافی"</string>
@@ -64,6 +66,8 @@
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"تنظیمات سامانه"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"آگاهی‌های سامانه‌ای خاموش شدند"</string>
   <string name="screen_notification_settings_title">"آگاهی‌ها"</string>
+  <string name="screen_preferences_section_customization">"سفارشی‌سازی"</string>
+  <string name="screen_preferences_section_security">"امنیت"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"تاریخچهٔ آگاهی‌های ارسالی"</string>
   <string name="troubleshoot_notifications_entry_point_section">"رفع‌اشکال"</string>
   <string name="troubleshoot_notifications_entry_point_title">"رفع‌اشکال آگاهی‌ها"</string>

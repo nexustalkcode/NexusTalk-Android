@@ -11,6 +11,14 @@ package io.element.android.features.roomdirectory.impl.root.model
 import io.element.android.features.roomdirectory.api.RoomDescription
 import io.element.android.libraries.matrix.api.roomdirectory.RoomDescription as MatrixRoomDescription
 
+/**
+ * 将 Matrix SDK 的房间描述转换为功能模块的房间描述
+ *
+ * 这是一个扩展函数，用于将底层 Matrix SDK 的房间描述模型转换为
+ * 应用层功能模块使用的房间描述模型。
+ *
+ * @return RoomDescription 转换后的房间描述对象
+ */
 fun MatrixRoomDescription.toFeatureModel(): RoomDescription {
     return RoomDescription(
         roomId = roomId,

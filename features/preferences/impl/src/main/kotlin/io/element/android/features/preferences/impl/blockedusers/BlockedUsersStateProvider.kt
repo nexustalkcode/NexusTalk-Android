@@ -14,6 +14,13 @@ import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.matrix.ui.components.aMatrixUserList
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 被屏蔽用户状态提供者
+ *
+ * 用于在预览模式下提供被屏蔽用户页面的示例状态数据。
+ *
+ * @see BlockedUsersState 被屏蔽用户状态
+ */
 class BlockedUsersStateProvider : PreviewParameterProvider<BlockedUsersState> {
     override val values: Sequence<BlockedUsersState>
         get() = sequenceOf(
@@ -27,6 +34,14 @@ class BlockedUsersStateProvider : PreviewParameterProvider<BlockedUsersState> {
         )
 }
 
+/**
+ * 创建示例 BlockedUsersState 对象
+ *
+ * @param blockedUsers 被屏蔽用户列表
+ * @param unblockUserAction 解封用户操作状态
+ * @param eventSink 事件处理函数
+ * @return BlockedUsersState 示例状态
+ */
 internal fun aBlockedUsersState(
     blockedUsers: List<MatrixUser> = aMatrixUserList(),
     unblockUserAction: AsyncAction<Unit> = AsyncAction.Uninitialized,

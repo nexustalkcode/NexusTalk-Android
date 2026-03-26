@@ -27,8 +27,6 @@ android {
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.lib)
-
     implementation(projects.appconfig)
     implementation(projects.features.enterprise.api)
     implementation(projects.features.viewfolder.api)
@@ -50,7 +48,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.features.enterprise.test)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.sessionStorage.test)

@@ -13,14 +13,18 @@ import io.element.android.libraries.matrix.api.poll.PollKind
 import kotlinx.collections.immutable.ImmutableList
 
 /**
- * UI model for a PollContent.
- * @property eventId the event id of the poll.
- * @property question the poll question.
- * @property answerItems the list of answers.
- * @property pollKind the kind of poll.
- * @property isPollEditable whether the poll is editable.
- * @property isPollEnded whether the poll is ended.
- * @property isMine whether the poll has been created by me.
+ * 投票内容状态数据类
+ *
+ * 表示投票在时间线中显示的完整 UI 状态。
+ * 包含投票的所有信息：问题、选项、类型、状态等。
+ *
+ * @property eventId 投票事件 ID
+ * @property question 投票问题
+ * @property answerItems 投票选项列表
+ * @property pollKind 投票类型（公开或匿名）
+ * @property isPollEditable 投票是否可编辑
+ * @property isPollEnded 投票是否已结束
+ * @property isMine 投票是否由当前用户创建
  */
 data class PollContentState(
     val eventId: EventId?,

@@ -15,6 +15,7 @@
   <string name="full_screen_intent_banner_message">"Damit du keinen wichtigen Anruf verpasst, ändere bitte deine Einstellungen so, dass du bei gesperrtem Telefon Benachrichtigungen im Vollbildmodus erhältst."</string>
   <string name="full_screen_intent_banner_title">"Verbessere dein Anruferlebnis"</string>
   <string name="screen_home_tab_chats">"Chats"</string>
+  <string name="screen_home_tab_community">"Gemeinschaft"</string>
   <string name="screen_home_tab_spaces">"Spaces"</string>
   <string name="screen_invites_decline_chat_message">"Möchtest du die Einladung zum Betreten von %1$s wirklich ablehnen?"</string>
   <string name="screen_invites_decline_chat_title">"Einladung ablehnen"</string>
@@ -53,4 +54,9 @@ Du hast keine ungelesenen Nachrichten!"</string>
   <string name="screen_roomlist_your_spaces">"Deine Spaces"</string>
   <string name="session_verification_banner_message">"Es sieht aus, als würdest du ein neues Gerät verwenden. Verifiziere es mit einem anderen Gerät, damit du auf deine verschlüsselten Nachrichten zugreifen kannst."</string>
   <string name="session_verification_banner_title">"Verifiziere deine Identität"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Communities bringen Mitglieder in themenbezogenen Gruppen zusammen. Alle Communities, denen Sie beitreten, werden hier angezeigt."</string>
+  <string name="screen_community_list_header_count">"%1$d Community"</string>
+  <string name="screen_community_list_header_description">"Communities, die Sie erstellen oder denen Sie beitreten"</string>
+  <string name="screen_roomlist_empty_message_new">"Dieser Ort gehört nur Ihnen und den Menschen, die Ihnen am nächsten stehen"</string>
 </resources>

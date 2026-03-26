@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 图标标题副标题分子组件
+ *
+ * 用于显示图标、标题和副标题的组合组件。
+ * 图标位于顶部中央，标题和副标题依次垂直排列。
+ * 适用于空状态页面、成功提示、错误提示等场景。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.molecules
 
 import androidx.compose.foundation.layout.Arrangement
@@ -30,13 +41,32 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Text
 
 /**
- * IconTitleSubtitleMolecule is a molecule which displays an icon, a title and a subtitle.
+ * 图标标题副标题组件
  *
- * @param title the title to display
- * @param subTitle the subtitle to display
- * @param iconStyle the style of the [BigIcon] to display
- * @param modifier the modifier to apply to this layout
- * @param showBetaLabel whether to show a "BETA" label next to the title
+ * 创建一个包含图标、标题和可选副标题的组合组件。
+ * 图标采用 BigIcon.Style 样式，标题使用加粗字重，副标题使用常规字重。
+ * 支持可选的 Beta 标签显示。
+ *
+ * @param title String 标题文本内容
+ * @param subTitle String? 副标题文本内容，可为 null
+ * @param iconStyle BigIcon.Style 大图标的样式配置
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ * @param showBetaLabel Boolean 是否在标题旁显示 Beta 标签，默认为 false
+ *
+ * @return Unit
+ *
+ * @see [BigIcon] 大图标组件
+ * @see [BetaLabel] Beta 标签组件
+ * @see [ElementTheme.typography.fontHeadingMdBold] 标题文本样式
+ *
+ * @example
+ * ```kotlin
+ * IconTitleSubtitleMolecule(
+ *     title = "操作成功",
+ *     subTitle = "您的更改已保存",
+ *     iconStyle = BigIcon.Style.Success
+ * )
+ * ```
  */
 @Composable
 fun IconTitleSubtitleMolecule(
@@ -85,6 +115,12 @@ fun IconTitleSubtitleMolecule(
     }
 }
 
+/**
+ * IconTitleSubtitleMolecule 预览组件
+ *
+ * 用于在设计预览中展示 IconTitleSubtitleMolecule 组件的默认状态。
+ * 此预览函数支持日夜两种主题模式。
+ */
 @PreviewsDayNight
 @Composable
 internal fun IconTitleSubtitleMoleculePreview() = ElementPreview {

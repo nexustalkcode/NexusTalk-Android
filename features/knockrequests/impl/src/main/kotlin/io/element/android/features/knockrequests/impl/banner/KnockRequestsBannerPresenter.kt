@@ -26,14 +26,29 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/** 接受错误显示持续时间（毫秒） */
 private const val ACCEPT_ERROR_DISPLAY_DURATION = 1500L
 
+/**
+ * 敲门请求横幅 Presenter
+ *
+ * 负责处理房间列表中敲门请求横幅的业务逻辑和状态管理。
+ * 管理敲门请求的快速接受、忽略和显示控制。
+ *
+ * @property knockRequestsService 敲门请求服务
+ * @property sessionCoroutineScope 会话级别的协程作用域
+ */
 @Inject
 class KnockRequestsBannerPresenter(
     private val knockRequestsService: KnockRequestsService,
     @SessionCoroutineScope
     private val sessionCoroutineScope: CoroutineScope,
 ) : Presenter<KnockRequestsBannerState> {
+    /**
+     * 生成界面状态
+     *
+     * @return KnockRequestsBannerState 敲门请求横幅状态
+     */
     @Composable
     override fun present(): KnockRequestsBannerState {
         val knockRequests by remember {
@@ -53,6 +68,11 @@ class KnockRequestsBannerPresenter(
             }
         }
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 敲门请求横幅事件
+         */
         fun handleEvent(event: KnockRequestsBannerEvents) {
             when (event) {
                 is KnockRequestsBannerEvents.AcceptSingleRequest -> {
@@ -78,6 +98,12 @@ class KnockRequestsBannerPresenter(
         )
     }
 
+    /**
+     * 接受单个敲门请求
+     *
+     * @param knockRequests 敲门请求列表
+     * @param displayAcceptError 是否显示接受错误
+     */
     private fun CoroutineScope.acceptSingleKnockRequest(
         knockRequests: List<KnockRequestPresentable>,
         displayAcceptError: MutableState<Boolean>,

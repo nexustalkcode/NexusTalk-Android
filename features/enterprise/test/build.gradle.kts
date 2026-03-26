@@ -17,5 +17,4 @@ dependencies {
     api(projects.features.enterprise.api)
     implementation(projects.libraries.compound)
     implementation(projects.libraries.matrix.api)
-    implementation(projects.tests.testutils)
 }

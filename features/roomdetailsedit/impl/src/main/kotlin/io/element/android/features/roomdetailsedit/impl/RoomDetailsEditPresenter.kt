@@ -44,18 +44,47 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 房间详情编辑页面的Presenter
+ *
+ * 负责处理房间详情编辑页面的业务逻辑，包括：
+ * - 加载和同步房间信息（名称、主题、头像）
+ * - 处理用户编辑操作
+ * - 管理相机权限
+ * - 保存更改到服务器
+ *
+ * @property room 已加入的房间，用于获取和更新房间信息
+ * @property mediaPickerProvider 媒体选择器提供者，用于选择图片或拍照
+ * @property mediaPreProcessor 媒体预处理器，用于处理上传的图片
+ * @property temporaryUriDeleter 临时URI删除器，用于清理临时文件
+ * @property permissionsPresenterFactory 权限Presenter工厂，用于创建相机权限Presenter
+ * @property mediaOptimizationConfigProvider 媒体优化配置提供者
+ */
 @Inject
 class RoomDetailsEditPresenter(
+    /** 已加入的房间，用于获取和更新房间信息 */
     private val room: JoinedRoom,
+    /** 媒体选择器提供者，用于选择图片或拍照 */
     private val mediaPickerProvider: PickerProvider,
+    /** 媒体预处理器，用于处理上传的图片 */
     private val mediaPreProcessor: MediaPreProcessor,
+    /** 临时URI删除器，用于清理临时文件 */
     private val temporaryUriDeleter: TemporaryUriDeleter,
+    /** 权限Presenter工厂，用于创建相机权限Presenter */
     permissionsPresenterFactory: PermissionsPresenter.Factory,
+    /** 媒体优化配置提供者 */
     private val mediaOptimizationConfigProvider: MediaOptimizationConfigProvider,
 ) : Presenter<RoomDetailsEditState> {
+    /** 相机权限Presenter，用于管理相机权限请求 */
     private val cameraPermissionPresenter = permissionsPresenterFactory.create(Manifest.permission.CAMERA)
+    /** 待处理的权限请求标志，防止重复请求 */
     private var pendingPermissionRequest = false
 
+    /**
+     * 生成房间详情编辑页面的状态
+     *
+     * @return 包含当前编辑状态的 [RoomDetailsEditState] 对象
+     */
     @Composable
     override fun present(): RoomDetailsEditState {
         val cameraPermissionState = cameraPermissionPresenter.present()
@@ -189,6 +218,19 @@ class RoomDetailsEditPresenter(
         )
     }
 
+    /**
+     * 保存房间详情更改的协程方法
+     *
+     * 将用户编辑的房间名称、主题和头像保存到Matrix服务器
+     *
+     * @param currentNameTrimmed 当前房间名称（已去除首尾空格）
+     * @param newNameTrimmed 新房间名称（已去除首尾空格）
+     * @param currentTopicTrimmed 当前房间主题（已去除首尾空格）
+     * @param newTopicTrimmed 新房间主题（已去除首尾空格）
+     * @param currentAvatar 当前头像URI
+     * @param newAvatarUri 新头像URI
+     * @param action 用于更新保存操作状态的MutableState
+     */
     private fun CoroutineScope.saveChanges(
         currentNameTrimmed: String,
         newNameTrimmed: String,
@@ -219,6 +261,14 @@ class RoomDetailsEditPresenter(
         }.runCatchingUpdatingState(action)
     }
 
+    /**
+     * 更新房间头像
+     *
+     * 处理头像的上传或删除，包括图片预处理和上传到Matrix服务器
+     *
+     * @param avatarUri 新的头像URI，如果为null表示删除头像
+     * @return 操作结果，成功返回Unit，失败返回异常
+     */
     private suspend fun updateAvatar(avatarUri: Uri?): Result<Unit> {
         return runCatchingExceptions {
             if (avatarUri != null) {

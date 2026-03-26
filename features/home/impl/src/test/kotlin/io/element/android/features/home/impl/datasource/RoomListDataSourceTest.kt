@@ -16,11 +16,9 @@ import io.element.android.libraries.dateformatter.test.FakeDateFormatter
 import io.element.android.libraries.matrix.api.roomlist.RoomListService
 import io.element.android.libraries.matrix.test.notificationsettings.FakeNotificationSettingsService
 import io.element.android.libraries.matrix.test.room.aRoomSummary
-import io.element.android.libraries.matrix.test.roomlist.FakeDynamicRoomList
 import io.element.android.libraries.matrix.test.roomlist.FakeRoomListService
 import io.element.android.services.analytics.test.FakeAnalyticsService
 import io.element.android.tests.testutils.testCoroutineDispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -29,13 +27,9 @@ import java.time.Instant
 class RoomListDataSourceTest {
     @Test
     fun `when DateTimeObserver gets a date change, the room summaries are refreshed`() = runTest {
-        val roomList = FakeDynamicRoomList().apply {
-            summaries.emit(listOf(aRoomSummary()))
-        }
-        val roomListService = FakeRoomListService(
-            createRoomListLambda = { roomList }
-        ).apply {
+        val roomListService = FakeRoomListService().apply {
             postState(RoomListService.State.Running)
+            postAllRooms(listOf(aRoomSummary()))
         }
         val dateTimeObserver = FakeDateTimeObserver()
         var dateFormatterResult = "Today"
@@ -48,7 +42,7 @@ class RoomListDataSourceTest {
             dateTimeObserver = dateTimeObserver,
         )
 
-        roomListDataSource.roomSummariesFlow.test {
+        roomListDataSource.allRooms.test {
             // Observe room list items changes
             roomListDataSource.launchIn(backgroundScope)
             // Get the initial room list
@@ -67,11 +61,9 @@ class RoomListDataSourceTest {
 
     @Test
     fun `when DateTimeObserver gets a time zone change, the room summaries are refreshed`() = runTest {
-        val roomList = FakeDynamicRoomList(summaries = MutableStateFlow(listOf(aRoomSummary())))
-        val roomListService = FakeRoomListService(
-            createRoomListLambda = { roomList }
-        ).apply {
+        val roomListService = FakeRoomListService().apply {
             postState(RoomListService.State.Running)
+            postAllRooms(listOf(aRoomSummary()))
         }
         val dateTimeObserver = FakeDateTimeObserver()
         var dateFormatterResult = "Today"
@@ -83,7 +75,7 @@ class RoomListDataSourceTest {
             ),
             dateTimeObserver = dateTimeObserver,
         )
-        roomListDataSource.roomSummariesFlow.test {
+        roomListDataSource.allRooms.test {
             // Observe room list items changes
             roomListDataSource.launchIn(backgroundScope)
             // Get the initial room list

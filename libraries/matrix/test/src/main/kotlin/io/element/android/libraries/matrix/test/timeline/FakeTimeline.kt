@@ -422,11 +422,6 @@ class FakeTimeline(
 
     override suspend fun paginate(direction: Timeline.PaginationDirection): Result<Boolean> = paginateLambda(direction)
 
-    // SC start
-    override suspend fun forceSendReadReceipt(eventId: EventId, receiptType: ReceiptType) = sendReadReceipt(eventId, receiptType)
-    override suspend fun fullyReadEventId() = null
-    // SC end
-
     var loadReplyDetailsLambda: (eventId: EventId) -> InReplyTo = {
         InReplyTo.NotLoaded(it)
     }

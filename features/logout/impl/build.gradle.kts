@@ -38,7 +38,7 @@ dependencies {
     implementation(projects.libraries.workmanager.api)
     api(projects.features.logout.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.featureflag.test)
     testImplementation(projects.libraries.sessionStorage.test)

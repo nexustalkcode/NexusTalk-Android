@@ -36,6 +36,18 @@ import io.element.android.libraries.designsystem.theme.components.TextButton
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 邀请成员视图
+ *
+ * Composable 函数，用于渲染邀请成员页面。
+ * 包含顶部导航栏、邀请人员列表和发送邀请进度对话框。
+ *
+ * @param state 邀请人员状态
+ * @param onBackClick 返回按钮点击回调
+ * @param modifier 视图修饰符
+ * @param invitePeopleView 邀请人员列表视图
+ * @see InvitePeopleState 邀请人员状态
+ */
 @Composable
 fun RoomInviteMembersView(
     state: InvitePeopleState,
@@ -76,6 +88,17 @@ fun RoomInviteMembersView(
     }
 }
 
+/**
+ * 邀请成员顶部导航栏
+ *
+ * Composable 函数，用于渲染邀请成员页面的顶部导航栏。
+ * 包含返回按钮和邀请按钮。
+ *
+ * @param canSend 是否可以发送邀请
+ * @param onBackClick 返回按钮点击回调
+ * @param onSubmitClick 提交/邀请按钮点击回调
+ * @see ExperimentalMaterial3Api 实验性 Material3 API
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RoomInviteMembersTopBar(
@@ -96,6 +119,12 @@ private fun RoomInviteMembersTopBar(
     )
 }
 
+/**
+ * 邀请进度对话框
+ *
+ * Composable 函数，用于显示发送邀请过程中的进度对话框。
+ * 告知用户正在准备邀请并提示不要关闭应用。
+ */
 @Composable
 private fun InviteProgressDialog() {
     ProgressDialog {

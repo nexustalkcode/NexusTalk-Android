@@ -10,11 +10,22 @@ package io.element.android.features.call.api
 
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * 当前通话服务接口
+ *
+ * 提供当前通话状态的访问接口，用于查询本地当前的通话状态。
+ * 该服务通过 StateFlow 提供通话状态的响应式更新。
+ *
+ * @see CurrentCall 当前通话状态
+ */
 interface CurrentCallService {
     /**
-     * The current call state flow, which will be updated when the active call changes.
-     * This value reflect the local state of the call. It is not updated if the user answers
-     * a call from another session.
+     * 当前通话状态流
+     *
+     * 当活动通话发生变化时，此值会自动更新。
+     * 此值反映通话的本地状态。如果用户在另一个会话中接听通话，此值不会更新。
+     *
+     * @return StateFlow<CurrentCall> 当前通话状态的响应式数据流
      */
     val currentCall: StateFlow<CurrentCall>
 }

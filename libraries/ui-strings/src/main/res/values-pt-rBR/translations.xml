@@ -107,7 +107,6 @@
   <string name="action_invite_people_to_app">"Convide pessoas para %1$s"</string>
   <string name="action_invites_list">"Convites"</string>
   <string name="action_join">"Entrar"</string>
-  <string name="action_learn_more">"Saber mais"</string>
   <string name="action_leave">"Sair"</string>
   <string name="action_leave_conversation">"Sair da conversa"</string>
   <string name="action_leave_room">"Sair da sala"</string>
@@ -494,4 +493,9 @@ Você tem certeza de que deseja continuar?"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Você não tem acesso à esta mensagem"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Não foi possível descriptografar a mensagem"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Esta mensagem foi bloqueada porque você não verificou seu dispositivo ou porque o remetente precisa verificar sua identidade."</string>
+  <string name="common_call_ended">"Chamada encerrada"</string>
+  <string name="action_start_call">"Iniciar chamada"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Nenhuma chamada"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Mantenha-se conectado com as comunidades"</string>
+  <string name="action_create_community">"Criar comunidade"</string>
 </resources>

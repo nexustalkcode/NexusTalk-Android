@@ -8,10 +8,12 @@
 
 package io.element.android.features.call.notifications
 
+import android.app.Notification
 import androidx.core.graphics.drawable.IconCompat
 import androidx.test.platform.app.InstrumentationRegistry
 import coil3.ImageLoader
 import com.google.common.truth.Truth.assertThat
+import io.element.android.features.call.impl.R
 import io.element.android.features.call.impl.notifications.RingingCallNotificationCreator
 import io.element.android.libraries.designsystem.components.avatar.AvatarData
 import io.element.android.libraries.matrix.test.AN_EVENT_ID
@@ -50,6 +52,19 @@ class RingingCallNotificationCreatorTest {
         val result = notificationCreator.createTestNotification()
 
         assertThat(result).isNotNull()
+        assertThat(result!!.headsUpContentView).isNotNull()
+    }
+
+    @Test
+    fun `createNotification - uses the incoming call subtitle`() = runTest {
+        val notificationCreator = createRingingCallNotificationCreator(
+            matrixClientProvider = FakeMatrixClientProvider(getClient = { Result.success(FakeMatrixClient()) })
+        )
+
+        val result = notificationCreator.createTestNotification()
+
+        val contentText = result!!.extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()
+        assertThat(contentText).isEqualTo(targetContext.getString(R.string.notification_incoming_call))
     }
 
     @Test
@@ -65,33 +80,7 @@ class RingingCallNotificationCreatorTest {
         getUserIconLambda.assertions().isCalledOnce()
     }
 
-    @Test
-    fun `createNotification - use the correct style for video call`() = runTest {
-        val notificationCreator = createRingingCallNotificationCreator(
-            matrixClientProvider = FakeMatrixClientProvider(getClient = { Result.success(FakeMatrixClient()) }),
-        )
-
-        val notification = notificationCreator.createTestNotification()
-        assertThat(notification?.category).isEqualTo("call")
-
-        val acceptAction = notification?.actions?.get(1)
-        assertThat(acceptAction?.title?.toString()).isEqualTo("Video")
-    }
-
-    @Test
-    fun `createNotification - use the correct style for audio call`() = runTest {
-        val notificationCreator = createRingingCallNotificationCreator(
-            matrixClientProvider = FakeMatrixClientProvider(getClient = { Result.success(FakeMatrixClient()) }),
-        )
-
-        val notification = notificationCreator.createTestNotification(audioOnly = true)
-        assertThat(notification?.category).isEqualTo("call")
-
-        val acceptAction = notification?.actions?.get(1)
-        assertThat(acceptAction?.title?.toString()).isEqualTo("Answer")
-    }
-
-    private suspend fun RingingCallNotificationCreator.createTestNotification(audioOnly: Boolean = false) = createNotification(
+    private suspend fun RingingCallNotificationCreator.createTestNotification() = createNotification(
         sessionId = A_SESSION_ID,
         roomId = A_ROOM_ID,
         eventId = AN_EVENT_ID,
@@ -103,15 +92,17 @@ class RingingCallNotificationCreatorTest {
         timestamp = 0L,
         expirationTimestamp = 20L,
         textContent = "textContent",
-        audioOnly = audioOnly
     )
+
+    private val targetContext
+        get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     private fun createRingingCallNotificationCreator(
         matrixClientProvider: FakeMatrixClientProvider = FakeMatrixClientProvider(),
         imageLoaderHolder: FakeImageLoaderHolder = FakeImageLoaderHolder(),
         notificationBitmapLoader: FakeNotificationBitmapLoader = FakeNotificationBitmapLoader(),
     ) = RingingCallNotificationCreator(
-        context = InstrumentationRegistry.getInstrumentation().targetContext,
+        context = targetContext,
         matrixClientProvider = matrixClientProvider,
         imageLoaderHolder = imageLoaderHolder,
         notificationBitmapLoader = notificationBitmapLoader,

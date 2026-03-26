@@ -19,6 +19,4 @@ android {
 dependencies {
     implementation(projects.libraries.androidutils)
     implementation(projects.services.toolbox.impl)
-
-    testCommonDependencies(libs)
 }

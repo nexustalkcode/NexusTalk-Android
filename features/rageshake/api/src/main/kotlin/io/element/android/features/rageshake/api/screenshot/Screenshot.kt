@@ -17,6 +17,14 @@ import android.os.Looper
 import android.view.PixelCopy
 import android.view.View
 
+/**
+ * View 扩展函数：截取屏幕截图
+ *
+ * 对 View 进行截图，使用 PixelCopy API（在 Android O 及以上）
+ * 或 Canvas 绘制（在较低版本）来实现。
+ *
+ * @param bitmapCallback 截图完成后的回调函数，传递 ImageResult 结果
+ */
 fun View.screenshot(bitmapCallback: (ImageResult) -> Unit) {
     try {
         val handler = Handler(Looper.getMainLooper())
@@ -59,7 +67,27 @@ fun View.screenshot(bitmapCallback: (ImageResult) -> Unit) {
     }
 }
 
+/**
+ * 截图结果密封接口
+ *
+ * 表示截图操作的可能结果，包含成功或失败状态。
+ */
 sealed interface ImageResult {
+    /**
+     * 截图失败
+     *
+     * 当截图操作失败时返回，包含异常信息。
+     *
+     * @param exception 失败原因异常
+     */
     data class Error(val exception: Exception) : ImageResult
+
+    /**
+     * 截图成功
+     *
+     * 当截图操作成功时返回，包含位图数据。
+     *
+     * @param data 截取的位图数据
+     */
     data class Success(val data: Bitmap) : ImageResult
 }

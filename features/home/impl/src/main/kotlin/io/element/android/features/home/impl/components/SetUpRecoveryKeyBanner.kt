@@ -17,6 +17,16 @@ import io.element.android.libraries.designsystem.components.AnnouncementType
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 
+/**
+ * 设置恢复密钥横幅
+ *
+ * 渲染设置恢复密钥提示横幅，当用户尚未设置恢复密钥时显示。
+ * 用户可以选择继续设置或关闭横幅。
+ *
+ * @param onContinueClick 继续点击事件
+ * @param onDismissClick 关闭点击事件
+ * @param modifier 修饰符
+ */
 @Composable
 internal fun SetUpRecoveryKeyBanner(
     onContinueClick: () -> Unit,

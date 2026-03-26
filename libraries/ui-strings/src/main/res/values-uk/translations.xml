@@ -103,7 +103,6 @@
   <string name="action_invite_people_to_app">"Запросити людей в %1$s"</string>
   <string name="action_invites_list">"Запрошення"</string>
   <string name="action_join">"Доєднатися"</string>
-  <string name="action_learn_more">"Докладніше"</string>
   <string name="action_leave">"Вийти"</string>
   <string name="action_leave_conversation">"Залишити розмову"</string>
   <string name="action_leave_room">"Вийти з кімнати"</string>
@@ -467,4 +466,9 @@
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Ви не маєте доступу до цього повідомлення"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Неможливо розшифрувати повідомлення"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Це повідомлення заблоковано оскільки ви не верифікували свій пристрій, або тому, що відправнику потрібно верифікувати вашу особистість."</string>
+  <string name="common_call_ended">"Дзвінок завершено"</string>
+  <string name="action_start_call">"Почати дзвінок"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Немає дзвінків"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Залишайтеся на зв'язку з спільнотами"</string>
+  <string name="action_create_community">"Створити спільноту"</string>
 </resources>

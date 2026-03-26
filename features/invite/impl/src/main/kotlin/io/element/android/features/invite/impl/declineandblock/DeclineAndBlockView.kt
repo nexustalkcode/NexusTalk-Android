@@ -42,6 +42,16 @@ import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 拒绝并封禁界面
+ *
+ * 渲染拒绝邀请并可选封禁用户的界面。
+ * 包含封禁用户开关、举报房间开关、举报原因输入和拒绝按钮。
+ *
+ * @param state 拒绝并封禁状态
+ * @param onBackClick 返回按钮点击回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun DeclineAndBlockView(
     state: DeclineAndBlockState,
@@ -142,6 +152,11 @@ fun DeclineAndBlockView(
 }
 
 @PreviewsDayNight
+/**
+ * 拒绝并封禁界面预览
+ *
+ * @param state 拒绝并封禁状态
+ */
 @Composable
 internal fun DeclineAndBlockViewPreview(
     @PreviewParameter(DeclineAndBlockStateProvider::class) state: DeclineAndBlockState

@@ -24,11 +24,17 @@ import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.core.meta.BuildMeta
 import kotlinx.coroutines.delay
 
-/**
- * Some time for the ui to refresh before showing confirmation step.
- */
+/** UI 刷新后再显示确认步骤的延迟时间（毫秒） */
 private const val DELAY_BEFORE_CONFIRMATION_STEP_IN_MILLIS = 100L
 
+/**
+ * 设置 PIN 码Presenter
+ *
+ * 负责管理设置 PIN 码界面的业务逻辑，包括：
+ * - 输入 PIN 码
+ * - 确认 PIN 码
+ * - 验证 PIN 码有效性
+ */
 @Inject
 class SetupPinPresenter(
     private val lockScreenConfig: LockScreenConfig,

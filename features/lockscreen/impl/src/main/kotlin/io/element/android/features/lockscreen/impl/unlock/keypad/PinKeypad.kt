@@ -48,10 +48,25 @@ import io.element.android.libraries.ui.utils.time.digit
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/** 按键之间的间距 */
 private val spaceBetweenPinKey = 16.dp
+/** 按键最小尺寸 */
 private val minSizePinKey = 16.dp
+/** 按键最大尺寸 */
 private val maxSizePinKey = 80.dp
 
+/**
+ * PIN 键盘组件
+ *
+ * 显示数字键盘的可组合组件，支持点击事件。
+ *
+ * @param onClick 按键点击回调
+ * @param maxWidth 最大宽度
+ * @param maxHeight 最大高度
+ * @param modifier 修饰符
+ * @param verticalAlignment 垂直对齐方式
+ * @param horizontalAlignment 水平对齐方式
+ */
 @Composable
 fun PinKeypad(
     onClick: (PinKeypadModel) -> Unit,

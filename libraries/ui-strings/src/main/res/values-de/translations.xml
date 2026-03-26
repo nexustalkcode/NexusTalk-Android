@@ -93,7 +93,6 @@
   <string name="action_enable">"Aktivieren"</string>
   <string name="action_end_poll">"Umfrage beenden"</string>
   <string name="action_enter_pin">"PIN eingeben"</string>
-  <string name="action_explore_public_spaces">"Erkunde öffentliche Spaces"</string>
   <string name="action_finish">"Fertigstellen"</string>
   <string name="action_forgot_password">"Passwort vergessen?"</string>
   <string name="action_forward">"Weiterleiten"</string>
@@ -107,7 +106,6 @@
   <string name="action_invite_people_to_app">"Lade Personen in %1$s ein"</string>
   <string name="action_invites_list">"Einladungen"</string>
   <string name="action_join">"Beitreten"</string>
-  <string name="action_learn_more">"Mehr erfahren"</string>
   <string name="action_leave">"Verlassen"</string>
   <string name="action_leave_conversation">"Unterhaltung verlassen"</string>
   <string name="action_leave_room">"Verlassen"</string>
@@ -304,7 +302,6 @@ Grund: %1$s."</string>
   <string name="common_report_a_problem">"Ein Problem melden"</string>
   <string name="common_report_submitted">"Bericht eingereicht"</string>
   <string name="common_rich_text_editor">"Rich-Text-Editor"</string>
-  <string name="common_role">"Rolle"</string>
   <string name="common_room">"Chat"</string>
   <string name="common_room_name">"Chat-Name"</string>
   <string name="common_room_name_placeholder">"z.B. Projektname"</string>
@@ -334,7 +331,6 @@ Grund: %1$s."</string>
   <string name="common_server_url">"Server-URL"</string>
   <string name="common_settings">"Einstellungen"</string>
   <string name="common_share_space">"Space teilen"</string>
-  <string name="common_shared_history">"Neue Mitglieder sehen den Nachrichtenverlauf"</string>
   <string name="common_shared_location">"Geteilter Standort"</string>
   <string name="common_shared_space">"Gemeinsamer Space"</string>
   <string name="common_signing_out">"Abmelden"</string>
@@ -386,7 +382,6 @@ Grund: %1$s."</string>
   <string name="common_voice_message">"Sprachnachricht"</string>
   <string name="common_waiting">"Warten…"</string>
   <string name="common_waiting_for_decryption_key">"Warte auf diese Nachricht"</string>
-  <string name="common_world_readable_history">"Jeder kann den Nachrichtenverlauf sehen"</string>
   <string name="common_you">"Du"</string>
   <string name="crypto_event_key_forwarded_known_profile_dialog_content">"%1$s (%2$s) hat diese Nachricht geteilt, weil du nicht im Chat warst, als sie verschickt wurde."</string>
   <string name="crypto_event_key_forwarded_unknown_profile_dialog_content">"Diese Nachricht wurde von %1$s weitergeleitet, da du zum Zeitpunkt des Versands kein Mitglied der Gruppe warst."</string>
@@ -496,4 +491,9 @@ Möchtest du wirklich fortfahren?"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Du hast keinen Zugriff auf diese Nachricht."</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Nachricht kann nicht entschlüsselt werden"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Diese Nachricht wurde entweder blockiert, weil du dein Gerät nicht verifiziert hast oder weil der Absender deine Identität verifizieren muss."</string>
+  <string name="common_call_ended">"Anruf beendet"</string>
+  <string name="action_start_call">"Anruf starten"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Keine Anrufe"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Mit Communities in Verbindung bleiben"</string>
+  <string name="action_create_community">"Community erstellen"</string>
 </resources>

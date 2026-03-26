@@ -10,6 +10,15 @@ package io.element.android.features.linknewdevice.impl.screens.number
 import io.element.android.features.linknewdevice.impl.screens.number.model.Number
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 输入数字状态数据类
+ *
+ * @property number 输入的数字
+ * @property sendingCode 发送验证码的异步状态
+ * @property eventSink 事件处理函数
+ * @property numberEntry 数字条目
+ * @property isContinueButtonEnabled 继续按钮是否启用
+ */
 data class EnterNumberState(
     val number: String,
     val sendingCode: AsyncAction<Unit>,

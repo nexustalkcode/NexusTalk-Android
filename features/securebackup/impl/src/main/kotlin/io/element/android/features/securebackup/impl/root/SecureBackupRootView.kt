@@ -8,8 +8,13 @@
 
 package io.element.android.features.securebackup.impl.root
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.progressSemantics
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -54,160 +59,166 @@ fun SecureBackupRootView(
         title = stringResource(id = CommonStrings.common_encryption),
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) {
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = stringResource(id = R.string.screen_chat_backup_key_backup_title),
-                )
-            },
-            supportingContent = {
-                Text(
-                    text = buildAnnotatedStringWithStyledPart(
-                        fullTextRes = R.string.screen_chat_backup_key_backup_description,
-                        coloredTextRes = CommonStrings.action_learn_more,
-                        color = ElementTheme.colors.textPrimary,
-                        underline = false,
-                        bold = true,
-                    ),
-                )
-            },
-            onClick = onLearnMoreClick,
-        )
-
-        // Disable / Enable key storage
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = stringResource(id = R.string.screen_chat_backup_key_storage_toggle_title),
-                )
-            },
-            trailingContent = when (state.backupState) {
-                BackupState.WAITING_FOR_SYNC,
-                BackupState.DISABLING -> ListItemContent.Custom { LoadingView() }
-                BackupState.UNKNOWN -> {
-                    when (state.doesBackupExistOnServer) {
-                        is AsyncData.Success -> {
-                            ListItemContent.Switch(checked = state.doesBackupExistOnServer.data)
-                        }
-                        is AsyncData.Loading,
-                        AsyncData.Uninitialized -> ListItemContent.Custom { LoadingView() }
-                        is AsyncData.Failure -> ListItemContent.Custom {
-                            Text(
-                                text = stringResource(id = CommonStrings.action_retry)
-                            )
-                        }
-                    }
-                }
-                BackupState.CREATING,
-                BackupState.ENABLING,
-                BackupState.RESUMING,
-                BackupState.ENABLED,
-                BackupState.DOWNLOADING -> ListItemContent.Switch(checked = true)
-            },
-            onClick = {
-                when (state.backupState) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+        ) {
+            ListItem(
+                headlineContent = {
+                    Text(
+                        text = stringResource(id = R.string.screen_chat_backup_key_backup_title),
+                    )
+                },
+                supportingContent = {
+                    Text(
+                        text = buildAnnotatedStringWithStyledPart(
+                            fullTextRes = R.string.screen_chat_backup_key_backup_description,
+                            coloredTextRes = CommonStrings.action_learn_more,
+                            color = ElementTheme.colors.textPrimary,
+                            underline = false,
+                            bold = true,
+                        ),
+                    )
+                },
+                onClick = {},
+            )
+            HorizontalDivider()
+            // Disable / Enable key storage
+            ListItem(
+                headlineContent = {
+                    Text(
+                        text = stringResource(id = R.string.screen_chat_backup_key_storage_toggle_title),
+                    )
+                },
+                trailingContent = when (state.backupState) {
                     BackupState.WAITING_FOR_SYNC,
-                    BackupState.DISABLING -> Unit
+                    BackupState.DISABLING -> ListItemContent.Custom { LoadingView() }
                     BackupState.UNKNOWN -> {
                         when (state.doesBackupExistOnServer) {
                             is AsyncData.Success -> {
-                                if (state.doesBackupExistOnServer.data) {
-                                    onDisableClick()
-                                } else {
-                                    state.eventSink.invoke(SecureBackupRootEvents.EnableKeyStorage)
-                                }
+                                ListItemContent.Switch(checked = state.doesBackupExistOnServer.data)
                             }
                             is AsyncData.Loading,
-                            AsyncData.Uninitialized -> Unit
-                            is AsyncData.Failure -> state.eventSink.invoke(SecureBackupRootEvents.RetryKeyBackupState)
+                            AsyncData.Uninitialized -> ListItemContent.Custom { LoadingView() }
+                            is AsyncData.Failure -> ListItemContent.Custom {
+                                Text(
+                                    text = stringResource(id = CommonStrings.action_retry)
+                                )
+                            }
                         }
                     }
                     BackupState.CREATING,
                     BackupState.ENABLING,
                     BackupState.RESUMING,
                     BackupState.ENABLED,
-                    BackupState.DOWNLOADING -> onDisableClick()
+                    BackupState.DOWNLOADING -> ListItemContent.Switch(checked = true)
+                },
+                onClick = {
+                    when (state.backupState) {
+                        BackupState.WAITING_FOR_SYNC,
+                        BackupState.DISABLING -> Unit
+                        BackupState.UNKNOWN -> {
+                            when (state.doesBackupExistOnServer) {
+                                is AsyncData.Success -> {
+                                    if (state.doesBackupExistOnServer.data) {
+                                        onDisableClick()
+                                    } else {
+                                        state.eventSink.invoke(SecureBackupRootEvents.EnableKeyStorage)
+                                    }
+                                }
+                                is AsyncData.Loading,
+                                AsyncData.Uninitialized -> Unit
+                                is AsyncData.Failure -> state.eventSink.invoke(SecureBackupRootEvents.RetryKeyBackupState)
+                            }
+                        }
+                        BackupState.CREATING,
+                        BackupState.ENABLING,
+                        BackupState.RESUMING,
+                        BackupState.ENABLED,
+                        BackupState.DOWNLOADING -> onDisableClick()
+                    }
+                },
+            )
+            HorizontalDivider()
+            // Setup recovery
+            when (state.recoveryState) {
+                RecoveryState.UNKNOWN,
+                RecoveryState.WAITING_FOR_SYNC -> Unit
+                RecoveryState.DISABLED -> {
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = stringResource(id = R.string.screen_chat_backup_recovery_action_setup),
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(id = R.string.screen_chat_backup_recovery_action_setup_description, state.appName),
+                            )
+                        },
+                        trailingContent = ListItemContent.Badge,
+                        enabled = state.isKeyStorageEnabled,
+                        alwaysClickable = true,
+                        onClick = {
+                            if (state.isKeyStorageEnabled) {
+                                onSetupClick()
+                            } else {
+                                state.eventSink.invoke(SecureBackupRootEvents.DisplayKeyStorageDisabledError)
+                            }
+                        },
+                    )
                 }
-            },
-        )
-        HorizontalDivider()
-        // Setup recovery
-        when (state.recoveryState) {
-            RecoveryState.UNKNOWN,
-            RecoveryState.WAITING_FOR_SYNC -> Unit
-            RecoveryState.DISABLED -> {
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            text = stringResource(id = R.string.screen_chat_backup_recovery_action_setup),
-                        )
-                    },
-                    supportingContent = {
-                        Text(
-                            text = stringResource(id = R.string.screen_chat_backup_recovery_action_setup_description, state.appName),
-                        )
-                    },
-                    trailingContent = ListItemContent.Badge,
-                    enabled = state.isKeyStorageEnabled,
-                    alwaysClickable = true,
-                    onClick = {
-                        if (state.isKeyStorageEnabled) {
-                            onSetupClick()
-                        } else {
-                            state.eventSink.invoke(SecureBackupRootEvents.DisplayKeyStorageDisabledError)
-                        }
-                    },
-                )
+                RecoveryState.ENABLED -> {
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = stringResource(id = R.string.screen_chat_backup_recovery_action_change),
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(id = R.string.screen_chat_backup_recovery_action_change_description),
+                            )
+                        },
+                        enabled = state.isKeyStorageEnabled,
+                        alwaysClickable = true,
+                        onClick = {
+                            if (state.isKeyStorageEnabled) {
+                                onChangeClick()
+                            } else {
+                                state.eventSink.invoke(SecureBackupRootEvents.DisplayKeyStorageDisabledError)
+                            }
+                        },
+                    )
+                }
+                RecoveryState.INCOMPLETE ->
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = stringResource(id = R.string.screen_chat_backup_recovery_action_confirm),
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(id = R.string.screen_chat_backup_recovery_action_confirm_description),
+                            )
+                        },
+                        trailingContent = ListItemContent.Badge,
+                        enabled = state.isKeyStorageEnabled,
+                        alwaysClickable = true,
+                        onClick = {
+                            if (state.isKeyStorageEnabled) {
+                                onConfirmRecoveryKeyClick()
+                            } else {
+                                state.eventSink.invoke(SecureBackupRootEvents.DisplayKeyStorageDisabledError)
+                            }
+                        },
+                    )
             }
-            RecoveryState.ENABLED -> {
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            text = stringResource(id = R.string.screen_chat_backup_recovery_action_change),
-                        )
-                    },
-                    supportingContent = {
-                        Text(
-                            text = stringResource(id = R.string.screen_chat_backup_recovery_action_change_description),
-                        )
-                    },
-                    enabled = state.isKeyStorageEnabled,
-                    alwaysClickable = true,
-                    onClick = {
-                        if (state.isKeyStorageEnabled) {
-                            onChangeClick()
-                        } else {
-                            state.eventSink.invoke(SecureBackupRootEvents.DisplayKeyStorageDisabledError)
-                        }
-                    },
-                )
-            }
-            RecoveryState.INCOMPLETE ->
-                ListItem(
-                    headlineContent = {
-                        Text(
-                            text = stringResource(id = R.string.screen_chat_backup_recovery_action_confirm),
-                        )
-                    },
-                    supportingContent = {
-                        Text(
-                            text = stringResource(id = R.string.screen_chat_backup_recovery_action_confirm_description),
-                        )
-                    },
-                    trailingContent = ListItemContent.Badge,
-                    enabled = state.isKeyStorageEnabled,
-                    alwaysClickable = true,
-                    onClick = {
-                        if (state.isKeyStorageEnabled) {
-                            onConfirmRecoveryKeyClick()
-                        } else {
-                            state.eventSink.invoke(SecureBackupRootEvents.DisplayKeyStorageDisabledError)
-                        }
-                    },
-                )
         }
     }
-
     AsyncActionView(
         async = state.enableAction,
         progressDialog = { },

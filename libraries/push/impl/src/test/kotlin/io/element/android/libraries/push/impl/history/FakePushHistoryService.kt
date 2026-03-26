@@ -11,9 +11,7 @@ package io.element.android.libraries.push.impl.history
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
-import io.element.android.libraries.push.impl.db.PushRequest
 import io.element.android.tests.testutils.lambda.lambdaError
-import kotlin.time.Instant
 
 class FakePushHistoryService(
     private val onPushReceivedResult: (
@@ -24,13 +22,9 @@ class FakePushHistoryService(
         Boolean,
         Boolean,
         String?
-    ) -> Unit = { _, _, _, _, _, _, _ -> lambdaError() },
-    private val enqueuePushRequest: (PushRequest) -> Result<Unit> = { lambdaError() },
-    private val replacePushRequests: (List<PushRequest>) -> Result<Unit> = { lambdaError() },
-    private val getPendingPushRequests: (SessionId, Instant?) -> Result<List<PushRequest>> = { _, _ -> lambdaError() },
-    private val removeOldPushRequests: (SessionId) -> Result<Unit> = { lambdaError() },
+    ) -> Unit = { _, _, _, _, _, _, _ -> lambdaError() }
 ) : PushHistoryService {
-    override fun onPushResult(
+    override fun onPushReceived(
         providerInfo: String,
         eventId: EventId?,
         roomId: RoomId?,
@@ -48,21 +42,5 @@ class FakePushHistoryService(
             includeDeviceState,
             comment
         )
-    }
-
-    override suspend fun insertOrUpdatePushRequest(pushRequest: PushRequest): Result<Unit> {
-        return enqueuePushRequest.invoke(pushRequest)
-    }
-
-    override suspend fun insertOrUpdatePushRequests(pushRequests: List<PushRequest>): Result<Unit> {
-        return replacePushRequests.invoke(pushRequests)
-    }
-
-    override suspend fun getPendingPushRequests(sessionId: SessionId, since: Instant?): Result<List<PushRequest>> {
-        return getPendingPushRequests.invoke(sessionId, since)
-    }
-
-    override suspend fun removeOldPushRequests(sessionId: SessionId): Result<Unit> {
-        return removeOldPushRequests.invoke(sessionId)
     }
 }

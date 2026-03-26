@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
@@ -36,6 +37,14 @@ import io.element.android.libraries.designsystem.theme.components.IconButton
 import io.element.android.libraries.designsystem.theme.components.IconColorButton
 import io.element.android.libraries.designsystem.theme.components.IconColorButtonStyle
 
+/**
+ * 禁用状态的消息编辑器视图
+ *
+ * 当用户没有权限发送消息时显示的占位符视图。该视图显示一个禁用的文本输入框和禁用
+ * 的发送按钮，提示用户当前无法发送消息。
+ *
+ * @param modifier 修饰符
+ */
 @Composable
 internal fun DisabledComposerView(
     modifier: Modifier = Modifier,
@@ -60,7 +69,7 @@ internal fun DisabledComposerView(
             modifier = Modifier
                 .clip(RoundedCornerShape(21.dp))
                 .border(0.5.dp, borderColor, RoundedCornerShape(21.dp))
-                .background(color = bgColor)
+                .background(color = Color.Transparent)
                 .size(42.dp)
                 .requiredHeightIn(min = 42.dp)
                 .weight(1f),

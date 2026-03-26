@@ -17,5 +17,5 @@ android {
 dependencies {
     implementation(libs.coroutines.core)
     implementation(projects.services.apperror.api)
-    implementation(projects.tests.testutils)
+    
 }

@@ -12,10 +12,6 @@ import android.content.Context
 import android.os.Build
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import chat.schildi.lib.preferences.ScAppStateStore
-import chat.schildi.lib.preferences.ScPreferencesStore
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.collectScPrefs
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Provider
@@ -63,17 +59,31 @@ import java.io.File
 import java.io.IOException
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
-import java.net.URL
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import java.util.Locale
 
 /**
- * BugReporter creates and sends the bug reports.
+ * 默认问题报告器
+ *
+ * BugReporter 接口的实现，负责创建和发送问题报告。
+ * 收集设备日志、崩溃信息、截图等数据，并上传到服务器。
+ *
+ * @property context 应用上下文
+ * @property appCoroutineScope 应用协程作用域
+ * @property screenshotHolder 截图持有者
+ * @property crashDataStore 崩溃数据存储
+ * @property coroutineDispatchers 协程调度器
+ * @property okHttpClient OkHttp 客户端提供者
+ * @property userAgentProvider 用户代理提供者
+ * @property sessionStore 会话存储
+ * @property buildMeta 构建元数据
+ * @property bugReporterUrlProvider 问题报告URL提供者
+ * @property sdkMetadata SDK 元数据
+ * @property matrixClientProvider Matrix 客户端提供者
+ * @property tracingService 追踪服务
  */
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -89,22 +99,42 @@ class DefaultBugReporter(
     private val sessionStore: SessionStore,
     private val buildMeta: BuildMeta,
     private val bugReporterUrlProvider: BugReporterUrlProvider,
-    private val scAppStateStore: ScAppStateStore,
-    private val scPreferencesStore: ScPreferencesStore,
     private val sdkMetadata: SdkMetadata,
     private val matrixClientProvider: MatrixClientProvider,
     private val tracingService: TracingService,
 ) : BugReporter {
     companion object {
-        // filenames
+        /**
+         * 日志文件名
+         */
         private const val LOG_CAT_FILENAME = "logcat.log"
+
+        /**
+         * 日志目录名称
+         */
         private const val LOG_DIRECTORY_NAME = "logs"
     }
 
+    /**
+     * Logcat 命令
+     *
+     * 用于获取设备日志的命令参数。
+     */
     private val logcatCommandDebug = arrayOf("logcat", "-d", "-v", "threadtime", "*:*")
+
+    /**
+     * 当前追踪日志级别
+     */
     private var currentTracingLogLevel: String? = null
 
+    /**
+     * 基础日志目录
+     */
     private val baseLogDirectory = File(context.cacheDir, LOG_DIRECTORY_NAME)
+
+    /**
+     * 当前日志目录
+     */
     private var currentLogDirectory: File = baseLogDirectory
 
     init {
@@ -156,7 +186,7 @@ class DefaultBugReporter(
                     append(problemDescription)
                     if (crashCallStack.isNotEmpty() && withCrashLogs) {
                         append("\n\n\n\n--------------------------------- crash call stack ---------------------------------\n")
-                        append(crashCallStack.take(5000))
+                        append(crashCallStack)
                     }
                 }
                 val gzippedFiles = mutableListOf<File>()
@@ -197,7 +227,7 @@ class DefaultBugReporter(
                     // Nightly versions have a custom version name suffix that we should remove for the bug report
                     .addFormDataPart("Version", buildMeta.versionName.replace("-nightly", ""))
                     .addFormDataPart("label", buildMeta.versionName)
-                    //.addFormDataPart("label", buildMeta.flavorDescription)
+                    .addFormDataPart("label", buildMeta.flavorDescription)
                     .addFormDataPart("branch_name", buildMeta.gitBranchName)
 
                 userId?.let {
@@ -225,48 +255,6 @@ class DefaultBugReporter(
                         }
                     }
                 }
-
-                // SC additions
-                val reportTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss ZZZ", Locale.US).format(Date())
-                /*
-                val enabledDebugSettings = DbgUtil.ALL_PREFS.filter { DbgUtil.isDbgEnabled(it) }
-                builder.addFormDataPart("enabledDebugSettings", enabledDebugSettings.joinToString().ensureNonEmpty())
-                    .addFormDataPart("experimentalSettingsEnabled", vectorPreferences.getEnabledExperimentalSettings().joinToString().ensureNonEmpty())
-                    .addFormDataPart("experimentalSettingsDisabled", vectorPreferences.getDisabledExperimentalSettings().joinToString().ensureNonEmpty())
-                 */
-                builder
-                    .addFormDataPart("reportTime", reportTime)
-                    .addFormDataPart("packageName", buildMeta.applicationId)
-                    .addFormDataPart("is_debug_build", buildMeta.isDebuggable.toString())
-                if (buildMeta.isDebuggable) {
-                    builder.addFormDataPart("label", "debug_build")
-                }
-                if (canContact) {
-                    builder.addFormDataPart("label", "can contact")
-                }
-                builder.addFormDataPart("label", "hs:${userId?.value?.substringAfter(":")}")
-                builder.addFormDataPart("label", "mxid:${userId?.value}")
-                builder.addFormDataPart("up_last_push", scAppStateStore.formatLastPushTs())
-                builder.addFormDataPart("up_provider", scAppStateStore.lastPushProvider())
-                builder.addFormDataPart("up_gateway", scAppStateStore.lastPushGateway())
-                builder.addFormDataPart("up_distributor", scAppStateStore.lastPushDistributor().toString())
-                val gatewayHost = tryOrNull { URL(scAppStateStore.lastPushGateway()).host }
-                builder.addFormDataPart("label", "up:gateway:$gatewayHost")
-                builder.addFormDataPart("label", "up:distributor:${scAppStateStore.lastPushDistributorName()}")
-                // Device characteristics
-                context.resources.displayMetrics.apply {
-                    builder.addFormDataPart("device_density", density.toString())
-                        .addFormDataPart("device_width_px", widthPixels.toString())
-                        .addFormDataPart("device_height_px", heightPixels.toString())
-                        .addFormDataPart("device_width_dp", (widthPixels/density).toString())
-                        .addFormDataPart("device_height_dp", (heightPixels/density).toString())
-                }
-                // Non-default SC settings
-                val changedScSettings = ScPrefs.scTweaks.prefs.collectScPrefs {
-                    scPreferencesStore.getCachedOrDefaultValue(it) != it.defaultValue
-                }
-                val scPrefsString = changedScSettings.joinToString(separator = ",") { "${it.sKey}=${scPreferencesStore.getCachedOrDefaultValue(it)}" }
-                builder.addFormDataPart("sc_preferences", scPrefsString)
 
                 if (withDevicesLogs) {
                     val files = getLogFiles().sortedByDescending { it.lastModified() }
@@ -441,6 +429,14 @@ class DefaultBugReporter(
         }
     }
 
+    /**
+     * 设置当前日志目录
+     *
+     * 根据子文件夹名称设置当前的日志目录。
+     * 企业版会根据用户域名为每个用户创建单独的日志目录。
+     *
+     * @param subfolderName 子文件夹名称（用户域名）
+     */
     private fun setCurrentLogDirectory(subfolderName: String?) {
         currentLogDirectory = if (subfolderName == null) {
             baseLogDirectory
@@ -449,12 +445,27 @@ class DefaultBugReporter(
         }
     }
 
+    /**
+     * 删除所有日志文件
+     *
+     * 根据谓词条件删除日志目录中的文件。
+     *
+     * @param predicate 用于过滤要删除的文件的谓词函数
+     */
     suspend fun deleteAllFiles(predicate: (File) -> Boolean) {
         withContext(coroutineDispatchers.io) {
             deleteAllFilesRecursive(baseLogDirectory, predicate)
         }
     }
 
+    /**
+     * 递归删除文件
+     *
+     * 递归遍历目录并删除符合条件的文件。
+     *
+     * @param directory 目录
+     * @param predicate 谓词函数
+     */
     private fun deleteAllFilesRecursive(
         directory: File,
         predicate: (File) -> Boolean,
@@ -540,14 +551,5 @@ class DefaultBugReporter(
 
     private fun countLogLines(file: File): Int {
         return file.reader().useLines { it.count() }
-    }
-}
-
-fun String?.ensureNonEmpty(fallback: String = "∅"): String {
-    return if (isNullOrEmpty()) {
-        // GitHub markdown format doesn't like empty code blocks
-        fallback
-    } else {
-        this
     }
 }

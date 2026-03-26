@@ -20,6 +20,11 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * PIN 解锁节点
+ *
+ * 显示 PIN 解锁界面的节点。
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class PinUnlockNode(
@@ -27,7 +32,11 @@ class PinUnlockNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: PinUnlockPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 回调接口
+     */
     interface Callback : Plugin {
+        /** 解锁成功时调用 */
         fun onUnlock()
     }
 

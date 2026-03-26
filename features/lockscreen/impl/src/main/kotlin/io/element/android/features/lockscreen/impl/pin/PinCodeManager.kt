@@ -11,68 +11,79 @@ package io.element.android.features.lockscreen.impl.pin
 import kotlinx.coroutines.flow.Flow
 
 /**
- * This interface is the main interface to manage the pin code.
- * Implementation should take care of encrypting the pin code and storing it.
+ * PIN 码管理器接口
+ *
+ * 管理 PIN 码的核心接口，实现类负责加密存储 PIN 码。
  */
 interface PinCodeManager {
     /**
-     * Callbacks for pin code management events.
+     * PIN 码管理事件回调接口
      */
     interface Callback {
         /**
-         * Called when the pin code is verified.
+         * PIN 码验证成功时调用
          */
         fun onPinCodeVerified()
 
         /**
-         * Called when the pin code is created.
+         * PIN 码创建成功时调用
          */
         fun onPinCodeCreated()
 
         /**
-         * Called when the pin code is removed.
+         * PIN 码删除时调用
          */
         fun onPinCodeRemoved()
     }
 
     /**
-     * Register a callback to be notified of pin code management events.
+     * 注册回调以接收 PIN 码管理事件
      */
     fun addCallback(callback: Callback)
 
     /**
-     * Unregister callback to be notified of pin code management events.
+     * 取消注册回调
      */
     fun removeCallback(callback: Callback)
 
     /**
-     * @return true if a pin code is available.
+     * 检查是否存在 PIN 码
+     *
+     * @return true 如果存在 PIN 码
      */
     fun hasPinCode(): Flow<Boolean>
 
     /**
-     * @return the size of the saved pin code.
+     * 获取已保存 PIN 码的长度
+     *
+     * @return PIN 码长度
      */
     suspend fun getPinCodeSize(): Int
 
     /**
-     * Creates a new encrypted pin code.
-     * @param pinCode the clear pin code to create
+     * 创建新的加密 PIN 码
+     *
+     * @param pinCode 明文 PIN 码
      */
     suspend fun createPinCode(pinCode: String)
 
     /**
-     * @return true if the pin code is correct.
+     * 验证 PIN 码
+     *
+     * @param pinCode 要验证的 PIN 码
+     * @return true 如果 PIN 码正确
      */
     suspend fun verifyPinCode(pinCode: String): Boolean
 
     /**
-     * Deletes the previously created pin code.
+     * 删除之前创建的 PIN 码
      */
     suspend fun deletePinCode()
 
     /**
-     * @return the number of remaining attempts before the pin code is blocked.
+     * 获取剩余尝试次数
+     *
+     * @return 锁定前的剩余尝试次数
      */
     suspend fun getRemainingPinCodeAttemptsNumber(): Int
 }

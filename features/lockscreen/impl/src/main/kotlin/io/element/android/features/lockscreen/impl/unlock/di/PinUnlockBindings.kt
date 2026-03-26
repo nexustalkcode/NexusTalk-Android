@@ -12,7 +12,17 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
 import io.element.android.features.lockscreen.impl.unlock.activity.PinUnlockActivity
 
+/**
+ * PIN 解锁依赖注入绑定接口
+ *
+ * 提供 PinUnlockActivity 的依赖注入绑定。
+ */
 @ContributesTo(AppScope::class)
 interface PinUnlockBindings {
+    /**
+     * 注入 Activity 依赖
+     *
+     * @param activity 要注入的 Activity
+     */
     fun inject(activity: PinUnlockActivity)
 }

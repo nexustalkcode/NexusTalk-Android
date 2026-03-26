@@ -8,6 +8,9 @@
 
 package io.element.android.features.roomdetails.impl.members.details
 
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.moleculeFlow
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.roomdetails.impl.aJoinedRoom
 import io.element.android.features.roomdetails.impl.members.aRoomMember
@@ -86,7 +89,9 @@ class RoomMemberDetailsPresenterTest {
         val presenter = createRoomMemberDetailsPresenter(
             room = room,
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.userName).isEqualTo("Alice")
             assertThat(initialState.avatarUrl).isEqualTo("Alice Avatar url")
@@ -106,7 +111,9 @@ class RoomMemberDetailsPresenterTest {
         val presenter = createRoomMemberDetailsPresenter(
             room = room,
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.userName).isEqualTo("Alice")
             assertThat(initialState.avatarUrl).isEqualTo("Profile avatar url")
@@ -123,7 +130,9 @@ class RoomMemberDetailsPresenterTest {
         val presenter = createRoomMemberDetailsPresenter(
             room = room,
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.userName).isEqualTo("Profile user name")
             assertThat(initialState.avatarUrl).isEqualTo("Profile avatar url")
@@ -152,7 +161,9 @@ class RoomMemberDetailsPresenterTest {
                 }
             },
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             val initialState = awaitItem()
             assertThat(initialState.userName).isNull()
             assertThat(initialState.avatarUrl).isNull()

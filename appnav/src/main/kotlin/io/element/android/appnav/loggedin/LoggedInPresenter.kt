@@ -18,8 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
 import dev.zacsweers.metro.Inject
 import im.vector.app.features.analytics.plan.CryptoSessionStateChange
 import im.vector.app.features.analytics.plan.UserProperties
@@ -130,7 +128,7 @@ class LoggedInPresenter(
         }
 
         return LoggedInState(
-            showSyncSpinner = showSyncSpinner && ScPrefs.SHOW_SYNCING_INDICATOR.value(),
+            showSyncSpinner = showSyncSpinner,
             pusherRegistrationState = pusherRegistrationState.value,
             ignoreRegistrationError = ignoreRegistrationError,
             forceNativeSlidingSyncMigration = forceNativeSlidingSyncMigration,
@@ -169,6 +167,6 @@ class LoggedInPresenter(
 
     private fun CoroutineScope.preloadAccountManagementUrl() = launch {
         matrixClient.getAccountManagementUrl(AccountManagementAction.Profile)
-        matrixClient.getAccountManagementUrl(AccountManagementAction.DevicesList)
+        matrixClient.getAccountManagementUrl(AccountManagementAction.SessionsList)
     }
 }

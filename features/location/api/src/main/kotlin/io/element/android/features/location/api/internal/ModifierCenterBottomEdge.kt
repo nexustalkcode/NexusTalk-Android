@@ -13,8 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 
 /**
- * Horizontally aligns the content to the center of the space.
- * Vertically aligns the bottom edge of the content to the center of the space.
+ * 将内容水平居中对齐，并将内容底部边缘垂直对齐到中心
+ *
+ * 该修饰符用于将内容在水平方向上居中，并在垂直方向上将内容的底部边缘对齐到容器的中心位置。
+ * 常用于地图上的图钉标记定位，使其尖端对准地图上的特定位置。
+ *
+ * @param scope 盒子作用域，用于获取容器尺寸信息
+ * @return Modifier 修改后的修饰符
  */
 fun Modifier.centerBottomEdge(scope: BoxScope): Modifier = this.then(
     with(scope) {

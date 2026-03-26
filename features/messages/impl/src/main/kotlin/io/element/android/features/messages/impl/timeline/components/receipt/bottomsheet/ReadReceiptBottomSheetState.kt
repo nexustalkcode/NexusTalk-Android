@@ -10,7 +10,13 @@ package io.element.android.features.messages.impl.timeline.components.receipt.bo
 
 import io.element.android.features.messages.impl.timeline.model.TimelineItem
 
+/**
+ * 已读回执底部表单状态数据类
+ *
+ * @property selectedEvent 选中的事件
+ * @property eventSink 事件处理函数
+ */
 data class ReadReceiptBottomSheetState(
     val selectedEvent: TimelineItem.Event?,
-    val eventSink: (ReadReceiptBottomSheetEvent) -> Unit,
+    val eventSink: (ReadReceiptBottomSheetEvents) -> Unit,
 )

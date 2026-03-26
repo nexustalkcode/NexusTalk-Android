@@ -44,6 +44,18 @@ import io.element.android.libraries.textcomposer.mentions.ResolvedSuggestion
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 建议选择器视图
+ *
+ * 显示消息编辑器中的@提及、房间别名等建议列表，允许用户从中选择并插入到消息中。
+ *
+ * @param roomId 当前房间ID
+ * @param roomName 当前房间名称
+ * @param roomAvatarData 当前房间头像数据
+ * @param suggestions 建议列表
+ * @param onSelectSuggestion 选择建议的回调函数
+ * @param modifier 修饰符
+ */
 @Composable
 fun SuggestionsPickerView(
     roomId: RoomId,
@@ -81,6 +93,18 @@ fun SuggestionsPickerView(
     }
 }
 
+/**
+ * 建议项视图
+ *
+ * 显示单个建议项的UI，包括头像、标题和副标题。支持显示@房间提及、房间成员和房间别名三种类型。
+ *
+ * @param suggestion 建议内容
+ * @param roomId 当前房间ID
+ * @param roomName 当前房间名称（用于@room提及的头像）
+ * @param roomAvatar 房间头像数据（用于@room提及的头像）
+ * @param onSelectSuggestion 选择建议的回调函数
+ * @param modifier 修饰符
+ */
 @Composable
 private fun SuggestionItemView(
     suggestion: ResolvedSuggestion,

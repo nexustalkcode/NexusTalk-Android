@@ -41,10 +41,7 @@ import io.element.android.libraries.matrix.impl.timeline.postprocessor.LoadingIn
 import io.element.android.libraries.matrix.impl.timeline.postprocessor.RoomBeginningPostProcessor
 import io.element.android.libraries.matrix.impl.timeline.postprocessor.TypingNotificationPostProcessor
 import io.element.android.libraries.matrix.impl.timeline.reply.InReplyToMapper
-import io.element.android.libraries.matrix.impl.util.EmoteEventContent
 import io.element.android.libraries.matrix.impl.util.MessageEventContent
-import io.element.android.libraries.matrix.impl.util.NoticeEventContent
-import io.element.android.libraries.matrix.impl.util.ScMessageEventContent
 import io.element.android.services.toolbox.api.systemclock.SystemClock
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -68,14 +65,13 @@ import kotlinx.coroutines.withContext
 import org.matrix.rustcomponents.sdk.EditedContent
 import org.matrix.rustcomponents.sdk.FormattedBody
 import org.matrix.rustcomponents.sdk.MessageFormat
-import org.matrix.rustcomponents.sdk.NoticeMessageContent
 import org.matrix.rustcomponents.sdk.PollData
 import org.matrix.rustcomponents.sdk.SendAttachmentJoinHandle
 import org.matrix.rustcomponents.sdk.UploadParameters
 import org.matrix.rustcomponents.sdk.UploadSource
 import org.matrix.rustcomponents.sdk.use
 import timber.log.Timber
-import uniffi.matrix_sdk.PaginationStatus
+import uniffi.matrix_sdk.RoomPaginationStatus
 import java.io.File
 import org.matrix.rustcomponents.sdk.EventOrTransactionId as RustEventOrTransactionId
 import org.matrix.rustcomponents.sdk.Timeline as InnerTimeline
@@ -151,8 +147,8 @@ class RustTimeline(
             .onEach { backPaginationStatus ->
                 updatePaginationStatus(Timeline.PaginationDirection.BACKWARDS) {
                     when (backPaginationStatus) {
-                        is PaginationStatus.Idle -> it.copy(isPaginating = false, hasMoreToLoad = !backPaginationStatus.hitTimelineStart)
-                        is PaginationStatus.Paginating -> it.copy(isPaginating = true, hasMoreToLoad = true)
+                        is RoomPaginationStatus.Idle -> it.copy(isPaginating = false, hasMoreToLoad = !backPaginationStatus.hitTimelineStart)
+                        is RoomPaginationStatus.Paginating -> it.copy(isPaginating = true, hasMoreToLoad = true)
                     }
                 }
             }
@@ -274,48 +270,11 @@ class RustTimeline(
     override suspend fun sendMessage(
         body: String,
         htmlBody: String?,
-        plaintext: Boolean,  // SC
         intentionalMentions: List<IntentionalMention>,
     ): Result<Unit> = withContext(dispatcher) {
-        ScMessageEventContent.from(body, htmlBody, plaintext, intentionalMentions).use { content ->
+        MessageEventContent.from(body, htmlBody, intentionalMentions).use { content ->
             runCatchingExceptions<Unit> {
                 inner.send(content)
-            }
-        }
-    }
-
-    override suspend fun sendNotice( // SC
-        body: String,
-        htmlBody: String?,
-        plaintext: Boolean,  // SC
-        intentionalMentions: List<IntentionalMention>,
-        inReplyToEventId: EventId?
-    ): Result<Unit> = withContext(dispatcher) {
-        NoticeEventContent.from(body, htmlBody, plaintext, intentionalMentions).use { content ->
-            runCatchingExceptions<Unit> {
-                if (inReplyToEventId == null) {
-                    inner.send(content)
-                } else {
-                    inner.sendReply(content, inReplyToEventId.value)
-                }
-            }
-        }
-    }
-
-    override suspend fun sendEmote( // SC
-        body: String,
-        htmlBody: String?,
-        plaintext: Boolean,
-        intentionalMentions: List<IntentionalMention>,
-        inReplyToEventId: EventId?
-    ): Result<Unit> = withContext(dispatcher) {
-        EmoteEventContent.from(body, htmlBody, plaintext, intentionalMentions).use { content ->
-            runCatchingExceptions<Unit> {
-                if (inReplyToEventId == null) {
-                    inner.send(content)
-                } else {
-                    inner.sendReply(content, inReplyToEventId.value)
-                }
             }
         }
     }
@@ -334,14 +293,12 @@ class RustTimeline(
         body: String,
         htmlBody: String?,
         intentionalMentions: List<IntentionalMention>,
-        plaintext: Boolean,  // SC
     ): Result<Unit> = withContext(dispatcher) {
         runCatchingExceptions {
             val editedContent = EditedContent.RoomMessage(
-                content = ScMessageEventContent.from(
+                content = MessageEventContent.from(
                     body = body,
                     htmlBody = htmlBody,
-                    plaintext = plaintext, // SC
                     intentionalMentions = intentionalMentions
                 ),
             )
@@ -356,7 +313,6 @@ class RustTimeline(
         eventOrTransactionId: EventOrTransactionId,
         caption: String?,
         formattedCaption: String?,
-        plaintext: Boolean,  // SC
     ): Result<Unit> = withContext(dispatcher) {
         runCatchingExceptions<Unit> {
             val editedContent = EditedContent.MediaCaption(
@@ -379,12 +335,11 @@ class RustTimeline(
         repliedToEventId: EventId,
         body: String,
         htmlBody: String?,
-        plaintext: Boolean,  // SC
         intentionalMentions: List<IntentionalMention>,
         fromNotification: Boolean,
     ): Result<Unit> = withContext(dispatcher) {
         runCatchingExceptions {
-            val msg = ScMessageEventContent.from(body, htmlBody, plaintext, intentionalMentions)
+            val msg = MessageEventContent.from(body, htmlBody, intentionalMentions)
             inner.sendReply(
                 msg = msg,
                 eventId = repliedToEventId.value,
@@ -398,7 +353,6 @@ class RustTimeline(
         imageInfo: ImageInfo,
         caption: String?,
         formattedCaption: String?,
-        plaintext: Boolean,  // SC
         inReplyToEventId: EventId?,
     ): Result<MediaUploadHandler> {
         Timber.d("Sending image ${file.path.hash()}")
@@ -425,7 +379,6 @@ class RustTimeline(
         videoInfo: VideoInfo,
         caption: String?,
         formattedCaption: String?,
-        plaintext: Boolean,  // SC
         inReplyToEventId: EventId?,
     ): Result<MediaUploadHandler> {
         Timber.d("Sending video ${file.path.hash()}")
@@ -451,7 +404,6 @@ class RustTimeline(
         audioInfo: AudioInfo,
         caption: String?,
         formattedCaption: String?,
-        plaintext: Boolean,  // SC
         inReplyToEventId: EventId?,
     ): Result<MediaUploadHandler> {
         Timber.d("Sending audio ${file.path.hash()}")
@@ -476,7 +428,6 @@ class RustTimeline(
         fileInfo: FileInfo,
         caption: String?,
         formattedCaption: String?,
-        plaintext: Boolean,  // SC
         inReplyToEventId: EventId?,
     ): Result<MediaUploadHandler> {
         Timber.d("Sending file ${file.path.hash()}")
@@ -509,7 +460,7 @@ class RustTimeline(
         runCatchingExceptions {
             roomContentForwarder.forward(fromTimeline = inner, eventId = eventId, toRoomIds = roomIds)
         }.onFailure {
-            Timber.e(it, "Failed to forward event")
+            Timber.e(it)
         }
     }
 
@@ -623,26 +574,6 @@ class RustTimeline(
             MediaUploadHandlerImpl(files, handle())
         }
     }
-
-    // SC start
-    override suspend fun forceSendReadReceipt(
-        eventId: EventId,
-        receiptType: ReceiptType,
-    ) = withContext(dispatcher) {
-        runCatching {
-            inner.forceSendReadReceipt(
-                receiptType = receiptType.toRustReceiptType(),
-                eventId = eventId.value,
-            )
-        }
-    }
-    override suspend fun fullyReadEventId(): String? {
-        return runCatching { inner.fullyReadEventId() }.getOrNull()
-    }
-    override suspend fun latestUserReceiptEventId(userId: String): String? {
-        return runCatching { inner.latestUserReadReceiptEventId(userId) }.getOrNull()
-    }
-    // SC end
 
     override suspend fun loadReplyDetails(eventId: EventId): InReplyTo = withContext(dispatcher) {
         val timelineItem = _timelineItems.first().firstOrNull { timelineItem ->

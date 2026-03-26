@@ -25,10 +25,23 @@ import io.element.android.libraries.architecture.runUpdatingState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 敲门请求列表 Presenter
+ *
+ * 负责处理敲门请求列表界面的业务逻辑和状态管理。
+ * 管理敲门请求的接受、拒绝、封禁和批量操作。
+ *
+ * @property knockRequestsService 敲门请求服务
+ */
 @Inject
 class KnockRequestsListPresenter(
     private val knockRequestsService: KnockRequestsService,
 ) : Presenter<KnockRequestsListState> {
+    /**
+     * 生成界面状态
+     *
+     * @return KnockRequestsListState 敲门请求列表状态
+     */
     @Composable
     override fun present(): KnockRequestsListState {
         val asyncAction = remember { mutableStateOf<AsyncAction<Unit>>(AsyncAction.Uninitialized) }
@@ -39,6 +52,11 @@ class KnockRequestsListPresenter(
 
         val coroutineScope = rememberCoroutineScope()
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 敲门请求列表事件
+         */
         fun handleEvent(event: KnockRequestsListEvents) {
             when (event) {
                 KnockRequestsListEvents.AcceptAll -> {
@@ -78,6 +96,13 @@ class KnockRequestsListPresenter(
         )
     }
 
+    /**
+     * 执行敲门请求操作
+     *
+     * @param currentAction 当前操作
+     * @param asyncAction 异步操作状态
+     * @param isActionConfirmed 操作是否已确认
+     */
     private fun CoroutineScope.executeAction(
         currentAction: KnockRequestsAction,
         asyncAction: MutableState<AsyncAction<Unit>>,

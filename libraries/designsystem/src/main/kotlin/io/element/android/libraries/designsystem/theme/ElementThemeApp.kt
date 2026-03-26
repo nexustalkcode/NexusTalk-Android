@@ -16,7 +16,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import chat.schildi.theme.ScTheme
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.theme.Theme
 import io.element.android.compound.theme.isDark
@@ -24,12 +23,10 @@ import io.element.android.compound.theme.mapToTheme
 import io.element.android.compound.tokens.generated.SemanticColors
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.core.meta.BuildType
-import io.element.android.libraries.core.meta.ScBuildMeta
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
 
 val LocalBuildMeta = staticCompositionLocalOf {
     BuildMeta(
-        scBuildMeta = ScBuildMeta("1.2.3", "ex0", null),
         isDebuggable = true,
         buildType = BuildType.DEBUG,
         applicationName = "MyApp",
@@ -78,12 +75,11 @@ fun ElementThemeApp(
     CompositionLocalProvider(
         LocalBuildMeta provides buildMeta,
     ) {
-        ScTheme(
+        ElementTheme(
             darkTheme = theme.isDark(),
             content = content,
-            //compoundLight = compoundLight, // SC: eh don't care about enterprise colors
-            //compoundDark = compoundDark, // SC commented out
+            compoundLight = compoundLight,
+            compoundDark = compoundDark,
         )
     }
 }
-

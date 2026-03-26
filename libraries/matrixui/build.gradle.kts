@@ -39,7 +39,6 @@ dependencies {
     implementation(libs.matrix.richtexteditor)
     implementation(projects.libraries.previewutils)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.dateformatter.test)
     testImplementation(projects.libraries.sessionStorage.test)

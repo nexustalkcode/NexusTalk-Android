@@ -1,3 +1,0 @@
-- Fix possible crash when sending emoji reactions
-- Adjust invite screen for SC theme
-- Add options to change message bubble colors

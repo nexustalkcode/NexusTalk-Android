@@ -21,6 +21,18 @@ import io.element.android.annotations.ContributesNode
 import io.element.android.features.login.impl.util.openLearnMorePage
 import io.element.android.libraries.architecture.callback
 
+/**
+ * 更改账户提供商节点
+ *
+ * 允许用户更改所选账户提供商（homeserver）的页面节点。
+ * 负责管理页面的生命周期和视图渲染。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenter 业务逻辑 presenter
+ * @see ChangeAccountProviderView 页面视图
+ * @see ChangeAccountProviderPresenter 业务逻辑处理
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class ChangeAccountProviderNode(
@@ -28,8 +40,13 @@ class ChangeAccountProviderNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: ChangeAccountProviderPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 更改账户提供商回调接口
+     */
     interface Callback : Plugin {
+        /** 完成时的回调 */
         fun onDone()
+        /** 导航到搜索账户提供商页面 */
         fun navigateToSearchAccountProvider()
     }
 

@@ -12,7 +12,6 @@ import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import chat.schildi.lib.preferences.ScPrefScreen
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import com.bumble.appyx.core.plugin.Plugin
@@ -45,10 +44,10 @@ class PreferencesRootNode(
         fun navigateToNotificationSettings()
         fun navigateToLockScreenSettings()
         fun navigateToAdvancedSettings()
-        fun navigateToScTweaks(scPrefScreen: ScPrefScreen?) // SC
         fun navigateToLabs()
         fun navigateToLinkNewDevice()
         fun navigateToUserProfile(matrixUser: MatrixUser)
+        fun navigateToUserQrCode(matrixUser: MatrixUser)
         fun navigateToBlockedUsers()
         fun startSignOutFlow()
         fun startAccountDeactivationFlow()
@@ -87,12 +86,12 @@ class PreferencesRootNode(
             onOpenDeveloperSettings = callback::navigateToDeveloperSettings,
             onOpenAdvancedSettings = callback::navigateToAdvancedSettings,
             onOpenLabs = callback::navigateToLabs,
-            navigateToScTweaks = callback::navigateToScTweaks,
             onLinkNewDeviceClick = callback::navigateToLinkNewDevice,
             onManageAccountClick = { onManageAccountClick(activity, it, isDark) },
             onOpenNotificationSettings = callback::navigateToNotificationSettings,
             onOpenLockScreenSettings = callback::navigateToLockScreenSettings,
             onOpenUserProfile = callback::navigateToUserProfile,
+            onOpenUserQrCode = callback::navigateToUserQrCode,
             onOpenBlockedUsers = callback::navigateToBlockedUsers,
             onSignOutClick = {
                 if (state.directLogoutState.canDoDirectSignOut) {

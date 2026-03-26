@@ -13,6 +13,14 @@ import dev.zacsweers.metro.Inject
 import io.element.android.features.analytics.api.preferences.AnalyticsPreferencesState
 import io.element.android.libraries.architecture.Presenter
 
+/**
+ * 分析设置页面 Presenter
+ *
+ * 负责提供分析设置页面所需的数据，通过委托给分析首选项 Presenter 来获取状态。
+ *
+ * @property analyticsPreferencesPresenter 分析首选项 Presenter
+ * @see AnalyticsSettingsState 分析设置状态
+ */
 @Inject
 class AnalyticsSettingsPresenter(
     private val analyticsPreferencesPresenter: Presenter<AnalyticsPreferencesState>,

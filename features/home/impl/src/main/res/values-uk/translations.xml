@@ -13,6 +13,7 @@
   <string name="full_screen_intent_banner_message">"Щоб ніколи не пропустити важливий виклик, змініть налаштування, щоб увімкнути повноекранні сповіщення, коли телефон заблоковано."</string>
   <string name="full_screen_intent_banner_title">"Покращуйте досвід дзвінків"</string>
   <string name="screen_home_tab_chats">"Бесіди"</string>
+  <string name="screen_home_tab_community">"Спільнота"</string>
   <string name="screen_home_tab_spaces">"Простори"</string>
   <string name="screen_invites_decline_chat_message">"Ви впевнені, що хочете відхилити запрошення приєднатися до %1$s?"</string>
   <string name="screen_invites_decline_chat_title">"Відхилити запрошення"</string>
@@ -50,4 +51,9 @@
   <string name="screen_roomlist_tombstoned_room_description">"Цю кімнату оновлено"</string>
   <string name="session_verification_banner_message">"Схоже, ви використовуєте новий пристрій. Щоб отримати доступ до зашифрованих повідомлень, підтвердьте особу за допомогою іншого пристрою."</string>
   <string name="session_verification_banner_title">"Підтвердьте, що це ви"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Спільноти об’єднують учасників у тематичні групи. Усі спільноти, до яких ви приєднаєтеся, відображатимуться тут."</string>
+  <string name="screen_community_list_header_count">"Спільнота %1$d"</string>
+  <string name="screen_community_list_header_description">"Спільноти, які ви створюєте або до яких приєднуєтеся"</string>
+  <string name="screen_roomlist_empty_message_new">"Це місце буде належати лише вам і вашим найближчим людям"</string>
 </resources>

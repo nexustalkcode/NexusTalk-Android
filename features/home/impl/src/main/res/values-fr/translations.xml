@@ -15,6 +15,7 @@
   <string name="full_screen_intent_banner_message">"Afin de ne jamais manquer un appel important, veuillez modifier vos paramètres pour autoriser les notifications en plein écran lorsque votre appareil est verrouillé."</string>
   <string name="full_screen_intent_banner_title">"Améliorez votre expérience d’appel"</string>
   <string name="screen_home_tab_chats">"Conversations"</string>
+  <string name="screen_home_tab_community">"Communauté"</string>
   <string name="screen_home_tab_spaces">"Espaces"</string>
   <string name="screen_invites_decline_chat_message">"Êtes-vous sûr de vouloir décliner l’invitation à rejoindre %1$s ?"</string>
   <string name="screen_invites_decline_chat_title">"Refuser l’invitation"</string>
@@ -53,4 +54,9 @@ Vous n’avez plus de messages non-lus !"</string>
   <string name="screen_roomlist_your_spaces">"Vos espaces"</string>
   <string name="session_verification_banner_message">"Il semblerait que vous utilisiez un nouvel appareil. Vérifiez la session avec un autre de vos appareils pour accéder à vos messages chiffrés."</string>
   <string name="session_verification_banner_title">"Vérifier que c’est bien vous"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Les communautés rassemblent les membres dans des groupes thématiques. Toutes les communautés que vous rejoignez apparaîtront ici."</string>
+  <string name="screen_community_list_header_count">"Communauté %1$d"</string>
+  <string name="screen_community_list_header_description">"Communautés que vous créez ou rejoignez"</string>
+  <string name="screen_roomlist_empty_message_new">"Ce lieu n'appartiendra qu'à vous et à vos proches."</string>
 </resources>

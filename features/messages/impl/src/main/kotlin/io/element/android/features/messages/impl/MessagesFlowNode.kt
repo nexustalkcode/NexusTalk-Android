@@ -95,6 +95,35 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * 消息流程节点
+ *
+ * Appyx FlowNode，管理消息页面的整体导航流程。
+ * 包含消息列表、媒体查看器、附件预览、位置查看、事件调试、转发、举报、投票、固定消息、线程等多种子页面。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property roomListService 房间列表服务
+ * @property sessionId 会话 ID
+ * @property sendLocationEntryPoint 发送位置入口点
+ * @property showLocationEntryPoint 查看位置入口点
+ * @property createPollEntryPoint 创建投票入口点
+ * @property elementCallEntryPoint 视频通话入口点
+ * @property mediaViewerEntryPoint 媒体查看器入口点
+ * @property forwardEntryPoint 转发入口点
+ * @property analyticsService 分析服务
+ * @property locationService 位置服务
+ * @property room 房间
+ * @property roomMemberProfilesCache 房间成员头像缓存
+ * @property roomNamesCache 房间名称缓存
+ * @property mentionSpanUpdater 提及更新器
+ * @property mentionSpanTheme 提及主题
+ * @property pinnedEventsTimelineProvider 固定事件时间线提供者
+ * @property timelineController 时间线控制器
+ * @property knockRequestsListEntryPoint 敲门请求列表入口点
+ * @property dateFormatter 日期格式化器
+ * @property coroutineDispatchers 协程调度器
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class MessagesFlowNode(
@@ -131,10 +160,29 @@ class MessagesFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ), MessagesEntryPoint.NodeProxy {
+    /**
+     * 导航目标密封接口
+     *
+     * 定义消息流程中的各个页面目标。
+     */
     sealed interface NavTarget : Parcelable {
+        /**
+         * 消息列表页面
+         *
+         * @property focusedEventId 聚焦的事件 ID（可选）
+         */
         @Parcelize
         data class Messages(val focusedEventId: EventId?) : NavTarget
 
+        /**
+         * 媒体查看器页面
+         *
+         * @property mode 媒体查看模式
+         * @property eventId 事件 ID（可选）
+         * @property mediaInfo 媒体信息
+         * @property mediaSource 媒体源
+         * @property thumbnailSource 缩略图源（可选）
+         */
         @Parcelize
         data class MediaViewer(
             val mode: MediaViewerEntryPoint.MediaViewerMode,
@@ -144,39 +192,94 @@ class MessagesFlowNode(
             val thumbnailSource: MediaSource?,
         ) : NavTarget
 
+        /**
+         * 附件预览页面
+         *
+         * @property timelineMode 时间线模式
+         * @property attachment 附件
+         * @property inReplyToEventId 回复的事件 ID（可选）
+         */
         @Parcelize
         data class AttachmentPreview(val timelineMode: Timeline.Mode, val attachment: Attachment, val inReplyToEventId: EventId?) : NavTarget
 
+        /**
+         * 位置查看器页面
+         *
+         * @property location 位置信息
+         * @property description 描述（可选）
+         */
         @Parcelize
         data class LocationViewer(val location: Location, val description: String?) : NavTarget
 
+        /**
+         * 事件调试信息页面
+         *
+         * @property eventId 事件 ID（可选）
+         * @property debugInfo 调试信息
+         */
         @Parcelize
         data class EventDebugInfo(val eventId: EventId?, val debugInfo: TimelineItemDebugInfo) : NavTarget
 
+        /**
+         * 转发事件页面
+         *
+         * @property eventId 事件 ID
+         * @property fromPinnedEvents 是否来自固定消息
+         */
         @Parcelize
         data class ForwardEvent(
             val eventId: EventId,
             val fromPinnedEvents: Boolean,
         ) : NavTarget
 
+        /**
+         * 举报消息页面
+         *
+         * @property eventId 事件 ID
+         * @property senderId 发送者 ID
+         */
         @Parcelize
         data class ReportMessage(val eventId: EventId, val senderId: UserId) : NavTarget
 
+        /**
+         * 发送位置页面
+         *
+         * @property timelineMode 时间线模式
+         */
         @Parcelize
         data class SendLocation(val timelineMode: Timeline.Mode) : NavTarget
 
+        /**
+         * 创建投票页面
+         *
+         * @property timelineMode 时间线模式
+         */
         @Parcelize
         data class CreatePoll(val timelineMode: Timeline.Mode) : NavTarget
 
+        /**
+         * 编辑投票页面
+         *
+         * @property timelineMode 时间线模式
+         * @property eventId 事件 ID
+         */
         @Parcelize
         data class EditPoll(val timelineMode: Timeline.Mode, val eventId: EventId) : NavTarget
 
+        /** 固定消息列表页面 */
         @Parcelize
         data object PinnedMessagesList : NavTarget
 
+        /** 敲门请求列表页面 */
         @Parcelize
         data object KnockRequestsList : NavTarget
 
+        /**
+         * 线程页面
+         *
+         * @property threadRootId 线程根 ID
+         * @property focusedEventId 聚焦的事件 ID（可选）
+         */
         @Parcelize
         data class Thread(val threadRootId: ThreadId, val focusedEventId: EventId?) : NavTarget
     }
@@ -272,11 +375,10 @@ class MessagesFlowNode(
                         backstack.push(NavTarget.EditPoll(Timeline.Mode.Live, eventId))
                     }
 
-                    override fun navigateToRoomCall(roomId: RoomId, isAudioCall: Boolean) {
+                    override fun navigateToRoomCall(roomId: RoomId) {
                         val callType = CallType.RoomCall(
                             sessionId = sessionId,
                             roomId = roomId,
-                            isAudioCall = isAudioCall
                         )
                         analyticsService.captureInteraction(Interaction.Name.MobileRoomCallButton)
                         elementCallEntryPoint.startCall(callType)
@@ -489,11 +591,10 @@ class MessagesFlowNode(
                         backstack.push(NavTarget.EditPoll(Timeline.Mode.Thread(navTarget.threadRootId), eventId))
                     }
 
-                    override fun navigateToRoomCall(roomId: RoomId, isAudioCall: Boolean) {
+                    override fun navigateToRoomCall(roomId: RoomId) {
                         val callType = CallType.RoomCall(
                             sessionId = sessionId,
                             roomId = roomId,
-                            isAudioCall = isAudioCall
                         )
                         analyticsService.captureInteraction(Interaction.Name.MobileRoomCallButton)
                         elementCallEntryPoint.startCall(callType)

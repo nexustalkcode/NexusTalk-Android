@@ -25,7 +25,9 @@ import io.element.android.libraries.pushproviders.test.FakePushProvider
 import io.element.android.libraries.pushstore.test.userpushstore.FakeUserPushStoreFactory
 import io.element.android.tests.testutils.awaitLastSequentialItem
 import io.element.android.tests.testutils.consumeItemsUntilPredicate
+import io.element.android.tests.testutils.lambda.any
 import io.element.android.tests.testutils.lambda.lambdaRecorder
+import io.element.android.tests.testutils.lambda.value
 import io.element.android.tests.testutils.test
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -329,6 +331,50 @@ class NotificationSettingsPresenterTest {
             assertThat(withNewProvider.currentPushDistributor).isInstanceOf(AsyncData.Loading::class.java)
             val lastItem = awaitItem()
             assertThat(lastItem.currentPushDistributor).isInstanceOf(AsyncData.Failure::class.java)
+        }
+    }
+
+    @Test
+    fun `present - automatically fallbacks to Firebase when current distributor cannot be restored`() = runTest {
+        val firebaseDistributor = Distributor(value = "Firebase", name = "Firebase")
+        val registerWithLambda = lambdaRecorder<MatrixClient, PushProvider, Distributor, Result<Unit>> { _, _, _ ->
+            Result.success(Unit)
+        }
+        val firebaseProvider = FakePushProvider(
+            index = 0,
+            name = "Firebase",
+            distributors = listOf(firebaseDistributor),
+            currentDistributor = { firebaseDistributor },
+        )
+        val brokenUnifiedPushProvider = FakePushProvider(
+            index = 1,
+            name = "UnifiedPush",
+            distributors = listOf(Distributor("io.ntfy", "ntfy")),
+            currentDistributor = { null },
+        )
+        val presenter = createNotificationSettingsPresenter(
+            pushService = FakePushService(
+                availablePushProviders = listOf(firebaseProvider, brokenUnifiedPushProvider),
+                currentPushProvider = { brokenUnifiedPushProvider },
+                registerWithLambda = registerWithLambda,
+            ),
+        )
+        presenter.test {
+            val initialLoadingState = awaitItem()
+            assertThat(initialLoadingState.currentPushDistributor).isEqualTo(AsyncData.Uninitialized)
+
+            val loadingFallbackState = awaitItem()
+            assertThat(loadingFallbackState.currentPushDistributor).isInstanceOf(AsyncData.Loading::class.java)
+
+            val recoveredState = awaitLastSequentialItem()
+            assertThat(recoveredState.currentPushDistributor).isEqualTo(AsyncData.Success(firebaseDistributor))
+            registerWithLambda.assertions()
+                .isCalledOnce()
+                .with(
+                    any(),
+                    value(firebaseProvider),
+                    value(firebaseDistributor),
+                )
         }
     }
 

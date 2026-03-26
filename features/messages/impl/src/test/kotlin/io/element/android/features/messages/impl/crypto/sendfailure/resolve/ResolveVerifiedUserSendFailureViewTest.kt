@@ -27,7 +27,7 @@ class ResolveVerifiedUserSendFailureViewTest {
 
     @Test
     fun `clicking on resolve and resend emit the expected event`() {
-        val eventsRecorder = EventsRecorder<ResolveVerifiedUserSendFailureEvent>()
+        val eventsRecorder = EventsRecorder<ResolveVerifiedUserSendFailureEvents>()
         rule.setResolveVerifiedUserSendFailureView(
             state = aResolveVerifiedUserSendFailureState(
                 verifiedUserSendFailure = aChangedIdentitySendFailure(),
@@ -36,12 +36,12 @@ class ResolveVerifiedUserSendFailureViewTest {
         )
 
         rule.clickOn(res = CommonStrings.screen_resolve_send_failure_changed_identity_primary_button_title)
-        eventsRecorder.assertSingle(ResolveVerifiedUserSendFailureEvent.ResolveAndResend)
+        eventsRecorder.assertSingle(ResolveVerifiedUserSendFailureEvents.ResolveAndResend)
     }
 
     @Test
     fun `clicking on retry emit the expected event`() {
-        val eventsRecorder = EventsRecorder<ResolveVerifiedUserSendFailureEvent>()
+        val eventsRecorder = EventsRecorder<ResolveVerifiedUserSendFailureEvents>()
         rule.setResolveVerifiedUserSendFailureView(
             state = aResolveVerifiedUserSendFailureState(
                 verifiedUserSendFailure = aChangedIdentitySendFailure(),
@@ -50,7 +50,7 @@ class ResolveVerifiedUserSendFailureViewTest {
         )
 
         rule.clickOn(res = CommonStrings.action_retry)
-        eventsRecorder.assertSingle(ResolveVerifiedUserSendFailureEvent.Retry)
+        eventsRecorder.assertSingle(ResolveVerifiedUserSendFailureEvents.Retry)
     }
 
     private fun <R : TestRule> AndroidComposeTestRule<R, ComponentActivity>.setResolveVerifiedUserSendFailureView(

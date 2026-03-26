@@ -30,7 +30,7 @@ dependencies {
     implementation(projects.libraries.preferences.api)
     implementation(libs.coroutines.core)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.featureflag.test)
 }

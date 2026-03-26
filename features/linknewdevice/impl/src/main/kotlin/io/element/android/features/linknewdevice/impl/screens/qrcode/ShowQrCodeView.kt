@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.linknewdevice.impl.R
@@ -44,6 +45,7 @@ fun ShowQrCodeView(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // 读取应用名，用于动态文案
     val appName = LocalBuildMeta.current.applicationName
     FlowStepPage(
         onBackClick = onBackClick,
@@ -57,14 +59,17 @@ fun ShowQrCodeView(
         ) {
             QrCodeImage(
                 data = data,
+                // 固定尺寸二维码，保证可扫性
+                size = DpSize(220.dp,220.dp),
                 modifier = Modifier
-                    .size(220.dp)
             )
             Spacer(modifier = Modifier.height(32.dp))
             NumberedListOrganism(
                 modifier = Modifier.fillMaxSize(),
                 items = persistentListOf(
+                    // 步骤 1：在桌面端操作
                     AnnotatedString(stringResource(R.string.screen_link_new_device_mobile_step1, appName)),
+                    // 步骤 2：强调可点击的动作文案
                     annotatedTextWithBold(
                         text = stringResource(
                             id = R.string.screen_link_new_device_mobile_step2,
@@ -72,6 +77,7 @@ fun ShowQrCodeView(
                         ),
                         boldText = stringResource(R.string.screen_link_new_device_mobile_step2_action)
                     ),
+                    // 步骤 3：完成提示
                     AnnotatedString(stringResource(R.string.screen_link_new_device_mobile_step3)),
                 )
             )

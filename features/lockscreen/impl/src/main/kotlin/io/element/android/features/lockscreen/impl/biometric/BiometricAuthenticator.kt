@@ -23,29 +23,96 @@ import timber.log.Timber
 import java.security.InvalidKeyException
 import javax.crypto.Cipher
 
+/**
+ * 生物识别认证器接口
+ *
+ * 提供生物识别认证功能，支持指纹、面部识别等生物特征验证。
+ */
 interface BiometricAuthenticator {
+    /**
+     * 生物识别认证回调接口
+     *
+     * 用于接收生物识别认证过程中的各种事件。
+     */
     interface Callback {
+        /**
+         * 生物识别设置错误时调用
+         *
+         * 当生物识别密钥无效或出现问题时触发。
+         */
         fun onBiometricSetupError()
+
+        /**
+         * 生物识别认证成功时调用
+         */
         fun onBiometricAuthenticationSuccess()
+
+        /**
+         * 生物识别认证失败时调用
+         *
+         * @param error 失败原因的错误对象（可选）
+         */
         fun onBiometricAuthenticationFailed(error: Exception?)
     }
 
+    /**
+     * 生物识别认证结果密封接口
+     */
     sealed interface AuthenticationResult {
+        /** 认证成功 */
         data object Success : AuthenticationResult
+        /** 认证失败
+         * @param error 失败原因的错误对象（可选）
+         */
         data class Failure(val error: Exception? = null) : AuthenticationResult
     }
 
+    /**
+     * 认证器是否处于活跃状态
+     *
+     * 如果为 true，表示生物识别可用于解锁应用。
+     */
     val isActive: Boolean
+
+    /**
+     * 设置生物识别认证
+     *
+     * 初始化加密密钥，为认证做准备。
+     */
     fun setup()
+
+    /**
+     * 执行生物识别认证
+     *
+     * @return 认证结果，表示成功或失败
+     */
     suspend fun authenticate(): AuthenticationResult
 }
 
+/**
+ * 无操作生物识别认证实现
+ *
+ * 当设备不支持生物识别时使用的默认实现，不执行任何实际操作。
+ */
 class NoopBiometricAuthentication : BiometricAuthenticator {
     override val isActive: Boolean = false
     override fun setup() = Unit
     override suspend fun authenticate() = BiometricAuthenticator.AuthenticationResult.Failure()
 }
 
+/**
+ * 默认生物识别认证实现
+ *
+ * 使用 Android BiometricPrompt API 实现完整的生物识别认证流程，
+ * 配合加密服务确保认证安全性。
+ *
+ * @param activity FragmentActivity 实例，用于显示生物识别对话框
+ * @param promptInfo 生物识别提示信息配置
+ * @param secretKeyRepository 密钥仓库，用于管理加密密钥
+ * @param encryptionDecryptionService 加解密服务
+ * @param keyAlias 密钥别名
+ * @param callbacks 认证回调列表
+ */
 class DefaultBiometricAuthentication(
     private val activity: FragmentActivity,
     private val promptInfo: PromptInfo,
@@ -56,6 +123,7 @@ class DefaultBiometricAuthentication(
 ) : BiometricAuthenticator {
     override val isActive: Boolean = true
 
+    /** 加密对象，用于生物识别认证 */
     private var cryptoObject: CryptoObject? = null
 
     override fun setup() {
@@ -91,6 +159,14 @@ class DefaultBiometricAuthentication(
     }
 }
 
+/**
+ * 内部认证回调类
+ *
+ * 处理 BiometricPrompt 的各种认证事件，并将结果传递给注册的回调。
+ *
+ * @param callbacks 回调列表
+ * @param deferredAuthenticationResult 用于异步返回认证结果的 Deferred 对象
+ */
 private class AuthenticationCallback(
     private val callbacks: List<BiometricAuthenticator.Callback>,
     private val deferredAuthenticationResult: CompletableDeferred<BiometricAuthenticator.AuthenticationResult>,

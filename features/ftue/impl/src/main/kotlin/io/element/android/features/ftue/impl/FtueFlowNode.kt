@@ -8,6 +8,24 @@
 
 package io.element.android.features.ftue.impl
 
+/**
+ * FtueFlowNode - 首次用户体验（FTUE）引导流程管理节点
+ *
+ * 该类是 Appyx 框架中的导航节点，负责管理用户首次使用应用时的引导流程。
+ * 它继承自 BaseFlowNode，使用 BackStack 作为导航模型来管理不同的引导步骤。
+ *
+ * 主要职责：
+ * 1. 根据 FtueService 的状态显示相应的引导步骤界面
+ * 2. 管理会话验证、通知授权、 analytics 授权和锁屏设置等引导流程
+ * 3. 处理各步骤完成后的回调，更新引导进度状态
+ *
+ * 导航流程遵循以下顺序：
+ * 1. Placeholder（占位符，用于等待初始状态）
+ * 2. SessionVerification（会话验证）
+ * 3. NotificationsOptIn（通知授权）
+ * 4. AnalyticsOptIn（分析授权）
+ * 5. LockScreenSetup（锁屏设置）
+ */
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,6 +45,7 @@ import io.element.android.features.ftue.impl.sessionverification.FtueSessionVeri
 import io.element.android.features.ftue.impl.state.DefaultFtueService
 import io.element.android.features.ftue.impl.state.FtueStep
 import io.element.android.features.ftue.impl.state.InternalFtueState
+import io.element.android.features.ftue.impl.welcome.WelcomeNode
 import io.element.android.features.lockscreen.api.LockScreenEntryPoint
 import io.element.android.libraries.architecture.BackstackView
 import io.element.android.libraries.architecture.BaseFlowNode
@@ -37,8 +56,16 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.parcelize.Parcelize
-import timber.log.Timber
 
+/**
+ * FTUE 引导流程节点构造函数
+ *
+ * @param buildContext 构建上下文，包含节点构建所需的信息，如保存的状态映射等
+ * @param plugins 插件列表，用于扩展节点功能
+ * @param defaultFtueService 默认的 FTUE 服务，负责管理引导步骤状态和进度
+ * @param analyticsEntryPoint Analytics 功能的入口点，用于创建 analytics 授权界面
+ * @param lockScreenEntryPoint 锁屏功能的入口点，用于创建锁屏设置界面
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class FtueFlowNode(
@@ -55,23 +82,68 @@ class FtueFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 导航目标密封接口，定义了 FTUE 流程中的各个步骤
+     *
+     * 每个 NavTarget 代表引导流程中的一个独立界面或功能模块。
+     * 通过实现 Parcelable 接口，支持状态保存和恢复。
+     */
     sealed interface NavTarget : Parcelable {
+        /**
+         * 占位符导航目标
+         * 用于引导流程初始化阶段，显示空白界面等待 FtueService 确定下一步骤
+         */
         @Parcelize
         data object Placeholder : NavTarget
 
+        /**
+         * 欢迎页面导航目标
+         * 显示欢迎页面，介绍 NexusTalk 应用
+         */
+        @Parcelize
+        data object Welcome : NavTarget
+
+        /**
+         * 会话验证导航目标
+         * 用户完成登录后，需要验证会话的安全性，确认设备信任关系
+         */
         @Parcelize
         data object SessionVerification : NavTarget
 
+        /**
+         * 通知授权导航目标
+         * 引导用户选择是否接收应用通知通知
+         */
         @Parcelize
         data object NotificationsOptIn : NavTarget
 
+        /**
+         * 分析授权导航目标
+         * 引导用户选择是否允许发送匿名使用统计数据以改进产品
+         */
         @Parcelize
         data object AnalyticsOptIn : NavTarget
 
+        /**
+         * 锁屏设置导航目标
+         * 引导用户设置应用内锁屏功能，增强隐私保护
+         */
         @Parcelize
         data object LockScreenSetup : NavTarget
     }
 
+    /**
+     * 节点构建完成后的初始化方法
+     *
+     * 该方法在节点完成构建后立即被调用，用于设置 FTUE 流程的状态监听。
+     * 通过订阅 defaultFtueService 的状态流，当引导步骤发生变化时自动切换界面。
+     *
+     * 工作流程：
+     * 1. 监听 ftueStepStateFlow 状态流
+     * 2. 过滤出未完成状态（Incomplete）
+     * 3. 提取下一步骤（nextStep）
+     * 4. 调用 showStep() 方法更新导航栈
+     */
     override fun onBuilt() {
         super.onBuilt()
         defaultFtueService.ftueStepStateFlow
@@ -82,13 +154,46 @@ class FtueFlowNode(
             .launchIn(lifecycleScope)
     }
 
+    /**
+     * 导航目标解析方法
+     *
+     * 根据传入的 NavTarget 创建对应的子节点。该方法是 Appyx 框架导航系统的核心部分，
+     * 负责将导航意图转换为实际的界面节点。
+     *
+     * 每个导航目标都关联特定的界面和回调逻辑：
+     * - Placeholder：空节点，不执行任何操作
+     * - SessionVerification：会话验证界面，完成后标记步骤已完成
+     * - NotificationsOptIn：通知授权界面，完成后更新 FTUE 步骤
+     * - AnalyticsOptIn：分析授权界面，由 analyticsEntryPoint 管理
+     * - LockScreenSetup：锁屏设置界面，完成后更新 FTUE 步骤
+     *
+     * @param navTarget 要解析的导航目标
+     * @param buildContext 构建上下文信息
+     * @return 对应的 Node 实例
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             NavTarget.Placeholder -> {
                 emptyNode(buildContext)
             }
+            is NavTarget.Welcome -> {
+                val callback = object : WelcomeNode.Callback {
+                    override fun onDone() {
+                        defaultFtueService.updateFtueStep(FtueStep.Welcome)
+                    }
+
+                    override fun onPrivacyPolicyClick() {
+
+                    }
+                }
+                createNode<WelcomeNode>(buildContext, listOf(callback))
+            }
             is NavTarget.SessionVerification -> {
                 val callback = object : FtueSessionVerificationFlowNode.Callback {
+                    override fun onBack() {
+                        Unit
+                    }
+
                     override fun onDone() {
                         defaultFtueService.onUserCompletedSessionVerification()
                     }
@@ -98,7 +203,7 @@ class FtueFlowNode(
             NavTarget.NotificationsOptIn -> {
                 val callback = object : NotificationsOptInNode.Callback {
                     override fun onNotificationsOptInFinished() {
-                        defaultFtueService.updateFtueStep()
+                        defaultFtueService.updateFtueStep(FtueStep.NotificationsOptIn)
                     }
                 }
                 createNode<NotificationsOptInNode>(buildContext, listOf(callback))
@@ -109,7 +214,7 @@ class FtueFlowNode(
             NavTarget.LockScreenSetup -> {
                 val callback = object : LockScreenEntryPoint.Callback {
                     override fun onSetupDone() {
-                        defaultFtueService.updateFtueStep()
+                        defaultFtueService.updateFtueStep(FtueStep.LockscreenSetup)
                     }
                 }
                 lockScreenEntryPoint.createNode(
@@ -122,10 +227,29 @@ class FtueFlowNode(
         }
     }
 
+    /**
+     * 显示指定步骤的引导界面
+     *
+     * 该方法负责将 FTUE 步骤映射到相应的导航目标，并更新 BackStack 导航栈。
+     * 使用 newRoot 操作替换整个导航栈，确保用户只能按顺序完成引导流程。
+     * 注意：AnalyticsOptIn 使用 replace 操作，允许用户返回上一步重新选择。
+     *
+     * 步骤映射关系：
+     * - WaitingForInitialState → Placeholder（等待初始状态）
+     * - SessionVerification → SessionVerification（会话验证）
+     * - NotificationsOptIn → NotificationsOptIn（通知授权）
+     * - AnalyticsOptIn → AnalyticsOptIn（分析授权）
+     * - LockscreenSetup → LockScreenSetup（锁屏设置）
+     *
+     * @param ftueStep 要显示的 FTUE 步骤枚举值
+     */
     private fun showStep(ftueStep: FtueStep) {
         when (ftueStep) {
             FtueStep.WaitingForInitialState -> {
                 backstack.newRoot(NavTarget.Placeholder)
+            }
+            FtueStep.Welcome -> {
+                backstack.newRoot(NavTarget.Welcome)
             }
             FtueStep.SessionVerification -> {
                 backstack.newRoot(NavTarget.SessionVerification)
@@ -142,6 +266,14 @@ class FtueFlowNode(
         }
     }
 
+    /**
+     * 组合式 UI 渲染方法
+     *
+     * 该方法使用 Appyx 框架的 BackstackView 组件来渲染当前导航栈中的内容。
+     * BackstackView 会自动监听 BackStack 的状态变化，并显示当前顶部节点的界面。
+     *
+     * @param modifier 修饰符，用于调整布局属性
+     */
     @Composable
     override fun View(modifier: Modifier) {
         BackstackView()

@@ -23,7 +23,6 @@ import io.element.android.features.logout.api.direct.DirectLogoutState
 import io.element.android.features.preferences.impl.utils.ShowDeveloperSettingsProvider
 import io.element.android.features.rageshake.api.RageshakeFeatureAvailability
 import io.element.android.libraries.architecture.Presenter
-import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatcher
 import io.element.android.libraries.designsystem.utils.snackbar.collectSnackbarMessageAsState
 import io.element.android.libraries.featureflag.api.FeatureFlagService
@@ -44,9 +43,30 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+/**
+ * 首选项根页面 Presenter
+ *
+ * 负责处理首选项根页面的业务逻辑，包括：
+ * - 获取和显示当前用户信息
+ * - 收集其他会话信息
+ * - 管理开发者设置和企业设置的显示
+ * - 处理账户管理 URL 和设备管理 URL 的获取
+ *
+ * @property matrixClient Matrix 客户端
+ * @property sessionVerificationService 会话验证服务
+ * @property analyticsService 分析服务
+ * @property versionFormatter 版本格式化器
+ * @property snackbarDispatcher Snackbar 调度器
+ * @property indicatorService 指示器服务
+ * @property directLogoutPresenter 直接退出登录 Presenter
+ * @property showDeveloperSettingsProvider 开发者设置显示提供者
+ * @property rageshakeFeatureAvailability 崩溃报告功能可用性
+ * @property featureFlagService 功能标志服务
+ * @property sessionStore 会话存储
+ * @see PreferencesRootState 首选项根页面状态
+ */
 @Inject
 class PreferencesRootPresenter(
-    private val buildMeta: BuildMeta, // SC
     private val matrixClient: MatrixClient,
     private val sessionVerificationService: SessionVerificationService,
     private val analyticsService: AnalyticsService,
@@ -142,7 +162,6 @@ class PreferencesRootPresenter(
         return PreferencesRootState(
             myUser = matrixUser.value,
             version = remember { versionFormatter.get() },
-            buildMeta = buildMeta, // SC
             deviceId = matrixClient.deviceId,
             isMultiAccountEnabled = isMultiAccountEnabled,
             otherSessions = otherSessions,
@@ -168,6 +187,6 @@ class PreferencesRootPresenter(
         devicesManagementUrl: MutableState<String?>,
     ) = launch {
         accountManagementUrl.value = matrixClient.getAccountManagementUrl(AccountManagementAction.Profile).getOrNull()
-        devicesManagementUrl.value = matrixClient.getAccountManagementUrl(AccountManagementAction.DevicesList).getOrNull()
+        devicesManagementUrl.value = matrixClient.getAccountManagementUrl(AccountManagementAction.SessionsList).getOrNull()
     }
 }

@@ -15,6 +15,12 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 房间目录状态提供器
+ *
+ * 用于在预览模式下提供示例房间目录状态数据。
+ * 继承自 Compose 的 PreviewParameterProvider，用于 UI 预览功能。
+ */
 open class RoomDirectoryStateProvider : PreviewParameterProvider<RoomDirectoryState> {
     override val values: Sequence<RoomDirectoryState>
         get() = sequenceOf(
@@ -31,6 +37,17 @@ open class RoomDirectoryStateProvider : PreviewParameterProvider<RoomDirectorySt
         )
 }
 
+/**
+ * 创建示例房间目录状态
+ *
+ * 用于测试和预览功能的辅助函数。
+ *
+ * @param query 搜索关键词，默认为空字符串
+ * @param displayLoadMoreIndicator 是否显示加载更多指示器，默认为 false
+ * @param roomDescriptions 房间描述列表，默认为空列表
+ * @param eventSink 事件处理函数，默认为空函数
+ * @return RoomDirectoryState 创建的房间目录状态对象
+ */
 fun aRoomDirectoryState(
     query: String = "",
     displayLoadMoreIndicator: Boolean = false,
@@ -43,6 +60,13 @@ fun aRoomDirectoryState(
     eventSink = eventSink,
 )
 
+/**
+ * 创建示例房间描述列表
+ *
+ * 用于测试和预览功能的辅助函数，返回包含示例房间的列表。
+ *
+ * @return ImmutableList<RoomDescription> 示例房间描述列表
+ */
 fun aRoomDescriptionList(): ImmutableList<RoomDescription> {
     return persistentListOf(
         RoomDescription(

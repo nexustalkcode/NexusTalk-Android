@@ -6,11 +6,33 @@
   <string name="screen_create_room_private_option_description">"Faqat taklif etilgan shaxslargina bu xonaga kira oladi. Barcha xabarlar boshdan-oxirigacha shifrlanadi."</string>
   <string name="screen_create_room_public_option_description">"Bu xonani har kim topishi mumkin.
 Buni xona sozlamalaridan istalgan vaqtda oʻzgartirishingiz mumkin."</string>
+  <string name="screen_create_room_public_option_title">"Jamoat xonasi (har kim)"</string>
   <string name="screen_create_room_room_access_section_knocking_option_description">"Xonaga qo‘shilishni istalgan kishi so‘rashi mumkin, lekin administrator yoki moderator so‘rovni qabul qilishi kerak"</string>
   <string name="screen_create_room_room_access_section_knocking_option_title">"Qo‘shilishni so‘rang"</string>
   <string name="screen_create_room_room_access_section_public_option_description">"Bu xonaga istalgan kishi qo‘shilishi mumkin"</string>
+  <string name="screen_create_room_room_access_section_public_option_title">"Har kim"</string>
   <string name="screen_create_room_room_address_section_footer">"Ushbu xona ommaviy xonalar ro‘yxatida ko‘rinishi uchun sizga xona manzili kerak bo‘ladi."</string>
-  <string name="screen_create_room_room_address_section_title">"Xona manzili"</string>
   <string name="screen_create_room_room_visibility_section_title">"Xonaning ko‘rinishi"</string>
   <string name="screen_create_room_topic_label">"Mavzu (ixtiyoriy)"</string>
+
+  <string name="screen_create_room_error_creating_space">"Noma'lum xatolik tufayli bo'sh joy yaratib bo'lmadi. Keyinroq qayta urinib ko‘ring."</string>
+  <string name="screen_create_room_name_label">"Ism"</string>
+  <string name="screen_create_room_avatar_photo">"surat"</string>
+  <string name="screen_create_room_name_placeholder">"Ism qo‘shish…"</string>
+  <string name="screen_create_room_new_room_title">"Yangi xona"</string>
+  <string name="screen_create_room_new_space_title">"Yangi joy"</string>
+  <string name="screen_create_room_private_option_title">"Shaxsiy"</string>
+  <string name="screen_create_room_public_option_short_description">"Har kim ishtirok etishi mumkin."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_description">"%1$s tizimidagi har kim qo‘shilishi mumkin, ammo hamma ruxsat so‘rashi kerak."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_title">"Qo'shilishni so'rang"</string>
+  <string name="screen_create_room_room_access_section_private_option_description">"Faqat taklif qilinganlar ishtirok etishi mumkin."</string>
+  <string name="screen_create_room_room_access_section_private_option_title">"Shaxsiy"</string>
+  <string name="screen_create_room_room_access_section_restricted_option_description">"%1$s tizimidagi har kim qo‘shilishi mumkin."</string>
+  <string name="screen_create_room_room_access_section_restricted_option_title">"Standart"</string>
+  <string name="screen_create_room_room_access_section_title">"Kim kirish huquqiga ega"</string>
+  <string name="screen_create_room_room_address_section_title">"Manzil"</string>
+  <string name="screen_create_room_space_selection_no_space_description">"(bo'sh joy yo'q)"</string>
+  <string name="screen_create_room_space_selection_no_space_title">"Uy"</string>
+  <string name="screen_create_room_space_selection_sheet_title">"Bo'sh joyga qo'shing"</string>
+  <string name="screen_create_room_topic_placeholder">"Tavsif qo‘shish…"</string>
 </resources>

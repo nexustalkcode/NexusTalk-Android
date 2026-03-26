@@ -18,6 +18,11 @@ import dev.zacsweers.metro.AssistedInject
 import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 设置 PIN 码节点
+ *
+ * 显示设置 PIN 码界面的节点。
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class SetupPinNode(

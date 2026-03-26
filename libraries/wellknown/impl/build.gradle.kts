@@ -34,7 +34,7 @@ dependencies {
     implementation(projects.libraries.matrix.api)
     implementation(projects.libraries.network)
 
-    testCommonDependencies(libs)
+   
     testImplementation(libs.coroutines.core)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.services.toolbox.test)

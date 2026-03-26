@@ -33,6 +33,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 安全备份根页面 Presenter
+ *
+ * 负责处理安全备份根页面的业务逻辑，包括：
+ * - 观察备份状态和恢复状态
+ * - 检查服务器上是否存在备份
+ * - 启用密钥存储
+ * - 处理错误状态显示
+ *
+ * @property encryptionService 加密服务
+ * @property buildMeta 构建元信息
+ * @property snackbarDispatcher Snackbar 调度器
+ * @see SecureBackupRootState 安全备份根页面状态
+ */
 @Inject
 class SecureBackupRootPresenter(
     private val encryptionService: EncryptionService,

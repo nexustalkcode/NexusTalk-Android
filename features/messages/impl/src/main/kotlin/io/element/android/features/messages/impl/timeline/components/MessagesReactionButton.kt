@@ -35,7 +35,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import chat.schildi.theme.ScTheme
 import coil3.compose.AsyncImage
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.messages.impl.R
@@ -56,6 +55,17 @@ import io.element.android.libraries.matrix.api.media.MediaSource
 import io.element.android.libraries.matrix.ui.media.MediaRequestData
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 消息反应按钮组件
+ *
+ * 渲染消息反应按钮，支持显示emoji、文本或反应计数。
+ * 按钮根据当前用户是否已添加该反应显示不同的样式。
+ *
+ * @param onClick 点击回调
+ * @param onLongClick 长按回调
+ * @param content 按钮内容
+ * @param modifier 修饰符
+ */
 @Composable
 @Suppress("ModifierClickableOrder") // This is needed to display the right ripple shape
 fun MessagesReactionButton(
@@ -93,7 +103,7 @@ fun MessagesReactionButton(
             .background(Color.Transparent)
             // Outer border, same colour as background
             .border(
-                BorderStroke(2.dp, if (ScTheme.yes) ElementTheme.materialColors.background else ElementTheme.colors.bgCanvasDefault),
+                BorderStroke(2.dp, ElementTheme.colors.bgCanvasDefault),
                 shape = RoundedCornerShape(corner = CornerSize(14.dp))
             )
             .padding(vertical = 2.dp, horizontal = 2.dp)
@@ -128,13 +138,32 @@ fun MessagesReactionButton(
     }
 }
 
+/**
+ * 消息反应按钮内容密封接口
+ *
+ * 定义反应按钮可以显示的不同内容类型。
+ */
 @Immutable
 sealed interface MessagesReactionsButtonContent {
+    /**
+     * 文本内容
+     * @property text 文本内容
+     */
     data class Text(val text: String) : MessagesReactionsButtonContent
+
+    /**
+     * 图标内容
+     * @property resourceId 图标资源ID
+     */
     data class Icon(@DrawableRes val resourceId: Int) : MessagesReactionsButtonContent
 
+    /**
+     * 反应内容
+     * @property reaction 聚合反应数据
+     */
     data class Reaction(val reaction: AggregatedReaction) : MessagesReactionsButtonContent
 
+    /** 判断是否为高亮状态（当前用户已添加该反应） */
     val isHighlighted get() = this is Reaction && reaction.isHighlighted
 }
 
@@ -182,7 +211,6 @@ private fun ReactionContent(
     } else {
         Text(
             text = reaction.displayKey,
-            color = ElementTheme.colors.textPrimary, // Prefer text color without alpha for emojis!
             style = ElementTheme.typography.fontBodyMdRegular.copy(
                 fontSize = 15.sp,
                 lineHeight = REACTION_EMOJI_LINE_HEIGHT,

@@ -33,6 +33,16 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.pinDigitBg
 
+/**
+ * PIN 码输入文本框组件
+ *
+ * 用于显示和输入 PIN 码的可组合组件，支持安全模式（隐藏输入内容）。
+ *
+ * @param pinEntry PIN 码输入状态
+ * @param isSecured 是否安全模式（隐藏输入内容）
+ * @param onValueChange 值变化回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun PinEntryTextField(
     pinEntry: PinEntry,

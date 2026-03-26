@@ -15,6 +15,11 @@ import io.element.android.features.login.impl.login.LoginMode
 import io.element.android.libraries.architecture.AsyncData
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 选择账户提供商状态预览参数提供者
+ *
+ * 用于在 Compose 预览中提供不同状态的 ChooseAccountProviderState 测试数据。
+ */
 open class ChooseAccountProviderStateProvider : PreviewParameterProvider<ChooseAccountProviderState> {
     private val server1 = anAccountProvider(
         url = "https://server1.io",
@@ -64,6 +69,9 @@ open class ChooseAccountProviderStateProvider : PreviewParameterProvider<ChooseA
         )
 }
 
+/**
+ * 创建测试用选择账户提供商状态
+ */
 fun aChooseAccountProviderState(
     accountProviders: List<AccountProvider> = listOf(
         anAccountProvider()

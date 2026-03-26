@@ -20,8 +20,19 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 默认直接退出登录视图实现
+ *
+ * 实现了 DirectLogoutView 接口，
+ * 负责渲染直接退出登录对话框的 UI。
+ */
 @ContributesBinding(SessionScope::class)
 class DefaultDirectLogoutView : DirectLogoutView {
+    /**
+     * 渲染直接退出登录对话框
+     *
+     * @param state 直接退出登录的当前状态
+     */
     @Composable
     override fun Render(state: DirectLogoutState) {
         val eventSink = state.eventSink

@@ -35,5 +35,9 @@ interface SessionPreferencesStore {
     suspend fun setVideoCompressionPreset(preset: VideoCompressionPreset)
     fun getVideoCompressionPreset(): Flow<VideoCompressionPreset>
 
+    // FTUE 完成状态
+    suspend fun setFtueCompleted(completed: Boolean)
+    fun isFtueCompleted(): Flow<Boolean>
+
     suspend fun clear()
 }

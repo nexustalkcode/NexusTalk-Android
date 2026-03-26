@@ -8,13 +8,19 @@
 
 package io.element.android.features.preferences.impl.notifications.edit
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.preferences.impl.R
 import io.element.android.libraries.designsystem.components.async.AsyncActionView
 import io.element.android.libraries.designsystem.components.avatar.Avatar
@@ -63,53 +69,67 @@ fun EditDefaultNotificationSettingView(
             title = stringResource(id = categoryTitle),
             showTopDivider = false,
         ) {
-            if (state.mode != null) {
-                Column(modifier = Modifier.selectableGroup()) {
-                    validModes.forEach { item ->
-                        DefaultNotificationSettingOption(
-                            mode = item,
-                            isSelected = state.mode == item,
-                            displayMentionsOnlyDisclaimer = state.displayMentionsOnlyDisclaimer,
-                            onSelectOption = { state.eventSink(EditDefaultNotificationSettingStateEvents.SetNotificationMode(it)) }
-                        )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+            ) {
+                if (state.mode != null) {
+                    Column(modifier = Modifier.selectableGroup()) {
+                        validModes.forEach { item ->
+                            DefaultNotificationSettingOption(
+                                mode = item,
+                                isSelected = state.mode == item,
+                                displayMentionsOnlyDisclaimer = state.displayMentionsOnlyDisclaimer,
+                                onSelectOption = { state.eventSink(EditDefaultNotificationSettingStateEvents.SetNotificationMode(it)) }
+                            )
+                        }
                     }
                 }
             }
         }
         if (state.roomsWithUserDefinedMode.isNotEmpty()) {
-            PreferenceCategory(title = stringResource(id = R.string.screen_notification_settings_edit_custom_settings_section_title)) {
-                state.roomsWithUserDefinedMode.forEach { summary ->
-                    val subtitle = when (summary.notificationMode) {
-                        RoomNotificationMode.ALL_MESSAGES -> stringResource(id = R.string.screen_notification_settings_edit_mode_all_messages)
-                        RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY -> {
-                            stringResource(id = R.string.screen_notification_settings_edit_mode_mentions_and_keywords)
+            PreferenceCategory(title = stringResource(id = R.string.screen_notification_settings_edit_custom_settings_section_title), showTopDivider = false) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+                ) {
+                    state.roomsWithUserDefinedMode.forEach { summary ->
+                        val subtitle = when (summary.notificationMode) {
+                            RoomNotificationMode.ALL_MESSAGES -> stringResource(id = R.string.screen_notification_settings_edit_mode_all_messages)
+                            RoomNotificationMode.MENTIONS_AND_KEYWORDS_ONLY -> {
+                                stringResource(id = R.string.screen_notification_settings_edit_mode_mentions_and_keywords)
+                            }
+                            RoomNotificationMode.MUTE -> stringResource(id = CommonStrings.common_mute)
+                            null -> ""
                         }
-                        RoomNotificationMode.MUTE -> stringResource(id = CommonStrings.common_mute)
-                        null -> ""
+                        ListItem(
+                            headlineContent = {
+                                val roomName = summary.name
+                                Text(
+                                    text = roomName ?: stringResource(id = CommonStrings.common_no_room_name),
+                                    fontStyle = FontStyle.Italic.takeIf { roomName == null }
+                                )
+                            },
+                            supportingContent = {
+                                Text(text = subtitle)
+                            },
+                            leadingContent = ListItemContent.Custom {
+                                Avatar(
+                                    avatarData = summary.avatarData,
+                                    avatarType = AvatarType.Room(
+                                        heroes = summary.heroesAvatar,
+                                    ),
+                                )
+                            },
+                            onClick = {
+                                openRoomNotificationSettings(summary.roomId)
+                            }
+                        )
                     }
-                    ListItem(
-                        headlineContent = {
-                            val roomName = summary.name
-                            Text(
-                                text = roomName ?: stringResource(id = CommonStrings.common_no_room_name),
-                                fontStyle = FontStyle.Italic.takeIf { roomName == null }
-                            )
-                        },
-                        supportingContent = {
-                            Text(text = subtitle)
-                        },
-                        leadingContent = ListItemContent.Custom {
-                            Avatar(
-                                avatarData = summary.avatarData,
-                                avatarType = AvatarType.Room(
-                                    heroes = summary.heroesAvatar,
-                                ),
-                            )
-                        },
-                        onClick = {
-                            openRoomNotificationSettings(summary.roomId)
-                        }
-                    )
                 }
             }
         }

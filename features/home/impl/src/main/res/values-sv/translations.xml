@@ -13,6 +13,7 @@
   <string name="full_screen_intent_banner_message">"För att säkerställa att du aldrig missar ett viktigt samtal, ändra dina inställningar för att tillåta helskärmsmeddelanden när telefonen är låst."</string>
   <string name="full_screen_intent_banner_title">"Förbättra din samtalsupplevelse"</string>
   <string name="screen_home_tab_chats">"Alla chattar"</string>
+  <string name="screen_home_tab_community">"Gemenskap"</string>
   <string name="screen_home_tab_spaces">"Utrymmen"</string>
   <string name="screen_invites_decline_chat_message">"Är du säker på att du vill tacka nej till inbjudan att gå med%1$s?"</string>
   <string name="screen_invites_decline_chat_title">"Avböj inbjudan"</string>
@@ -50,4 +51,9 @@ Du har inga olästa meddelanden!"</string>
   <string name="screen_roomlist_tombstoned_room_description">"Det här rummet har uppgraderats"</string>
   <string name="session_verification_banner_message">"Det verkar som om du använder en ny enhet. Verifiera med en annan enhet för att komma åt dina krypterade meddelanden."</string>
   <string name="session_verification_banner_title">"Verifiera att det är du"</string>
+
+  <string name="screen_community_roomlist_empty_message">"Gemenskaper samlar medlemmar i ämnesbaserade grupper. Alla grupper du går med i visas här."</string>
+  <string name="screen_community_list_header_count">"%1$d Community"</string>
+  <string name="screen_community_list_header_description">"Grupper du skapar eller går med i"</string>
+  <string name="screen_roomlist_empty_message_new">"Denna plats kommer bara att tillhöra dig och de människor som står dig närmast"</string>
 </resources>

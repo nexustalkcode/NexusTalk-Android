@@ -13,6 +13,16 @@ import io.element.android.appnav.di.RoomGraphFactory
 import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.room.JoinedRoom
 
+/**
+ * 默认的房间图工厂实现。
+ *
+ * 实现 RoomGraphFactory 接口，
+ * 负责创建聊天房间级别的依赖注入图。
+ * 内部持有 SessionGraph 实例，
+ * 通过调用 SessionGraph.roomGraphFactory.create() 方法创建 RoomGraph。
+ *
+ * 通过 @ContributesBinding 注解绑定到 SessionScope。
+ */
 @ContributesBinding(SessionScope::class)
 class DefaultRoomGraphFactory(
     private val sessionGraph: SessionGraph,

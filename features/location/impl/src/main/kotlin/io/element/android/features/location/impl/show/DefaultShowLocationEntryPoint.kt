@@ -15,6 +15,11 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.location.api.ShowLocationEntryPoint
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * 默认显示位置入口点实现
+ *
+ * 实现 ShowLocationEntryPoint 接口，负责创建显示位置功能的节点。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultShowLocationEntryPoint : ShowLocationEntryPoint {
     override fun createNode(

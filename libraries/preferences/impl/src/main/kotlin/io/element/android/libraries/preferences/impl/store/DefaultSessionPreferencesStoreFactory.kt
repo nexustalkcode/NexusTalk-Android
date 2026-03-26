@@ -33,7 +33,7 @@ class DefaultSessionPreferencesStoreFactory(
         sessionObserver.addListener(object : SessionListener {
             override suspend fun onSessionDeleted(userId: String, wasLastSession: Boolean) {
                 val sessionPreferences = cache.remove(SessionId(userId))
-                sessionPreferences?.clear()
+                sessionPreferences?.clearButPreserveFtueCompletion()
             }
         })
     }

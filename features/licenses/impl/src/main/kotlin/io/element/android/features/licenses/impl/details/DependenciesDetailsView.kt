@@ -26,6 +26,16 @@ import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.Scaffold
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 
+/**
+ * 依赖项许可证详情视图组件
+ *
+ * 使用 Jetpack Compose 实现依赖项许可证详情的用户界面。
+ * 展示单个依赖项的所有许可证信息，支持点击链接。
+ *
+ * @param licenseItem 许可证项目信息
+ * @param onBack 返回按钮点击回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DependenciesDetailsView(
@@ -71,6 +81,11 @@ fun DependenciesDetailsView(
     }
 }
 
+/**
+ * 依赖项许可证详情视图预览组件
+ *
+ * 用于在 Android Studio 预览中展示许可证详情视图 UI。
+ */
 @PreviewsDayNight
 @Composable
 internal fun DependenciesDetailsViewPreview() = ElementPreview {

@@ -8,6 +8,11 @@
 
 package io.element.android.features.lockscreen.impl.pin
 
+/**
+ * 默认 PIN 码管理器回调实现
+ *
+ * 提供 PIN 码管理事件回调的空实现，用于不需要处理所有事件的场景。
+ */
 open class DefaultPinCodeManagerCallback : PinCodeManager.Callback {
     override fun onPinCodeVerified() = Unit
 

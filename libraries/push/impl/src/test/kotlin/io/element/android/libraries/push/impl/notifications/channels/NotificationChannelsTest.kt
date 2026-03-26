@@ -12,9 +12,6 @@ import android.os.Build
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.common.truth.Truth.assertThat
-import io.element.android.features.enterprise.api.EnterpriseService
-import io.element.android.features.enterprise.test.FakeEnterpriseService
-import io.element.android.libraries.matrix.test.A_SESSION_ID
 import io.element.android.services.toolbox.test.strings.FakeStringProvider
 import io.mockk.every
 import io.mockk.mockk
@@ -36,7 +33,11 @@ class NotificationChannelsTest {
 
         createNotificationChannels(notificationManager = notificationManager)
 
-        verify { notificationManager.createNotificationChannel(any<NotificationChannelCompat>()) }
+        verify {
+            notificationManager.createNotificationChannel(match<NotificationChannelCompat> {
+                it.id == NOISY_NOTIFICATION_CHANNEL_ID && it.importance == NotificationManagerCompat.IMPORTANCE_HIGH
+            })
+        }
         verify { notificationManager.deleteNotificationChannel(any<String>()) }
     }
 
@@ -53,28 +54,10 @@ class NotificationChannelsTest {
 
     @Test
     fun `getChannelIdForMessage - returns the right channel`() {
-        val notificationChannels = createNotificationChannels(
-            enterpriseService = FakeEnterpriseService(
-                getNoisyNotificationChannelIdResult = { null }
-            ),
-        )
-        assertThat(notificationChannels.getChannelIdForMessage(sessionId = A_SESSION_ID, noisy = true))
-            .isEqualTo(NOISY_NOTIFICATION_CHANNEL_ID)
-        assertThat(notificationChannels.getChannelIdForMessage(sessionId = A_SESSION_ID, noisy = false))
-            .isEqualTo(SILENT_NOTIFICATION_CHANNEL_ID)
-    }
+        val notificationChannels = createNotificationChannels()
 
-    @Test
-    fun `getChannelIdForMessage - returns the right channel when enterprise service override the result`() {
-        val notificationChannels = createNotificationChannels(
-            enterpriseService = FakeEnterpriseService(
-                getNoisyNotificationChannelIdResult = { "A_CHANNEL_ID" }
-            ),
-        )
-        assertThat(notificationChannels.getChannelIdForMessage(sessionId = A_SESSION_ID, noisy = true))
-            .isEqualTo("A_CHANNEL_ID")
-        assertThat(notificationChannels.getChannelIdForMessage(sessionId = A_SESSION_ID, noisy = false))
-            .isEqualTo(SILENT_NOTIFICATION_CHANNEL_ID)
+        assertThat(notificationChannels.getChannelIdForMessage(noisy = true)).isEqualTo(NOISY_NOTIFICATION_CHANNEL_ID)
+        assertThat(notificationChannels.getChannelIdForMessage(noisy = false)).isEqualTo(SILENT_NOTIFICATION_CHANNEL_ID)
     }
 
     @Test
@@ -84,13 +67,26 @@ class NotificationChannelsTest {
         assertThat(notificationChannels.getChannelIdForTest()).isEqualTo(NOISY_NOTIFICATION_CHANNEL_ID)
     }
 
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
+    fun `init - ringing call channel is silent`() {
+        val context = RuntimeEnvironment.getApplication()
+        val notificationManager = NotificationManagerCompat.from(context)
+
+        createNotificationChannels(notificationManager = notificationManager)
+
+        val channel = notificationManager.getNotificationChannel(RINGING_CALL_NOTIFICATION_CHANNEL_ID)
+
+        assertThat(channel).isNotNull()
+        assertThat(channel?.sound).isNull()
+        assertThat(channel?.shouldVibrate()).isFalse()
+    }
+
     private fun createNotificationChannels(
         notificationManager: NotificationManagerCompat = mockk(relaxed = true),
-        enterpriseService: EnterpriseService = FakeEnterpriseService(),
     ) = DefaultNotificationChannels(
         notificationManager = notificationManager,
         stringProvider = FakeStringProvider(),
         context = RuntimeEnvironment.getApplication(),
-        enterpriseService = enterpriseService,
     )
 }

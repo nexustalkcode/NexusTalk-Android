@@ -55,7 +55,7 @@ internal fun ReadReceiptBottomSheet(
             onDismissRequest = {
                 coroutineScope.launch {
                     sheetState.hide()
-                    state.eventSink(ReadReceiptBottomSheetEvent.Dismiss)
+                    state.eventSink(ReadReceiptBottomSheetEvents.Dismiss)
                 }
             }
         ) {
@@ -64,7 +64,7 @@ internal fun ReadReceiptBottomSheet(
                 onUserDataClick = {
                     coroutineScope.launch {
                         sheetState.hide()
-                        state.eventSink(ReadReceiptBottomSheetEvent.Dismiss)
+                        state.eventSink(ReadReceiptBottomSheetEvents.Dismiss)
                         onUserDataClick.invoke(it)
                     }
                 },

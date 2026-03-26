@@ -14,6 +14,18 @@ import dev.zacsweers.metro.Inject
 import io.element.android.libraries.architecture.Presenter
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 管理授权空间 Presenter
+ *
+ * 负责处理管理授权空间页面的业务逻辑，包括：
+ * - 显示可选的空间列表
+ * - 切换选择空间
+ * - 完成或取消选择
+ *
+ * @property spaceSelectionStateHolder 空间选择状态持有者，用于跨页面共享选择状态
+ * @see ManageAuthorizedSpacesState 管理授权空间状态
+ * @see Presenter Presenter 基类
+ */
 @Inject
 class ManageAuthorizedSpacesPresenter(
     private val spaceSelectionStateHolder: SpaceSelectionStateHolder,

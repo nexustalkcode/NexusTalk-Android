@@ -22,6 +22,18 @@ import timber.log.Timber
 
 private const val ELEMENT_X_TARGET = "elementx"
 
+/**
+ * 平台初始化器。
+ *
+ * 实现 androidx.startup.Initializer 接口，
+ * 在应用启动时完成以下初始化工作：
+ * - 配置并初始化 Timber 日志系统
+ * - 设置应用追踪配置（Logging、Sentry 等）
+ * - 初始化平台特定服务
+ * - 配置 Rust 堆栈回溯环境变量
+ *
+ * 依赖 AppBindings 获取追踪服务、平台服务、错误报告器等组件。
+ */
 class PlatformInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         val appBindings = context.bindings<AppBindings>()
@@ -42,7 +54,7 @@ class PlatformInitializer : Initializer<Unit> {
         )
         bugReporter.setCurrentTracingLogLevel(logLevel.name)
         platformService.init(tracingConfiguration)
-        // Also set env variable for rust back trace
+        // 同时设置 Rust 堆栈回溯的环境变量
         Os.setenv("RUST_BACKTRACE", "1", true)
     }
 

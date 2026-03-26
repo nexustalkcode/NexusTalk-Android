@@ -11,9 +11,17 @@ package io.element.android.features.messages.impl.crypto.sendfailure.resolve
 import io.element.android.features.messages.impl.crypto.sendfailure.VerifiedUserSendFailure
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 解决已验证用户发送失败状态数据类
+ *
+ * @property verifiedUserSendFailure 已验证用户发送失败信息
+ * @property resolveAction 解决操作的异步状态
+ * @property retryAction 重试操作的异步状态
+ * @property eventSink 事件处理函数
+ */
 data class ResolveVerifiedUserSendFailureState(
     val verifiedUserSendFailure: VerifiedUserSendFailure,
     val resolveAction: AsyncAction<Unit>,
     val retryAction: AsyncAction<Unit>,
-    val eventSink: (ResolveVerifiedUserSendFailureEvent) -> Unit
+    val eventSink: (ResolveVerifiedUserSendFailureEvents) -> Unit
 )

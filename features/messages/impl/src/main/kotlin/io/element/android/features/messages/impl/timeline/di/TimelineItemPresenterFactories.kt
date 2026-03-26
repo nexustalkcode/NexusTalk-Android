@@ -21,9 +21,12 @@ import io.element.android.libraries.di.RoomScope
 import kotlin.reflect.KClass
 
 /**
- * Container that declares the [TimelineItemPresenterFactory] map multi binding.
+ * 时间线项Presenter工厂集合模块接口
  *
- * Its sole purpose is to support the case of an empty map multibinding.
+ * 声明TimelineItemPresenterFactory的多绑定Map。
+ * 其唯一目的是支持空Map多绑定的情况。
+ *
+ * @see TimelineItemPresenterFactory 时间线项Presenter工厂
  */
 @BindingContainer
 @ContributesTo(RoomScope::class)

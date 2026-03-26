@@ -10,4 +10,9 @@
   <string name="screen_notification_optin_subtitle">"Можете да промените настройките си по-късно."</string>
   <string name="screen_notification_optin_title">"Разрешете известията и никога не пропускайте съобщение"</string>
   <string name="screen_session_verification_enter_recovery_key">"Въвеждане на ключ за възстановяване"</string>
+  <string name="screen_welcome_agreement">"Като докоснете „Съгласен съм и продължавам", приемате нашите %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Декларация за поверителност"</string>
+  <string name="screen_welcome_title">"Добре дошли в %s"</string>
+  <string name="screen_welcome_privacy_notice">"Моля, прочетете нашата Декларация за поверителност"</string>
+  <string name="screen_welcome_agree">"Съгласен"</string>
 </resources>

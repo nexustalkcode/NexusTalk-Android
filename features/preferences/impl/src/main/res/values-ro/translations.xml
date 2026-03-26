@@ -43,6 +43,8 @@
   <string name="screen_edit_profile_error">"A fost întâlnită o eroare necunoscută și informațiile nu au putut fi modificate."</string>
   <string name="screen_edit_profile_error_title">"Nu s-a putut actualiza profilul"</string>
   <string name="screen_edit_profile_title">"Editați profilul"</string>
+  <string name="screen_edit_profile_change_avatar">"Schimbă avatarul"</string>
+  <string name="screen_edit_profile_username">"Nume de utilizator"</string>
   <string name="screen_edit_profile_updating_details">"Se actualizează profilul…"</string>
   <string name="screen_labs_enable_threads">"Activați răspunsurile în fir"</string>
   <string name="screen_labs_enable_threads_description">"Aplicația va reporni pentru a aplica această modificare."</string>
@@ -78,6 +80,8 @@ Dacă continuați, unele dintre setările dumneavoastră pot fi modificate."</st
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"Setări de sistem"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Notificările de sistem sunt dezactivate"</string>
   <string name="screen_notification_settings_title">"Notificări"</string>
+  <string name="screen_preferences_section_customization">"Personalizare"</string>
+  <string name="screen_preferences_section_security">"Securitate"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Istoricul notificărilor"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Depanare"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Depanați notificările"</string>

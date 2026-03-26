@@ -60,7 +60,7 @@ fun Checkbox(
 @Composable
 private fun compoundCheckBoxColors(): CheckboxColors {
     return CheckboxDefaults.colors(
-        checkedColor = ElementTheme.colors.bgAccentRest,
+        checkedColor = ElementTheme.colors.iconPrimary,
         uncheckedColor = ElementTheme.colors.borderInteractivePrimary,
         checkmarkColor = ElementTheme.materialColors.onPrimary,
         disabledUncheckedColor = ElementTheme.colors.borderDisabled,

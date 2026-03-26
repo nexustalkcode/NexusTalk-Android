@@ -32,12 +32,33 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 离开房间 Presenter
+ *
+ * 负责处理离开房间的业务逻辑，包括：
+ * - 显示离开房间确认对话框
+ * - 执行离开房间操作
+ * - 处理各种确认场景（私信、私密房间、最后所有者等）
+ * - 清理相关通知
+ *
+ * 使用协程进行异步操作，确保主线程流畅响应。
+ *
+ * @property client Matrix 客户端，用于执行房间操作
+ * @property dispatchers 协程调度器
+ * @property notificationConversationService 通知会话服务，用于清理通知
+ * @see LeaveRoomState 离开房间状态
+ */
 @Inject
 class LeaveRoomPresenter(
     private val client: MatrixClient,
     private val dispatchers: CoroutineDispatchers,
     private val notificationConversationService: NotificationConversationService,
 ) : Presenter<LeaveRoomState> {
+    /**
+     * 创建视图状态
+     *
+     * @return LeaveRoomState 当前离开房间的状态
+     */
     @Composable
     override fun present(): LeaveRoomState {
         val scope = rememberCoroutineScope()
@@ -57,6 +78,14 @@ class LeaveRoomPresenter(
         }
     }
 
+    /**
+     * 显示离开房间确认对话框
+     *
+     * 根据房间类型和用户权限确定要显示的确认场景。
+     *
+     * @param roomId 房间 ID
+     * @param leaveAction 离开操作状态
+     */
     private fun CoroutineScope.showLeaveRoomAlert(
         roomId: RoomId,
         leaveAction: MutableState<AsyncAction<Unit>>,
@@ -74,6 +103,12 @@ class LeaveRoomPresenter(
         }
     }
 
+    /**
+     * 执行离开房间操作
+     *
+     * @param roomId 房间 ID
+     * @param leaveAction 离开操作状态
+     */
     private fun CoroutineScope.leaveRoom(
         roomId: RoomId,
         leaveAction: MutableState<AsyncAction<Unit>>,
@@ -89,6 +124,11 @@ class LeaveRoomPresenter(
         }
     }
 
+    /**
+     * 判断是否是房间的最后一个所有者
+     *
+     * @return 是否是最后一个所有者
+     */
     private suspend fun BaseRoom.isLastOwner(): Boolean {
         if (roomInfoFlow.value.isDm) {
             // DMs are not owned by the user, so we can return false

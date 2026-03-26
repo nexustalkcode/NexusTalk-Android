@@ -43,6 +43,8 @@
   <string name="screen_edit_profile_error">"Ismeretlen hiba történt, és az információ módosítása nem sikerült."</string>
   <string name="screen_edit_profile_error_title">"Nem sikerült frissíteni a profilt"</string>
   <string name="screen_edit_profile_title">"Profil szerkesztése"</string>
+  <string name="screen_edit_profile_change_avatar">"Avatar módosítása"</string>
+  <string name="screen_edit_profile_username">"Felhasználónév"</string>
   <string name="screen_edit_profile_updating_details">"Profil frissítése…"</string>
   <string name="screen_labs_enable_threads">"Üzenetszál válaszok engedélyezése"</string>
   <string name="screen_labs_enable_threads_description">"Az alkalmazás újraindul, hogy a változás érvénybe lépjen."</string>
@@ -76,6 +78,8 @@ Ha folytatja, egyes beállítások megváltozhatnak."</string>
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"rendszerbeállításokat"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"A rendszerértesítések ki vannak kapcsolva"</string>
   <string name="screen_notification_settings_title">"Értesítések"</string>
+  <string name="screen_preferences_section_customization">"Testreszabás"</string>
+  <string name="screen_preferences_section_security">"Biztonság"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Leküldéses értesítések előzmények"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Hibaelhárítás"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Értesítések hibaelhárítása"</string>

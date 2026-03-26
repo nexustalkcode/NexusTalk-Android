@@ -18,6 +18,13 @@ import dev.zacsweers.metro.AssistedInject
 import io.element.android.annotations.ContributesNode
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 分析设置页面 Node
+ *
+ * 负责显示分析设置页面，让用户可以管理分析数据收集偏好。
+ *
+ * @property presenter 分析设置 Presenter
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class AnalyticsSettingsNode(

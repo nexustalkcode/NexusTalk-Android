@@ -81,7 +81,7 @@ class LoggedInPresenterTest {
             accountManagementUrlResult.assertions().isCalledExactly(2)
                 .withSequence(
                     listOf(value(AccountManagementAction.Profile)),
-                    listOf(value(AccountManagementAction.DevicesList)),
+                    listOf(value(AccountManagementAction.SessionsList)),
                 )
         }
     }

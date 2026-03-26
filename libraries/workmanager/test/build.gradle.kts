@@ -16,5 +16,5 @@ android {
 dependencies {
     api(projects.libraries.workmanager.api)
     implementation(projects.libraries.matrix.api)
-    implementation(projects.tests.testutils)
+    
 }

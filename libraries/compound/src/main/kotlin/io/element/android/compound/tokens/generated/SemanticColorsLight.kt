@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 Element Creations Ltd.
+ * Copyright (c) 2025 Element Creations Ltd.
  *
  * SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-Element-Commercial.
  * Please see LICENSE files in the repository root for full details.
@@ -15,6 +15,7 @@
 @file:Suppress("all")
 package io.element.android.compound.tokens.generated
 
+import androidx.compose.ui.graphics.Color
 import io.element.android.compound.annotations.CoreColorToken
 import io.element.android.compound.tokens.generated.internal.LightColorTokens
 
@@ -73,19 +74,23 @@ val compoundColorsLight = SemanticColors(
     gradientActionStop2 = LightColorTokens.colorGreen700,
     gradientActionStop3 = LightColorTokens.colorGreen900,
     gradientActionStop4 = LightColorTokens.colorGreen1100,
-    gradientCriticalStop1 = LightColorTokens.colorRed200,
-    gradientCriticalStop2 = LightColorTokens.colorThemeBg,
-    gradientInfoStop1 = LightColorTokens.colorBlue200,
-    gradientInfoStop2 = LightColorTokens.colorThemeBg,
+    gradientInfoStop1 = LightColorTokens.colorAlphaBlue500,
+    gradientInfoStop2 = LightColorTokens.colorAlphaBlue400,
+    gradientInfoStop3 = LightColorTokens.colorAlphaBlue300,
+    gradientInfoStop4 = LightColorTokens.colorAlphaBlue200,
+    gradientInfoStop5 = LightColorTokens.colorAlphaBlue100,
+    gradientInfoStop6 = LightColorTokens.colorTransparent,
     gradientSubtleStop1 = LightColorTokens.colorAlphaGreen500,
     gradientSubtleStop2 = LightColorTokens.colorAlphaGreen400,
     gradientSubtleStop3 = LightColorTokens.colorAlphaGreen300,
     gradientSubtleStop4 = LightColorTokens.colorAlphaGreen200,
     gradientSubtleStop5 = LightColorTokens.colorAlphaGreen100,
     gradientSubtleStop6 = LightColorTokens.colorTransparent,
+    gradientBrandStop1 = LightColorTokens.colorBrandStart,
+    gradientBrandStop2 = LightColorTokens.colorBrandEnd,
     iconAccentPrimary = LightColorTokens.colorGreen900,
     iconAccentTertiary = LightColorTokens.colorGreen800,
-    iconCriticalPrimary = LightColorTokens.colorRed900,
+    iconCriticalPrimary = Color(0xFFFF4439),
     iconDisabled = LightColorTokens.colorGray700,
     iconInfoPrimary = LightColorTokens.colorBlue1100,
     iconOnSolidPrimary = LightColorTokens.colorThemeBg,
@@ -95,7 +100,7 @@ val compoundColorsLight = SemanticColors(
     iconQuaternaryAlpha = LightColorTokens.colorAlphaGray700,
     iconSecondary = LightColorTokens.colorGray900,
     iconSecondaryAlpha = LightColorTokens.colorAlphaGray900,
-    iconSuccessPrimary = LightColorTokens.colorGreen900,
+    iconSuccessPrimary = Color(0xFF2FD159),
     iconTertiary = LightColorTokens.colorGray800,
     iconTertiaryAlpha = LightColorTokens.colorAlphaGray800,
     textActionAccent = LightColorTokens.colorGreen900,

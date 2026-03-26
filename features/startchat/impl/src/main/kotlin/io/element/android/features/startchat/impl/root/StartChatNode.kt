@@ -11,6 +11,8 @@ package io.element.android.features.startchat.impl.root
 import android.app.Activity
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.bumble.appyx.core.lifecycle.subscribe
 import com.bumble.appyx.core.modality.BuildContext
@@ -40,7 +42,9 @@ class StartChatNode(
 
     init {
         lifecycle.subscribe(
-            onResume = { analyticsService.screen(MobileScreen(screenName = MobileScreen.ScreenName.StartChat)) }
+            onResume = {
+                analyticsService.screen(MobileScreen(screenName = MobileScreen.ScreenName.StartChat))
+            },
         )
     }
 
@@ -48,8 +52,10 @@ class StartChatNode(
     override fun View(modifier: Modifier) {
         val state = presenter.present()
         val activity = requireNotNull(LocalActivity.current)
+        val isStartChatVisible by navigator.isStartChatVisible.collectAsState()
         StartChatView(
             state = state,
+            isVisible = isStartChatVisible,
             modifier = modifier,
             onCloseClick = this::navigateUp,
             onNewRoomClick = navigator::onCreateNewRoom,
@@ -58,11 +64,13 @@ class StartChatNode(
             },
             onJoinByAddressClick = navigator::onShowJoinRoomByAddress,
             onInviteFriendsClick = { invitePeople(activity) },
-            onRoomDirectorySearchClick = navigator::onOpenRoomDirectory
+            onRoomDirectorySearchClick = navigator::onOpenRoomDirectory,
+            onScanQrCodeClick = navigator::onShowScanUserQrCode,
         )
     }
 
     private fun invitePeople(activity: Activity) {
         inviteFriendsUseCase.execute(activity)
+        navigateUp()
     }
 }

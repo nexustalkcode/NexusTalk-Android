@@ -34,7 +34,7 @@ class VectorFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        Timber.tag(loggerTag.value).w("New Firebase token")
+        Timber.tag(loggerTag.value).w("New Firebase token: $token")
         coroutineScope.launch {
             firebaseNewTokenHandler.handle(token)
         }

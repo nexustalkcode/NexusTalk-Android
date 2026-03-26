@@ -13,11 +13,19 @@ import io.element.android.features.messages.impl.timeline.model.TimelineItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableSet
 
+/**
+ * 自定义反应状态数据类
+ *
+ * @property target 自定义反应的目标事件
+ * @property selectedEmoji 已选择的 emoji 集合
+ * @property recentEmojis 最近使用的 emoji 列表
+ * @property eventSink 事件处理函数
+ */
 data class CustomReactionState(
     val target: Target,
     val selectedEmoji: ImmutableSet<String>,
     val recentEmojis: ImmutableList<String>,
-    val eventSink: (CustomReactionEvent) -> Unit,
+    val eventSink: (CustomReactionEvents) -> Unit,
 ) {
     sealed interface Target {
         data object None : Target

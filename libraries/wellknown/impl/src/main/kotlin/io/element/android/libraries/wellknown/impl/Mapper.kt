@@ -15,5 +15,4 @@ internal fun InternalElementWellKnown.map() = ElementWellKnown(
     enforceElementPro = enforceElementPro,
     rageshakeUrl = rageshakeUrl,
     brandColor = brandColor,
-    notificationSound = notificationSound,
 )

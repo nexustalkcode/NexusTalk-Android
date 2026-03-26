@@ -41,6 +41,21 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 线程页面顶部栏组件
+ *
+ * 线程消息页面的顶部栏，显示：
+ * - 返回按钮
+ * - 房间头像和名称
+ * - 固定显示"线程"标签
+ *
+ * @param roomName 房间名称，如果为null则显示"无房间名称"
+ * @param roomAvatarData 房间头像数据
+ * @param heroes 房间中的重要成员头像列表（用于群组头像显示）
+ * @param isTombstoned 是否为已废弃的房间
+ * @param onBackClick 点击返回按钮时的回调
+ * @param modifier 视图修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ThreadTopBar(

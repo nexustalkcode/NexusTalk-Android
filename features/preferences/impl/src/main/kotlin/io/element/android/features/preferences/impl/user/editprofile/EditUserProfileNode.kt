@@ -22,6 +22,13 @@ import io.element.android.libraries.architecture.inputs
 import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.user.MatrixUser
 
+/**
+ * 编辑用户资料页面 Node
+ *
+ * 负责显示编辑用户资料页面，允许用户修改头像和显示名称。
+ *
+ * @property presenterFactory 编辑用户资料 Presenter 工厂
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class EditUserProfileNode(
@@ -30,11 +37,18 @@ class EditUserProfileNode(
     presenterFactory: EditUserProfilePresenter.Factory,
 ) : Node(buildContext, plugins = plugins),
     EditUserProfileNavigator {
+    /**
+     * 输入数据类
+     */
     data class Inputs(
         val matrixUser: MatrixUser
     ) : NodeInputs
 
+    /**
+     * 页面回调接口
+     */
     interface Callback : Plugin {
+        /** 完成编辑 */
         fun onDone()
     }
 

@@ -15,8 +15,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 
+/**
+ * 假的锁屏服务实现
+ *
+ * 用于测试的假实现，可以控制锁状态和 PIN 设置状态。
+ */
 class FakeLockScreenService : LockScreenService {
+    /** PIN 是否已设置的 MutableStateFlow */
     private var isPinSetup = MutableStateFlow(false)
+    /** 锁状态的 MutableStateFlow */
     private val _lockState: MutableStateFlow<LockScreenLockState> = MutableStateFlow(LockScreenLockState.Locked)
     override val lockState: StateFlow<LockScreenLockState> = _lockState
 
@@ -24,6 +31,11 @@ class FakeLockScreenService : LockScreenService {
         return isPinSetup.map { !it }
     }
 
+    /**
+     * 设置 PIN 是否已设置
+     *
+     * @param isPinSetup PIN 是否已设置
+     */
     fun setIsPinSetup(isPinSetup: Boolean) {
         this.isPinSetup.value = isPinSetup
     }
@@ -32,6 +44,11 @@ class FakeLockScreenService : LockScreenService {
         return isPinSetup
     }
 
+    /**
+     * 设置锁状态
+     *
+     * @param lockState 新的锁状态
+     */
     fun setLockState(lockState: LockScreenLockState) {
         _lockState.value = lockState
     }

@@ -16,9 +16,24 @@ import io.element.android.features.leaveroom.impl.LeaveRoomPresenter
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 离开房间依赖注入模块
+ *
+ * 定义离开房间功能所需的依赖注入绑定，
+ * 用于在会话范围内提供 LeaveRoomPresenter 实例。
+ *
+ * @see LeaveRoomPresenter 离开房间 Presenter
+ * @see LeaveRoomState 离开房间状态
+ */
 @ContributesTo(SessionScope::class)
 @BindingContainer
 interface LeaveRoomModule {
+    /**
+     * 绑定离开房间 Presenter
+     *
+     * @param presenter LeaveRoomPresenter 实例
+     * @return Presenter<LeaveRoomState>
+     */
     @Binds
     fun bindLeaveRoomPresenter(presenter: LeaveRoomPresenter): Presenter<LeaveRoomState>
 }

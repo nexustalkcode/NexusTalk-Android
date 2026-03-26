@@ -27,6 +27,17 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 接受/拒绝邀请界面
+ *
+ * 渲染接受或拒绝房间邀请的界面。
+ * 处理接受和拒绝操作的异步状态，显示加载、成功、错误和确认对话框。
+ *
+ * @param state 接受/拒绝邀请状态
+ * @param onAcceptInviteSuccess 接受成功回调
+ * @param onDeclineInviteSuccess 拒绝成功回调
+ * @param modifier 修饰符
+ */
 fun AcceptDeclineInviteView(
     state: AcceptDeclineInviteState,
     onAcceptInviteSuccess: (RoomId) -> Unit,
@@ -95,6 +106,18 @@ fun AcceptDeclineInviteView(
 }
 
 @Composable
+/**
+ * 拒绝确认对话框
+ *
+ * 显示在用户点击拒绝按钮时，询问用户是否确认拒绝邀请。
+ * 根据是否封禁用户显示不同的对话框文本。
+ *
+ * @param invite 邀请数据
+ * @param blockUser 是否同时封禁用户
+ * @param onConfirmClick 确认按钮点击回调
+ * @param onDismissClick 取消按钮点击回调
+ * @param modifier 修饰符
+ */
 private fun DeclineConfirmationDialog(
     invite: InviteData,
     blockUser: Boolean,
@@ -122,6 +145,11 @@ private fun DeclineConfirmationDialog(
 }
 
 @PreviewsDayNight
+/**
+ * 接受/拒绝邀请界面预览
+ *
+ * @param state 接受/拒绝邀请状态
+ */
 @Composable
 internal fun AcceptDeclineInviteViewPreview(@PreviewParameter(AcceptDeclineInviteStateProvider::class) state: AcceptDeclineInviteState) =
     ElementPreview {

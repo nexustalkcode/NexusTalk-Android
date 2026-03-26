@@ -17,6 +17,6 @@ dependencies {
     implementation(projects.libraries.matrix.api)
     implementation(projects.libraries.matrixmedia.api)
     implementation(projects.libraries.designsystem)
-    implementation(projects.tests.testutils)
+    
     implementation(libs.coil.compose)
 }

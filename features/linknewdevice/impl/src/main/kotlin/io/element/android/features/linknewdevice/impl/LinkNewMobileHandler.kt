@@ -44,21 +44,25 @@ class LinkNewMobileHandler(
 
     fun createAndStartNewHandler() {
         Timber.tag(loggerTag.value).d("createAndStartNewHandler()")
+        // 启动新的 handler 前先取消旧任务
         currentJob?.cancel()
         handler = matrixClient.createLinkMobileHandler().getOrNull()
         handler?.let { h ->
             currentJob = sessionScope.launch {
+                // 转发流程状态到 StateFlow
                 h.linkMobileStep
                     .onEach {
                         linkMobileStepFlow.emit(it)
                     }
                     .launchIn(this)
+                // 启动移动端配对流程
                 h.start()
             }
         }
     }
 
     fun reset() {
+        // 取消任务并重置流程状态
         currentJob?.cancel()
         currentJob = null
         sessionScope.launch {

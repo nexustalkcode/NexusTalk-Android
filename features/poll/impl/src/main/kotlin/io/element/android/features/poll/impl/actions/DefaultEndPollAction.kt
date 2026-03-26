@@ -16,10 +16,25 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.services.analytics.api.AnalyticsService
 
+/**
+ * 默认结束投票操作实现类
+ *
+ * 实现了 EndPollAction 接口，负责结束投票的具体逻辑。
+ * 结束投票后会上报分析事件。
+ *
+ * @property analyticsService 分析服务，用于上报结束投票事件
+ */
 @ContributesBinding(RoomScope::class)
 class DefaultEndPollAction(
     private val analyticsService: AnalyticsService,
 ) : EndPollAction {
+    /**
+     * 执行结束投票操作
+     *
+     * @param timeline 时间线，用于发送结束投票的事件
+     * @param pollStartId 投票开始事件 ID
+     * @return Result<Unit> 操作结果
+     */
     override suspend fun execute(timeline: Timeline, pollStartId: EventId): Result<Unit> {
         return timeline.endPoll(
             pollStartId = pollStartId,

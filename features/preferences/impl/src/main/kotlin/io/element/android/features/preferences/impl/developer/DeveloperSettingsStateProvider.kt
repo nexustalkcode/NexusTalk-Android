@@ -18,6 +18,13 @@ import io.element.android.libraries.matrix.api.tracing.TraceLogPack
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 开发者设置状态提供者
+ *
+ * 用于在预览模式下提供开发者设置页面的示例状态数据。
+ *
+ * @see DeveloperSettingsState 开发者设置状态
+ */
 open class DeveloperSettingsStateProvider : PreviewParameterProvider<DeveloperSettingsState> {
     override val values: Sequence<DeveloperSettingsState>
         get() = sequenceOf(
@@ -32,16 +39,22 @@ open class DeveloperSettingsStateProvider : PreviewParameterProvider<DeveloperSe
             ),
             aDeveloperSettingsState(
                 isEnterpriseBuild = true,
-                // Disable the color picker for now, Paparazzi is failing with:
-                // java.lang.IllegalArgumentException: Cannot round NaN value.
-                //  at kotlin.math.MathKt__MathJVMKt.roundToInt(MathJVM.kt:1210)
-                //  at io.mhssn.colorpicker.ext.ColorExtKt.lighten(ColorExt.kt:86)
-                //  at io.mhssn.colorpicker.pickers.ClassicColorPickerKt$ClassicColorPicker$1$1.invokeSuspend(ClassicColorPicker.kt:53)
-                showColorPicker = false,
+                showColorPicker = true,
             ),
         )
 }
 
+/**
+ * 创建示例 DeveloperSettingsState 对象
+ *
+ * @param clearCacheAction 清除缓存操作状态
+ * @param customElementCallBaseUrlState 自定义 Element Call URL 状态
+ * @param traceLogPacks 追踪日志包列表
+ * @param isEnterpriseBuild 是否为企业版
+ * @param showColorPicker 是否显示颜色选择器
+ * @param eventSink 事件处理函数
+ * @return DeveloperSettingsState 示例状态
+ */
 fun aDeveloperSettingsState(
     clearCacheAction: AsyncAction<Unit> = AsyncAction.Uninitialized,
     customElementCallBaseUrlState: CustomElementCallBaseUrlState = aCustomElementCallBaseUrlState(),
@@ -63,6 +76,13 @@ fun aDeveloperSettingsState(
     eventSink = eventSink,
 )
 
+/**
+ * 创建示例 CustomElementCallBaseUrlState 对象
+ *
+ * @param baseUrl 基础 URL
+ * @param validator 验证函数
+ * @return CustomElementCallBaseUrlState 示例状态
+ */
 fun aCustomElementCallBaseUrlState(
     baseUrl: String? = null,
     validator: (String?) -> Boolean = { true },

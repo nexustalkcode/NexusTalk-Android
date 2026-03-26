@@ -12,7 +12,6 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.core.UserId
-import io.element.android.libraries.matrix.api.notification.CallIntent
 import io.element.android.libraries.matrix.api.notification.RtcNotificationType
 
 data class NotifiableRingingCallEvent(
@@ -30,7 +29,6 @@ data class NotifiableRingingCallEvent(
     val senderAvatarUrl: String?,
     val roomAvatarUrl: String? = null,
     val rtcNotificationType: RtcNotificationType,
-    val callIntent: CallIntent,
     val timestamp: Long,
     val expirationTimestamp: Long,
 ) : NotifiableEvent

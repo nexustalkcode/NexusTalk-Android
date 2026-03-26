@@ -10,6 +10,11 @@ package io.element.android.features.preferences.impl.developer.tracing
 
 import io.element.android.libraries.matrix.api.tracing.LogLevel
 
+/**
+ * 将 LogLevelItem 转换为 Matrix LogLevel
+ *
+ * @return 对应的 Matrix LogLevel
+ */
 fun LogLevelItem.toLogLevel(): LogLevel {
     return when (this) {
         LogLevelItem.ERROR -> io.element.android.libraries.matrix.api.tracing.LogLevel.ERROR
@@ -20,6 +25,11 @@ fun LogLevelItem.toLogLevel(): LogLevel {
     }
 }
 
+/**
+ * 将 Matrix LogLevel 转换为 LogLevelItem
+ *
+ * @return 对应的 LogLevelItem
+ */
 fun LogLevel.toLogLevelItem(): LogLevelItem {
     return when (this) {
         LogLevel.ERROR -> LogLevelItem.ERROR

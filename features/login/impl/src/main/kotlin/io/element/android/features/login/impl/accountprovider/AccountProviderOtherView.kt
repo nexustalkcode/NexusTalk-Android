@@ -30,7 +30,14 @@ import io.element.android.libraries.designsystem.theme.components.HorizontalDivi
 import io.element.android.libraries.designsystem.theme.components.Text
 
 /**
- * https://www.figma.com/file/o9p34zmiuEpZRyvZXJZAYL/FTUE?type=design&node-id=604-60817
+ * "其他服务器"视图组件
+ *
+ * 用于显示"搜索其他服务器"选项的可组合组件。
+ * 允许用户输入自定义的 homeserver 地址进行连接。
+ *
+ * @param onClick 点击回调
+ * @param modifier 修饰符
+ * @see <a href="https://www.figma.com/file/o9p34zmiuEpZRyvZXJZAYL/FTUE?type=design&node-id=604-60817">Figma 设计稿</a>
  */
 @Composable
 fun AccountProviderOtherView(

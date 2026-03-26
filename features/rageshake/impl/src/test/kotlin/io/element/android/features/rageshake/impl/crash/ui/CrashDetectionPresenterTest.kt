@@ -8,13 +8,17 @@
 
 package io.element.android.features.rageshake.impl.crash.ui
 
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.rageshake.api.crash.CrashDetectionEvent
 import io.element.android.features.rageshake.impl.crash.A_CRASH_DATA
 import io.element.android.features.rageshake.impl.crash.DefaultCrashDetectionPresenter
 import io.element.android.features.rageshake.impl.crash.FakeCrashDataStore
+import io.element.android.libraries.androidutils.clipboard.FakeClipboardHelper
 import io.element.android.libraries.core.meta.BuildMeta
+import io.element.android.libraries.designsystem.utils.snackbar.SnackbarDispatcher
 import io.element.android.libraries.matrix.test.core.aBuildMeta
+import io.element.android.libraries.ui.strings.CommonStrings
 import io.element.android.tests.testutils.WarmUpRule
 import io.element.android.tests.testutils.test
 import kotlinx.coroutines.flow.Flow
@@ -90,6 +94,48 @@ class CrashDetectionPresenterTest {
     }
 
     @Test
+    fun `present - copy diagnostic info`() = runTest {
+        val clipboardHelper = FakeClipboardHelper()
+        val snackbarDispatcher = SnackbarDispatcher()
+        val presenter = createPresenter(
+            crashDataStore = FakeCrashDataStore(appHasCrashed = true, crashData = A_CRASH_DATA),
+            buildMeta = aBuildMeta(
+                applicationName = "Element X",
+                versionName = "1.2.3",
+                versionCode = 123,
+                flavorDescription = "Gplay",
+                gitRevision = "abc123",
+            ),
+            clipboardHelper = clipboardHelper,
+            snackbarDispatcher = snackbarDispatcher,
+        )
+
+        snackbarDispatcher.snackbarMessage.test {
+            presenter.test {
+                skipItems(1)
+                val initialState = awaitItem()
+                assertThat(initialState.crashDetected).isTrue()
+
+                initialState.eventSink.invoke(CrashDetectionEvent.CopyDiagnosticInfo)
+
+                val clipboardText = clipboardHelper.clipboardContents as String
+                assertThat(clipboardText).contains("App: Element X")
+                assertThat(clipboardText).contains("Version: 1.2.3 (123)")
+                assertThat(clipboardText).contains("Flavor: Gplay")
+                assertThat(clipboardText).contains("Git revision: abc123")
+                assertThat(clipboardText).contains("Crash info:")
+                assertThat(clipboardText).contains(A_CRASH_DATA)
+
+                assertThat(awaitItem().crashDetected).isFalse()
+            }
+
+            val firstMessage = awaitItem()
+            val snackbarMessage = firstMessage ?: awaitItem()
+            assertThat(snackbarMessage?.messageResId).isEqualTo(CommonStrings.common_copied_to_clipboard)
+        }
+    }
+
+    @Test
     fun `present - crashDetected is false if the feature is not available`() = runTest {
         val isFeatureAvailableFlow = MutableStateFlow(false)
         val crashDataStore = FakeCrashDataStore(appHasCrashed = false)
@@ -120,9 +166,13 @@ class CrashDetectionPresenterTest {
         crashDataStore: FakeCrashDataStore = FakeCrashDataStore(),
         buildMeta: BuildMeta = aBuildMeta(),
         isFeatureAvailableFlow: Flow<Boolean> = flowOf(true),
+        clipboardHelper: FakeClipboardHelper = FakeClipboardHelper(),
+        snackbarDispatcher: SnackbarDispatcher = SnackbarDispatcher(),
     ) = DefaultCrashDetectionPresenter(
         buildMeta = buildMeta,
         crashDataStore = crashDataStore,
         rageshakeFeatureAvailability = { isFeatureAvailableFlow },
+        clipboardHelper = clipboardHelper,
+        snackbarDispatcher = snackbarDispatcher,
     )
 }

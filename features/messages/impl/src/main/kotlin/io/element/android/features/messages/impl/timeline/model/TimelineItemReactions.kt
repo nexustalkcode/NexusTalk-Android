@@ -11,6 +11,13 @@ package io.element.android.features.messages.impl.timeline.model
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 时间线项目反应数据类
+ *
+ * 包含一个事件的所有反应信息。
+ *
+ * @property reactions 聚合反应列表
+ */
 data class TimelineItemReactions(
     val reactions: ImmutableList<AggregatedReaction>
 ) {

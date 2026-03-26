@@ -58,6 +58,26 @@ import kotlinx.coroutines.launch
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
+/**
+ * 加入房间 Presenter
+ *
+ * 负责处理加入房间功能的业务逻辑和状态管理。
+ * 处理加入房间、敲门请求、接受邀请、拒绝邀请等操作。
+ *
+ * @property roomId 房间 ID
+ * @property roomIdOrAlias 房间 ID 或别名
+ * @property roomDescription 房间描述
+ * @property serverNames 服务器名称列表
+ * @property trigger 加入房间的触发器
+ * @property matrixClient Matrix 客户端
+ * @property joinRoom 加入房间服务
+ * @property knockRoom 敲门服务
+ * @property cancelKnockRoom 取消敲门服务
+ * @property forgetRoom 忘记房间服务
+ * @property acceptDeclineInvitePresenter 接受/拒绝邀请 Presenter
+ * @property buildMeta 构建元数据
+ * @property seenInvitesStore 已查看邀请存储
+ */
 @AssistedInject
 class JoinRoomPresenter(
     @Assisted private val roomId: RoomId,
@@ -74,7 +94,20 @@ class JoinRoomPresenter(
     private val buildMeta: BuildMeta,
     private val seenInvitesStore: SeenInvitesStore,
 ) : Presenter<JoinRoomState> {
+    /**
+     * 工厂接口
+     */
     fun interface Factory {
+        /**
+         * 创建 Presenter 实例
+         *
+         * @param roomId 房间 ID
+         * @param roomIdOrAlias 房间 ID 或别名
+         * @param roomDescription 房间描述
+         * @param serverNames 服务器名称列表
+         * @param trigger 加入房间的触发器
+         * @return JoinRoomPresenter 实例
+         */
         fun create(
             roomId: RoomId,
             roomIdOrAlias: RoomIdOrAlias,
@@ -86,6 +119,11 @@ class JoinRoomPresenter(
 
     private val spaceList = matrixClient.spaceService.spaceRoomList(roomId)
 
+    /**
+     * 生成界面状态
+     *
+     * @return JoinRoomState 加入房间状态
+     */
     @Composable
     override fun present(): JoinRoomState {
         val coroutineScope = rememberCoroutineScope()
@@ -121,7 +159,7 @@ class JoinRoomPresenter(
                 }
                 spaceRoom.isPresent -> {
                     val spaceRoom = spaceRoom.get()
-                    // Only use this state when space is not locally known
+                    // 仅在空间未本地已知时使用此状态
                     contentState = if (spaceRoom.state != null) {
                         ContentState.Loading
                     } else {
@@ -152,6 +190,11 @@ class JoinRoomPresenter(
             contentState.markRoomInviteAsSeen()
         }
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 加入房间事件
+         */
         fun handleEvent(event: JoinRoomEvents) {
             when (event) {
                 JoinRoomEvents.JoinRoom -> coroutineScope.joinRoom(joinAction)
@@ -202,6 +245,11 @@ class JoinRoomPresenter(
         )
     }
 
+    /**
+     * 执行加入房间操作
+     *
+     * @param joinAction 加入操作的异步状态
+     */
     private fun CoroutineScope.joinRoom(joinAction: MutableState<AsyncAction<Unit>>) = launch {
         joinAction.runUpdatingState {
             joinRoom.invoke(
@@ -212,12 +260,24 @@ class JoinRoomPresenter(
         }
     }
 
+    /**
+     * 执行敲门请求操作
+     *
+     * @param knockAction 敲门操作的异步状态
+     * @param message 敲门消息
+     */
     private fun CoroutineScope.knockRoom(knockAction: MutableState<AsyncAction<Unit>>, message: String) = launch {
         knockAction.runUpdatingState {
             knockRoom(roomIdOrAlias, message, serverNames)
         }
     }
 
+    /**
+     * 取消敲门请求操作
+     *
+     * @param requiresConfirmation 是否需要确认
+     * @param cancelKnockAction 取消敲门操作的异步状态
+     */
     private fun CoroutineScope.cancelKnockRoom(requiresConfirmation: Boolean, cancelKnockAction: MutableState<AsyncAction<Unit>>) = launch {
         if (requiresConfirmation) {
             cancelKnockAction.value = AsyncAction.ConfirmingNoParams
@@ -228,12 +288,20 @@ class JoinRoomPresenter(
         }
     }
 
+    /**
+     * 执行忘记房间操作
+     *
+     * @param forgetAction 忘记房间操作的异步状态
+     */
     private fun CoroutineScope.forgetRoom(forgetAction: MutableState<AsyncAction<Unit>>) = launch {
         forgetAction.runUpdatingState {
             forgetRoom.invoke(roomId)
         }
     }
 
+    /**
+     * 将房间邀请标记为已查看
+     */
     private suspend fun ContentState.markRoomInviteAsSeen() {
         if ((this as? ContentState.Loaded)?.joinAuthorisationStatus as? JoinAuthorisationStatus.IsInvited != null) {
             seenInvitesStore.markAsSeen(roomId)
@@ -376,9 +444,10 @@ private fun JoinRule?.toJoinAuthorisationStatus(): JoinAuthorisationStatus {
     return when (this) {
         JoinRule.Knock,
         is JoinRule.KnockRestricted -> JoinAuthorisationStatus.CanKnock
-        JoinRule.Invite -> JoinAuthorisationStatus.NeedInvite
+        JoinRule.Invite,
+        JoinRule.Private -> JoinAuthorisationStatus.NeedInvite
         is JoinRule.Restricted -> JoinAuthorisationStatus.Restricted
         JoinRule.Public -> JoinAuthorisationStatus.CanJoin
-        is JoinRule.Custom, null -> JoinAuthorisationStatus.Unknown
+        else -> JoinAuthorisationStatus.Unknown
     }
 }

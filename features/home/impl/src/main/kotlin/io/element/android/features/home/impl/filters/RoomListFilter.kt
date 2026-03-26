@@ -9,17 +9,17 @@
 package io.element.android.features.home.impl.filters
 
 import io.element.android.features.home.impl.R
-import io.element.android.libraries.matrix.api.roomlist.RoomListFilter as MatrixRoomListFilter
 
 /**
  * Enum class representing the different filters that can be applied to the room list.
  * Order is important, it'll be used as initial order in the UI.
  */
 enum class RoomListFilter(val stringResource: Int) {
+    Favourites(io.element.android.libraries.ui.strings.R.string.action_pin),
     Unread(R.string.screen_roomlist_filter_unreads),
     People(R.string.screen_roomlist_filter_people),
     Rooms(R.string.screen_roomlist_filter_rooms),
-    Favourites(R.string.screen_roomlist_filter_favourites),
+
     Invites(R.string.screen_roomlist_filter_invites);
 
     val incompatibleFilters: Set<RoomListFilter>
@@ -30,14 +30,4 @@ enum class RoomListFilter(val stringResource: Int) {
             Favourites -> setOf(Invites)
             Invites -> setOf(Rooms, People, Unread, Favourites)
         }
-}
-
-fun RoomListFilter.into(): MatrixRoomListFilter {
-    return when (this) {
-        RoomListFilter.Rooms -> MatrixRoomListFilter.Category.Group
-        RoomListFilter.People -> MatrixRoomListFilter.Category.People
-        RoomListFilter.Unread -> MatrixRoomListFilter.Unread
-        RoomListFilter.Favourites -> MatrixRoomListFilter.Favorite
-        RoomListFilter.Invites -> MatrixRoomListFilter.Invite
-    }
 }

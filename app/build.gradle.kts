@@ -33,6 +33,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     // When using precompiled plugins, we need to apply the firebase plugin like this
     id(libs.plugins.firebaseAppDistribution.get().pluginId)
+    alias(libs.plugins.knit)
     id("kotlin-parcelize")
     alias(libs.plugins.licensee)
     alias(libs.plugins.kotlin.serialization)
@@ -46,15 +47,15 @@ android {
     namespace = "io.element.android.x"
 
     defaultConfig {
-        //applicationId = BuildTimeConfig.APPLICATION_ID
-        applicationId = "chat.schildi.android"
-        versionCode = 1150
-        versionName = "0.11.0-ex_26_3_3"
+        applicationId = BuildTimeConfig.APPLICATION_ID
         targetSdk = Versions.TARGET_SDK
+        versionCode = Versions.VERSION_CODE
+        versionName = Versions.VERSION_NAME
 
         // Keep abiFilter for the universalApk
         ndk {
-            abiFilters += listOf("armeabi-v7a", "x86", "arm64-v8a", "x86_64")
+//            abiFilters += listOf("armeabi-v7a", "x86", "arm64-v8a", "x86_64")
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
         }
 
         // Ref: https://developer.android.com/studio/build/configure-apk-splits.html#configure-abi-split
@@ -73,7 +74,8 @@ android {
 
                 if (!buildingAppBundle) {
                     // Specifies a list of ABIs that Gradle should create APKs for.
-                    include("armeabi-v7a", "x86", "arm64-v8a", "x86_64")
+//                    include("armeabi-v7a", "x86", "arm64-v8a", "x86_64")
+                    include("armeabi-v7a", "arm64-v8a")
                     // Generate a universal APK that includes all ABIs, so user who installs from CI tool can use this one by default.
                     isUniversalApk = true
                 }
@@ -108,23 +110,22 @@ android {
     logger.warnInBox("Building ${defaultConfig.applicationId} ($baseAppName) [$buildType]")
 
     buildTypes {
-        val oidcRedirectSchemeBase = BuildTimeConfig.METADATA_HOST_REVERSED ?: "io.element.android"
+        val oidcRedirectSchemeBase = BuildTimeConfig.METADATA_HOST_REVERSED ?: "space.nexustalk.android.default"
+//        val oidcRedirectSchemeBase = BuildTimeConfig.METADATA_HOST_REVERSED ?: "chat.schildi.android.default"
         getByName("debug") {
-            resValue("string", "app_name", "$baseAppName dbg")
             resValue(
                 "string",
-                "login_redirect_scheme_upstream", // SC: we have non-_upstream it in resources to better combine build flavor+type
+                "login_redirect_scheme",
                 "$oidcRedirectSchemeBase.debug",
             )
-            applicationIdSuffix = ".debug"
+            //applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("debug")
         }
 
         getByName("release") {
-            resValue("string", "app_name", baseAppName)
             resValue(
                 "string",
-                "login_redirect_scheme_upstream", // SC: we have non-_upstream it in resources to better combine build flavor+type
+                "login_redirect_scheme",
                 oidcRedirectSchemeBase,
             )
             signingConfig = signingConfigs.getByName("debug")
@@ -158,10 +159,9 @@ android {
             initWith(release)
             applicationIdSuffix = ".nightly"
             versionNameSuffix = "-nightly"
-            resValue("string", "app_name", "$baseAppName nightly")
             resValue(
                 "string",
-                "login_redirect_scheme_upstream", // SC: we have non-_upstream it in resources to better combine build flavor+type
+                "login_redirect_scheme",
                 "$oidcRedirectSchemeBase.nightly",
             )
             matchingFallbacks += listOf("release")
@@ -199,13 +199,12 @@ android {
     productFlavors {
         create("gplay") {
             dimension = "store"
-            //isDefault = true
+            isDefault = true
             buildConfigFieldStr("SHORT_FLAVOR_DESCRIPTION", "G")
             buildConfigFieldStr("FLAVOR_DESCRIPTION", "GooglePlay")
         }
         create("fdroid") {
             dimension = "store"
-            isDefault = true // SC
             buildConfigFieldStr("SHORT_FLAVOR_DESCRIPTION", "F")
             buildConfigFieldStr("FLAVOR_DESCRIPTION", "FDroid")
         }
@@ -222,105 +221,29 @@ android {
     }
 }
 
-// SC: downstream package name and versioning, overriding Element default config while reducing merge conflicts
-val scVersionMajor = 0
-val scVersionMinor = 11
-val scVersionPatch = 0
-// Following val is set by increment_version.sh based on the values above
-val scVersionMain = "0.7.6"
-android {
-    // Use a flavor for common things that the upstream config will not override by the build type
-    flavorDimensions += "package"
-    flavorDimensions += "sc-variant"
-    productFlavors {
-        // Common upstream overrides across all sc variants - only one flavor for this dimension to ensure it's picked up!
-        create("sc") {
-            dimension = "package"
-            versionCode = 1150
-            versionName = "0.11.0-ex_26_3_3"
-            isDefault = true
-        }
-        // SC variants for different release tracks. Cannot do actual release types for those since fdroid build tools always want `release` builds.
-        create("default") {
-            dimension = "sc-variant"
-            applicationId = "chat.schildi.android"
-            isDefault = true
-            resValue("string", "sc_app_name", "SchildiChat Next")
-            resValue("string", "sc_app_name_launcher", "SchildiNext")
-        }
-        create("beta") {
-            dimension = "sc-variant"
-            applicationId = "chat.schildi.next"
-            resValue("string", "sc_app_name", "SchildiChat Next (Beta)")
-            resValue("string", "sc_app_name_launcher", "SchildiNext β")
-        }
-        create("internal") {
-            dimension = "sc-variant"
-            applicationId = "chat.schildi.next.internal"
-            resValue("string", "sc_app_name", "SchildiChat Next (Internal)")
-            resValue("string", "sc_app_name_launcher", "SchildiNext[i]")
-        }
-    }
-    // Build types to override some more upstream values
-    buildTypes {
-        named("debug") {
-            resValue("string", "app_name", "SchildiChat Next dbg")
-            buildConfigField("String", "SC_VERSION_MAIN", "\"$scVersionMain\"")
-            buildConfigField("String", "SC_VERSION_ELEMENT", "\"${Versions.VERSION_NAME}\"")
-        }
-        named("release") {
-            resValue("string", "app_name", "SchildiChat Next")
-            buildConfigField("String", "SC_VERSION_MAIN", "\"$scVersionMain\"")
-            buildConfigField("String", "SC_VERSION_ELEMENT", "\"${Versions.VERSION_NAME}\"")
-        }
-    }
-}
-// SC: Disable unused upstream configs
-androidComponents {
-    beforeVariants { variantBuilder ->
-        if (variantBuilder.buildType in listOf("nightly") || variantBuilder.flavorName?.startsWith("gplay") == true) {
-            variantBuilder.enable = false
-        }
-    }
+// Knit
+apply {
+    plugin("kotlinx-knit")
 }
 
-androidComponents {
-    // map for the version codes last digit
-    // x86 must have greater values than arm
-    // 64 bits have greater value than 32 bits
-    val abiVersionCodes = mapOf(
-        "armeabi-v7a" to 1,
-        "arm64-v8a" to 2,
-        "x86" to 3,
-        "x86_64" to 4,
-    )
-
-    onVariants { variant ->
-        // Assigns a different version code for each output APK
-        // other than the universal APK.
-        variant.outputs.forEach { output ->
-            val name = output.filters.find { it.filterType == ABI }?.identifier
-
-            // Stores the value of abiCodes that is associated with the ABI for this variant.
-            val abiCode = abiVersionCodes[name] ?: 0
-            // Assigns the new version code to output.versionCode, which changes the version code
-            // for only the output APK, not for the variant itself.
-            output.versionCode.set((output.versionCode.orNull ?: 0) * 10 + abiCode)
-        }
+knit {
+    files = fileTree(project.rootDir) {
+        include(
+            "**/*.md",
+            "**/*.kt",
+            "*/*.kts",
+        )
+        exclude(
+            "**/build/**",
+            "*/.gradle/**",
+            "**/CHANGES.md",
+        )
     }
-
-    val reportingExtension: ReportingExtension = project.extensions.getByType(ReportingExtension::class.java)
-    configureLicensesTasks(reportingExtension)
 }
 
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.theme)
-    implementation(projects.schildi.lib) // Needed for DI
-    implementation(projects.schildi.matrixsdk) // Needed for DI
-    implementation(libs.androidx.emoji2)
-    implementation(libs.androidx.emoji2.bundled)
     allLibrariesImpl()
     allServicesImpl()
     if (isEnterpriseBuild) {
@@ -361,7 +284,6 @@ dependencies {
 
     implementation(libs.matrix.emojibase.bindings)
 
-    testCommonDependencies(libs)
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.services.toolbox.test)
 
@@ -377,11 +299,6 @@ tasks.withType<GenerateBuildConfig>().configureEach {
 }
 
 licensee {
-    ignoreDependencies("chat.schildi.rustcomponents", "sdk-android")
-    ignoreDependencies("com.github.SchildiChat", "element-compound-android")
-    ignoreDependencies("com.beeper.android.messageformat", "messageformat-android")
-    ignoreDependencies("com.github.beeper.matrix-messageformat-compose", "messageformat-android")
-    ignoreDependencies(groupId = "chat.schildi")
     allow("Apache-2.0")
     allow("MIT")
     allow("BSD-2-Clause")

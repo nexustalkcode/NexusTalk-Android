@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"Megfelelő szoba található"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Szoba nem található"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"pl. #szoba-neve:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"QR-kód beolvasása"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Olvassa be a QR-kódot egy névjegy hozzáadásához"</string>
+  <string name="screen_scan_user_qr_code_success">"A QR-kód beolvasása sikeres"</string>
 </resources>

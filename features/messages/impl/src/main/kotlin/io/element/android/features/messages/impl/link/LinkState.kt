@@ -11,7 +11,13 @@ package io.element.android.features.messages.impl.link
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.wysiwyg.link.Link
 
+/**
+ * 链接状态数据类
+ *
+ * @property linkClick 链接点击的异步操作状态
+ * @property eventSink 事件处理函数
+ */
 data class LinkState(
     val linkClick: AsyncAction<Link>,
-    val eventSink: (LinkEvent) -> Unit,
+    val eventSink: (LinkEvents) -> Unit,
 )

@@ -8,9 +8,29 @@
 
 package io.element.android.features.login.impl.screens.loginpassword
 
+/**
+ * 登录密码事件接口
+ *
+ * 定义登录密码页面的用户交互事件。
+ */
 sealed interface LoginPasswordEvents {
+    /**
+     * 设置登录名/用户名事件
+     *
+     * @property login 用户名或 Matrix ID
+     */
     data class SetLogin(val login: String) : LoginPasswordEvents
+
+    /**
+     * 设置密码事件
+     *
+     * @property password 用户密码
+     */
     data class SetPassword(val password: String) : LoginPasswordEvents
+
+    /** 提交登录事件 - 用户点击登录按钮 */
     data object Submit : LoginPasswordEvents
+
+    /** 清除错误事件 */
     data object ClearError : LoginPasswordEvents
 }

@@ -11,24 +11,21 @@ package io.element.android.features.networkmonitor.api
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Monitors the network status of the device, providing the current network connectivity status as a flow.
+ * 网络监控器接口
  *
- * **Note:** network connectivity does not imply internet connectivity. The device can be connected to a network that can't reach the homeserver.
+ * 监控设备的网络连接状态，提供当前网络连接状态的 Flow。
+ *
+ * **注意：** 网络连接状态不等于互联网连接状态。
+ * 设备可能已连接到网络，但无法访问 homeserver。
+ *
+ * @see DefaultNetworkMonitor 默认实现
+ * @see NetworkStatus 网络状态枚举
  */
 interface NetworkMonitor {
     /**
-     * A flow containing the current network connectivity status.
+     * 当前网络连接状态的 Flow
+     *
+     * @property connectivity 网络连接状态流
      */
     val connectivity: StateFlow<NetworkStatus>
-
-    /**
-     * Checks if the active network is being blocked by Doze, even if it's available.
-     */
-    val isNetworkBlocked: StateFlow<Boolean>
-
-    /**
-     * A flow indicating whether the app is running in an air-gapped environment.
-     * An air-gapped environment is an environment that is not connected to the internet, and where the app can only communicate with a limited set of servers.
-     */
-    val isInAirGappedEnvironment: StateFlow<Boolean>
 }

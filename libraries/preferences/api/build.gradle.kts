@@ -17,11 +17,10 @@ android {
 }
 
 dependencies {
-    implementation(projects.schildi.lib)
     implementation(libs.coroutines.core)
     implementation(projects.libraries.matrix.api)
     implementation(libs.androidx.datastore.preferences)
 
-    testCommonDependencies(libs)
+   
     testImplementation(projects.libraries.preferences.test)
 }

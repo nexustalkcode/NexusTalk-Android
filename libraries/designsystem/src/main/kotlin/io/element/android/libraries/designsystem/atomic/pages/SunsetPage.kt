@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 日落主题页面组件
+ *
+ * 用于显示日落渐变背景效果的特殊页面。
+ * 自动应用与当前主题相反的颜色方案，
+ * 适用于迁移页面、特殊状态页面等场景。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.pages
 
 import androidx.compose.foundation.Image
@@ -29,8 +40,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import chat.schildi.theme.ForcedDarkScTheme
-import chat.schildi.theme.ScTheme
 import io.element.android.compound.annotations.CoreColorToken
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.internal.DarkColorTokens
@@ -42,6 +51,34 @@ import io.element.android.libraries.designsystem.text.withColoredPeriod
 import io.element.android.libraries.designsystem.theme.components.CircularProgressIndicator
 import io.element.android.libraries.designsystem.theme.components.Text
 
+/**
+ * 日落主题页面组件
+ *
+ * 创建一个具有日落渐变背景效果的页面。
+ * 标题带有彩色句号装饰，支持加载状态显示。
+ *
+ * @param isLoading Boolean 是否显示加载状态
+ * @param title String 标题文本
+ * @param subtitle String 副标题文本
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ * @param overallContent @Composable () -> Unit 页面整体内容
+ *
+ * @return Unit
+ *
+ * @see [withColoredPeriod] 带彩色句号的文本处理
+ *
+ * @example
+ * ```kotlin
+ * SunsetPage(
+ *     isLoading = false,
+ *     title = "迁移完成",
+ *     subtitle = "您的数据已成功迁移",
+ *     overallContent = {
+ *         Button("完成", onClick = { /* 完成 */ })
+ *     }
+ * )
+ * ```
+ */
 @Composable
 fun SunsetPage(
     isLoading: Boolean,
@@ -50,13 +87,11 @@ fun SunsetPage(
     modifier: Modifier = Modifier,
     overallContent: @Composable () -> Unit,
 ) {
-    /*
     ElementTheme(
         // Always use the opposite value of the current theme
         darkTheme = ElementTheme.isLightTheme,
         applySystemBarsUpdate = false,
-    ) { */
-    ForcedDarkScTheme {
+    ) {
         Box(
             modifier = modifier.fillMaxSize()
         ) {
@@ -109,13 +144,15 @@ fun SunsetPage(
     }
 }
 
+/**
+ * 日落背景组件
+ *
+ * SunsetPage 的内部组件，用于绘制日落渐变背景。
+ * 根据当前主题自动选择相反的颜色方案。
+ */
 @OptIn(CoreColorToken::class)
 @Composable
 private fun SunsetBackground() {
-    if (ScTheme.yes) {
-        ScSunsetBackground()
-        return
-    }
     Column(modifier = Modifier.fillMaxSize()) {
         // The top background colors are the opposite of the current theme ones
         val topBackgroundColor = if (ElementTheme.isLightTheme) {
@@ -151,6 +188,12 @@ private fun SunsetBackground() {
     }
 }
 
+/**
+ * SunsetPage 预览组件
+ *
+ * 用于在设计预览中展示 SunsetPage 组件的默认状态。
+ * 此预览函数支持日夜两种主题模式。
+ */
 @PreviewsDayNight
 @Composable
 internal fun SunsetPagePreview() = ElementPreview {

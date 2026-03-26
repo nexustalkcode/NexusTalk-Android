@@ -24,8 +24,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/** 已查看邀请的偏好设置键名 */
 private val seenInvitesKey = stringSetPreferencesKey("seenInvites")
 
+/**
+ * 默认已查看邀请存储实现
+ *
+ * 实现了 SeenInvitesStore 接口，使用 DataStore 存储用户已查看的房间邀请。
+ * 每个会话使用独立的存储文件，通过会话 ID 哈希值命名。
+ *
+ * @property context Android 上下文
+ * @property sessionId 会话 ID
+ * @property sessionCoroutineScope 会话协程作用域
+ * @property sessionObserver 会话观察器
+ */
 class DefaultSeenInvitesStore(
     context: Context,
     sessionId: SessionId,

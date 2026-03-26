@@ -6,11 +6,33 @@
   <string name="screen_create_room_private_option_description">"Dim ond pobl wahoddwyd all gael mynediad i\'r ystafell hon. Mae pob neges wedi\'i hamgryptio o\'r dechrau i\'r diwedd."</string>
   <string name="screen_create_room_public_option_description">"Gall unrhyw un ddod o hyd i\'r ystafell hon.
 Gallwch newid hyn unrhyw bryd yng ngosodiadau ystafell."</string>
+  <string name="screen_create_room_public_option_title">"Ystafell gyhoeddus"</string>
   <string name="screen_create_room_room_access_section_knocking_option_description">"Gall unrhyw un ofyn am gael ymuno â\'r ystafell ond bydd rhaid i weinyddwr neu gymedrolwr dderbyn y cais"</string>
   <string name="screen_create_room_room_access_section_knocking_option_title">"Gofyn i gael ymuno"</string>
   <string name="screen_create_room_room_access_section_public_option_description">"Gall unrhyw un ymuno â\'r ystafell hon"</string>
+  <string name="screen_create_room_room_access_section_public_option_title">"Unrhyw un"</string>
   <string name="screen_create_room_room_address_section_footer">"Er mwyn i\'r ystafell hon fod yn weladwy yn y cyfeiriadur ystafelloedd cyhoeddus, bydd angen cyfeiriad ystafell arnoch."</string>
   <string name="screen_create_room_room_address_section_title">"Cyfeiriad yr ystafell"</string>
   <string name="screen_create_room_room_visibility_section_title">"Gwelededd yr ystafell"</string>
   <string name="screen_create_room_topic_label">"Pwnc (dewisol)"</string>
+
+  <string name="screen_create_room_error_creating_space">"Nid oedd modd creu'r gofod oherwydd gwall anhysbys. Ceisiwch eto yn nes ymlaen."</string>
+  <string name="screen_create_room_name_label">"Enw"</string>
+  <string name="screen_create_room_avatar_photo">"llun"</string>
+  <string name="screen_create_room_name_placeholder">"Ychwanegu enw…"</string>
+  <string name="screen_create_room_new_room_title">"Ystafell newydd"</string>
+  <string name="screen_create_room_new_space_title">"Gofod newydd"</string>
+  <string name="screen_create_room_private_option_title">"Preifat"</string>
+  <string name="screen_create_room_public_option_short_description">"Gall unrhyw un ymuno."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_description">"Gall unrhyw un yn _PH_P1Ds__ ymuno ond rhaid i bawb arall ofyn am fynediad."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_title">"Gofynnwch i ymuno"</string>
+  <string name="screen_create_room_room_access_section_private_option_description">"Dim ond pobl a wahoddwyd all ymuno."</string>
+  <string name="screen_create_room_room_access_section_private_option_title">"Preifat"</string>
+  <string name="screen_create_room_room_access_section_restricted_option_description">"Gall unrhyw un yn _PH_P1Ds__ ymuno."</string>
+  <string name="screen_create_room_room_access_section_restricted_option_title">"Safonol"</string>
+  <string name="screen_create_room_room_access_section_title">"Pwy sydd â mynediad"</string>
+  <string name="screen_create_room_space_selection_no_space_description">"(dim lle)"</string>
+  <string name="screen_create_room_space_selection_no_space_title">"Cartref"</string>
+  <string name="screen_create_room_space_selection_sheet_title">"Ychwanegu at y gofod"</string>
+  <string name="screen_create_room_topic_placeholder">"Ychwanegu disgrifiad…"</string>
 </resources>

@@ -24,8 +24,6 @@ android {
 setupDependencyInjection()
 
 dependencies {
-    implementation(projects.schildi.theme)
-
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.uiStrings)
     implementation(projects.libraries.androidutils)
@@ -35,6 +33,10 @@ dependencies {
     implementation(projects.libraries.designsystem)
     implementation(projects.libraries.testtags)
     implementation(projects.libraries.uiUtils)
+    implementation(projects.libraries.recentemojis.api)
+    implementation(projects.libraries.recentemojis.impl)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.matrix.emojibase.bindings)
 
     releaseApi(libs.matrix.richtexteditor)
     releaseApi(libs.matrix.richtexteditor.compose)
@@ -46,6 +48,6 @@ dependencies {
         debugApi(libs.matrix.richtexteditor.compose)
     }
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
 }

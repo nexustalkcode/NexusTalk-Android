@@ -43,6 +43,8 @@
   <string name="screen_edit_profile_error">"Det oppstod en ukjent feil, og informasjonen kunne ikke endres."</string>
   <string name="screen_edit_profile_error_title">"Kan ikke oppdatere profilen"</string>
   <string name="screen_edit_profile_title">"Rediger profil"</string>
+  <string name="screen_edit_profile_change_avatar">"Endre avatar"</string>
+  <string name="screen_edit_profile_username">"Brukernavn"</string>
   <string name="screen_edit_profile_updating_details">"Oppdaterer profilen…"</string>
   <string name="screen_labs_enable_threads">"Aktiver trådsvar"</string>
   <string name="screen_labs_enable_threads_description">"Appen vil starte på nytt for å implementere denne endringen."</string>
@@ -76,6 +78,8 @@ Hvis du fortsetter, kan noen av innstillingene dine endres."</string>
   <string name="screen_notification_settings_system_notifications_action_required_content_link">"systeminnstillinger"</string>
   <string name="screen_notification_settings_system_notifications_turned_off">"Systemvarsler er slått av"</string>
   <string name="screen_notification_settings_title">"Varslinger"</string>
+  <string name="screen_preferences_section_customization">"Tilpasning"</string>
+  <string name="screen_preferences_section_security">"Sikkerhet"</string>
   <string name="troubleshoot_notifications_entry_point_push_history_title">"Push-historikk"</string>
   <string name="troubleshoot_notifications_entry_point_section">"Feilsøk"</string>
   <string name="troubleshoot_notifications_entry_point_title">"Feilsøk varsler"</string>

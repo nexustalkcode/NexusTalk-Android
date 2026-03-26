@@ -39,6 +39,19 @@ import kotlinx.coroutines.launch
 import java.text.Collator
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * 编辑默认通知设置 Presenter
+ *
+ * 负责处理编辑默认通知设置页面的业务逻辑，包括：
+ * - 获取和观察当前默认通知模式
+ * - 获取具有用户自定义通知模式的房间列表
+ * - 设置默认通知模式
+ *
+ * @property notificationSettingsService 通知设置服务
+ * @property isOneToOne 是否为一对一房间
+ * @property roomListService 房间列表服务
+ * @see EditDefaultNotificationSettingState 编辑默认通知设置状态
+ */
 @AssistedInject
 class EditDefaultNotificationSettingPresenter(
     private val notificationSettingsService: NotificationSettingsService,
@@ -47,7 +60,7 @@ class EditDefaultNotificationSettingPresenter(
 ) : Presenter<EditDefaultNotificationSettingState> {
     @AssistedFactory
     interface Factory {
-        fun create(isOneToOne: Boolean): EditDefaultNotificationSettingPresenter
+        fun create(oneToOne: Boolean): EditDefaultNotificationSettingPresenter
     }
 
     private val collator = Collator.getInstance().apply {

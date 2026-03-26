@@ -12,13 +12,19 @@ import io.element.android.features.messages.impl.timeline.model.event.TimelineIt
 import io.element.android.libraries.architecture.Presenter
 
 /**
- * A factory for a [Presenter] associated with a timeline item.
+ * 时间线项Presenter工厂函数接口
  *
- * Implementations should be annotated with [dev.zacsweers.metro.AssistedFactory] to be created by the dependency injection library.
+ * 用于创建与时间线项关联的Presenter实例的工厂接口。
+ * 不同类型的时间线项内容（如文本、语音、文件等）对应不同的Presenter。
  *
- * @param C The timeline item's [TimelineItemEventContent] subtype.
- * @param S The [Presenter]'s state class.
- * @return A [Presenter] that produces a state of type [S] for the given content of type [C].
+ * 实现类应使用@AssistedFactory注解标记，以便依赖注入库创建实例。
+ *
+ * @param C 时间线项的TimelineItemEventContent子类型
+ * @param S Presenter的状态类类型
+ * @return 一个Presenter，为给定的C类型内容生成S类型的状态
+ *
+ * @see TimelineItemEventContent 时间线项事件内容
+ * @see Presenter Presenter基类
  */
 fun interface TimelineItemPresenterFactory<C : TimelineItemEventContent, S : Any> {
     fun create(content: C): Presenter<S>

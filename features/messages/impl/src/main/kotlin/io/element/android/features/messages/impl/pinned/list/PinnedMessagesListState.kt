@@ -22,6 +22,11 @@ import io.element.android.libraries.ui.strings.CommonPlurals
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 固定消息列表状态密封接口
+ *
+ * 定义了固定消息列表界面的不同状态，包括加载中、空状态和已加载状态。
+ */
 @Immutable
 sealed interface PinnedMessagesListState {
     data object Failed : PinnedMessagesListState
@@ -35,7 +40,7 @@ sealed interface PinnedMessagesListState {
         val actionListState: ActionListState,
         val linkState: LinkState,
         val displayThreadSummaries: Boolean,
-        val eventSink: (PinnedMessagesListEvent) -> Unit,
+        val eventSink: (PinnedMessagesListEvents) -> Unit,
     ) : PinnedMessagesListState {
         val loadedPinnedMessagesCount = timelineItems.count { timelineItem -> timelineItem is TimelineItem.Event }
     }

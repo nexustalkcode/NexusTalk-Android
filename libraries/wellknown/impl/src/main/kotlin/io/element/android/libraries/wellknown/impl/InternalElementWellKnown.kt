@@ -30,6 +30,4 @@ data class InternalElementWellKnown(
     val rageshakeUrl: String? = null,
     @SerialName("brand_color")
     val brandColor: String? = null,
-    @SerialName("notification_sound")
-    val notificationSound: String? = null,
 )

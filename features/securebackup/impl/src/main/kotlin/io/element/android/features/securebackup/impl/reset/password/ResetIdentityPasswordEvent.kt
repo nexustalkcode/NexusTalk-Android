@@ -8,7 +8,15 @@
 
 package io.element.android.features.securebackup.impl.reset.password
 
+/**
+ * 重置身份密码事件密封接口
+ *
+ * 定义了重置身份密码页面的用户交互事件。
+ */
 sealed interface ResetIdentityPasswordEvent {
+    /** 重置事件，包含密码 */
     data class Reset(val password: String) : ResetIdentityPasswordEvent
+
+    /** 关闭错误提示事件 */
     data object DismissError : ResetIdentityPasswordEvent
 }

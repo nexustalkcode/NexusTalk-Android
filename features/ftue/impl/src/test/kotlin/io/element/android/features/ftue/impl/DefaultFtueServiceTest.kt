@@ -100,6 +100,33 @@ class DefaultFtueServiceTest {
     }
 
     @Test
+    fun `if session is already verified, show Welcome page`() = runTest {
+        // Start with Unknown status, then emit Verified (not NotVerified)
+        val sessionVerificationService = FakeSessionVerificationService().apply {
+            emitVerifiedStatus(SessionVerifiedStatus.Unknown)
+        }
+        val analyticsService = FakeAnalyticsService()
+        val permissionStateProvider = FakePermissionStateProvider(permissionGranted = true)
+        val lockScreenService = FakeLockScreenService()
+        val service = createDefaultFtueService(
+            sessionVerificationService = sessionVerificationService,
+            analyticsService = analyticsService,
+            permissionStateProvider = permissionStateProvider,
+            lockScreenService = lockScreenService,
+        )
+
+        service.ftueStepStateFlow.test {
+            assertThat(awaitItem()).isEqualTo(InternalFtueState.Unknown)
+            // After state becomes Verified, should show Welcome (skip SessionVerification since session is verified)
+            sessionVerificationService.emitVerifiedStatus(SessionVerifiedStatus.Verified)
+            assertThat(awaitItem()).isEqualTo(InternalFtueState.Incomplete(FtueStep.WaitingForInitialState))
+            // Manually update to proceed to Welcome
+            service.updateFtueStep()
+            assertThat(awaitItem()).isEqualTo(InternalFtueState.Incomplete(FtueStep.Welcome))
+        }
+    }
+
+    @Test
     fun `traverse flow`() = runTest {
         val sessionVerificationService = FakeSessionVerificationService().apply {
             emitVerifiedStatus(SessionVerifiedStatus.NotVerified)
@@ -116,11 +143,8 @@ class DefaultFtueServiceTest {
 
         service.ftueStepStateFlow.test {
             assertThat(awaitItem()).isEqualTo(InternalFtueState.Unknown)
-            // Session verification
-            assertThat(awaitItem()).isEqualTo(InternalFtueState.Incomplete(FtueStep.SessionVerification))
-            sessionVerificationService.emitVerifiedStatus(SessionVerifiedStatus.Verified)
-            // User completes verification
-            service.onUserCompletedSessionVerification()
+            assertThat(awaitItem()).isEqualTo(InternalFtueState.Incomplete(FtueStep.Welcome))
+            service.updateFtueStep(FtueStep.Welcome)
             // Notifications opt in
             assertThat(awaitItem()).isEqualTo(InternalFtueState.Incomplete(FtueStep.NotificationsOptIn))
             permissionStateProvider.setPermissionGranted()
@@ -129,12 +153,8 @@ class DefaultFtueServiceTest {
             // Entering PIN code
             assertThat(awaitItem()).isEqualTo(InternalFtueState.Incomplete(FtueStep.LockscreenSetup))
             lockScreenService.setIsPinSetup(true)
-            // Simulate event from LockScreenEntryPoint.Callback.onSetupDone()
+            // Simulate event from LockScreenEntryPoint.Callback.onSetupDone()（引导中已跳过分析页，直接完成）
             service.updateFtueStep()
-            // Analytics opt in
-            assertThat(awaitItem()).isEqualTo(InternalFtueState.Incomplete(FtueStep.AnalyticsOptIn))
-            analyticsService.setDidAskUserConsent()
-            // Final step
             assertThat(awaitItem()).isEqualTo(InternalFtueState.Complete)
         }
     }
@@ -159,9 +179,7 @@ class DefaultFtueServiceTest {
 
         service.ftueStepStateFlow.test {
             assertThat(awaitItem()).isEqualTo(InternalFtueState.Unknown)
-            // Analytics opt in
-            assertThat(awaitItem()).isEqualTo(InternalFtueState.Incomplete(FtueStep.AnalyticsOptIn))
-            analyticsService.setDidAskUserConsent()
+            // 引导中已跳过分析页，锁屏等前置条件满足后直接完成
             assertThat(awaitItem()).isEqualTo(InternalFtueState.Complete)
         }
     }
@@ -184,9 +202,7 @@ class DefaultFtueServiceTest {
 
         service.ftueStepStateFlow.test {
             assertThat(awaitItem()).isEqualTo(InternalFtueState.Unknown)
-            // Analytics opt in
-            assertThat(awaitItem()).isEqualTo(InternalFtueState.Incomplete(FtueStep.AnalyticsOptIn))
-            analyticsService.setDidAskUserConsent()
+            // 引导中已跳过分析页，直接完成
             assertThat(awaitItem()).isEqualTo(InternalFtueState.Complete)
         }
     }

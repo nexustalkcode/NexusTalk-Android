@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Je kunt je instellingen later wijzigen."</string>
   <string name="screen_notification_optin_title">"Sta meldingen toe en mis nooit meer een bericht"</string>
   <string name="screen_session_verification_enter_recovery_key">"Voer herstelsleutel in"</string>
+  <string name="screen_welcome_agreement">"Door op Akkoord en doorgaan te tikken, accepteer je onze %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Privacybeleid"</string>
+  <string name="screen_welcome_title">"Welkom bij %s"</string>
+  <string name="screen_welcome_privacy_notice">"Lees ons Privacybeleid"</string>
+  <string name="screen_welcome_agree">"Akkoord"</string>
 </resources>

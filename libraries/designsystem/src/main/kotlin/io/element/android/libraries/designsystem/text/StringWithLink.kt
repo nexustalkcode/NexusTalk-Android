@@ -25,7 +25,8 @@ fun stringWithLink(
     onLinkClick: (String) -> Unit,
     @StringRes linkTextRes: Int = CommonStrings.action_learn_more,
 ) = buildAnnotatedString {
-    val learnMoreStr = stringResource(linkTextRes)
+    //去除了解更多
+    val learnMoreStr = ""
     val fullText = stringResource(textRes, learnMoreStr)
     append(fullText)
     val learnMoreStartIndex = fullText.lastIndexOf(learnMoreStr)

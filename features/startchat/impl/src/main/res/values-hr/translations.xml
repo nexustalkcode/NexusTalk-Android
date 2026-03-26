@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"Pronađena je odgovarajuća soba"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Soba nije pronađena"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"npr. #naziv-sobe:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"Skeniraj QR kod"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Skenirajte QR kod za dodavanje kontakta"</string>
+  <string name="screen_scan_user_qr_code_success">"QR kod je uspješno skeniran"</string>
 </resources>

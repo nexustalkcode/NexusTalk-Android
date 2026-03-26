@@ -29,6 +29,21 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
+/**
+ * 默认固定事件时间线提供器实现类
+ *
+ * 实现 PinnedEventsTimelineProvider 接口，提供群聊中固定（置顶）消息的时间线数据。
+ * 使用 @SingleIn 注解确保每个 RoomScope 只有一个实例，
+ * 使用 @ContributesBinding 注解绑定到 RoomScope。
+ *
+ * @property room 已加入的房间
+ * @property syncService 同步服务
+ * @property dispatchers 协程调度器
+ *
+ * @see PinnedEventsTimelineProvider 固定事件时间线提供器接口
+ * @see Timeline 时间线
+ * @see AsyncData 异步数据
+ */
 @SingleIn(RoomScope::class)
 @ContributesBinding(RoomScope::class)
 class DefaultPinnedEventsTimelineProvider(

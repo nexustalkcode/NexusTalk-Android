@@ -10,6 +10,13 @@ package io.element.android.features.rageshake.api.detection
 
 import io.element.android.features.rageshake.api.preferences.aRageshakePreferencesState
 
+/**
+ * 创建默认摇一摇检测状态的辅助函数
+ *
+ * 用于预览和测试，创建一个默认的 RageshakeDetectionState 实例。
+ *
+ * @return RageshakeDetectionState 默认状态的实例
+ */
 fun aRageshakeDetectionState() = RageshakeDetectionState(
     takeScreenshot = false,
     showDialog = false,

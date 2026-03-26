@@ -29,6 +29,16 @@ import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.architecture.createNode
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 问题报告流程节点
+ *
+ * 管理问题报告功能的导航流程，包括主表单页面和日志查看页面。
+ * 使用 BaseFlowNode 作为基类，支持页面间的导航。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property viewFolderEntryPoint 日志文件夹查看入口点
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class BugReportFlowNode(
@@ -45,10 +55,27 @@ class BugReportFlowNode(
 ) {
     private val callback: BugReportEntryPoint.Callback = callback()
 
+    /**
+     * 导航目标密封接口
+     *
+     * 定义问题报告流程中的各个导航目标。
+     */
     sealed interface NavTarget : Parcelable {
+        /**
+         * 根页面 - 问题报告表单
+         *
+         * 问题报告的主页面，用户可以填写问题描述和选择附件。
+         */
         @Parcelize
         data object Root : NavTarget
 
+        /**
+         * 日志查看页面
+         *
+         * 用于查看设备日志的页面。
+         *
+         * @param rootPath 日志目录的根路径
+         */
         @Parcelize
         data class ViewLogs(
             val rootPath: String,

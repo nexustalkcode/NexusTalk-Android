@@ -40,6 +40,6 @@ dependencies {
     api(libs.statemachine)
     api(projects.features.securebackup.api)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
 }

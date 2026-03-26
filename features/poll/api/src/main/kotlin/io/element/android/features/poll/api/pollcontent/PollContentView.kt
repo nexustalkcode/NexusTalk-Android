@@ -37,6 +37,18 @@ import io.element.android.libraries.matrix.api.poll.PollKind
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 投票内容视图 Composable
+ *
+ * 用于在聊天界面中显示投票的完整 UI 组件。
+ * 显示投票问题、所有答案选项、投票统计以及创建者的操作按钮。
+ *
+ * @param state 投票内容状态
+ * @param onSelectAnswer 选择答案回调，参数为投票开始事件 ID 和答案 ID
+ * @param onEditPoll 编辑投票回调，参数为投票开始事件 ID
+ * @param onEndPoll 结束投票回调，参数为投票开始事件 ID
+ * @param modifier 修饰符
+ */
 @Composable
 fun PollContentView(
     state: PollContentState,
@@ -60,6 +72,23 @@ fun PollContentView(
     )
 }
 
+/**
+ * 投票内容视图 Composable（扩展版本）
+ *
+ * 用于在聊天界面中显示投票的完整 UI 组件，带有详细参数。
+ *
+ * @param eventId 投票事件 ID
+ * @param question 投票问题
+ * @param answerItems 投票选项列表
+ * @param pollKind 投票类型（公开或匿名）
+ * @param isPollEditable 投票是否可编辑
+ * @param isPollEnded 投票是否已结束
+ * @param isMine 投票是否由当前用户创建
+ * @param onSelectAnswer 选择答案回调
+ * @param onEditPoll 编辑投票回调
+ * @param onEndPoll 结束投票回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun PollContentView(
     eventId: EventId?,
@@ -127,6 +156,14 @@ fun PollContentView(
     }
 }
 
+/**
+ * 投票答案列表 Composable（私有）
+ *
+ * 用于显示所有投票答案的列表容器组件。
+ *
+ * @param answerItems 答案列表
+ * @param onSelectAnswer 选择答案回调
+ */
 @Composable
 private fun PollAnswers(
     answerItems: ImmutableList<PollAnswerItem>,
@@ -151,6 +188,13 @@ private fun PollAnswers(
     }
 }
 
+/**
+ * 公开投票底部提示 Composable（私有）
+ *
+ * 显示投票总票数信息，仅在公开投票或投票已结束时显示。
+ *
+ * @param votesCount 总投票数
+ */
 @Composable
 private fun ColumnScope.DisclosedPollBottomNotice(
     votesCount: Int,
@@ -163,6 +207,11 @@ private fun ColumnScope.DisclosedPollBottomNotice(
     )
 }
 
+/**
+ * 匿名投票底部提示 Composable（私有）
+ *
+ * 显示匿名投票的提示信息，告知用户投票是匿名的。
+ */
 @Composable
 private fun ColumnScope.UndisclosedPollBottomNotice() {
     Text(
@@ -175,6 +224,18 @@ private fun ColumnScope.UndisclosedPollBottomNotice() {
     )
 }
 
+/**
+ * 投票创建者视图 Composable（私有）
+ *
+ * 显示投票创建者的操作按钮（编辑或结束投票）。
+ * 根据投票状态显示不同的按钮。
+ *
+ * @param isPollEnded 投票是否已结束
+ * @param isPollEditable 投票是否可编辑
+ * @param onEditPoll 编辑投票回调
+ * @param onEndPoll 结束投票回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun CreatorView(
     isPollEnded: Boolean,

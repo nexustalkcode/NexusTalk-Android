@@ -22,8 +22,14 @@ import io.element.android.libraries.di.annotations.ApplicationContext
 import timber.log.Timber
 import java.util.Locale
 
+/**
+ * Android 位置操作实现
+ *
+ * 在 Android 平台上实现位置操作功能，包括分享位置和打开设置。
+ */
 @ContributesBinding(AppScope::class)
 class AndroidLocationActions(
+    /** 应用上下文 */
     @ApplicationContext private val context: Context
 ) : LocationActions {
     override fun share(location: Location, label: String?) {
@@ -45,7 +51,18 @@ class AndroidLocationActions(
     }
 }
 
-// Ref: https://developer.android.com/guide/components/intents-common#ViewMap
+// 参考：https://developer.android.com/guide/components/intents-common#ViewMap
+
+/**
+ * 构建地理位置 URI
+ *
+ * 将位置信息转换为 Android 地图Intent使用的 URI 格式。
+ *
+ * @param location 地理位置信息
+ * @param label 位置标签/描述
+ * @param urlEncoder URL 编码函数，默认为 Uri::encode
+ * @return String 格式化的地理位置 URI
+ */
 @VisibleForTesting
 internal fun buildUrl(
     location: Location,

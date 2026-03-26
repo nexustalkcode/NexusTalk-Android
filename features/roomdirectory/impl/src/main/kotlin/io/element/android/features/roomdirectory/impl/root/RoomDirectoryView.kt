@@ -56,6 +56,16 @@ import io.element.android.libraries.testtags.TestTags
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 房间目录主视图
+ *
+ * 房间目录界面的顶层 Composable 函数，负责整体布局结构。
+ *
+ * @param state 房间目录状态
+ * @param onResultClick 点击房间项时的回调
+ * @param onBackClick 返回按钮点击回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun RoomDirectoryView(
     state: RoomDirectoryState,
@@ -80,6 +90,14 @@ fun RoomDirectoryView(
     )
 }
 
+/**
+ * 房间目录顶部导航栏
+ *
+ * 显示房间目录页面的顶部导航栏，包含返回按钮和标题。
+ *
+ * @param onBackClick 返回按钮点击回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RoomDirectoryTopBar(
@@ -95,6 +113,15 @@ private fun RoomDirectoryTopBar(
     )
 }
 
+/**
+ * 房间目录内容区域
+ *
+ * 包含搜索输入框和房间列表的主要布局。
+ *
+ * @param state 房间目录状态
+ * @param onResultClick 点击房间项时的回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun RoomDirectoryContent(
     state: RoomDirectoryState,
@@ -118,6 +145,18 @@ private fun RoomDirectoryContent(
     }
 }
 
+/**
+ * 房间目录房间列表
+ *
+ * 以懒加载列表形式展示房间目录搜索结果。
+ *
+ * @param roomDescriptions 房间描述列表
+ * @param displayLoadMoreIndicator 是否显示加载更多指示器
+ * @param displayEmptyState 是否显示空状态提示
+ * @param onResultClick 点击房间项时的回调
+ * @param onReachedLoadMore 滚动到底部触发加载更多的回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun RoomDirectoryRoomList(
     roomDescriptions: ImmutableList<RoomDescription>,
@@ -157,6 +196,13 @@ private fun RoomDirectoryRoomList(
     }
 }
 
+/**
+ * 加载更多指示器
+ *
+ * 显示在列表底部，表示正在加载更多数据。
+ *
+ * @param modifier 修饰符
+ */
 @Composable
 private fun LoadMoreIndicator(modifier: Modifier = Modifier) {
     Box(
@@ -172,6 +218,18 @@ private fun LoadMoreIndicator(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * 搜索文本输入框
+ *
+ * 用于输入房间搜索关键词的自定义文本输入框组件。
+ * 包含清空按钮和搜索图标。
+ *
+ * @param query 当前搜索关键词
+ * @param onQueryChange 搜索关键词变化回调
+ * @param placeholder 占位符文本
+ * @param modifier 修饰符
+ * @param colors 文本框颜色配置
+ */
 @Composable
 private fun SearchTextField(
     query: String,
@@ -225,6 +283,15 @@ private fun SearchTextField(
     )
 }
 
+/**
+ * 房间目录房间行
+ *
+ * 显示单个房间信息的行组件，包含房间头像、名称和描述。
+ *
+ * @param roomDescription 房间描述
+ * @param onClick 点击回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun RoomDirectoryRoomRow(
     roomDescription: RoomDescription,
@@ -270,6 +337,13 @@ private fun RoomDirectoryRoomRow(
     }
 }
 
+/**
+ * 房间目录视图预览
+ *
+ * 用于在预览模式下展示房间目录界面的各种状态。
+ *
+ * @param state 房间目录状态提供器
+ */
 @PreviewsDayNight
 @Composable
 internal fun RoomDirectoryViewPreview(@PreviewParameter(RoomDirectoryStateProvider::class) state: RoomDirectoryState) = ElementPreview {

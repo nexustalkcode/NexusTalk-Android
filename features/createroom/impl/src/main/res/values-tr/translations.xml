@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_create_room_action_create_room">"Yeni oda"</string>
-  <string name="screen_create_room_add_people_title">"Kişileri davet et"</string>
+  <string name="screen_create_room_add_people_title">"İnsanları davet et"</string>
   <string name="screen_create_room_error_creating_room">"Oda oluşturulurken bir hata oluştu"</string>
   <string name="screen_create_room_private_option_description">"Bu odaya yalnızca davet edilen kişiler erişebilir. Tüm mesajlar uçtan uca şifrelenir."</string>
   <string name="screen_create_room_public_option_description">"Bu odayı herkes bulabilir.
 Bunu istediğiniz zaman oda ayarlarından değiştirebilirsiniz."</string>
+  <string name="screen_create_room_public_option_title">"Herkese açık oda"</string>
   <string name="screen_create_room_room_access_section_knocking_option_description">"Herkes odaya katılmayı isteyebilir ancak bir yönetici veya moderatörün isteği kabul etmesi gerekecektir"</string>
   <string name="screen_create_room_room_access_section_knocking_option_title">"Katılmak için sor"</string>
   <string name="screen_create_room_room_access_section_public_option_description">"Bu odaya herkes katılabilir"</string>
+  <string name="screen_create_room_room_access_section_public_option_title">"Herkes"</string>
   <string name="screen_create_room_room_address_section_footer">"Bu odanın genel oda dizininde görünür olması için bir oda adresine ihtiyacınız olacaktır."</string>
   <string name="screen_create_room_room_address_section_title">"Oda adresi"</string>
   <string name="screen_create_room_room_visibility_section_title">"Oda görünürlüğü"</string>
   <string name="screen_create_room_topic_label">"Konu (isteğe bağlı)"</string>
+
+  <string name="screen_create_room_error_creating_space">"Bilinmeyen bir hata nedeniyle alan oluşturulamadı. Daha sonra tekrar deneyin."</string>
+  <string name="screen_create_room_name_label">"İsim"</string>
+  <string name="screen_create_room_avatar_photo">"fotoğraf"</string>
+  <string name="screen_create_room_name_placeholder">"Ad ekle…"</string>
+  <string name="screen_create_room_new_room_title">"Yeni oda"</string>
+  <string name="screen_create_room_new_space_title">"Yeni alan"</string>
+  <string name="screen_create_room_private_option_title">"Özel"</string>
+  <string name="screen_create_room_public_option_short_description">"Herkes katılabilir."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_description">"%1$s bölgesindeki herkes katılabilir ancak diğer herkesin erişim talebinde bulunması gerekir."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_title">"Katılmayı iste"</string>
+  <string name="screen_create_room_room_access_section_private_option_description">"Yalnızca davet edilen kişiler katılabilir."</string>
+  <string name="screen_create_room_room_access_section_private_option_title">"Özel"</string>
+  <string name="screen_create_room_room_access_section_restricted_option_description">"%1$s bölgesindeki herkes katılabilir."</string>
+  <string name="screen_create_room_room_access_section_restricted_option_title">"Standart"</string>
+  <string name="screen_create_room_room_access_section_title">"Kimin erişimi var"</string>
+  <string name="screen_create_room_space_selection_no_space_description">"(boşluk yok)"</string>
+  <string name="screen_create_room_space_selection_no_space_title">"Ev"</string>
+  <string name="screen_create_room_space_selection_sheet_title">"Alana ekle"</string>
+  <string name="screen_create_room_topic_placeholder">"Açıklama ekle…"</string>
 </resources>

@@ -50,6 +50,29 @@ import timber.log.Timber
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * 通话界面 Presenter
+ *
+ * 负责通话界面的业务逻辑和状态管理。处理通话的启动、消息传递、WebView 交互等。
+ *
+ * @property callType 通话类型
+ * @property navigator 导航器，用于关闭界面
+ * @property callWidgetProvider 通话小组件提供者
+ * @property userAgentProvider 用户代理提供者
+ * @property clock 系统时钟
+ * @property dispatchers 协程调度器
+ * @property matrixClientsProvider Matrix 客户端提供者
+ * @property screenTracker 屏幕追踪器
+ * @property activeCallManager 活动通话管理器
+ * @property languageTagProvider 语言标签提供者
+ * @property appForegroundStateService 应用前台状态服务
+ * @property appCoroutineScope 应用协程作用域
+ * @property widgetMessageSerializer 小组件消息序列化器
+ *
+ * @see Presenter 基础 Presenter 类
+ * @see CallScreenState 通话界面状态
+ * @see CallScreenEvents 通话界面事件
+ */
 @AssistedInject
 class CallScreenPresenter(
     @Assisted private val callType: CallType,
@@ -67,8 +90,20 @@ class CallScreenPresenter(
     private val appCoroutineScope: CoroutineScope,
     private val widgetMessageSerializer: WidgetMessageSerializer,
 ) : Presenter<CallScreenState> {
+    /**
+     * CallScreenPresenter 工厂接口
+     *
+     * 用于依赖注入创建 CallScreenPresenter 实例。
+     */
     @AssistedFactory
     interface Factory {
+        /**
+         * 创建通话界面 Presenter
+         *
+         * @param callType 通话类型
+         * @param navigator 导航器
+         * @return CallScreenPresenter 实例
+         */
         fun create(callType: CallType, navigator: CallScreenNavigator): CallScreenPresenter
     }
 
@@ -226,7 +261,6 @@ class CallScreenPresenter(
                         sessionId = inputs.sessionId,
                         roomId = inputs.roomId,
                         clientId = UUID.randomUUID().toString(),
-                        isAudioCall = inputs.isAudioCall,
                         languageTag = languageTag,
                         theme = theme,
                     ).getOrThrow()

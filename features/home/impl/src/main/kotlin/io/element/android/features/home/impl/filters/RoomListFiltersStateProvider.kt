@@ -24,7 +24,7 @@ class RoomListFiltersStateProvider : PreviewParameterProvider<RoomListFiltersSta
 
 fun aRoomListFiltersState(
     filterSelectionStates: List<FilterSelectionState> = RoomListFilter.entries.map { FilterSelectionState(it, isSelected = false) },
-    eventSink: (RoomListFiltersEvent) -> Unit = {},
+    eventSink: (RoomListFiltersEvents) -> Unit = {},
 ) = RoomListFiltersState(
     filterSelectionStates = filterSelectionStates.toImmutableList(),
     eventSink = eventSink,

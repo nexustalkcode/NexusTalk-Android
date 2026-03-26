@@ -35,6 +35,21 @@ import timber.log.Timber
 import io.element.android.features.verifysession.impl.outgoing.OutgoingVerificationStateMachine.Event as StateMachineEvent
 import io.element.android.features.verifysession.impl.outgoing.OutgoingVerificationStateMachine.State as StateMachineState
 
+/**
+ * 传出会话验证 Presenter
+ *
+ * 负责处理传出会话验证页面的业务逻辑，包括：
+ * - 管理会话验证状态机
+ * - 处理验证请求流程
+ * - 处理 SAS 验证挑战
+ * - 观察验证服务状态
+ *
+ * @property showDeviceVerifiedScreen 是否显示设备已验证屏幕
+ * @property verificationRequest 传出验证请求
+ * @property sessionVerificationService 会话验证服务
+ * @property encryptionService 加密服务
+ * @see OutgoingVerificationState 传出会话验证状态
+ */
 @AssistedInject
 class OutgoingVerificationPresenter(
     @Assisted private val showDeviceVerifiedScreen: Boolean,

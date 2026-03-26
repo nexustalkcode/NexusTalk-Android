@@ -19,6 +19,20 @@ import io.element.android.libraries.di.annotations.ApplicationContext
 import io.element.android.libraries.workmanager.api.di.MetroWorkerFactory
 import kotlin.reflect.KClass
 
+/**
+ * 应用依赖注入图接口。
+ *
+ * 定义了应用级别的依赖注入关系。
+ * 使用 Metro 依赖注入框架的 @DependencyGraph 注解标记。
+ * 继承自 NodeFactoriesBindings，提供节点工厂绑定。
+ *
+ * 包含以下依赖关系：
+ * - sessionGraphFactory：会话图的工厂接口，用于创建 SessionGraph
+ * - workerProviders：WorkManager 工作者提供者映射
+ *
+ * Factory 接口定义了创建 AppGraph 实例的工厂方法，
+ * 接收 ApplicationContext 作为参数。
+ */
 @DependencyGraph(AppScope::class)
 interface AppGraph : NodeFactoriesBindings {
     val sessionGraphFactory: SessionGraph.Factory

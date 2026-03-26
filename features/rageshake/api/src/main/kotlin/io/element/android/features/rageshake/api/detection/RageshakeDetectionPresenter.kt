@@ -10,4 +10,12 @@ package io.element.android.features.rageshake.api.detection
 
 import io.element.android.libraries.architecture.Presenter
 
+/**
+ * 摇一摇检测 Presenter 接口
+ *
+ * 继承自 Presenter 接口，负责呈现摇一摇检测功能的状态。
+ * 用于检测用户摇晃设备来触发问题报告流程。
+ *
+ * @see RageshakeDetectionState 摇一摇检测状态
+ */
 interface RageshakeDetectionPresenter : Presenter<RageshakeDetectionState>

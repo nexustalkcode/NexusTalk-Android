@@ -9,7 +9,6 @@
 package io.element.android.features.ftue.impl.sessionverification.choosemode
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -39,19 +38,32 @@ import io.element.android.libraries.designsystem.theme.components.TextButton
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 选择自验证方式视图组件
+ *
+ * 这是选择会话验证方式页面的 Compose UI 组件。
+ * 展示了身份确认的标题和副标题，并提供多种验证方式供用户选择。
+ *
+ * @param state 选择自验证方式状态
+ * @param onUseAnotherDevice 点击使用另一台设备按钮回调
+ * @param onUseRecoveryKey 点击使用恢复密钥按钮回调
+ * @param onResetKey 点击重置密钥按钮回调
+ * @param onLearnMore 点击了解更多按钮回调
+ * @param modifier 修饰符
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChooseSelfVerificationModeView(
     state: ChooseSelfVerificationModeState,
+    onBack: () -> Unit,
     onUseAnotherDevice: () -> Unit,
     onUseRecoveryKey: () -> Unit,
     onResetKey: () -> Unit,
     onLearnMore: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val activity = LocalActivity.current
     BackHandler {
-        activity?.finish()
+        onBack()
     }
     HeaderFooterPage(
         modifier = modifier,
@@ -83,21 +95,34 @@ fun ChooseSelfVerificationModeView(
             )
         }
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                modifier = Modifier
-                    .clickable(onClick = onLearnMore)
-                    .padding(vertical = 4.dp, horizontal = 16.dp),
-                text = stringResource(CommonStrings.action_learn_more),
-                style = ElementTheme.typography.fontBodyLgMedium
-            )
-        }
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.Center,
+//        ) {
+//            Text(
+//                modifier = Modifier
+//                    .clickable(onClick = onLearnMore)
+//                    .padding(vertical = 4.dp, horizontal = 16.dp),
+//                text = stringResource(CommonStrings.action_learn_more),
+//                style = ElementTheme.typography.fontBodyLgMedium
+//            )
+//        }
     }
 }
 
+/**
+ * 选择自验证方式按钮组件
+ *
+ * 根据按钮状态显示不同的操作按钮，包括：
+ * - 使用另一台设备验证（如果可用）
+ * - 使用恢复密钥验证（如果可用）
+ * - 无法确认身份时的重置选项
+ *
+ * @param state 选择自验证方式状态
+ * @param onUseAnotherDevice 点击使用另一台设备按钮回调
+ * @param onUseRecoveryKey 点击使用恢复密钥按钮回调
+ * @param onResetKey 点击重置密钥按钮回调
+ */
 @Composable
 private fun ChooseSelfVerificationModeButtons(
     state: ChooseSelfVerificationModeState,
@@ -146,6 +171,7 @@ internal fun ChooseSelfVerificationModeViewPreview(
 ) = ElementPreview {
     ChooseSelfVerificationModeView(
         state = state,
+        onBack = {},
         onUseAnotherDevice = {},
         onUseRecoveryKey = {},
         onResetKey = {},

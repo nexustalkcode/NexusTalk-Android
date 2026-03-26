@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -30,8 +29,6 @@ import io.element.android.features.messages.api.MessageComposerContext
 import io.element.android.features.messages.api.timeline.voicemessages.composer.VoiceMessageComposerEvent
 import io.element.android.features.messages.api.timeline.voicemessages.composer.VoiceMessageComposerPresenter
 import io.element.android.features.messages.api.timeline.voicemessages.composer.VoiceMessageComposerState
-import io.element.android.libraries.audio.api.AudioFocus
-import io.element.android.libraries.audio.api.AudioFocusRequester
 import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.di.annotations.SessionCoroutineScope
 import io.element.android.libraries.matrix.api.timeline.Timeline
@@ -54,35 +51,65 @@ import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * 默认语音消息Composer Presenter
+ *
+ * 负责处理语音消息录制和发送的业务逻辑和状态管理。
+ * 管理录音权限、录制状态、播放状态和消息发送流程。
+ *
+ * @property sessionCoroutineScope 会话级别的协程作用域
+ * @property timelineMode 时间线模式
+ * @property voiceRecorder 语音录制器
+ * @property analyticsService 分析服务
+ * @property mediaSenderFactory 媒体发送器工厂
+ * @property player 语音消息播放器
+ * @property messageComposerContext 消息Composer上下文
+ * @property permissionsPresenterFactory 权限Presenter工厂
+ */
 @AssistedInject
 class DefaultVoiceMessageComposerPresenter(
     @SessionCoroutineScope private val sessionCoroutineScope: CoroutineScope,
     @Assisted private val timelineMode: Timeline.Mode,
     private val voiceRecorder: VoiceRecorder,
     private val analyticsService: AnalyticsService,
-    private val audioFocus: AudioFocus,
     mediaSenderFactory: MediaSenderFactory,
     private val player: VoiceMessageComposerPlayer,
     private val messageComposerContext: MessageComposerContext,
     permissionsPresenterFactory: PermissionsPresenter.Factory
 ) : VoiceMessageComposerPresenter {
+    /**
+     * 默认语音消息Composer Presenter工厂接口
+     *
+     * 用于创建DefaultVoiceMessageComposerPresenter实例。
+     */
     @ContributesBinding(RoomScope::class)
     @AssistedFactory
     interface Factory : VoiceMessageComposerPresenter.Factory {
+        /**
+         * 创建 Presenter 实例
+         *
+         * @param timelineMode 时间线模式
+         * @return DefaultVoiceMessageComposerPresenter 实例
+         */
         override fun create(timelineMode: Timeline.Mode): DefaultVoiceMessageComposerPresenter
     }
 
     private val permissionsPresenter = permissionsPresenterFactory.create(Manifest.permission.RECORD_AUDIO)
-    private var pendingEvent: VoiceMessageRecorderEvent.Start? = null
     private val mediaSender = mediaSenderFactory.create(timelineMode)
 
+    /**
+     * 生成界面状态
+     *
+     * @return VoiceMessageComposerState 语音消息Composer状态
+     */
     @Composable
     override fun present(): VoiceMessageComposerState {
         val localCoroutineScope = rememberCoroutineScope()
         val recorderState by voiceRecorder.state.collectAsState(initial = VoiceRecorderState.Idle)
         val playerState by player.state.collectAsState(initial = VoiceMessageComposerPlayer.State.Initial)
         val keepScreenOn by remember { derivedStateOf { recorderState is VoiceRecorderState.Recording } }
-        val permissionState by rememberUpdatedState(permissionsPresenter.present())
+
+        val permissionState = permissionsPresenter.present()
         var isSending by remember { mutableStateOf(false) }
         var showSendFailureDialog by remember { mutableStateOf(false) }
 
@@ -92,15 +119,11 @@ class DefaultVoiceMessageComposerPresenter(
             player.setMedia(recording.file.path)
         }
 
-        LaunchedEffect(permissionState.permissionGranted) {
-            if (permissionState.permissionGranted) {
-                pendingEvent?.let {
-                    localCoroutineScope.startRecording()
-                    pendingEvent = null
-                }
-            }
-        }
-
+        /**
+         * 处理生命周期事件
+         *
+         * @param event 生命周期事件
+         */
         fun handleLifecycleEvent(event: Lifecycle.Event) {
             when (event) {
                 Lifecycle.Event.ON_PAUSE -> {
@@ -114,8 +137,12 @@ class DefaultVoiceMessageComposerPresenter(
             }
         }
 
+        /**
+         * 处理语音消息录制器事件
+         *
+         * @param event 录制器事件
+         */
         fun handleVoiceMessageRecorderEvent(event: VoiceMessageRecorderEvent) {
-            pendingEvent = null
             when (event) {
                 VoiceMessageRecorderEvent.Start -> {
                     Timber.v("Voice message record button pressed")
@@ -125,7 +152,6 @@ class DefaultVoiceMessageComposerPresenter(
                         }
                         else -> {
                             Timber.i("Voice message permission needed")
-                            pendingEvent = VoiceMessageRecorderEvent.Start
                             permissionState.eventSink(PermissionsEvent.RequestPermissions)
                         }
                     }
@@ -141,6 +167,11 @@ class DefaultVoiceMessageComposerPresenter(
             }
         }
 
+        /**
+         * 处理语音消息播放器事件
+         *
+         * @param event 播放器事件
+         */
         fun handleVoiceMessagePlayerEvent(event: VoiceMessagePlayerEvent) {
             localCoroutineScope.launch {
                 when (event) {
@@ -151,6 +182,7 @@ class DefaultVoiceMessageComposerPresenter(
             }
         }
 
+        /** 发送语音消息 */
         fun sendVoiceMessage() {
             val finishedState = recorderState as? VoiceRecorderState.Finished
             if (finishedState == null) {
@@ -179,6 +211,11 @@ class DefaultVoiceMessageComposerPresenter(
             }
         }
 
+        /**
+         * 处理语音消息Composer事件
+         *
+         * @param event 语音消息Composer事件
+         */
         fun handleEvent(event: VoiceMessageComposerEvent) {
             when (event) {
                 is VoiceMessageComposerEvent.RecorderEvent -> handleVoiceMessageRecorderEvent(event.recorderEvent)
@@ -208,7 +245,7 @@ class DefaultVoiceMessageComposerPresenter(
                 is VoiceRecorderState.Recording -> VoiceMessageState.Recording(
                     duration = state.elapsedTime,
                     levels = state.levels
-                        // Keep only the last 128 samples for display, else we can have a crash
+                        // 只保留最后128个样本用于显示，否则可能导致崩溃
                         .takeLast(128)
                         .toImmutableList(),
                 )
@@ -227,6 +264,14 @@ class DefaultVoiceMessageComposerPresenter(
         )
     }
 
+    /**
+     * 预览状态计算
+     *
+     * @param playerState 播放器状态
+     * @param recorderState 录制器状态
+     * @param isSending 是否正在发送
+     * @return VoiceMessageState 语音消息状态
+     */
     @Composable
     private fun previewState(
         playerState: VoiceMessageComposerPlayer.State,
@@ -247,35 +292,39 @@ class DefaultVoiceMessageComposerPresenter(
         )
     }
 
+    /** 开始录制 */
     private fun CoroutineScope.startRecording() = launch {
         try {
-            audioFocus.requestAudioFocus(AudioFocusRequester.RecordVoiceMessage) {
-                // something else grabbed focus (phone call, etc) - finish gracefully
-                // so the user keeps their partial recording
-                sessionCoroutineScope.finishRecording()
-            }
             voiceRecorder.startRecord()
         } catch (e: SecurityException) {
-            audioFocus.releaseAudioFocus()
             Timber.e(e, "Voice message error")
             analyticsService.trackError(VoiceMessageException.PermissionMissing("Expected permission to record but none", e))
         }
     }
 
+    /** 结束录制 */
     private fun CoroutineScope.finishRecording() = launch {
         voiceRecorder.stopRecord()
-        audioFocus.releaseAudioFocus()
     }
 
+    /** 取消录制 */
     private fun CoroutineScope.cancelRecording() = launch {
         voiceRecorder.stopRecord(cancelled = true)
-        audioFocus.releaseAudioFocus()
     }
 
+    /** 删除录制 */
     private fun CoroutineScope.deleteRecording() = launch {
         voiceRecorder.deleteRecording()
     }
 
+    /**
+     * 发送语音消息
+     *
+     * @param file 语音文件
+     * @param mimeType MIME类型
+     * @param waveform 波形数据
+     * @return Result<Unit> 发送结果
+     */
     private suspend fun sendMessage(
         file: File,
         mimeType: String,
@@ -297,6 +346,7 @@ class DefaultVoiceMessageComposerPresenter(
         return result
     }
 
+    /** 捕获Composer事件用于分析 */
     private fun AnalyticsService.captureComposerEvent() =
         capture(
             Composer(
@@ -308,6 +358,7 @@ class DefaultVoiceMessageComposerPresenter(
         )
 }
 
+/** 从录制器状态中获取波形数据 */
 private fun VoiceRecorderState.finishedWaveform(): ImmutableList<Float> =
     (this as? VoiceRecorderState.Finished)
         ?.waveform
@@ -315,9 +366,13 @@ private fun VoiceRecorderState.finishedWaveform(): ImmutableList<Float> =
         .toImmutableList()
 
 /**
- * The time to display depending on the player state.
+ * 根据播放器状态显示时间
  *
- * Either the current position or total duration.
+ * 显示当前播放位置或总时长。
+ *
+ * @param playerState 播放器状态
+ * @param recording 录制器状态
+ * @return Duration 显示的时间
  */
 private fun displayTime(
     playerState: VoiceMessageComposerPlayer.State,

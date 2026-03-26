@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"آپ بعد میں اپنی ترتیبات تبدیل کر سکتے ہیں۔"</string>
   <string name="screen_notification_optin_title">"اطلاعات کی اجازت دیں اور کبھی بھی کسی پیغام سے محروم نہ ہوں۔"</string>
   <string name="screen_session_verification_enter_recovery_key">"بازیابی کلید درج کریں"</string>
+  <string name="screen_welcome_agreement">"متفق ہوں اور جاری رکھیں پر ٹیپ کرکے آپ ہمارے %s کو قبول کرتے ہیں"</string>
+  <string name="screen_welcome_privacy_policy_link">"رازداری کی پالیسی"</string>
+  <string name="screen_welcome_title">"%s میں خوش آمدید"</string>
+  <string name="screen_welcome_privacy_notice">"براہ کرم ہماری رازداری کی پالیسی پڑھیں"</string>
+  <string name="screen_welcome_agree">"متفق ہوں"</string>
 </resources>

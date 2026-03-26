@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"您稍後仍可變更設定。"</string>
   <string name="screen_notification_optin_title">"允許通知，永遠不會錯誤任何訊息"</string>
   <string name="screen_session_verification_enter_recovery_key">"輸入復原金鑰"</string>
+  <string name="screen_welcome_title">"歡迎來到 %s"</string>
+  <string name="screen_welcome_privacy_notice">"請閱讀我們的《隱私政策》"</string>
+  <string name="screen_welcome_agree">"同意"</string>
+  <string name="screen_welcome_agreement">"點擊「%s」即表示您接受"</string>
+  <string name="screen_welcome_privacy_policy_link">"同意並繼續"</string>
 </resources>

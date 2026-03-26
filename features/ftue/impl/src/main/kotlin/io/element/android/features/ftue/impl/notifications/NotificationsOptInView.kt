@@ -47,6 +47,16 @@ import io.element.android.libraries.designsystem.theme.components.Surface
 import io.element.android.libraries.designsystem.theme.components.TextButton
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 通知权限选择视图组件
+ *
+ * 这是通知权限请求页面的 Compose UI 组件。
+ * 展示了为什么要开启通知的理由，并提供"启用"和"暂时不"两个选项供用户选择。
+ *
+ * @param state 通知权限选择状态
+ * @param onBack 返回/关闭回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun NotificationsOptInView(
     state: NotificationsOptInState,
@@ -67,6 +77,13 @@ fun NotificationsOptInView(
     }
 }
 
+/**
+ * 通知权限选择页面头部组件
+ *
+ * 显示通知权限请求页面的标题和副标题。
+ *
+ * @param modifier 修饰符
+ */
 @Composable
 private fun NotificationsOptInHeader(
     modifier: Modifier = Modifier,
@@ -79,6 +96,13 @@ private fun NotificationsOptInHeader(
     )
 }
 
+/**
+ * 通知权限选择页面底部组件
+ *
+ * 显示"启用通知"和"暂时不"两个操作按钮。
+ *
+ * @param state 通知权限选择状态
+ */
 @Composable
 private fun NotificationsOptInFooter(state: NotificationsOptInState) {
     ButtonColumnMolecule {
@@ -99,6 +123,12 @@ private fun NotificationsOptInFooter(state: NotificationsOptInState) {
     }
 }
 
+/**
+ * 通知权限选择页面内容组件
+ *
+ * 展示模拟的通知消息界面，帮助用户理解开启通知后可以收到哪些消息。
+ * 显示三个模拟的消息气泡，每个气泡包含头像和不同长度的消息预览。
+ */
 @Composable
 private fun NotificationsOptInContent() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -132,6 +162,16 @@ private fun NotificationsOptInContent() {
     }
 }
 
+/**
+ * 模拟通知消息行组件
+ *
+ * 展示一个模拟的通知消息，包含用户头像和消息预览内容。
+ *
+ * @param avatarLetter 头像上的字母
+ * @param avatarColorsId 头像颜色 ID
+ * @param firstRowPercent 第一行消息内容的显示百分比（用于模拟不同长度的消息）
+ * @param secondRowPercent 第二行消息内容的显示百分比（用于模拟多行消息）
+ */
 @Composable
 private fun NotificationRow(
     avatarLetter: String,

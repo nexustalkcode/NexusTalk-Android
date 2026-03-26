@@ -10,4 +10,9 @@ package io.element.android.features.roomdetailsedit.api
 
 import io.element.android.libraries.architecture.SimpleFeatureEntryPoint
 
+/**
+ * 房间详情编辑功能的入口点接口
+ *
+ * 定义了房间详情编辑功能的简单入口点，用于创建和管理编辑页面节点
+ */
 fun interface RoomDetailsEditEntryPoint : SimpleFeatureEntryPoint

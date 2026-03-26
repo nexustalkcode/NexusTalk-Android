@@ -8,7 +8,6 @@
 
 package io.element.android.libraries.matrix.impl
 
-import chat.schildi.lib.preferences.ScPreferencesStore
 import dev.zacsweers.metro.Inject
 import io.element.android.libraries.core.coroutine.CoroutineDispatchers
 import io.element.android.libraries.core.data.ByteUnit
@@ -22,7 +21,7 @@ import io.element.android.libraries.matrix.impl.certificates.UserCertificatesPro
 import io.element.android.libraries.matrix.impl.paths.SessionPaths
 import io.element.android.libraries.matrix.impl.paths.getSessionPaths
 import io.element.android.libraries.matrix.impl.proxy.ProxyProvider
-import io.element.android.libraries.matrix.impl.room.TimelineEventFilterFactory
+import io.element.android.libraries.matrix.impl.room.TimelineEventTypeFilterFactory
 import io.element.android.libraries.matrix.impl.storage.SqliteStoreBuilderProvider
 import io.element.android.libraries.matrix.impl.util.anonymizedTokens
 import io.element.android.libraries.network.useragent.UserAgentProvider
@@ -35,7 +34,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import org.matrix.rustcomponents.sdk.Client
 import org.matrix.rustcomponents.sdk.ClientBuilder
-import org.matrix.rustcomponents.sdk.CrossProcessLockConfig
 import org.matrix.rustcomponents.sdk.RequestConfig
 import org.matrix.rustcomponents.sdk.Session
 import org.matrix.rustcomponents.sdk.SlidingSyncVersion
@@ -57,24 +55,18 @@ class RustMatrixClientFactory(
     private val appCoroutineScope: CoroutineScope,
     private val coroutineDispatchers: CoroutineDispatchers,
     private val sessionStore: SessionStore,
-    private val scPreferencesStore: ScPreferencesStore,
     private val userAgentProvider: UserAgentProvider,
     private val userCertificatesProvider: UserCertificatesProvider,
     private val proxyProvider: ProxyProvider,
     private val clock: SystemClock,
     private val analyticsService: AnalyticsService,
     private val featureFlagService: FeatureFlagService,
-    private val timelineEventFilterFactory: TimelineEventFilterFactory,
+    private val timelineEventTypeFilterFactory: TimelineEventTypeFilterFactory,
     private val clientBuilderProvider: ClientBuilderProvider,
     private val sqliteStoreBuilderProvider: SqliteStoreBuilderProvider,
     private val workManagerScheduler: WorkManagerScheduler,
 ) {
-    private val sessionDelegate = RustClientSessionDelegate(
-        sessionStore = sessionStore,
-        appCoroutineScope = appCoroutineScope,
-        analyticsService = analyticsService,
-        coroutineDispatchers = coroutineDispatchers
-    )
+    private val sessionDelegate = RustClientSessionDelegate(sessionStore, appCoroutineScope, coroutineDispatchers)
 
     suspend fun create(sessionData: SessionData): RustMatrixClient = withContext(coroutineDispatchers.io) {
         val client = getBaseClientBuilder(
@@ -123,8 +115,7 @@ class RustMatrixClientFactory(
             dispatchers = coroutineDispatchers,
             baseCacheDirectory = cacheDirectory,
             clock = clock,
-            timelineEventFilterFactory = timelineEventFilterFactory,
-            scPreferencesStore = scPreferencesStore,
+            timelineEventTypeFilterFactory = timelineEventTypeFilterFactory,
             featureFlagService = featureFlagService,
             analyticsService = analyticsService,
             workManagerScheduler = workManagerScheduler,
@@ -170,15 +161,12 @@ class RustMatrixClientFactory(
             .requestConfig(
                 RequestConfig(
                     timeout = 30_000uL,
-                    // retryLimit must be non-zero for the SDK to retry API calls in case of error (including 429 Too Many Requests error).
-                    retryLimit = 3u,
+                    retryLimit = 0u,
                     // Use default values for the rest
                     maxConcurrentRequests = null,
                     maxRetryTime = null,
                 )
             )
-            // Make sure all built clients use the single process cross-process lock config
-            .crossProcessLockConfig(CrossProcessLockConfig.SingleProcess)
             .run {
                 // Apply sliding sync version settings
                 when (slidingSyncType) {

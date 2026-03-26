@@ -21,6 +21,7 @@ class DefaultLinkNewDeviceEntryPoint : LinkNewDeviceEntryPoint {
         buildContext: BuildContext,
         callback: LinkNewDeviceEntryPoint.Callback,
     ): Node {
+        // 通过父节点创建流程节点，并注入回调插件
         return parentNode.createNode<LinkNewDeviceFlowNode>(
             buildContext = buildContext,
             plugins = listOf(

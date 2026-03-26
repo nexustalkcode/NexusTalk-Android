@@ -11,6 +11,9 @@ package io.element.android.features.messages.impl.attachments.video
 import android.net.Uri
 import android.util.Size
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.moleculeFlow
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.messages.test.attachments.video.FakeVideoMetadataExtractor
 import io.element.android.features.messages.test.attachments.video.FakeVideoMetadataExtractorFactory
@@ -26,7 +29,6 @@ import io.element.android.libraries.mediaviewer.api.local.LocalMedia
 import io.element.android.libraries.mediaviewer.test.viewer.aLocalMedia
 import io.element.android.libraries.preferences.api.store.VideoCompressionPreset
 import io.element.android.tests.testutils.WarmUpRule
-import io.element.android.tests.testutils.test
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -44,7 +46,9 @@ class DefaultMediaOptimizationSelectorPresenterTest {
     @Test
     fun `present - initial state`() = runTest {
         val presenter = createDefaultMediaOptimizationSelectorPresenter()
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             awaitItem().run {
                 // Loading
                 assertThat(videoSizeEstimations).isInstanceOf(AsyncData.Loading::class.java)
@@ -73,7 +77,9 @@ class DefaultMediaOptimizationSelectorPresenterTest {
         val presenter = createDefaultMediaOptimizationSelectorPresenter(
             localMedia = aLocalMedia(mockMediaUrl, anImageMediaInfo())
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             // Skip loading state
             skipItems(1)
 
@@ -88,7 +94,9 @@ class DefaultMediaOptimizationSelectorPresenterTest {
     @Test
     fun `present - OpenVideoPresetSelectorDialog displays it, DismissVideoPresetSelectorDialog hides it`() = runTest {
         val presenter = createDefaultMediaOptimizationSelectorPresenter()
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             // Skip loading state
             val eventSink = awaitItem().eventSink
 
@@ -107,7 +115,9 @@ class DefaultMediaOptimizationSelectorPresenterTest {
     @Test
     fun `present - SelectVideoPreset sets it and dismisses the dialog`() = runTest {
         val presenter = createDefaultMediaOptimizationSelectorPresenter()
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             // Skip loading state
             val eventSink = awaitItem().eventSink
 
@@ -129,7 +139,9 @@ class DefaultMediaOptimizationSelectorPresenterTest {
         val presenter = createDefaultMediaOptimizationSelectorPresenter(
             mediaExtractorFactory = FakeVideoMetadataExtractorFactory(FakeVideoMetadataExtractor(sizeResult = Result.failure(AN_EXCEPTION))),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             // Skip loading state
             val eventSink = awaitItem().eventSink
 
@@ -151,7 +163,9 @@ class DefaultMediaOptimizationSelectorPresenterTest {
                 )
             ),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             // Skip loading and loaded states
             val eventSink = awaitItem().eventSink
             skipItems(1)
@@ -174,7 +188,9 @@ class DefaultMediaOptimizationSelectorPresenterTest {
         val presenter = createDefaultMediaOptimizationSelectorPresenter(
             localMedia = aLocalMedia(mockMediaUrl, anImageMediaInfo()),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             // Skip loading state
             val eventSink = awaitItem().eventSink
 
@@ -191,7 +207,9 @@ class DefaultMediaOptimizationSelectorPresenterTest {
         val presenter = createDefaultMediaOptimizationSelectorPresenter(
             maxUploadSizeProvider = MaxUploadSizeProvider { Result.failure(AN_EXCEPTION) }
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             // Skip loading and loaded state
             skipItems(1)
             assertThat(awaitItem().maxUploadSize.dataOrNull()).isEqualTo(1024 * 1024 * 100)
@@ -203,7 +221,9 @@ class DefaultMediaOptimizationSelectorPresenterTest {
         val presenter = createDefaultMediaOptimizationSelectorPresenter(
             featureFlagService = FakeFeatureFlagService(mapOf(FeatureFlags.SelectableMediaQuality.key to false)),
         )
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             // Skip loading and loaded state
             skipItems(1)
             assertThat(awaitItem().displayMediaSelectorViews).isFalse()

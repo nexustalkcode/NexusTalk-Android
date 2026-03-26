@@ -40,7 +40,6 @@ import io.element.android.libraries.core.data.ByteUnit
 import io.element.android.libraries.core.extensions.runCatchingExceptions
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.core.meta.BuildType
-import io.element.android.libraries.core.meta.isGplayBuild
 import io.element.android.libraries.featureflag.api.FeatureFlagService
 import io.element.android.libraries.featureflag.api.FeatureFlags
 import io.element.android.libraries.featureflag.ui.model.FeatureUiModel
@@ -58,6 +57,30 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.net.URL
 
+/**
+ * 开发者设置页面 Presenter
+ *
+ * 负责处理开发者设置页面的业务逻辑，包括：
+ * - 管理功能标志的启用/禁用
+ * - 计算和显示缓存大小、数据库大小
+ * - 处理缓存清除操作
+ * - 管理追踪日志级别和日志包
+ * - 处理 Element Call 自定义 URL
+ * - 企业版品牌颜色定制
+ *
+ * @property sessionId 会话 ID
+ * @property featureFlagService 功能标志服务
+ * @property computeCacheSizeUseCase 计算缓存大小用例
+ * @property clearCacheUseCase 清除缓存用例
+ * @property rageshakePresenter 崩溃报告 Presenter
+ * @property appPreferencesStore 应用偏好存储
+ * @property buildMeta 构建元数据
+ * @property enterpriseService 企业服务
+ * @property vacuumStoresUseCase 清理数据库用例
+ * @property databaseSizesUseCase 获取数据库大小用例
+ * @property fileSizeFormatter 文件大小格式化器
+ * @see DeveloperSettingsState 开发者设置状态
+ */
 @Inject
 class DeveloperSettingsPresenter(
     private val sessionId: SessionId,
@@ -111,7 +134,7 @@ class DeveloperSettingsPresenter(
             featureFlagService.getAvailableFeatures()
                 .run {
                     // Never display room directory search in release builds for Play Store
-                    if (buildMeta.flavorDescription == "GooglePlay" && buildMeta.buildType == BuildType.RELEASE || buildMeta.isGplayBuild) {
+                    if (buildMeta.flavorDescription == "GooglePlay" && buildMeta.buildType == BuildType.RELEASE) {
                         filterNot { it.key == FeatureFlags.RoomDirectorySearch.key }
                     } else {
                         this

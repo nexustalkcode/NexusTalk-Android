@@ -12,6 +12,7 @@ import android.app.Activity
 import android.os.Parcelable
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
-import chat.schildi.lib.preferences.scTimelineFilterSettings
 import com.bumble.appyx.core.lifecycle.subscribe
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
@@ -32,10 +32,11 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedInject
 import im.vector.app.features.analytics.plan.MobileScreen
 import io.element.android.annotations.ContributesNode
+import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.home.api.HomeEntryPoint
 import io.element.android.features.home.impl.components.RoomListMenuAction
 import io.element.android.features.home.impl.model.RoomListRoomSummary
-import io.element.android.features.home.impl.roomlist.RoomListEvent
+import io.element.android.features.home.impl.roomlist.RoomListEvents
 import io.element.android.features.invite.api.InviteData
 import io.element.android.features.invite.api.acceptdecline.AcceptDeclineInviteView
 import io.element.android.features.invite.api.declineandblock.DeclineInviteAndBlockEntryPoint
@@ -55,8 +56,10 @@ import io.element.android.libraries.designsystem.components.ProgressDialog
 import io.element.android.libraries.designsystem.utils.DelayedVisibility
 import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.di.annotations.SessionCoroutineScope
+import io.element.android.libraries.androidutils.browser.openUrlInChromeCustomTab
 import io.element.android.libraries.matrix.api.MatrixClient
 import io.element.android.libraries.matrix.api.core.RoomId
+import io.element.android.libraries.push.api.badge.BadgeManager
 import io.element.android.services.analytics.api.AnalyticsService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -146,9 +149,6 @@ class HomeFlowNode(
 
     private fun onMenuActionClick(activity: Activity, roomListMenuAction: RoomListMenuAction) {
         when (roomListMenuAction) {
-            RoomListMenuAction.Settings -> {
-                callback.navigateToSettings()
-            }
             RoomListMenuAction.InviteFriends -> {
                 inviteFriendsUseCase.execute(activity)
             }
@@ -162,14 +162,31 @@ class HomeFlowNode(
         backstack.push(NavTarget.SelectNewOwnersWhenLeavingRoom(roomId))
     }
 
+    private fun onManageAccountClick(
+        activity: Activity,
+        url: String,
+        isDark: Boolean,
+    ) {
+        activity.openUrlInChromeCustomTab(
+            null,
+            darkTheme = isDark,
+            url = url,
+        )
+    }
+
     private fun onNewOwnersSelected(roomId: RoomId) {
-        stateFlow.value.roomListState.eventSink(RoomListEvent.LeaveRoom(roomId, needsConfirmation = false))
+        stateFlow.value.roomListState.eventSink(RoomListEvents.LeaveRoom(roomId, needsConfirmation = false))
     }
 
     private fun rootNode(buildContext: BuildContext): Node {
         return node(buildContext) { modifier ->
             val state by stateFlow.collectAsState()
             val activity = requireNotNull(LocalActivity.current)
+            val isDark = ElementTheme.isLightTheme.not()
+
+            LaunchedEffect(state.chatsUnreadCount) {
+                BadgeManager.setBadgeCount(activity.applicationContext, state.chatsUnreadCount)
+            }
 
             val loadingJoinedRoomJob = remember { mutableStateOf<AsyncData<Job>>(AsyncData.Uninitialized) }
             if (loadingJoinedRoomJob.value.isLoading()) {
@@ -183,8 +200,6 @@ class HomeFlowNode(
                 }
             }
 
-            val scTimelineFilterSettings = scTimelineFilterSettings()
-
             fun navigateToRoom(
                 roomId: RoomId,
             ) {
@@ -195,7 +210,7 @@ class HomeFlowNode(
 
                 val job = sessionCoroutineScope.launch {
                     runCatchingExceptions {
-                        matrixClient.getJoinedRoom(roomId, scTimelineFilterSettings.value)
+                        matrixClient.getJoinedRoom(roomId)
                     }.fold(
                         onSuccess = { joinedRoom ->
                             if (isActive) {
@@ -223,10 +238,21 @@ class HomeFlowNode(
 
             HomeView(
                 homeState = state,
-                matrixClient = matrixClient, // SC
                 onRoomClick = ::navigateToRoom,
                 onSettingsClick = callback::navigateToSettings,
-                onStartChatClick = callback::navigateToCreateRoom,
+                onOpenUserProfile = callback::navigateToUserProfile,
+                onOpenUserQrCode = callback::navigateToUserQrCode,
+                onManageAccountClick = { onManageAccountClick(activity, it, isDark) },
+                onManageDevicesClick = { onManageAccountClick(activity, it, isDark) },
+                onLinkNewDeviceClick = callback::navigateToScanQrCode,
+                onNotificationSettingsClick = callback::navigateToNotificationSettings,
+                onLockScreenSettingsClick = callback::navigateToLockScreenSettings,
+                onAdvancedSettingsClick = callback::navigateToAdvancedSettings,
+                onAboutClick = callback::navigateToAbout,
+                onBlockedUsersClick = callback::navigateToBlockedUsers,
+                onSignOutClick = callback::navigateToSignOut,
+                onStartChatClick = callback::navigateToStartChat,
+                onCreateRoomClick = callback::navigateToCreateRoom,
                 onCreateSpaceClick = callback::navigateToCreateSpace,
                 onSetUpRecoveryClick = callback::navigateToSetUpRecovery,
                 onConfirmRecoveryKeyClick = callback::navigateToEnterRecoveryKey,
@@ -234,6 +260,7 @@ class HomeFlowNode(
                 onMenuActionClick = { onMenuActionClick(activity, it) },
                 onReportRoomClick = ::navigateToReportRoom,
                 onDeclineInviteAndBlockUser = ::navigateToDeclineInviteAndBlockUser,
+                onScanQrCode = callback::navigateToScanQrCode,
                 modifier = modifier,
                 acceptDeclineInviteView = {
                     acceptDeclineInviteView.Render(
@@ -244,8 +271,15 @@ class HomeFlowNode(
                     )
                 },
                 leaveRoomView = {
+                    // 渲染 roomListState 的离开房间状态
                     leaveRoomRenderer.Render(
                         state = state.roomListState.leaveRoomState,
+                        onSelectNewOwners = ::navigateToSelectNewOwnersWhenLeavingRoom,
+                        modifier = Modifier
+                    )
+                    // 渲染 groupListState 的离开房间状态（社区列表离开群聊）
+                    leaveRoomRenderer.Render(
+                        state = state.groupListState.leaveRoomState,
                         onSelectNewOwners = ::navigateToSelectNewOwnersWhenLeavingRoom,
                         modifier = Modifier
                     )

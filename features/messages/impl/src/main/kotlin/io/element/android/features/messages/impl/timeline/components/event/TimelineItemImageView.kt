@@ -35,13 +35,8 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
-import chat.schildi.theme.ScTheme
-import chat.schildi.theme.scBubbleFont
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
-import com.beeper.android.messageformat.MatrixBodyParseResult
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.messages.impl.timeline.aTimelineItemEvent
 import io.element.android.features.messages.impl.timeline.components.ATimelineItemEventRow
@@ -63,10 +58,13 @@ import io.element.android.libraries.ui.utils.time.isTalkbackActive
 import io.element.android.wysiwyg.compose.EditorStyledText
 import io.element.android.wysiwyg.link.Link
 
+private val OUTGOING_MESSAGE_TEXT_COLOR = Color(0xFF0A0A0A)
+
 @Composable
 fun TimelineItemImageView(
     content: TimelineItemImageContent,
     hideMediaContent: Boolean,
+    isMine: Boolean = false,
     onContentClick: (() -> Unit)?,
     onLongClick: (() -> Unit)?,
     onLinkClick: (Link) -> Unit,
@@ -79,7 +77,7 @@ fun TimelineItemImageView(
     val description = content.caption?.let { "$a11yLabel: $it" } ?: a11yLabel
     Column(modifier = modifier) {
         val containerModifier = if (content.showCaption) {
-            Modifier.clip(RoundedCornerShape(ScTheme.exposures.commonLayoutRadius))
+            Modifier.clip(RoundedCornerShape(10.dp))
         } else {
             Modifier
         }
@@ -87,7 +85,6 @@ fun TimelineItemImageView(
             modifier = containerModifier.blurHashBackground(content.blurhash, alpha = 0.9f),
             aspectRatio = coerceRatioWhenHidingContent(content.aspectRatio, hideMediaContent),
         ) {
-            if (shouldDrawScPreviewMedia(content.mediaSource)) { ScPreviewMedia(content.mediaSource) ; return@TimelineItemAspectRatioBox }
             ProtectedView(
                 hideContent = hideMediaContent,
                 onShowClick = onShowContentClick,
@@ -96,7 +93,7 @@ fun TimelineItemImageView(
                 AsyncImage(
                     modifier = Modifier
                         .fillMaxWidth()
-                        //.then(if (isLoaded) Modifier.background(Color.White) else Modifier)
+                        .then(if (isLoaded) Modifier.background(Color.White) else Modifier)
                         .then(
                             if (!isTalkbackActive() && onContentClick != null) {
                                 Modifier
@@ -125,26 +122,16 @@ fun TimelineItemImageView(
             } else {
                 content.formattedCaption ?: SpannedString(content.caption)
             }
+            val captionColor = if (isMine) OUTGOING_MESSAGE_TEXT_COLOR else ElementTheme.colors.textPrimary
             CompositionLocalProvider(
-                LocalContentColor provides ElementTheme.colors.textPrimary,
-                LocalTextStyle provides ElementTheme.typography.scBubbleFont
+                LocalContentColor provides captionColor,
+                LocalTextStyle provides ElementTheme.typography.fontBodyLgRegular
             ) {
                 val aspectRatio = content.aspectRatio ?: DEFAULT_ASPECT_RATIO
-                if (!ScPrefs.LEGACY_MESSAGE_RENDERING.value()) {
-                    ScTimelineItemTextView(
-                        content = content,
-                        onLinkLongClick = onLinkLongClick,
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp) // This is (12.dp - 8.dp) contentPadding from CommonLayout
-                            .widthIn(min = scLayoutDpUnspecified() ?: (MIN_HEIGHT_IN_DP.dp * aspectRatio), max = MAX_HEIGHT_IN_DP.dp * aspectRatio),
-                        onContentLayoutChange = onContentLayoutChange,
-                    )
-                    return@CompositionLocalProvider
-                }
                 EditorStyledText(
                     modifier = Modifier
                         .padding(horizontal = 4.dp) // This is (12.dp - 8.dp) contentPadding from CommonLayout
-                        .widthIn(min = scLayoutDpUnspecified() ?: (MIN_HEIGHT_IN_DP.dp * aspectRatio), max = MAX_HEIGHT_IN_DP.dp * aspectRatio),
+                        .widthIn(min = MIN_HEIGHT_IN_DP.dp * aspectRatio, max = MAX_HEIGHT_IN_DP.dp * aspectRatio),
                     text = caption,
                     style = ElementRichTextEditorStyle.textStyle(),
                     onLinkClickedListener = onLinkClick,

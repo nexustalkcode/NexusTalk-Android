@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.libraries.designsystem.colors.gradientActionColors
+import io.element.android.libraries.designsystem.ext.angledGradient
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Icon
@@ -53,9 +54,7 @@ internal fun SendButtonIcon(
         modifier = modifier
             .clip(CircleShape)
             .size(36.dp)
-            .then(
-                scButtonBackgroundModifier(canSendMessage) ?: Modifier.buttonBackgroundModifier(canSendMessage)
-            )
+            .buttonBackgroundModifier(canSendMessage)
     ) {
         Icon(
             modifier = Modifier
@@ -82,21 +81,13 @@ private fun Modifier.buttonBackgroundModifier(
     canSendMessage: Boolean,
 ) = then(
     if (canSendMessage) {
-        val colors = gradientActionColors()
-        Modifier.drawWithCache {
-            val verticalGradientBrush = ShaderBrush(
-                LinearGradientShader(
-                    from = Offset(0f, 0f),
-                    to = Offset(0f, size.height),
-                    colors = colors,
-                )
-            )
-            onDrawBehind {
-                drawRect(
-                    brush = verticalGradientBrush,
-                )
-            }
-        }
+        Modifier.angledGradient(
+            colorStops = arrayOf(
+                0f to ElementTheme.colors.gradientBrandStop1,
+                1f to ElementTheme.colors.gradientBrandStop2
+            ),
+            degrees = 89f
+        )
     } else {
         Modifier
     }

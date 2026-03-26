@@ -27,11 +27,26 @@ import io.element.android.libraries.androidutils.browser.openUrlInChromeCustomTa
 import io.element.android.libraries.architecture.appyx.launchMolecule
 import io.element.android.libraries.di.RoomScope
 
+/**
+ * 安全与隐私节点
+ *
+ * 安全与隐私设置的主页面节点。
+ * 负责显示安全与隐私设置界面，包括：
+ * - 房间访问权限设置
+ * - 房间加密设置
+ * - 历史可见性设置
+ * - 房间地址和目录可见性设置
+ *
+ * @see Node 基础节点类
+ * @see SecurityAndPrivacyPresenter 业务逻辑处理类
+ * @see SecurityAndPrivacyView 界面渲染组件
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class SecurityAndPrivacyNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
+    /** Presenter 工厂，用于创建业务逻辑处理类 */
     presenterFactory: SecurityAndPrivacyPresenter.Factory,
 ) : Node(buildContext, plugins = plugins) {
     private val navigator = plugins<SecurityAndPrivacyNavigator>().first()

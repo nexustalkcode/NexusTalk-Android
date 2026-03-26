@@ -39,7 +39,7 @@ android {
         )
         buildConfigFieldStr(
             name = "URL_PRIVACY",
-            value = BuildTimeConfig.URL_PRIVACY ?: "https://schildi.chat/next/privacy/",
+            value = BuildTimeConfig.URL_PRIVACY ?: "https://element.io/privacy",
         )
     }
 }
@@ -47,9 +47,6 @@ android {
 setupDependencyInjection()
 
 dependencies {
-    api(projects.schildi.lib)
-    api(projects.schildi.components)
-
     implementation(projects.libraries.androidutils)
     implementation(projects.appconfig)
     implementation(projects.libraries.core)
@@ -66,6 +63,7 @@ dependencies {
     implementation(projects.libraries.testtags)
     implementation(projects.libraries.uiStrings)
     implementation(projects.libraries.matrixui)
+    implementation(projects.libraries.qrcode)
     implementation(projects.libraries.mediapickers.api)
     implementation(projects.libraries.mediaupload.api)
     implementation(projects.libraries.permissions.api)
@@ -97,7 +95,7 @@ dependencies {
     implementation(platform(libs.network.okhttp.bom))
     implementation(libs.network.okhttp)
 
-    testCommonDependencies(libs, true)
+   
     testImplementation(projects.libraries.matrix.test)
     testImplementation(projects.libraries.featureflag.test)
     testImplementation(projects.libraries.mediapickers.test)

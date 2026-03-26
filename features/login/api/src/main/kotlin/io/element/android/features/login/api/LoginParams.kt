@@ -12,8 +12,13 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * Parameters to start the login flow, when the application is opened
- * from a mobile.element.io link.
+ * 登录参数数据类
+ *
+ * 表示从 mobile.element.io 链接启动登录流程时的参数。
+ * 用于在应用启动时自动引导用户登录到特定的账户提供商。
+ *
+ * @property accountProvider 账户提供商 URL
+ * @property loginHint 登录提示文本，可为 null
  */
 @Parcelize
 data class LoginParams(

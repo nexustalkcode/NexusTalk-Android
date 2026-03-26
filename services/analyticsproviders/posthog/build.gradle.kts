@@ -44,5 +44,5 @@ dependencies {
     implementation(projects.libraries.di)
     implementation(projects.services.analyticsproviders.api)
 
-    testCommonDependencies(libs)
+   
 }

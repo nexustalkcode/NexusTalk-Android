@@ -8,8 +8,21 @@
 
 package io.element.android.features.securityandprivacy.impl.editroomaddress
 
+/**
+ * 编辑房间地址事件密封接口
+ *
+ * 定义编辑房间地址页面中可能发生的用户交互事件。
+ */
 sealed interface EditRoomAddressEvents {
+    /** 保存房间地址 */
     data object Save : EditRoomAddressEvents
+
+    /** 关闭错误提示 */
     data object DismissError : EditRoomAddressEvents
+
+    /**
+     * 房间地址变更事件
+     * @property roomAddress 新的房间地址
+     */
     data class RoomAddressChanged(val roomAddress: String) : EditRoomAddressEvents
 }

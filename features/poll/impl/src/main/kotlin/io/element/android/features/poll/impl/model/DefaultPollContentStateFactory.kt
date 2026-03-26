@@ -19,10 +19,30 @@ import io.element.android.libraries.matrix.api.poll.isDisclosed
 import io.element.android.libraries.matrix.api.timeline.item.event.PollContent
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 默认投票内容状态工厂实现类
+ *
+ * 实现了 PollContentStateFactory 接口，
+ * 负责将底层的 PollContent 数据转换为 UI 状态。
+ *
+ * @property matrixClient Matrix 客户端
+ */
 @ContributesBinding(RoomScope::class)
 class DefaultPollContentStateFactory(
     private val matrixClient: MatrixClient,
 ) : PollContentStateFactory {
+    /**
+     * 创建投票内容状态
+     *
+     * 将原始投票数据转换为包含 UI 所需所有信息的完整状态。
+     * 包括计算投票百分比、确定获胜者、处理用户投票等。
+     *
+     * @param eventId 投票事件 ID
+     * @param isEditable 投票是否可编辑
+     * @param isOwn 投票是否由当前用户创建
+     * @param content 投票内容数据
+     * @return 投票内容 UI 状态
+     */
     override suspend fun create(
         eventId: EventId?,
         isEditable: Boolean,

@@ -21,8 +21,22 @@ import io.element.android.libraries.core.log.logger.LoggerTag
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/** 日志标签，用于日志输出 */
 private val loggerTag = LoggerTag("PiP")
 
+/**
+ * 画中画 Presenter
+ *
+ * 负责处理通话画中画模式的业务逻辑和状态管理。
+ * 管理画中画模式的进入、退出和状态跟踪。
+ *
+ * @property pipSupportProvider 画中画支持提供者，用于检查设备是否支持画中画功能
+ *
+ * @see PipSupportProvider 画中画支持提供者接口
+ * @see PictureInPictureState 画中画状态
+ * @see PictureInPictureEvents 画中画事件
+ * @see PipController 画中画控制器接口
+ */
 @Inject
 class PictureInPicturePresenter(
     pipSupportProvider: PipSupportProvider,
@@ -30,12 +44,22 @@ class PictureInPicturePresenter(
     private val isPipSupported = pipSupportProvider.isPipSupported()
     private var pipView: PipView? = null
 
+    /**
+     * 生成界面状态
+     *
+     * @return PictureInPictureState 画中画状态
+     */
     @Composable
     override fun present(): PictureInPictureState {
         val coroutineScope = rememberCoroutineScope()
         var isInPictureInPicture by remember { mutableStateOf(false) }
         var pipController by remember { mutableStateOf<PipController?>(null) }
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 画中画事件
+         */
         fun handleEvent(event: PictureInPictureEvents) {
             when (event) {
                 is PictureInPictureEvents.SetPipController -> {
@@ -65,6 +89,11 @@ class PictureInPicturePresenter(
         )
     }
 
+    /**
+     * 设置画中画视图
+     *
+     * @param pipView 画中画视图
+     */
     fun setPipView(pipView: PipView?) {
         if (isPipSupported) {
             Timber.tag(loggerTag.value).d("Setting PiP params")
@@ -76,7 +105,11 @@ class PictureInPicturePresenter(
     }
 
     /**
-     * Enters Picture-in-Picture mode, if allowed by Element Call.
+     * 进入画中画模式
+     *
+     * 如果 Element Call 允许，则进入画中画模式。
+     *
+     * @param pipController 画中画控制器
      */
     private suspend fun switchToPip(pipController: PipController?) {
         if (isPipSupported) {

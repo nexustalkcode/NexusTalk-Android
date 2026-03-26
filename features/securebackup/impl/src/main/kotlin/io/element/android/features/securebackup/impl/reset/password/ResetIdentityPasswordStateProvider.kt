@@ -11,7 +11,13 @@ package io.element.android.features.securebackup.impl.reset.password
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 重置身份密码状态提供器
+ *
+ * 用于 Compose Preview 的状态提供器，提供不同状态的 [ResetIdentityPasswordState] 示例。
+ */
 class ResetIdentityPasswordStateProvider : PreviewParameterProvider<ResetIdentityPasswordState> {
+    /** 预览状态序列 */
     override val values: Sequence<ResetIdentityPasswordState>
         get() = sequenceOf(
             aResetIdentityPasswordState(),
@@ -21,6 +27,13 @@ class ResetIdentityPasswordStateProvider : PreviewParameterProvider<ResetIdentit
         )
 }
 
+/**
+ * 创建重置身份密码状态的辅助函数
+ *
+ * @param resetAction 重置操作状态
+ * @param eventSink 事件处理函数
+ * @return 重置身份密码状态实例
+ */
 private fun aResetIdentityPasswordState(
     resetAction: AsyncAction<Unit> = AsyncAction.Uninitialized,
     eventSink: (ResetIdentityPasswordEvent) -> Unit = {},

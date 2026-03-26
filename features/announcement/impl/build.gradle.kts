@@ -33,6 +33,5 @@ dependencies {
     api(projects.features.announcement.api)
     implementation(libs.androidx.datastore.preferences)
 
-    testCommonDependencies(libs, true)
     testImplementation(projects.libraries.matrix.test)
 }

@@ -15,8 +15,7 @@ import org.matrix.rustcomponents.sdk.JoinRule as RustJoinRule
 fun RustJoinRule.map(): JoinRule {
     return when (this) {
         RustJoinRule.Public -> JoinRule.Public
-        // Assume a private join rule is invite only instead. Private shouldn't be in use in Matrix.
-        RustJoinRule.Private -> JoinRule.Invite
+        RustJoinRule.Private -> JoinRule.Private
         RustJoinRule.Knock -> JoinRule.Knock
         RustJoinRule.Invite -> JoinRule.Invite
         is RustJoinRule.Restricted -> JoinRule.Restricted(rules.map { it.map() }.toImmutableList())
@@ -28,6 +27,7 @@ fun RustJoinRule.map(): JoinRule {
 fun JoinRule.map(): RustJoinRule {
     return when (this) {
         JoinRule.Public -> RustJoinRule.Public
+        JoinRule.Private -> RustJoinRule.Private
         JoinRule.Knock -> RustJoinRule.Knock
         JoinRule.Invite -> RustJoinRule.Invite
         is JoinRule.Restricted -> RustJoinRule.Restricted(rules.map { it.map() })

@@ -29,6 +29,16 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 投票历史流程节点
+ *
+ * 管理投票历史界面的导航流程，包括投票列表和编辑投票页面。
+ * 使用 FlowNode 管理导航栈。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property createPollEntryPoint 创建投票入口点
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class PollHistoryFlowNode(
@@ -43,6 +53,11 @@ class PollHistoryFlowNode(
     buildContext = buildContext,
     plugins = plugins
 ) {
+    /**
+     * 导航目标密封接口
+     *
+     * 定义了投票历史流程中的所有导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         @Parcelize
         data object Root : NavTarget

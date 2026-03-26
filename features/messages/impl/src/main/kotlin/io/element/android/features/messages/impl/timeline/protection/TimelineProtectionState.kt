@@ -12,6 +12,12 @@ import androidx.compose.runtime.Immutable
 import io.element.android.libraries.matrix.api.core.EventId
 import kotlinx.collections.immutable.ImmutableSet
 
+/**
+ * 时间线保护状态数据类
+ *
+ * @property protectionState 保护状态
+ * @property eventSink 事件处理函数
+ */
 data class TimelineProtectionState(
     val protectionState: ProtectionState,
     val eventSink: (TimelineProtectionEvent) -> Unit,

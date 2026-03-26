@@ -34,6 +34,15 @@ import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.di.SessionScope
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 安全备份流程节点
+ *
+ * 安全备份功能的主流程节点，负责管理整个安全备份功能的导航流程。
+ * 使用 BackStack 管理多个子页面（根页面、设置页面、更改页面、禁用页面、输入恢复密钥页面、重置身份页面）。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class SecureBackupFlowNode(
@@ -52,22 +61,33 @@ class SecureBackupFlowNode(
     buildContext = buildContext,
     plugins = plugins
 ) {
+    /**
+     * 导航目标密封接口
+     *
+     * 定义了安全备份流程中的各个页面目标。
+     */
     sealed interface NavTarget : Parcelable {
+        /** 根页面 - 显示安全备份状态和操作选项 */
         @Parcelize
         data object Root : NavTarget
 
+        /** 设置恢复密钥页面 */
         @Parcelize
         data object Setup : NavTarget
 
+        /** 更改恢复密钥页面 */
         @Parcelize
         data object Change : NavTarget
 
+        /** 禁用安全备份页面 */
         @Parcelize
         data object Disable : NavTarget
 
+        /** 输入恢复密钥页面 */
         @Parcelize
         data object EnterRecoveryKey : NavTarget
 
+        /** 重置身份流程页面 */
         @Parcelize
         data object ResetIdentity : NavTarget
     }
@@ -119,6 +139,10 @@ class SecureBackupFlowNode(
                         } else {
                             callback.onDone()
                         }
+                    }
+
+                    override fun onResetRecoveryKey() {
+                        backstack.push(NavTarget.ResetIdentity)
                     }
                 }
                 createNode<SecureBackupEnterRecoveryKeyNode>(buildContext, plugins = listOf(callback))

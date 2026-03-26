@@ -22,6 +22,14 @@ import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.designsystem.showkase.getBrowserIntent
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 开发者设置页面 Node
+ *
+ * 负责显示开发者设置页面，包括功能标志管理、缓存清理、日志追踪等开发相关功能。
+ *
+ * @property presenter 开发者设置 Presenter
+ * @see Callback 页面回调接口
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class DeveloperSettingsNode(
@@ -29,8 +37,13 @@ class DeveloperSettingsNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: DeveloperSettingsPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 开发者设置页面回调接口
+     */
     interface Callback : Plugin {
+        /** 导航到推送历史页面 */
         fun navigateToPushHistory()
+        /** 完成设置 */
         fun onDone()
     }
 

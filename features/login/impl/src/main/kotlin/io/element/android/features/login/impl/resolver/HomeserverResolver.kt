@@ -22,7 +22,14 @@ import timber.log.Timber
 import java.util.Collections
 
 /**
- * Resolve homeserver base on search terms.
+ * Homeserver 解析器
+ *
+ * 根据用户输入的搜索词解析和验证 homeserver。
+ * 支持从输入推断可能的域名，并并行验证服务器兼容性。
+ *
+ * @property dispatchers 协程调度器
+ * @property homeServerLoginCompatibilityChecker 服务器登录兼容性检查器
+ * @see HomeserverData 解析后的 homeserver 数据
  */
 @Inject
 class HomeserverResolver(

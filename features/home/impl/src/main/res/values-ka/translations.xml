@@ -4,6 +4,7 @@
   <string name="confirm_recovery_key_banner_message">"დაადასტურეთ თქვენი აღდგენის გასაღები რათა გქონდეთ წვდომა გასაღებების დამგროვებელთან და შეტყობინებების ისტორიასთან."</string>
   <string name="confirm_recovery_key_banner_title">"თქვენი გასაღების დამგროვებელი არაა სინქრონიზებული"</string>
   <string name="screen_home_tab_chats">"ჩატები"</string>
+  <string name="screen_home_tab_community">"თემი"</string>
   <string name="screen_invites_decline_chat_message">"დარწმუნებული ხართ, რომ გსურთ, უარი თქვათ მოწვევაზე %1$s-ში?"</string>
   <string name="screen_invites_decline_chat_title">"მოწვევაზე უარის თქმა"</string>
   <string name="screen_invites_decline_direct_chat_message">"დარწმუნებული ხართ, რომ გსურთ, უარი თქვათ ჩატზე %1$s-თან?"</string>
@@ -35,4 +36,9 @@
   <string name="screen_roomlist_mark_as_unread">"წაუკითხავად მონიშვნა"</string>
   <string name="session_verification_banner_message">"როგორც ჩანს, ახალ მოწყობილობას იყენებთ. დაადასტურეთ სხვა მოწყობილობით თქვენს დაშიფრულ შეტყობინებებზე წვდომისთვის."</string>
   <string name="session_verification_banner_title">"დაადასტურეთ, რომ ეს თქვენ ხართ"</string>
+
+  <string name="screen_community_roomlist_empty_message">"თემები აერთიანებს წევრებს თემებზე დაფუძნებულ ჯგუფებში. ნებისმიერი საზოგადოება, რომელსაც შეუერთდებით, აქ გამოჩნდება."</string>
+  <string name="screen_community_list_header_count">"%1$d საზოგადოება"</string>
+  <string name="screen_community_list_header_description">"საზოგადოებები, რომლებსაც ქმნით ან უერთდებით"</string>
+  <string name="screen_roomlist_empty_message_new">"ეს ადგილი მხოლოდ შენ და შენთან ყველაზე ახლობელ ადამიანებს გეკუთვნის"</string>
 </resources>

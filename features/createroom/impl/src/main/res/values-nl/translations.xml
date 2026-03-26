@@ -4,14 +4,35 @@
   <string name="screen_create_room_add_people_title">"Mensen uitnodigen"</string>
   <string name="screen_create_room_error_creating_room">"Er is een fout opgetreden bij het aanmaken van de kamer"</string>
   <string name="screen_create_room_private_option_description">"Alleen uitgenodigde personen hebben toegang tot deze kamer. Alle berichten zijn end-to-end versleuteld."</string>
-  <string name="screen_create_room_private_option_title">"Privé"</string>
   <string name="screen_create_room_public_option_description">"Iedereen kan deze kamer vinden.
 Je kunt dit op elk gewenst moment wijzigen in de kamerinstellingen."</string>
-  <string name="screen_create_room_public_option_title">"Openbaar"</string>
+  <string name="screen_create_room_public_option_title">"Openbare kamer"</string>
   <string name="screen_create_room_room_access_section_knocking_option_description">"Iedereen kan vragen om toe te treden tot de kamer, maar een beheerder of moderator moet het verzoek accepteren"</string>
   <string name="screen_create_room_room_access_section_knocking_option_title">"Vraag om toe te treden"</string>
-  <string name="screen_create_room_room_access_section_private_option_title">"Privé"</string>
   <string name="screen_create_room_room_access_section_public_option_description">"Iedereen kan toetreden tot deze kamer"</string>
-  <string name="screen_create_room_room_access_section_public_option_title">"Openbaar"</string>
+  <string name="screen_create_room_room_access_section_public_option_title">"Iedereen"</string>
   <string name="screen_create_room_topic_label">"Onderwerp (optioneel)"</string>
+
+  <string name="screen_create_room_error_creating_space">"De ruimte kan niet worden gemaakt vanwege een onbekende fout. Probeer het later opnieuw."</string>
+  <string name="screen_create_room_name_label">"Naam"</string>
+  <string name="screen_create_room_avatar_photo">"foto"</string>
+  <string name="screen_create_room_name_placeholder">"Naam toevoegen…"</string>
+  <string name="screen_create_room_new_room_title">"Nieuwe kamer"</string>
+  <string name="screen_create_room_new_space_title">"Nieuwe ruimte"</string>
+  <string name="screen_create_room_private_option_title">"Privé"</string>
+  <string name="screen_create_room_public_option_short_description">"Iedereen kan meedoen."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_description">"Iedereen in %1$s kan lid worden, maar alle anderen moeten toegang aanvragen."</string>
+  <string name="screen_create_room_room_access_section_knocking_restricted_option_title">"Vraag om mee te doen"</string>
+  <string name="screen_create_room_room_access_section_private_option_description">"Alleen uitgenodigde mensen kunnen deelnemen."</string>
+  <string name="screen_create_room_room_access_section_private_option_title">"Privé"</string>
+  <string name="screen_create_room_room_access_section_restricted_option_description">"Iedereen in %1$s kan meedoen."</string>
+  <string name="screen_create_room_room_access_section_restricted_option_title">"Standaard"</string>
+  <string name="screen_create_room_room_access_section_title">"Wie heeft toegang"</string>
+  <string name="screen_create_room_room_address_section_footer">"U heeft een adres nodig om het zichtbaar te maken in de openbare directory."</string>
+  <string name="screen_create_room_room_address_section_title">"Adres"</string>
+  <string name="screen_create_room_room_visibility_section_title">"Zichtbaarheid van de kamer"</string>
+  <string name="screen_create_room_space_selection_no_space_description">"(geen spatie)"</string>
+  <string name="screen_create_room_space_selection_no_space_title">"Thuis"</string>
+  <string name="screen_create_room_space_selection_sheet_title">"Voeg toe aan ruimte"</string>
+  <string name="screen_create_room_topic_placeholder">"Beschrijving toevoegen…"</string>
 </resources>

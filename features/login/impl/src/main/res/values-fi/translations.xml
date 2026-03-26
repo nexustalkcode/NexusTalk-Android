@@ -33,7 +33,7 @@
   <string name="screen_login_error_invalid_user_id">"Tämä ei ole kelvollinen käyttäjätunnus. Odotettu muoto: \'@käyttäjä:kotipalvelin.fi\'"</string>
   <string name="screen_login_error_refresh_tokens">"Tämä palvelin on määritetty käyttämään refresh tokeneja. Näitä ei tueta salasanapohjaisen kirjautumisen kanssa."</string>
   <string name="screen_login_error_unsupported_authentication">"Valitsemasi kotipalvelin ei tue salasana- tai OIDC-kirjautumista. Ota yhteyttä palvelimesi ylläpitäjään tai valitse toinen kotipalvelin."</string>
-  <string name="screen_login_form_header">"Anna tietosi"</string>
+  <string name="screen_login_form_header">"Syötä tietosi"</string>
   <string name="screen_login_subtitle">"Matrix on avoin verkko turvallista, hajautettua viestintää varten."</string>
   <string name="screen_login_title">"Tervetuloa takaisin!"</string>
   <string name="screen_login_title_with_homeserver">"Kirjaudu sisään %1$s -palvelimelle"</string>
@@ -41,10 +41,12 @@
   <string name="screen_onboarding_sign_in_manually">"Kirjaudu sisään manuaalisesti"</string>
   <string name="screen_onboarding_sign_in_to">"Kirjaudu sisään %1$s -palvelimelle"</string>
   <string name="screen_onboarding_sign_in_with_qr_code">"Kirjaudu sisään QR-koodilla"</string>
+  <string name="screen_onboarding_sign_in">"Kirjaudu sisään"</string>
+  <string name="screen_onboarding_signing_in">"Kirjaudutaan..."</string>
   <string name="screen_onboarding_sign_up">"Luo tili"</string>
   <string name="screen_onboarding_welcome_message">"Tervetuloa kaikkien aikojen nopeimpaan %1$s -sovellukseen. Ahdettu nopeudella ja yksinkertaisuudella."</string>
   <string name="screen_onboarding_welcome_subtitle">"Tervetuloa %1$s -sovellukseen. Ahdettu nopeudella ja yksinkertaisuudella."</string>
-  <string name="screen_onboarding_welcome_title">"Ole elementissäsi"</string>
+  <string name="screen_onboarding_welcome_title">"Ole %s:ssäsi"</string>
   <string name="screen_qr_code_login_connecting_subtitle">"Muodostetaan turvallista yhteyttä"</string>
   <string name="screen_qr_code_login_connection_note_secure_state_description">"Turvallista yhteyttä uuteen laitteeseen ei voitu muodostaa. Olemassa olevat laitteesi ovat edelleen turvassa, eikä sinun tarvitse huolehtia niistä."</string>
   <string name="screen_qr_code_login_connection_note_secure_state_list_header">"Mitä nyt?"</string>
@@ -60,8 +62,6 @@
   <string name="screen_qr_code_login_error_cancelled_title">"Kirjautumispyyntö peruutettu"</string>
   <string name="screen_qr_code_login_error_declined_subtitle">"Kirjautuminen hylättiin toisella laitteella."</string>
   <string name="screen_qr_code_login_error_declined_title">"Kirjautuminen hylätty"</string>
-  <string name="screen_qr_code_login_error_device_already_signed_in_subtitle">"Sinun ei tarvitse tehdä mitään muuta."</string>
-  <string name="screen_qr_code_login_error_device_already_signed_in_title">"Toinen laitteesi on jo kirjautunut sisään"</string>
   <string name="screen_qr_code_login_error_expired_subtitle">"Kirjautuminen vanhentui. Yritä uudelleen."</string>
   <string name="screen_qr_code_login_error_expired_title">"Kirjautumista ei suoritettu ajoissa"</string>
   <string name="screen_qr_code_login_error_linking_not_suported_subtitle">"Toinen laitteesi ei tue kirjautumista %s -sovellukseen QR-koodilla.

@@ -11,6 +11,13 @@ package io.element.android.features.preferences.impl.about
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 关于页面状态提供者
+ *
+ * 用于在预览模式下提供关于页面的示例状态数据。
+ *
+ * @see AboutState 关于页面状态
+ */
 open class AboutStateProvider : PreviewParameterProvider<AboutState> {
     override val values: Sequence<AboutState>
         get() = sequenceOf(
@@ -18,6 +25,12 @@ open class AboutStateProvider : PreviewParameterProvider<AboutState> {
         )
 }
 
+/**
+ * 创建示例 AboutState 对象
+ *
+ * @param elementLegals 法律信息列表，默认为获取所有法律信息
+ * @return AboutState 示例状态
+ */
 fun anAboutState(
     elementLegals: List<ElementLegal> = getAllLegals(),
 ) = AboutState(

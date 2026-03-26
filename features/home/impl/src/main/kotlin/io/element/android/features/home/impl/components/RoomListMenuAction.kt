@@ -8,8 +8,14 @@
 
 package io.element.android.features.home.impl.components
 
+/**
+ * 房间列表菜单操作枚举
+ *
+ * 定义房间列表菜单中的可执行操作。
+ */
 enum class RoomListMenuAction {
-    Settings,
+    /** 邀请好友 */
     InviteFriends,
+    /** 报告问题 */
     ReportBug
 }

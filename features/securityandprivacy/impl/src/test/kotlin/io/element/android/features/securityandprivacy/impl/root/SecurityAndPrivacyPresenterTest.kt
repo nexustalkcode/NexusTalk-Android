@@ -309,7 +309,7 @@ class SecurityAndPrivacyPresenterTest {
             baseRoom = FakeBaseRoom(
                 roomPermissions = roomPermissions(),
                 getRoomVisibilityResult = { Result.success(RoomVisibility.Private) },
-                initialRoomInfo = aRoomInfo(historyVisibility = RoomHistoryVisibility.Shared, joinRule = JoinRule.Invite)
+                initialRoomInfo = aRoomInfo(historyVisibility = RoomHistoryVisibility.Shared, joinRule = JoinRule.Private)
             ),
             enableEncryptionResult = enableEncryptionLambda,
             updateJoinRuleResult = updateJoinRuleLambda,
@@ -809,13 +809,14 @@ class SecurityAndPrivacyPresenterTest {
                 )
             )
         )
-        // Room has SpaceMember access with existing space ID, so isSpaceMemberSelectable is true
+        // No spaces available, so isSpaceMemberSelectable should be false
         val presenter = createSecurityAndPrivacyPresenter(room = room)
         presenter.test {
             skipItems(1)
             with(awaitItem()) {
                 assertThat(savedSettings.roomAccess).isInstanceOf(SecurityAndPrivacyRoomAccess.SpaceMember::class.java)
-                assertThat(isSpaceMemberSelectable).isTrue()
+                assertThat(isSpaceMemberSelectable).isFalse()
+                // showSpaceMemberOption should still be true because savedSettings has SpaceMember
                 assertThat(showSpaceMemberOption).isTrue()
             }
             cancelAndIgnoreRemainingEvents()
@@ -1090,7 +1091,7 @@ class SecurityAndPrivacyPresenterTest {
             baseRoom = FakeBaseRoom(
                 roomPermissions = roomPermissions(),
                 getRoomVisibilityResult = { Result.success(RoomVisibility.Private) },
-                initialRoomInfo = aRoomInfo(historyVisibility = RoomHistoryVisibility.Shared, joinRule = JoinRule.Invite)
+                initialRoomInfo = aRoomInfo(historyVisibility = RoomHistoryVisibility.Shared, joinRule = JoinRule.Private)
             ),
         ),
         navigator: SecurityAndPrivacyNavigator = FakeSecurityAndPrivacyNavigator(),

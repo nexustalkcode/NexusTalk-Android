@@ -8,7 +8,12 @@
 
 package io.element.android.features.preferences.impl.advanced
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import im.vector.app.features.analytics.plan.Interaction
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.preferences.impl.R
@@ -71,124 +77,131 @@ fun AdvancedSettingsView(
             )
         }
     ) {
-        PreferenceDropdown(
-            title = stringResource(id = CommonStrings.common_appearance),
-            selectedOption = state.theme,
-            options = ThemeOption.entries.toImmutableList(),
-            onSelectOption = { themeOption ->
-                state.eventSink(AdvancedSettingsEvents.SetTheme(themeOption))
-            }
-        )
-        ListItem(
-            headlineContent = {
-                Text(text = stringResource(id = CommonStrings.action_view_source))
-            },
-            supportingContent = {
-                Text(text = stringResource(id = R.string.screen_advanced_settings_view_source_description))
-            },
-            trailingContent = ListItemContent.Switch(
-                checked = state.isDeveloperModeEnabled,
-            ),
-            onClick = { state.eventSink(AdvancedSettingsEvents.SetDeveloperModeEnabled(!state.isDeveloperModeEnabled)) }
-        )
-        ListItem(
-            headlineContent = {
-                Text(text = stringResource(id = R.string.screen_advanced_settings_share_presence))
-            },
-            supportingContent = {
-                Text(text = stringResource(id = R.string.screen_advanced_settings_share_presence_description))
-            },
-            trailingContent = ListItemContent.Switch(
-                checked = state.isSharePresenceEnabled,
-            ),
-            onClick = { state.eventSink(AdvancedSettingsEvents.SetSharePresenceEnabled(!state.isSharePresenceEnabled)) }
-        )
-        val compressImages = state.mediaOptimizationState?.shouldCompressImages
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+        ) {
+            PreferenceDropdown(
+                title = stringResource(id = CommonStrings.common_appearance),
+                selectedOption = state.theme,
+                options = ThemeOption.entries.toImmutableList(),
+                onSelectOption = { themeOption ->
+                    state.eventSink(AdvancedSettingsEvents.SetTheme(themeOption))
+                }
+            )
+            ListItem(
+                headlineContent = {
+                    Text(text = stringResource(id = CommonStrings.action_view_source))
+                },
+                supportingContent = {
+                    Text(text = stringResource(id = R.string.screen_advanced_settings_view_source_description))
+                },
+                trailingContent = ListItemContent.Switch(
+                    checked = state.isDeveloperModeEnabled,
+                ),
+                onClick = { state.eventSink(AdvancedSettingsEvents.SetDeveloperModeEnabled(!state.isDeveloperModeEnabled)) }
+            )
+            ListItem(
+                headlineContent = {
+                    Text(text = stringResource(id = R.string.screen_advanced_settings_share_presence))
+                },
+                supportingContent = {
+                    Text(text = stringResource(id = R.string.screen_advanced_settings_share_presence_description))
+                },
+                trailingContent = ListItemContent.Switch(
+                    checked = state.isSharePresenceEnabled,
+                ),
+                onClick = { state.eventSink(AdvancedSettingsEvents.SetSharePresenceEnabled(!state.isSharePresenceEnabled)) }
+            )
 
-        when (state.mediaOptimizationState) {
-            null -> Unit
-            is MediaOptimizationState.AllMedia -> {
-                ListItem(
-                    headlineContent = {
-                        Text(text = stringResource(id = R.string.screen_advanced_settings_media_compression_title))
-                    },
-                    supportingContent = {
-                        Text(text = stringResource(id = R.string.screen_advanced_settings_media_compression_description))
-                    },
-                    trailingContent = ListItemContent.Switch(
-                        checked = compressImages ?: false,
-                    ),
-                    onClick = {
-                        val newValue = !(compressImages ?: false)
-                        analyticsService.captureInteraction(
-                            if (newValue) {
-                                Interaction.Name.MobileSettingsOptimizeMediaUploadsEnabled
-                            } else {
-                                Interaction.Name.MobileSettingsOptimizeMediaUploadsDisabled
-                            }
-                        )
-                        state.eventSink(AdvancedSettingsEvents.SetCompressMedia(newValue))
-                    }
-                )
-            }
-            is MediaOptimizationState.Split -> {
-                ListItem(
-                    headlineContent = {
-                        Text(text = stringResource(id = R.string.screen_advanced_settings_optimise_image_upload_quality_title))
-                    },
-                    supportingContent = {
-                        Text(text = stringResource(id = R.string.screen_advanced_settings_optimise_image_upload_quality_description))
-                    },
-                    trailingContent = ListItemContent.Switch(
-                        checked = compressImages ?: false,
-                    ),
-                    onClick = {
-                        val newValue = !(compressImages ?: false)
-                        analyticsService.captureInteraction(
-                            if (newValue) {
-                                Interaction.Name.MobileSettingsOptimizeMediaUploadsEnabled
-                            } else {
-                                Interaction.Name.MobileSettingsOptimizeMediaUploadsDisabled
-                            }
-                        )
-                        state.eventSink(AdvancedSettingsEvents.SetCompressMedia(newValue))
-                    }
-                )
+            val compressImages = state.mediaOptimizationState?.shouldCompressImages
 
-                var displaySelectorDialog by remember { mutableStateOf(false) }
-
-                ListItem(
-                    headlineContent = {
-                        Text(text = stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_title))
-                    },
-                    supportingContent = {
-                        val description = stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_description)
-                        val quality = when (state.mediaOptimizationState.videoPreset) {
-                            VideoCompressionPreset.LOW -> stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_low)
-                            VideoCompressionPreset.STANDARD -> stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_standard)
-                            VideoCompressionPreset.HIGH -> stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_high)
-                        }
-                        val descriptionWithValue = remember(quality) {
-                            String.format(description, quality)
-                        }
-                        Text(text = descriptionWithValue)
-                    },
-                    onClick = { displaySelectorDialog = true },
-                )
-
-                if (displaySelectorDialog) {
-                    VideoQualitySelectorDialog(
-                        selectedPreset = state.mediaOptimizationState.videoPreset,
-                        onSubmit = { preset ->
-                            state.eventSink(AdvancedSettingsEvents.SetVideoUploadQuality(preset))
-                            displaySelectorDialog = false
+            when (state.mediaOptimizationState) {
+                null -> Unit
+                is MediaOptimizationState.AllMedia -> {
+                    ListItem(
+                        headlineContent = {
+                            Text(text = stringResource(id = R.string.screen_advanced_settings_media_compression_title))
                         },
-                        onDismiss = { displaySelectorDialog = false },
+                        supportingContent = {
+                            Text(text = stringResource(id = R.string.screen_advanced_settings_media_compression_description))
+                        },
+                        trailingContent = ListItemContent.Switch(
+                            checked = compressImages ?: false,
+                        ),
+                        onClick = {
+                            val newValue = !(compressImages ?: false)
+                            analyticsService.captureInteraction(
+                                if (newValue) {
+                                    Interaction.Name.MobileSettingsOptimizeMediaUploadsEnabled
+                                } else {
+                                    Interaction.Name.MobileSettingsOptimizeMediaUploadsDisabled
+                                }
+                            )
+                            state.eventSink(AdvancedSettingsEvents.SetCompressMedia(newValue))
+                        }
                     )
+                }
+                is MediaOptimizationState.Split -> {
+                    ListItem(
+                        headlineContent = {
+                            Text(text = stringResource(id = R.string.screen_advanced_settings_optimise_image_upload_quality_title))
+                        },
+                        supportingContent = {
+                            Text(text = stringResource(id = R.string.screen_advanced_settings_optimise_image_upload_quality_description))
+                        },
+                        trailingContent = ListItemContent.Switch(
+                            checked = compressImages ?: false,
+                        ),
+                        onClick = {
+                            val newValue = !(compressImages ?: false)
+                            analyticsService.captureInteraction(
+                                if (newValue) {
+                                    Interaction.Name.MobileSettingsOptimizeMediaUploadsEnabled
+                                } else {
+                                    Interaction.Name.MobileSettingsOptimizeMediaUploadsDisabled
+                                }
+                            )
+                            state.eventSink(AdvancedSettingsEvents.SetCompressMedia(newValue))
+                        }
+                    )
+
+                    var displaySelectorDialog by remember { mutableStateOf(false) }
+
+                    ListItem(
+                        headlineContent = {
+                            Text(text = stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_title))
+                        },
+                        supportingContent = {
+                            val description = stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_description)
+                            val quality = when (state.mediaOptimizationState.videoPreset) {
+                                VideoCompressionPreset.LOW -> stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_low)
+                                VideoCompressionPreset.STANDARD -> stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_standard)
+                                VideoCompressionPreset.HIGH -> stringResource(id = R.string.screen_advanced_settings_optimise_video_upload_quality_high)
+                            }
+                            val descriptionWithValue = remember(quality) {
+                                String.format(description, quality)
+                            }
+                            Text(text = descriptionWithValue)
+                        },
+                        onClick = { displaySelectorDialog = true },
+                    )
+
+                    if (displaySelectorDialog) {
+                        VideoQualitySelectorDialog(
+                            selectedPreset = state.mediaOptimizationState.videoPreset,
+                            onSubmit = { preset ->
+                                state.eventSink(AdvancedSettingsEvents.SetVideoUploadQuality(preset))
+                                displaySelectorDialog = false
+                            },
+                            onDismiss = { displaySelectorDialog = false },
+                        )
+                    }
                 }
             }
         }
-
         ModerationAndSafety(state)
     }
 }
@@ -238,7 +251,7 @@ private fun VideoQualitySelectorDialog(
                             color = ElementTheme.colors.textSecondary,
                         )
                     },
-                    leadingContent = ListItemContent.RadioButton(
+                    leadingContent = ListItemContent.RadioCheckbox(
                         selected = isSelected,
                     ),
                     onClick = {
@@ -258,58 +271,71 @@ private fun ModerationAndSafety(
     PreferenceCategory(
         modifier = modifier,
         title = stringResource(R.string.screen_advanced_settings_moderation_and_safety_section_title),
-        showTopDivider = true
+        showTopDivider = false
     ) {
-        PreferenceSwitch(
-            title = stringResource(R.string.screen_advanced_settings_hide_invite_avatars_toggle_title),
-            isChecked = state.mediaPreviewConfigState.hideInviteAvatars,
-            onCheckedChange = {
-                state.eventSink(AdvancedSettingsEvents.SetHideInviteAvatars(it))
-            },
-            enabled = !state.mediaPreviewConfigState.setHideInviteAvatarsAction.isLoading()
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+        ) {
+            PreferenceSwitch(
+                title = stringResource(R.string.screen_advanced_settings_hide_invite_avatars_toggle_title),
+                isChecked = state.mediaPreviewConfigState.hideInviteAvatars,
+                onCheckedChange = {
+                    state.eventSink(AdvancedSettingsEvents.SetHideInviteAvatars(it))
+                },
+                enabled = !state.mediaPreviewConfigState.setHideInviteAvatarsAction.isLoading()
+            )
+        }
         ListSectionHeader(
             title = stringResource(R.string.screen_advanced_settings_show_media_timeline_title),
             hasDivider = false,
-            description = {
-                ListSupportingText(
-                    text = stringResource(R.string.screen_advanced_settings_show_media_timeline_subtitle),
-                    contentPadding = ListSupportingTextDefaults.Padding.None,
-                )
-            }
         )
-        ListItem(
-            headlineContent = { Text(text = stringResource(R.string.screen_advanced_settings_show_media_timeline_always_hide)) },
-            leadingContent = ListItemContent.RadioButton(
-                selected = state.mediaPreviewConfigState.timelineMediaPreviewValue == MediaPreviewValue.Off,
-                compact = true
-            ),
-            onClick = {
-                state.eventSink(AdvancedSettingsEvents.SetTimelineMediaPreviewValue(MediaPreviewValue.Off))
-            },
-            enabled = !state.mediaPreviewConfigState.setTimelineMediaPreviewAction.isLoading()
-        )
-        ListItem(
-            headlineContent = { Text(text = stringResource(R.string.screen_advanced_settings_show_media_timeline_private_rooms)) },
-            leadingContent = ListItemContent.RadioButton(
-                selected = state.mediaPreviewConfigState.timelineMediaPreviewValue == MediaPreviewValue.Private,
-                compact = true
-            ),
-            onClick = {
-                state.eventSink(AdvancedSettingsEvents.SetTimelineMediaPreviewValue(MediaPreviewValue.Private))
-            },
-            enabled = !state.mediaPreviewConfigState.setTimelineMediaPreviewAction.isLoading()
-        )
-        ListItem(
-            headlineContent = { Text(text = stringResource(R.string.screen_advanced_settings_show_media_timeline_always_show)) },
-            leadingContent = ListItemContent.RadioButton(
-                selected = state.mediaPreviewConfigState.timelineMediaPreviewValue == MediaPreviewValue.On,
-                compact = true
-            ),
-            onClick = {
-                state.eventSink(AdvancedSettingsEvents.SetTimelineMediaPreviewValue(MediaPreviewValue.On))
-            },
-            enabled = !state.mediaPreviewConfigState.setTimelineMediaPreviewAction.isLoading()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+        ) {
+            ListItem(
+                headlineContent = { Text(text = stringResource(R.string.screen_advanced_settings_show_media_timeline_always_hide)) },
+                leadingContent = ListItemContent.RadioCheckbox(
+                    selected = state.mediaPreviewConfigState.timelineMediaPreviewValue == MediaPreviewValue.Off,
+                    compact = true
+                ),
+                onClick = {
+                    state.eventSink(AdvancedSettingsEvents.SetTimelineMediaPreviewValue(MediaPreviewValue.Off))
+                },
+                enabled = !state.mediaPreviewConfigState.setTimelineMediaPreviewAction.isLoading()
+            )
+            ListItem(
+                headlineContent = { Text(text = stringResource(R.string.screen_advanced_settings_show_media_timeline_private_rooms)) },
+                leadingContent = ListItemContent.RadioCheckbox(
+                    selected = state.mediaPreviewConfigState.timelineMediaPreviewValue == MediaPreviewValue.Private,
+                    compact = true
+                ),
+                onClick = {
+                    state.eventSink(AdvancedSettingsEvents.SetTimelineMediaPreviewValue(MediaPreviewValue.Private))
+                },
+                enabled = !state.mediaPreviewConfigState.setTimelineMediaPreviewAction.isLoading()
+            )
+            ListItem(
+                headlineContent = { Text(text = stringResource(R.string.screen_advanced_settings_show_media_timeline_always_show)) },
+                leadingContent = ListItemContent.RadioCheckbox(
+                    selected = state.mediaPreviewConfigState.timelineMediaPreviewValue == MediaPreviewValue.On,
+                    compact = true
+                ),
+                onClick = {
+                    state.eventSink(AdvancedSettingsEvents.SetTimelineMediaPreviewValue(MediaPreviewValue.On))
+                },
+                enabled = !state.mediaPreviewConfigState.setTimelineMediaPreviewAction.isLoading()
+            )
+        }
+        ListSupportingText(
+            modifier = Modifier.padding(top = 6.dp, start = 16.dp, end = 16.dp),
+            text = stringResource(R.string.screen_advanced_settings_show_media_timeline_subtitle),
+            contentPadding = ListSupportingTextDefaults.Padding.None,
         )
     }
 }

@@ -8,7 +8,6 @@
 
 package io.element.android.libraries.designsystem.components.avatar.internal
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -17,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.element.android.compound.theme.ElementTheme
 import io.element.android.libraries.designsystem.components.avatar.AvatarData
 import io.element.android.libraries.designsystem.components.avatar.AvatarType
 import io.element.android.libraries.designsystem.components.avatar.anAvatarData
@@ -36,26 +34,19 @@ internal fun SpaceAvatar(
     contentDescription: String? = null,
 ) {
     val size = forcedAvatarSize ?: avatarData.size.dp
-    val avatarShape = avatarType.avatarShape(size)
-    val commonModifier = modifier
-        .border(
-            width = 1.dp,
-            color = ElementTheme.colors.iconQuaternaryAlpha,
-            shape = avatarShape,
-        )
     when {
         avatarType.isTombstoned -> TombstonedRoomAvatar(
             size = size,
-            avatarShape = avatarShape,
-            modifier = commonModifier,
+            avatarShape = avatarType.avatarShape(size),
+            modifier = modifier,
             contentDescription = contentDescription,
         )
         else -> InitialOrImageAvatar(
             avatarData = avatarData,
             hideAvatarImage = hideAvatarImage,
-            avatarShape = avatarShape,
+            avatarShape = avatarType.avatarShape(size),
             forcedAvatarSize = forcedAvatarSize,
-            modifier = commonModifier,
+            modifier = modifier,
             contentDescription = contentDescription,
         )
     }

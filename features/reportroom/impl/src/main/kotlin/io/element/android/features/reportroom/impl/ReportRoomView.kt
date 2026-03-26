@@ -40,6 +40,16 @@ import io.element.android.libraries.designsystem.theme.components.TextField
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 举报房间页面的 Compose 视图层
+ *
+ * 使用 Jetpack Compose 框架构建举报房间的用户界面
+ * 包含举报原因输入框、离开房间开关和举报按钮
+ *
+ * @param state 举报房间的界面状态
+ * @param onBackClick 返回按钮的点击回调
+ * @param modifier 视图修饰符，用于控制布局和样式
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportRoomView(
@@ -47,30 +57,38 @@ fun ReportRoomView(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // 获取当前焦点管理器，用于在提交时清除焦点
     val focusManager = LocalFocusManager.current
 
+    // 判断是否正在进行举报操作
     val isReporting = state.reportAction is AsyncAction.Loading
+
+    // 异步操作状态视图，处理加载、成功和错误状态
     AsyncActionView(
         async = state.reportAction,
-        onSuccess = { onBackClick() },
+        onSuccess = { onBackClick() },  // 举报成功后返回上一页
         errorTitle = { failure ->
+            // 根据不同错误类型显示不同的标题
             when (failure) {
                 is ReportRoom.Exception.LeftRoomFailed -> stringResource(R.string.screen_report_room_leave_failed_alert_title)
                 else -> stringResource(CommonStrings.dialog_title_error)
             }
         },
         errorMessage = { failure ->
+            // 根据不同错误类型显示不同的错误消息
             when (failure) {
                 is ReportRoom.Exception.LeftRoomFailed -> stringResource(R.string.screen_report_room_leave_failed_alert_message)
                 else -> stringResource(CommonStrings.error_unknown)
             }
         },
         onRetry = {
+            // 重试举报操作
             state.eventSink(ReportRoomEvents.Report)
         },
         onErrorDismiss = { state.eventSink(ReportRoomEvents.ClearReportAction) }
     )
 
+    // 脚手架布局，包含顶部应用栏和内容区域
     Scaffold(
         topBar = {
             TopAppBar(
@@ -82,21 +100,23 @@ fun ReportRoomView(
         },
         modifier = modifier
     ) { padding ->
+        // 主内容区域，使用列布局
         Column(
             modifier = Modifier
                 .padding(padding)
                 .consumeWindowInsets(padding)
-                .imePadding()
+                .imePadding()  // 处理键盘弹出时的内边距
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState())  // 支持垂直滚动
                 .padding(vertical = 16.dp)
         ) {
+            // 举报原因输入框
             TextField(
                 value = state.reason,
                 onValueChange = { state.eventSink(ReportRoomEvents.UpdateReason(it)) },
                 placeholder = stringResource(R.string.screen_report_room_reason_placeholder),
                 minLines = 3,
-                enabled = !isReporting,
+                enabled = !isReporting,  // 举报进行中时禁用输入
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -106,6 +126,7 @@ fun ReportRoomView(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // 离开房间开关列表项
             ListItem(
                 modifier = Modifier.padding(end = 8.dp),
                 headlineContent = {
@@ -119,13 +140,16 @@ fun ReportRoomView(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // 举报按钮
             Button(
                 text = stringResource(CommonStrings.action_report),
-                enabled = state.canReport && !isReporting,
-                destructive = true,
-                showProgress = isReporting,
+                enabled = state.canReport && !isReporting,  // 有举报原因且不在举报中时可点击
+                destructive = true,  // 使用危险操作样式（红色）
+                showProgress = isReporting,  // 举报进行中显示加载指示器
                 onClick = {
+                    // 清除焦点以隐藏键盘
                     focusManager.clearFocus(force = true)
+                    // 触发举报事件
                     state.eventSink(ReportRoomEvents.Report)
                 },
                 modifier = Modifier
@@ -136,6 +160,13 @@ fun ReportRoomView(
     }
 }
 
+/**
+ * 举报房间视图的预览函数
+ *
+ * 用于在 Android Studio 预览模式下展示不同的状态组合
+ *
+ * @param state 预览参数，由 [ReportRoomStateProvider] 提供
+ */
 @PreviewsDayNight
 @Composable
 internal fun ReportRoomViewPreview(

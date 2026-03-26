@@ -68,7 +68,6 @@ fun aRoomInfo(
     historyVisibility: RoomHistoryVisibility = RoomHistoryVisibility.Joined,
     roomVersion: String? = "11",
     privilegedCreatorRole: Boolean = false,
-    isLowPriority: Boolean = false,
 ) = RoomInfo(
     id = id,
     name = name,
@@ -105,5 +104,4 @@ fun aRoomInfo(
     historyVisibility = historyVisibility,
     roomVersion = roomVersion,
     privilegedCreatorRole = privilegedCreatorRole,
-    isLowPriority = isLowPriority,
 )

@@ -41,8 +41,8 @@ import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.invite.api.InviteData
 import io.element.android.libraries.designsystem.atomic.atoms.PlaceholderAtom
-import io.element.android.libraries.designsystem.atomic.atoms.RoomPreviewAliasAtom
 import io.element.android.libraries.designsystem.atomic.atoms.RoomPreviewDescriptionAtom
+import io.element.android.libraries.designsystem.atomic.atoms.RoomPreviewSubtitleAtom
 import io.element.android.libraries.designsystem.atomic.atoms.RoomPreviewTitleAtom
 import io.element.android.libraries.designsystem.atomic.molecules.ButtonRowMolecule
 import io.element.android.libraries.designsystem.atomic.molecules.IconTitlePlaceholdersRowMolecule
@@ -82,6 +82,21 @@ import io.element.android.libraries.matrix.ui.model.InviteSender
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 加入房间主视图
+ *
+ * 组合函数，渲染加入房间界面的主视图。
+ * 根据不同的授权状态显示不同的 UI，包括加入按钮、敲门按钮、邀请接受/拒绝等。
+ *
+ * @param state 加入房间状态
+ * @param onBackClick 返回按钮点击回调
+ * @param onJoinSuccess 加入成功回调
+ * @param onKnockSuccess 敲门成功回调
+ * @param onForgetSuccess 忘记成功回调
+ * @param onCancelKnockSuccess 取消敲门成功回调
+ * @param onDeclineInviteAndBlockUser 拒绝并阻止用户回调
+ * @param modifier 修饰符
+ */
 @Composable
 fun JoinRoomView(
     state: JoinRoomState,
@@ -202,6 +217,21 @@ fun JoinRoomView(
     )
 }
 
+/**
+ * 加入房间底部栏
+ *
+ * 根据用户的加入授权状态显示不同的操作按钮。
+ *
+ * @param joinAuthorisationStatus 加入授权状态
+ * @param onAcceptInvite 接受邀请回调
+ * @param onDeclineInvite 拒绝邀请回调
+ * @param onJoinRoom 加入房间回调
+ * @param onKnockRoom 敲门回调
+ * @param onCancelKnock 取消敲门回调
+ * @param onForgetRoom 忘记房间回调
+ * @param onGoBack 返回回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun JoinRoomFooter(
     joinAuthorisationStatus: JoinAuthorisationStatus,
@@ -293,6 +323,14 @@ private fun JoinRoomFooter(
     }
 }
 
+/**
+ * 未授权加入底部栏
+ *
+ * 显示加入失败时的提示信息和确定按钮。
+ *
+ * @param onOkClick 确定按钮点击回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun JoinUnauthorizedFooter(
     onOkClick: () -> Unit,
@@ -313,6 +351,15 @@ private fun JoinUnauthorizedFooter(
     }
 }
 
+/**
+ * 被禁止加入底部栏
+ *
+ * 显示用户被禁止加入房间时的提示信息和忘记房间按钮。
+ *
+ * @param status 被禁止状态信息
+ * @param onForgetRoom 忘记房间回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun JoinBannedFooter(
     status: JoinAuthorisationStatus.IsBanned,
@@ -343,6 +390,14 @@ private fun JoinBannedFooter(
     }
 }
 
+/**
+ * 受限制加入底部栏
+ *
+ * 显示受限制房间的提示信息和加入按钮。
+ *
+ * @param onJoinRoom 加入房间回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun JoinRestrictedFooter(
     onJoinRoom: () -> Unit,
@@ -367,6 +422,18 @@ private fun JoinRestrictedFooter(
     }
 }
 
+/**
+ * 加入房间内容区域
+ *
+ * 根据内容状态显示不同的房间信息，包括已加载、未知房间、加载中、失败等状态。
+ *
+ * @param roomIdOrAlias 房间 ID 或别名
+ * @param contentState 内容状态
+ * @param knockMessage 敲门消息
+ * @param hideAvatarsImages 是否隐藏头像图片
+ * @param onKnockMessageUpdate 敲门消息更新回调
+ * @param modifier 修饰符
+ */
 @Composable
 private fun JoinRoomContent(
     roomIdOrAlias: RoomIdOrAlias,
@@ -430,6 +497,15 @@ private fun JoinRoomContent(
     }
 }
 
+/**
+ * 邀请者视图
+ *
+ * 显示邀请发送者的信息，包括头像、名称和用户 ID。
+ *
+ * @param sender 邀请发送者
+ * @param hideAvatarImage 是否隐藏头像
+ * @param modifier 修饰符
+ */
 @Composable
 private fun InvitedByView(
     sender: InviteSender,
@@ -469,6 +545,13 @@ private fun InvitedByView(
     }
 }
 
+/**
+ * 未知房间内容视图
+ *
+ * 显示无法找到房间时的提示信息。
+ *
+ * @param modifier 修饰符
+ */
 @Composable
 private fun UnknownRoomContent(
     modifier: Modifier = Modifier
@@ -500,6 +583,15 @@ private fun UnknownRoomContent(
     )
 }
 
+/**
+ * 不完整内容视图
+ *
+ * 显示房间信息加载中的占位符，或加载失败时的内容。
+ *
+ * @param roomIdOrAlias 房间 ID 或别名
+ * @param isLoading 是否正在加载
+ * @param modifier 修饰符
+ */
 @Composable
 private fun IncompleteContent(
     roomIdOrAlias: RoomIdOrAlias,
@@ -514,7 +606,7 @@ private fun IncompleteContent(
         title = {
             when (roomIdOrAlias) {
                 is RoomIdOrAlias.Alias -> {
-                    RoomPreviewAliasAtom(roomIdOrAlias.identifier)
+                    RoomPreviewSubtitleAtom(roomIdOrAlias.identifier)
                 }
                 is RoomIdOrAlias.Id -> {
                     PlaceholderAtom(width = 200.dp, height = 22.dp)
@@ -530,6 +622,13 @@ private fun IncompleteContent(
     )
 }
 
+/**
+ * 已敲门状态内容视图
+ *
+ * 显示用户已经发送敲门请求后的提示信息。
+ *
+ * @param modifier 修饰符
+ */
 @Composable
 private fun IsKnockedLoadedContent(modifier: Modifier = Modifier) {
     IconTitleSubtitleMolecule(
@@ -540,6 +639,15 @@ private fun IsKnockedLoadedContent(modifier: Modifier = Modifier) {
     )
 }
 
+/**
+ * 默认已加载内容视图
+ *
+ * 显示房间的完整信息，包括头像、名称、别名、主题、成员数量等。
+ *
+ * @param contentState 已加载的内容状态
+ * @param hideAvatarImage 是否隐藏头像
+ * @param modifier 修饰符
+ */
 @Composable
 private fun DefaultLoadedContent(
     contentState: ContentState.Loaded,
@@ -566,12 +674,13 @@ private fun DefaultLoadedContent(
             }
         },
         subtitle = {
-            if (contentState.alias != null) {
-                RoomPreviewAliasAtom(contentState.alias.value)
-            }
-            if (contentState.details is LoadedDetails.Space) {
-                Spacer(Modifier.height(8.dp))
-                SpaceInfoRow(visibility = SpaceRoomVisibility.fromJoinRule(contentState.joinRule))
+            when {
+                contentState.details is LoadedDetails.Space -> {
+                    SpaceInfoRow(visibility = SpaceRoomVisibility.fromJoinRule(contentState.joinRule))
+                }
+                contentState.alias != null -> {
+                    RoomPreviewSubtitleAtom(contentState.alias.value)
+                }
             }
         },
         description = {
@@ -593,6 +702,15 @@ private fun DefaultLoadedContent(
     )
 }
 
+/**
+ * 加入房间顶部栏
+ *
+ * 显示返回按钮和房间名称（当处于敲门状态时）。
+ *
+ * @param contentState 内容状态
+ * @param hideAvatarImage 是否隐藏头像
+ * @param onBackClick 返回按钮点击回调
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun JoinRoomTopBar(
@@ -642,6 +760,13 @@ private fun JoinRoomTopBar(
     )
 }
 
+/**
+ * 加入房间视图预览
+ *
+ * 使用 JoinRoomStateProvider 提供各种状态进行预览测试。
+ *
+ * @param state 加入房间状态
+ */
 @PreviewsDayNight
 @Composable
 internal fun JoinRoomViewPreview(@PreviewParameter(JoinRoomStateProvider::class) state: JoinRoomState) = ElementPreview {

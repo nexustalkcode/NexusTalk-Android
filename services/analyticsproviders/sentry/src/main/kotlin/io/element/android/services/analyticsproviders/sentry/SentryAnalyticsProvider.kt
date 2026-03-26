@@ -146,6 +146,4 @@ private fun BuildType.toSentryEnv() = when (this) {
     BuildType.RELEASE -> SentryConfig.ENV_RELEASE
     BuildType.NIGHTLY -> SentryConfig.ENV_NIGHTLY
     BuildType.DEBUG -> SentryConfig.ENV_DEBUG
-    BuildType.RELEASE_SC,
-    BuildType.DEBUG_SC -> "SC" // unused anyway?
 }

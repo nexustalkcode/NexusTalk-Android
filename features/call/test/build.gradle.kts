@@ -23,5 +23,4 @@ dependencies {
     implementation(projects.features.call.impl)
     implementation(projects.libraries.matrix.api)
     implementation(projects.libraries.matrix.test)
-    implementation(projects.tests.testutils)
 }

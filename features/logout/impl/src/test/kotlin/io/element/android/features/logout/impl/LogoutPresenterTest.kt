@@ -23,7 +23,6 @@ import io.element.android.libraries.matrix.api.encryption.RecoveryState
 import io.element.android.libraries.matrix.test.AN_EXCEPTION
 import io.element.android.libraries.matrix.test.FakeMatrixClient
 import io.element.android.libraries.matrix.test.encryption.FakeEncryptionService
-import io.element.android.libraries.workmanager.api.WorkManagerRequestType
 import io.element.android.libraries.workmanager.test.FakeWorkManagerScheduler
 import io.element.android.tests.testutils.WarmUpRule
 import io.element.android.tests.testutils.lambda.lambdaRecorder
@@ -150,7 +149,7 @@ class LogoutPresenterTest {
 
     @Test
     fun `present - logout then confirm`() = runTest {
-        val cancelWorkManagerJobsLambda = lambdaRecorder<SessionId, WorkManagerRequestType?, Unit> { _, _ -> }
+        val cancelWorkManagerJobsLambda = lambdaRecorder<SessionId, Unit> {}
         val workManagerScheduler = FakeWorkManagerScheduler(cancelLambda = cancelWorkManagerJobsLambda)
         val presenter = createLogoutPresenter(workManagerScheduler = workManagerScheduler)
         moleculeFlow(RecompositionMode.Immediate) {
@@ -239,7 +238,7 @@ class LogoutPresenterTest {
 internal fun createLogoutPresenter(
     matrixClient: MatrixClient = FakeMatrixClient(),
     encryptionService: EncryptionService = FakeEncryptionService(),
-    workManagerScheduler: FakeWorkManagerScheduler = FakeWorkManagerScheduler(cancelLambda = { _, _ -> }),
+    workManagerScheduler: FakeWorkManagerScheduler = FakeWorkManagerScheduler(cancelLambda = {}),
 ): LogoutPresenter = LogoutPresenter(
     matrixClient = matrixClient,
     encryptionService = encryptionService,

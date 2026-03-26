@@ -11,27 +11,34 @@ package io.element.android.features.lockscreen.impl.storage
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Should be implemented by any class that provides access to the encrypted PIN code.
- * All methods are suspending in case there are async IO operations involved.
+ * 加密 PIN 码存储接口
+ *
+ * 提供加密 PIN 码访问的接口，所有方法都是挂起函数以支持异步 IO 操作。
  */
 interface EncryptedPinCodeStorage {
     /**
-     * Returns the encrypted PIN code.
+     * 获取加密的 PIN 码
+     *
+     * @return 加密的 PIN 码字符串，如果不存在则返回 null
      */
     suspend fun getEncryptedCode(): String?
 
     /**
-     * Saves the encrypted PIN code to some persistable storage.
+     * 保存加密的 PIN 码到持久化存储
+     *
+     * @param pinCode 加密的 PIN 码字符串
      */
     suspend fun saveEncryptedPinCode(pinCode: String)
 
     /**
-     * Deletes the PIN code from some persistable storage.
+     * 从持久化存储中删除 PIN 码
      */
     suspend fun deleteEncryptedPinCode()
 
     /**
-     * Returns whether the PIN code is stored or not.
+     * 检查是否存储了 PIN 码
+     *
+     * @return true 如果存储了 PIN 码
      */
     fun hasPinCode(): Flow<Boolean>
 }

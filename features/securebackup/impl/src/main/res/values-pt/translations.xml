@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Desativar a cópia de segurança"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Ativar a cópia de segurança"</string>
-  <string name="screen_chat_backup_key_backup_description">"Guarda a tua identidade criptográfica e as chaves de mensagens de forma segura no servidor. Isto permitir-te-á ver o teu histórico de mensagens em qualquer dispositivo novo. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Guarda a tua identidade criptográfica e as chaves de mensagens de forma segura no servidor. Isto permitir-te-á ver o teu histórico de mensagens em qualquer dispositivo novo. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Armazenamento de chaves"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"O armazenamento de chaves deve ser ativado para configurar a recuperação."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Carrega chaves a partir deste dispositivo"</string>

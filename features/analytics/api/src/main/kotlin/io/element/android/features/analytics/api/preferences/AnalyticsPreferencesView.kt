@@ -24,6 +24,15 @@ import io.element.android.libraries.designsystem.theme.components.ListItem
 import io.element.android.libraries.designsystem.theme.components.ListSupportingText
 import io.element.android.libraries.designsystem.theme.components.Text
 
+/**
+ * 分析偏好设置视图组件
+ *
+ * 使用 Jetpack Compose 实现分析偏好设置的用户界面。
+ * 展示分析功能的开关和隐私政策链接。
+ *
+ * @param state 当前视图状态
+ * @param modifier 修饰符
+ */
 @Composable
 fun AnalyticsPreferencesView(
     state: AnalyticsPreferencesState,
@@ -64,6 +73,13 @@ fun AnalyticsPreferencesView(
     }
 }
 
+/**
+ * 分析偏好设置视图预览组件
+ *
+ * 用于在 Android Studio 预览中展示偏好设置视图 UI。
+ *
+ * @param state 预览状态
+ */
 @PreviewsDayNight
 @Composable
 internal fun AnalyticsPreferencesViewPreview(@PreviewParameter(AnalyticsPreferencesStateProvider::class) state: AnalyticsPreferencesState) =

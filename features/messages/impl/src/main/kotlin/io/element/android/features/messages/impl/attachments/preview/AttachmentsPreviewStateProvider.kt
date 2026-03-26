@@ -28,7 +28,37 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import java.io.File
 
+/**
+ * 附件预览状态提供器
+ *
+ * 用于预览（Preview）功能的测试状态生成器。
+ * 继承自 PreviewParameterProvider，为 Compose 预览提供多种状态变体。
+ *
+ * 使用方法：
+ * 在 @Composable 函数上使用 @PreviewParameter 注解引入此提供器
+ *
+ * @example
+ * @Preview
+ * @Composable
+ * fun MyPreview(@PreviewParameter(AttachmentsPreviewStateProvider::class) state: AttachmentsPreviewState) {
+ *     // 使用 state 进行预览
+ * }
+ */
 open class AttachmentsPreviewStateProvider : PreviewParameterProvider<AttachmentsPreviewState> {
+    /**
+     * 生成预览状态序列
+     *
+     * 包含多种场景的状态变体，用于全面测试UI表现：
+     * - 空闲状态
+     * - 处理中状态（不显示进度）
+     * - 处理中状态（显示进度）
+     * - 准备上传状态
+     * - 上传中状态
+     * - 失败状态
+     * - 文件太大错误状态
+     * - 视频附件状态
+     * - 视频预设选择器对话框状态
+     */
     override val values: Sequence<AttachmentsPreviewState>
         get() = sequenceOf(
             anAttachmentsPreviewState(),
@@ -60,6 +90,18 @@ open class AttachmentsPreviewStateProvider : PreviewParameterProvider<Attachment
         )
 }
 
+/**
+ * 创建附件预览状态的辅助函数
+ *
+ * 用于测试中快速创建 AttachmentsPreviewState 实例
+ *
+ * @param mediaInfo 媒体信息，默认为图片媒体信息
+ * @param textEditorState 文本编辑器状态，默认为空的Markdown状态
+ * @param sendActionState 发送操作状态，默认为空闲状态
+ * @param mediaOptimizationSelectorState 媒体优化选择器状态
+ * @param displayFileTooLargeError 是否显示文件太大错误
+ * @return AttachmentsPreviewState 实例
+ */
 fun anAttachmentsPreviewState(
     mediaInfo: MediaInfo = anImageMediaInfo(),
     textEditorState: TextEditorState = aTextEditorStateMarkdown(),
@@ -77,6 +119,15 @@ fun anAttachmentsPreviewState(
     eventSink = {}
 )
 
+/**
+ * 创建媒体上传信息的辅助函数
+ *
+ * 用于测试中创建模拟的 MediaUploadInfo 实例
+ *
+ * @param filePath 文件路径
+ * @param thumbnailFilePath 缩略图文件路径（可选）
+ * @return MediaUploadInfo.Image 实例
+ */
 fun aMediaUploadInfo(
     filePath: String = "file://path",
     thumbnailFilePath: String? = null,
@@ -94,6 +145,19 @@ fun aMediaUploadInfo(
     thumbnailFile = thumbnailFilePath?.let { File(it) },
 )
 
+/**
+ * 创建媒体优化选择器状态的辅助函数
+ *
+ * 用于测试中创建模拟的 MediaOptimizationSelectorState 实例
+ *
+ * @param maxUploadSize 最大上传大小，默认为100MB
+ * @param videoSizeEstimations 视频大小估算列表
+ * @param isImageOptimizationEnabled 是否启用图片优化
+ * @param selectedVideoPreset 选中的视频预设
+ * @param displayMediaSelectorViews 是否显示媒体选择器视图
+ * @param displayVideoPresetSelectorDialog 是否显示视频预设选择器对话框
+ * @return MediaOptimizationSelectorState 实例
+ */
 fun aMediaOptimisationSelectorState(
     maxUploadSize: Long = 100 * 1024 * 1024,
     videoSizeEstimations: AsyncData<ImmutableList<VideoUploadEstimation>> = AsyncData.Success(persistentListOf()),
@@ -111,6 +175,13 @@ fun aMediaOptimisationSelectorState(
     eventSink = {},
 )
 
+/**
+ * 创建视频大小估算列表的辅助函数
+ *
+ * 包含HIGH和STANDARD两种预设的估算数据，用于测试
+ *
+ * @return 包含视频大小估算的AsyncData
+ */
 internal fun aVideoSizeEstimationList(): AsyncData<ImmutableList<VideoUploadEstimation>> = AsyncData.Success(
     persistentListOf(
         VideoUploadEstimation(

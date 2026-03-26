@@ -45,11 +45,29 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
+/**
+ * 房间成员列表 Presenter
+ *
+ * 负责处理房间成员列表页面的业务逻辑。
+ * 管理成员列表的加载、搜索、过滤和 moderation 状态。
+ *
+ * @property room 已加入的房间
+ * @property coroutineDispatchers 协程调度器
+ * @property roomMembersModerationPresenter 成员 moderation Presenter
+ * @property encryptionService 加密服务
+ * @see Presenter Presenter 基类
+ * @see RoomMemberListState 成员列表状态
+ * @see Inject 依赖注入注解
+ */
 @Inject
 class RoomMemberListPresenter(
+    /** 已加入的房间 */
     private val room: JoinedRoom,
+    /** 协程调度器 */
     private val coroutineDispatchers: CoroutineDispatchers,
+    /** 成员 moderation Presenter */
     private val roomMembersModerationPresenter: Presenter<RoomMemberModerationState>,
+    /** 加密服务 */
     private val encryptionService: EncryptionService,
 ) : Presenter<RoomMemberListState> {
     private val powerLevelRoomMemberComparator = PowerLevelRoomMemberComparator()
@@ -125,11 +143,11 @@ class RoomMemberListPresenter(
             }
         }
 
-        fun handleEvent(event: RoomMemberListEvent) {
+        fun handleEvent(event: RoomMemberListEvents) {
             when (event) {
-                is RoomMemberListEvent.RoomMemberSelected ->
+                is RoomMemberListEvents.RoomMemberSelected ->
                     roomModerationState.eventSink(ShowActionsForUser(event.roomMember.toMatrixUser()))
-                is RoomMemberListEvent.ChangeSelectedSection -> selectedSection = event.section
+                is RoomMemberListEvents.ChangeSelectedSection -> selectedSection = event.section
             }
         }
 

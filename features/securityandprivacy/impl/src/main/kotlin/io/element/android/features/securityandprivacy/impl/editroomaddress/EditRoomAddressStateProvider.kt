@@ -12,6 +12,15 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.ui.room.address.RoomAddressValidity
 
+/**
+ * 编辑房间地址状态提供者
+ *
+ * 用于在预览模式下提供各种状态的 EditRoomAddressState 实例。
+ * 继承自 PreviewParameterProvider，用于 Compose 预览功能。
+ *
+ * @see EditRoomAddressState 页面状态
+ * @see PreviewParameterProvider 预览参数提供者基类
+ */
 open class EditRoomAddressStateProvider : PreviewParameterProvider<EditRoomAddressState> {
     override val values: Sequence<EditRoomAddressState>
         get() = sequenceOf(

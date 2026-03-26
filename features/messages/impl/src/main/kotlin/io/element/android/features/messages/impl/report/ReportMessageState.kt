@@ -10,9 +10,17 @@ package io.element.android.features.messages.impl.report
 
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 举报消息状态数据类
+ *
+ * @property reason 举报原因
+ * @property blockUser 是否屏蔽用户
+ * @property result 举报操作的异步状态
+ * @property eventSink 事件处理函数
+ */
 data class ReportMessageState(
     val reason: String,
     val blockUser: Boolean,
     val result: AsyncAction<Unit>,
-    val eventSink: (ReportMessageEvent) -> Unit
+    val eventSink: (ReportMessageEvents) -> Unit
 )

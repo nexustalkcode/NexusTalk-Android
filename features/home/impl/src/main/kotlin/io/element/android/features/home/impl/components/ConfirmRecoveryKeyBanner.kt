@@ -18,6 +18,16 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 确认恢复密钥横幅
+ *
+ * 渲染恢复密钥确认提示横幅，当用户需要确认已设置恢复密钥时显示。
+ * 用户可以选择继续验证或关闭横幅。
+ *
+ * @param onContinueClick 继续点击事件
+ * @param onDismissClick 关闭点击事件
+ * @param modifier 修饰符
+ */
 @Composable
 internal fun ConfirmRecoveryKeyBanner(
     onContinueClick: () -> Unit,

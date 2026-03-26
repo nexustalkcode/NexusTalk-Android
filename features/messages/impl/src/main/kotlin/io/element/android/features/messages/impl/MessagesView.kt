@@ -11,6 +11,7 @@ package io.element.android.features.messages.impl
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,15 +32,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.onClick
@@ -50,16 +53,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import chat.schildi.lib.preferences.ScPrefs
-import chat.schildi.lib.preferences.value
-import chat.schildi.theme.ScTheme
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.messages.api.timeline.voicemessages.composer.VoiceMessageComposerEvent
-import io.element.android.features.messages.impl.actionlist.ActionListEvent
+import io.element.android.features.messages.impl.actionlist.ActionListEvents
 import io.element.android.features.messages.impl.actionlist.ActionListView
 import io.element.android.features.messages.impl.actionlist.model.TimelineItemAction
+import io.element.android.features.messages.impl.crypto.historyvisible.HistoryVisibleStateView
 import io.element.android.features.messages.impl.crypto.identity.IdentityChangeStateView
-import io.element.android.features.messages.impl.link.LinkEvent
+import io.element.android.features.messages.impl.link.LinkEvents
 import io.element.android.features.messages.impl.link.LinkView
 import io.element.android.features.messages.impl.messagecomposer.AttachmentsBottomSheet
 import io.element.android.features.messages.impl.messagecomposer.DisabledComposerView
@@ -70,18 +71,18 @@ import io.element.android.features.messages.impl.pinned.banner.PinnedMessagesBan
 import io.element.android.features.messages.impl.pinned.banner.PinnedMessagesBannerView
 import io.element.android.features.messages.impl.pinned.banner.PinnedMessagesBannerViewDefaults
 import io.element.android.features.messages.impl.timeline.FOCUS_ON_PINNED_EVENT_DEBOUNCE_DURATION_IN_MILLIS
-import io.element.android.features.messages.impl.timeline.TimelineEvent
+import io.element.android.features.messages.impl.timeline.TimelineEvents
 import io.element.android.features.messages.impl.timeline.TimelineView
 import io.element.android.features.messages.impl.timeline.aGroupedEvents
 import io.element.android.features.messages.impl.timeline.aTimelineItemDaySeparator
 import io.element.android.features.messages.impl.timeline.aTimelineItemEvent
 import io.element.android.features.messages.impl.timeline.aTimelineState
 import io.element.android.features.messages.impl.timeline.components.customreaction.CustomReactionBottomSheet
-import io.element.android.features.messages.impl.timeline.components.customreaction.CustomReactionEvent
-import io.element.android.features.messages.impl.timeline.components.reactionsummary.ReactionSummaryEvent
+import io.element.android.features.messages.impl.timeline.components.customreaction.CustomReactionEvents
+import io.element.android.features.messages.impl.timeline.components.reactionsummary.ReactionSummaryEvents
 import io.element.android.features.messages.impl.timeline.components.reactionsummary.ReactionSummaryView
 import io.element.android.features.messages.impl.timeline.components.receipt.bottomsheet.ReadReceiptBottomSheet
-import io.element.android.features.messages.impl.timeline.components.receipt.bottomsheet.ReadReceiptBottomSheetEvent
+import io.element.android.features.messages.impl.timeline.components.receipt.bottomsheet.ReadReceiptBottomSheetEvents
 import io.element.android.features.messages.impl.timeline.model.TimelineItem
 import io.element.android.features.messages.impl.timeline.model.TimelineItemGroupPosition
 import io.element.android.features.messages.impl.timeline.model.event.aTimelineItemStateEventContent
@@ -101,6 +102,7 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.text.toAnnotatedString
 import io.element.android.libraries.designsystem.text.toDp
 import io.element.android.libraries.designsystem.theme.components.BottomSheetDragHandle
+import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Scaffold
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.utils.HideKeyboardWhenDisposed
@@ -133,7 +135,7 @@ fun MessagesView(
     onLinkClick: (String, Boolean) -> Unit,
     onSendLocationClick: () -> Unit,
     onCreatePollClick: () -> Unit,
-    onJoinCallClick: (isAudioCall: Boolean) -> Unit,
+    onJoinCallClick: () -> Unit,
     onViewAllPinnedMessagesClick: () -> Unit,
     modifier: Modifier = Modifier,
     forceJumpToBottomVisibility: Boolean = false,
@@ -171,7 +173,7 @@ fun MessagesView(
         Timber.v("OnMessageLongClicked= ${event.id}")
         hidingKeyboard {
             state.actionListState.eventSink(
-                ActionListEvent.ComputeForMessage(
+                ActionListEvents.ComputeForMessage(
                     event = event,
                     userEventPermissions = state.userEventPermissions,
                 )
@@ -180,221 +182,202 @@ fun MessagesView(
     }
 
     fun onActionSelected(action: TimelineItemAction, event: TimelineItem.Event) {
-        state.eventSink(MessagesEvent.HandleAction(action, event))
+        state.eventSink(MessagesEvents.HandleAction(action, event))
     }
 
     fun onEmojiReactionClick(emoji: String, event: TimelineItem.Event) {
-        state.eventSink(MessagesEvent.ToggleReaction(emoji, event.eventOrTransactionId))
+        state.eventSink(MessagesEvents.ToggleReaction(emoji, event.eventOrTransactionId))
     }
 
     fun onEmojiReactionLongClick(emoji: String, event: TimelineItem.Event) {
         if (event.eventId == null) return
-        state.reactionSummaryState.eventSink(ReactionSummaryEvent.ShowReactionSummary(event.eventId, event.reactionsState.reactions, emoji))
+        state.reactionSummaryState.eventSink(ReactionSummaryEvents.ShowReactionSummary(event.eventId, event.reactionsState.reactions, emoji))
     }
 
     fun onMoreReactionsClick(event: TimelineItem.Event) {
-        state.customReactionState.eventSink(CustomReactionEvent.ShowCustomReactionSheet(event))
+        state.customReactionState.eventSink(CustomReactionEvents.ShowCustomReactionSheet(event))
     }
 
-    val syncReadMarkerAndReceipt = ScPrefs.SYNC_READ_RECEIPT_AND_MARKER.value()
-
     val expandableState = rememberExpandableBottomSheetLayoutState()
-    ExpandableBottomSheetLayout(
-        modifier = modifier
+    Box(
+        modifier = Modifier
             .fillMaxSize()
             .imePadding()
             .systemBarsPadding()
-            .onSizeChanged { size ->
-                // Let the composer takes at max half of the available height.
-                // The value will be different if the soft keyboard is displayed
-                // or not.
-                maxComposerHeightPx = (size.height * 0.5f).toInt()
-            },
-        content = {
-            Scaffold(
-                contentWindowInsets = WindowInsets.statusBars,
-                topBar = {
-                    if (state.timelineState.timelineMode is Timeline.Mode.Thread) {
-                        ThreadTopBar(
-                            roomName = state.roomName,
-                            roomAvatarData = state.roomAvatar,
-                            heroes = state.heroes,
-                            isTombstoned = state.isTombstoned,
-                            onBackClick = onBackClick,
-                        )
-                    } else {
-                        Column { // SC wrong indention
-                        MessagesViewTopBar(
-                            state = state, // SC
-                            onViewAllPinnedMessagesClick = onViewAllPinnedMessagesClick, // SC
-                            roomName = state.roomName,
-                            roomAvatar = state.roomAvatar,
-                            isTombstoned = state.isTombstoned,
-                            heroes = state.heroes,
-                            roomCallState = state.roomCallState,
-                            dmUserIdentityState = state.dmUserVerificationState,
-                            sharedHistoryIcon = state.topBarSharedHistoryIcon,
-                            onBackClick = { hidingKeyboard { onBackClick() } },
-                            onRoomDetailsClick = { hidingKeyboard { onRoomDetailsClick() } },
-                            onJoinCallClick = onJoinCallClick,
-                        )
-                        ScReadMarkerDebug(state.timelineState.scReadState)
-                        } // SC wrong indention
-                    }
+    ) {
+        // 背景图片 - 放在最底层
+        Image(
+            painter = painterResource(id = io.element.android.libraries.designsystem.R.drawable.bg_chat),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(),
+        )
+        ExpandableBottomSheetLayout(
+            modifier = modifier
+                .fillMaxSize()
+                .imePadding()
+                .systemBarsPadding()
+                .onSizeChanged { size ->
+                    // Let the composer takes at max half of the available height.
+                    // The value will be different if the soft keyboard is displayed
+                    // or not.
+                    maxComposerHeightPx = (size.height * 0.5f).toInt()
                 },
-                content = { padding ->
-                    Box(
-                        modifier = Modifier
-                            .padding(padding)
-                            .consumeWindowInsets(padding)
-                    ) {
-                        MessagesViewContent(
-                            state = state,
-                            onContentClick = ::onContentClick,
-                            onMessageLongClick = ::onMessageLongClick,
-                            onUserDataClick = {
-                                hidingKeyboard {
-                                    state.eventSink(MessagesEvent.OnUserClicked(it))
-                                }
-                            },
-                            onLinkClick = { link, customTab ->
-                                if (customTab) {
-                                    onLinkClick(link.url, true)
-                                    // Do not check those links, they are internal link only
-                                } else {
-                                    state.linkState.eventSink(LinkEvent.OnLinkClick(link))
-                                }
-                            },
-                            onReactionClick = ::onEmojiReactionClick,
-                            onReactionLongClick = ::onEmojiReactionLongClick,
-                            onMoreReactionsClick = ::onMoreReactionsClick,
-                            onReadReceiptClick = { event ->
-                                state.readReceiptBottomSheetState.eventSink(ReadReceiptBottomSheetEvent.EventSelected(event))
-                            },
-                            onSendLocationClick = onSendLocationClick,
-                            onCreatePollClick = onCreatePollClick,
-                            onSwipeToReply = { targetEvent ->
-                                state.eventSink(MessagesEvent.HandleAction(TimelineItemAction.Reply, targetEvent))
-                            },
-                            forceJumpToBottomVisibility = forceJumpToBottomVisibility,
-                            onJoinCallClick = onJoinCallClick,
-                            onViewAllPinnedMessagesClick = onViewAllPinnedMessagesClick,
-                            knockRequestsBannerView = knockRequestsBannerView,
-                        )
-
-                        SuggestionsPickerView(
+            content = {
+                Scaffold(
+                    containerColor = Color.Transparent,
+                    contentWindowInsets = WindowInsets.statusBars,
+                    topBar = {
+                        if (state.timelineState.timelineMode is Timeline.Mode.Thread) {
+                            ThreadTopBar(
+                                roomName = state.roomName,
+                                roomAvatarData = state.roomAvatar,
+                                heroes = state.heroes,
+                                isTombstoned = state.isTombstoned,
+                                onBackClick = onBackClick,
+                            )
+                        } else {
+                            MessagesViewTopBar(
+                                roomName = state.roomName,
+                                roomAvatar = state.roomAvatar,
+                                isTombstoned = state.isTombstoned,
+                                heroes = state.heroes,
+                                roomCallState = state.roomCallState,
+                                dmUserIdentityState = state.dmUserVerificationState,
+                                onBackClick = { hidingKeyboard { onBackClick() } },
+                                onRoomDetailsClick = { hidingKeyboard { onRoomDetailsClick() } },
+                                onJoinCallClick = onJoinCallClick,
+                            )
+                        }
+                    },
+                    content = { padding ->
+                        Box(
                             modifier = Modifier
-                                .shadow(10.dp)
-                                .background(ElementTheme.colors.bgCanvasDefault)
-                                .align(Alignment.BottomStart)
-                                .heightIn(max = 230.dp),
-                            roomId = state.roomId,
-                            roomName = state.roomName,
-                            roomAvatarData = state.roomAvatar,
-                            suggestions = state.composerState.suggestions,
-                            onSelectSuggestion = {
-                                state.composerState.eventSink(MessageComposerEvent.InsertSuggestion(it))
-                            }
+                                .padding(padding)
+                                .consumeWindowInsets(padding)
+                        ) {
+                            MessagesViewContent(
+                                state = state,
+                                onContentClick = ::onContentClick,
+                                onMessageLongClick = ::onMessageLongClick,
+                                onUserDataClick = {
+                                    hidingKeyboard {
+                                        state.eventSink(MessagesEvents.OnUserClicked(it))
+                                    }
+                                },
+                                onLinkClick = { link, customTab ->
+                                    if (customTab) {
+                                        onLinkClick(link.url, true)
+                                        // Do not check those links, they are internal link only
+                                    } else {
+                                        state.linkState.eventSink(LinkEvents.OnLinkClick(link))
+                                    }
+                                },
+                                onReactionClick = ::onEmojiReactionClick,
+                                onReactionLongClick = ::onEmojiReactionLongClick,
+                                onMoreReactionsClick = ::onMoreReactionsClick,
+                                onReadReceiptClick = { event ->
+                                    state.readReceiptBottomSheetState.eventSink(ReadReceiptBottomSheetEvents.EventSelected(event))
+                                },
+                                onSendLocationClick = onSendLocationClick,
+                                onCreatePollClick = onCreatePollClick,
+                                onSwipeToReply = { targetEvent ->
+                                    state.eventSink(MessagesEvents.HandleAction(TimelineItemAction.Reply, targetEvent))
+                                },
+                                forceJumpToBottomVisibility = forceJumpToBottomVisibility,
+                                onJoinCallClick = onJoinCallClick,
+                                onViewAllPinnedMessagesClick = onViewAllPinnedMessagesClick,
+                                knockRequestsBannerView = knockRequestsBannerView,
+                            )
+
+                            SuggestionsPickerView(
+                                modifier = Modifier
+                                    .shadow(10.dp)
+                                    .background(ElementTheme.colors.bgCanvasDefault)
+                                    .align(Alignment.BottomStart)
+                                    .heightIn(max = 230.dp),
+                                roomId = state.roomId,
+                                roomName = state.roomName,
+                                roomAvatarData = state.roomAvatar,
+                                suggestions = state.composerState.suggestions,
+                                onSelectSuggestion = {
+                                    state.composerState.eventSink(MessageComposerEvent.InsertSuggestion(it))
+                                }
+                            )
+                        }
+                    },
+                    snackbarHost = {
+                        SnackbarHost(
+                            snackbarHostState,
+                            modifier = Modifier.navigationBarsPadding()
                         )
-                    }
-                },
-                snackbarHost = {
-                    SnackbarHost(
-                        snackbarHostState,
-                        modifier = Modifier.navigationBarsPadding()
-                    )
-                },
-            )
-        },
-        bottomSheetContent = {
-            MessagesViewComposerBottomSheetContents(
-                state = state,
-                onLinkClick = { url, customTab -> onLinkClick(url, customTab) },
-                onRoomSuccessorClick = { roomId ->
-                    state.timelineState.eventSink(TimelineEvent.NavigateToPredecessorOrSuccessorRoom(roomId = roomId))
-                },
-                scBeforeSend = {
-                    state.timelineState.eventSink(TimelineEvent.MarkAsRead)
-                }.takeIf { syncReadMarkerAndReceipt },
-            )
-        },
-        sheetDragHandle = @Composable { toggleAction ->
-            if (state.composerState.showTextFormatting) {
-                val expandA11yLabel = stringResource(CommonStrings.a11y_expand_message_text_field)
-                val collapseA11yLabel = stringResource(CommonStrings.a11y_collapse_message_text_field)
-                BottomSheetDragHandle(
-                    modifier = Modifier.semantics {
-                        role = Role.Button
-                        // Accessibility action to toggle the bottom sheet state
-                        val label = when (expandableState.position) {
-                            ExpandableBottomSheetLayoutState.Position.COLLAPSED, ExpandableBottomSheetLayoutState.Position.DRAGGING -> expandA11yLabel
-                            ExpandableBottomSheetLayoutState.Position.EXPANDED -> collapseA11yLabel
-                        }
-                        onClick(label) {
-                            toggleAction()
-                            true
-                        }
-                    }
+                    },
                 )
-            } else {
-                LaunchedEffect(Unit) {
-                    // Ensure that the bottom sheet is collapsed
-                    if (expandableState.position == ExpandableBottomSheetLayoutState.Position.EXPANDED) {
-                        toggleAction()
+            },
+            bottomSheetContent = {
+                MessagesViewComposerBottomSheetContents(
+                    state = state,
+                    onLinkClick = { url, customTab -> onLinkClick(url, customTab) },
+                    onRoomSuccessorClick = { roomId ->
+                        state.timelineState.eventSink(TimelineEvents.NavigateToPredecessorOrSuccessorRoom(roomId = roomId))
+                    },
+                )
+
+            },
+            sheetDragHandle = @Composable { toggleAction ->
+                if (state.composerState.showTextFormatting) {
+                    val expandA11yLabel = stringResource(CommonStrings.a11y_expand_message_text_field)
+                    val collapseA11yLabel = stringResource(CommonStrings.a11y_collapse_message_text_field)
+                    BottomSheetDragHandle(
+                        modifier = Modifier.semantics {
+                            role = Role.Button
+                            // Accessibility action to toggle the bottom sheet state
+                            val label = when (expandableState.position) {
+                                ExpandableBottomSheetLayoutState.Position.COLLAPSED, ExpandableBottomSheetLayoutState.Position.DRAGGING -> expandA11yLabel
+                                ExpandableBottomSheetLayoutState.Position.EXPANDED -> collapseA11yLabel
+                            }
+                            onClick(label) {
+                                toggleAction()
+                                true
+                            }
+                        }
+                    )
+                } else {
+                    LaunchedEffect(Unit) {
+                        // Ensure that the bottom sheet is collapsed
+                        if (expandableState.position == ExpandableBottomSheetLayoutState.Position.EXPANDED) {
+                            toggleAction()
+                        }
                     }
                 }
-            }
-        },
-        isSwipeGestureEnabled = state.composerState.showTextFormatting,
-        state = expandableState,
-        sheetShape = if (state.composerState.showTextFormatting || state.composerState.suggestions.isNotEmpty()) {
-            MaterialTheme.shapes.large
-        } else {
-            RectangleShape
-        },
-        maxBottomSheetContentHeight = maxComposerHeightPx.toDp(),
-    )
-
-    var endPollConfirmingEvent: TimelineItem.Event? by remember { mutableStateOf(null) }
-
-    if (endPollConfirmingEvent != null) {
-        ConfirmationDialog(
-            content = stringResource(id = CommonStrings.common_poll_end_confirmation),
-            onSubmitClick = {
-                endPollConfirmingEvent?.let { event ->
-                    onActionSelected(TimelineItemAction.EndPoll, event)
-                }
-                endPollConfirmingEvent = null
             },
-            onDismiss = { endPollConfirmingEvent = null },
+            isSwipeGestureEnabled = state.composerState.showTextFormatting,
+            state = expandableState,
+            sheetShape = if (state.composerState.showTextFormatting || state.composerState.suggestions.isNotEmpty()) {
+                MaterialTheme.shapes.large
+            } else {
+                RectangleShape
+            },
+            maxBottomSheetContentHeight = maxComposerHeightPx.toDp(),
         )
     }
 
     ActionListView(
         state = state.actionListState,
-        onSelectAction = { action: TimelineItemAction, event: TimelineItem.Event ->
-            if (action == TimelineItemAction.EndPoll) {
-                endPollConfirmingEvent = event
-            } else {
-                onActionSelected(action, event)
-            }
-        },
+        onSelectAction = ::onActionSelected,
         onCustomReactionClick = { event ->
-            state.customReactionState.eventSink(CustomReactionEvent.ShowCustomReactionSheet(event))
+            state.customReactionState.eventSink(CustomReactionEvents.ShowCustomReactionSheet(event))
         },
         onEmojiReactionClick = ::onEmojiReactionClick,
         onVerifiedUserSendFailureClick = { event ->
-            state.timelineState.eventSink(TimelineEvent.ComputeVerifiedUserSendFailure(event))
+            state.timelineState.eventSink(TimelineEvents.ComputeVerifiedUserSendFailure(event))
         },
     )
 
     CustomReactionBottomSheet(
         state = state.customReactionState,
         onSelectEmoji = { uniqueId, emoji ->
-            state.eventSink(MessagesEvent.ToggleReaction(emoji.unicode, uniqueId))
-        },
-        onSelectCustomEmoji = { uniqueId, emoji ->
-            state.eventSink(MessagesEvent.ToggleReaction(emoji, uniqueId))
+            state.eventSink(MessagesEvents.ToggleReaction(emoji.unicode, uniqueId))
         }
     )
 
@@ -420,8 +403,8 @@ private fun ReinviteDialog(state: MessagesState) {
             content = stringResource(id = R.string.screen_room_invite_again_alert_message),
             cancelText = stringResource(id = CommonStrings.action_cancel),
             submitText = stringResource(id = CommonStrings.action_invite),
-            onSubmitClick = { state.eventSink(MessagesEvent.InviteDialogDismissed(InviteDialogAction.Invite)) },
-            onDismiss = { state.eventSink(MessagesEvent.InviteDialogDismissed(InviteDialogAction.Cancel)) }
+            onSubmitClick = { state.eventSink(MessagesEvents.InviteDialogDismissed(InviteDialogAction.Invite)) },
+            onDismiss = { state.eventSink(MessagesEvents.InviteDialogDismissed(InviteDialogAction.Cancel)) }
         )
     }
 }
@@ -439,7 +422,7 @@ private fun MessagesViewContent(
     onMessageLongClick: (TimelineItem.Event) -> Unit,
     onSendLocationClick: () -> Unit,
     onCreatePollClick: () -> Unit,
-    onJoinCallClick: (isAudioCall: Boolean) -> Unit,
+    onJoinCallClick: () -> Unit,
     onViewAllPinnedMessagesClick: () -> Unit,
     forceJumpToBottomVisibility: Boolean,
     onSwipeToReply: (TimelineItem.Event) -> Unit,
@@ -499,20 +482,20 @@ private fun MessagesViewContent(
 
             if (state.timelineState.timelineMode !is Timeline.Mode.Thread) {
                 AnimatedVisibility(
-                    visible = ScPrefs.PINNED_MESSAGE_OVERLAY.value() && state.pinnedMessagesBannerState is PinnedMessagesBannerState.Visible && scrollBehavior.isVisible,
+                    visible = state.pinnedMessagesBannerState is PinnedMessagesBannerState.Visible && scrollBehavior.isVisible,
                     enter = expandVertically(),
                     exit = shrinkVertically(),
                 ) {
                     fun focusOnPinnedEvent(eventId: EventId) {
                         state.timelineState.eventSink(
-                            TimelineEvent.FocusOnEvent(eventId = eventId, debounce = FOCUS_ON_PINNED_EVENT_DEBOUNCE_DURATION_IN_MILLIS.milliseconds)
+                            TimelineEvents.FocusOnEvent(eventId = eventId, debounce = FOCUS_ON_PINNED_EVENT_DEBOUNCE_DURATION_IN_MILLIS.milliseconds)
                         )
                     }
                     PinnedMessagesBannerView(
                         state = state.pinnedMessagesBannerState,
                         onClick = ::focusOnPinnedEvent,
                         onViewAllClick = onViewAllPinnedMessagesClick,
-                  )
+                    )
                 }
                 knockRequestsBannerView()
             }
@@ -523,7 +506,6 @@ private fun MessagesViewContent(
 @Composable
 private fun MessagesViewComposerBottomSheetContents(
     state: MessagesState,
-    scBeforeSend: (() -> Unit)?,
     onRoomSuccessorClick: (RoomId) -> Unit,
     onLinkClick: (String, Boolean) -> Unit,
 ) {
@@ -536,10 +518,17 @@ private fun MessagesViewComposerBottomSheetContents(
                 // Do not show the identity change if user is composing a Rich message or is seeing suggestion(s).
                 if (state.composerState.suggestions.isEmpty() &&
                     state.composerState.textEditorState is TextEditorState.Markdown) {
-                    IdentityChangeStateView(
-                        state = state.identityChangeState,
-                        onLinkClick = onLinkClick,
-                    )
+                    if (state.identityChangeState.roomMemberIdentityStateChanges.isNotEmpty()) {
+                        IdentityChangeStateView(
+                            state = state.identityChangeState,
+                            onLinkClick = onLinkClick,
+                        )
+                    } else {
+                        HistoryVisibleStateView(
+                            state = state.historyVisibleState,
+                            onLinkClick = onLinkClick,
+                        )
+                    }
                 }
                 val verificationViolation = state.identityChangeState.roomMemberIdentityStateChanges.firstOrNull {
                     it.identityState == IdentityState.VerificationViolation
@@ -551,7 +540,6 @@ private fun MessagesViewComposerBottomSheetContents(
                         state = state.composerState,
                         voiceMessageState = state.voiceMessageComposerState,
                         modifier = Modifier.fillMaxWidth(),
-                        scBeforeSend = scBeforeSend,
                     )
                 }
             }
@@ -567,14 +555,14 @@ private fun CantSendMessageBanner() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ScTheme.exposures.composerBlockBg ?: ElementTheme.colors.bgSubtleSecondary)
+            .background(ElementTheme.colors.bgSubtleSecondary)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
             text = stringResource(id = R.string.screen_room_timeline_no_permission_to_post),
-            color = ScTheme.exposures.composerBlockFg ?: ElementTheme.colors.textSecondary,
+            color = ElementTheme.colors.textSecondary,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             fontStyle = FontStyle.Italic,

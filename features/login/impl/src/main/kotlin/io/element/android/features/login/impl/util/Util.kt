@@ -14,6 +14,13 @@ import androidx.core.net.toUri
 import io.element.android.appconfig.AuthenticationConfig
 import io.element.android.libraries.core.data.tryOrNull
 
+/**
+ * 打开了解更多页面
+ *
+ * 在浏览器中打开 Sliding Sync 的详细了解页面。
+ *
+ * @param context Android 上下文
+ */
 fun openLearnMorePage(context: Context) {
     val intent = Intent(Intent.ACTION_VIEW, AuthenticationConfig.SLIDING_SYNC_READ_MORE_URL.toUri())
     tryOrNull { context.startActivity(intent) }

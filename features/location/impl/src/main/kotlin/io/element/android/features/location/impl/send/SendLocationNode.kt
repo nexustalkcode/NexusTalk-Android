@@ -24,6 +24,11 @@ import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.services.analytics.api.AnalyticsService
 
+/**
+ * 发送位置节点
+ *
+ * 负责显示发送位置界面，包含地图视图和发送功能。
+ */
 @ContributesNode(RoomScope::class)
 @AssistedInject
 class SendLocationNode(
@@ -32,6 +37,11 @@ class SendLocationNode(
     presenterFactory: SendLocationPresenter.Factory,
     analyticsService: AnalyticsService,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 输入参数数据类
+     *
+     * @property timelineMode 时间线模式
+     */
     data class Inputs(
         val timelineMode: Timeline.Mode,
     ) : NodeInputs

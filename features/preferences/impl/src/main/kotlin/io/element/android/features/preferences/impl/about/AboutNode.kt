@@ -23,6 +23,14 @@ import io.element.android.libraries.androidutils.browser.openUrlInChromeCustomTa
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.SessionScope
 
+/**
+ * 关于页面 Node
+ *
+ * 负责显示应用程序的关于页面，包括版权、使用政策和隐私政策等法律信息链接。
+ *
+ * @property presenter 关于页面 Presenter
+ * @see Callback 页面回调接口
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class AboutNode(
@@ -30,12 +38,23 @@ class AboutNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: AboutPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 关于页面回调接口
+     */
     interface Callback : Plugin {
+        /** 导航到开源许可证页面 */
         fun navigateToOssLicenses()
     }
 
     private val callback: Callback = callback()
 
+    /**
+     * 处理法律信息点击事件
+     *
+     * @param activity 当前活动
+     * @param darkTheme 是否使用深色主题
+     * @param elementLegal 被点击的法律信息
+     */
     private fun onElementLegalClick(
         activity: Activity,
         darkTheme: Boolean,

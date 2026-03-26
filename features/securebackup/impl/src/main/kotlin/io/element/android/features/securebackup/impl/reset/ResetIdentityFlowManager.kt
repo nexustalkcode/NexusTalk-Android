@@ -23,16 +23,38 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+/**
+ * 重置身份流程管理器
+ *
+ * 负责管理身份重置流程的协调工作，包括：
+ * - 启动身份重置
+ * - 跟踪重置状态
+ * - 处理重置完成后的回调
+ *
+ * @property encryptionService 加密服务
+ * @property sessionCoroutineScope 会话协程作用域
+ * @property sessionVerificationService 会话验证服务
+ */
 @Inject
 class ResetIdentityFlowManager(
     private val encryptionService: EncryptionService,
     @SessionCoroutineScope private val sessionCoroutineScope: CoroutineScope,
     private val sessionVerificationService: SessionVerificationService,
 ) {
+    /** 重置句柄数据流 */
     private val resetHandleFlow: MutableStateFlow<AsyncData<IdentityResetHandle?>> = MutableStateFlow(AsyncData.Uninitialized)
+
+    /** 当前重置句柄数据流 */
     val currentHandleFlow: StateFlow<AsyncData<IdentityResetHandle?>> = resetHandleFlow
+
+    /** 重置完成等待任务 */
     private var whenResetIsDoneWaitingJob: Job? = null
 
+    /**
+     * 设置重置完成后的回调
+     *
+     * @param block 回调代码块
+     */
     fun whenResetIsDone(block: () -> Unit) {
         whenResetIsDoneWaitingJob = sessionCoroutineScope.launch {
             sessionVerificationService.sessionVerifiedStatus.filterIsInstance<SessionVerifiedStatus.Verified>().first()
@@ -40,6 +62,14 @@ class ResetIdentityFlowManager(
         }
     }
 
+    /**
+     * 获取重置句柄
+     *
+     * 如果已经存在有效的重置句柄，则返回现有数据流；
+     * 否则启动新的重置流程。
+     *
+     * @return 包含重置句柄的异步数据流
+     */
     fun getResetHandle(): StateFlow<AsyncData<IdentityResetHandle?>> {
         return if (resetHandleFlow.value.isLoading() || resetHandleFlow.value.isSuccess()) {
             resetHandleFlow
@@ -60,6 +90,9 @@ class ResetIdentityFlowManager(
         }
     }
 
+    /**
+     * 取消重置流程
+     */
     suspend fun cancel() {
         currentHandleFlow.value.dataOrNull()?.cancel()
         resetHandleFlow.value = AsyncData.Uninitialized

@@ -11,7 +11,21 @@ package io.element.android.features.login.impl.di
 import dev.zacsweers.metro.ContributesTo
 import io.element.android.features.login.impl.qrcode.QrCodeLoginManager
 
+/**
+ * 二维码登录绑定接口
+ *
+ * 定义二维码登录功能的依赖绑定。
+ * 用于在 QrCodeLoginScope 作用域内提供 QrCodeLoginManager 实例。
+ *
+ * @see QrCodeLoginScope 二维码登录作用域
+ * @see QrCodeLoginManager 二维码登录管理器
+ */
 @ContributesTo(QrCodeLoginScope::class)
 interface QrCodeLoginBindings {
+    /**
+     * 获取二维码登录管理器
+     *
+     * @return QrCodeLoginManager 实例
+     */
     fun qrCodeLoginManager(): QrCodeLoginManager
 }

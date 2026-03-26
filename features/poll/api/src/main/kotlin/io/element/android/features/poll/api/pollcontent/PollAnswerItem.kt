@@ -11,15 +11,17 @@ package io.element.android.features.poll.api.pollcontent
 import io.element.android.libraries.matrix.api.poll.PollAnswer
 
 /**
- * UI model for a [PollAnswer].
+ * UI 模型 - 投票答案项
  *
- * @property answer the poll answer.
- * @property isSelected whether the user has selected this answer.
- * @property isEnabled whether the answer can be voted.
- * @property isWinner whether this is the winner answer in the poll.
- * @property showVotes whether the votes for this answer should be displayed.
- * @property votesCount the number of votes for this answer.
- * @property percentage the percentage of votes for this answer.
+ * 用于在 UI 中显示单个投票选项的完整信息。
+ *
+ * @property answer 投票答案对象
+ * @property isSelected 用户是否选择了该答案
+ * @property isEnabled 该答案是否可投票（投票结束后不可投票）
+ * @property isWinner 是否是投票中的获胜答案
+ * @property showVotes 是否显示投票数
+ * @property votesCount 投票数量
+ * @property percentage 投票百分比
  */
 data class PollAnswerItem(
     val answer: PollAnswer,

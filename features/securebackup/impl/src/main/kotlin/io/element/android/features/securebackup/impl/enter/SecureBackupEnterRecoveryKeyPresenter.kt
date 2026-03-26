@@ -27,6 +27,18 @@ import io.element.android.libraries.matrix.api.encryption.EncryptionService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 输入恢复密钥 Presenter
+ *
+ * 负责处理输入恢复密钥页面的业务逻辑，包括：
+ * - 管理恢复密钥输入状态
+ * - 验证恢复密钥格式
+ * - 提交恢复密钥进行验证
+ *
+ * @property encryptionService 加密服务
+ * @property recoveryKeyTools 恢复密钥工具类
+ * @see SecureBackupEnterRecoveryKeyState 输入恢复密钥状态
+ */
 @Inject
 class SecureBackupEnterRecoveryKeyPresenter(
     private val encryptionService: EncryptionService,

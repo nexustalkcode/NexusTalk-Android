@@ -29,13 +29,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
@@ -231,7 +235,7 @@ private fun TextFieldContainer(
     content: @Composable () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(4.dp),
+        shape = RoundedCornerShape(8.dp),
         border = if (readOnly) {
             null
         } else {
@@ -303,6 +307,118 @@ private fun textFieldStyle(enabled: Boolean): TextStyle {
             ElementTheme.colors.textSecondary
         }
     )
+}
+
+/**
+ * Capsule style TextField with customizable shadow elevation.
+ * @param value The text to display.
+ * @param onValueChange Callback when text changes.
+ * @param modifier Modifier to apply.
+ * @param label Optional label above the field.
+ * @param labelStyle Optional style for the label text.
+ * @param placeholder Placeholder text when empty.
+ * @param elevation Shadow elevation in dp.
+ * @param enabled Whether the field is enabled.
+ * @param readOnly Whether the field is read-only.
+ * @param singleLine Whether to show single line.
+ * @param maxLines Maximum lines.
+ * @param minLines Minimum lines.
+ * @param keyboardOptions Keyboard options.
+ * @param keyboardActions Keyboard actions.
+ * @param visualTransformation Visual transformation.
+ * @param interactionSource Interaction source.
+ * @param onTextLayout Text layout callback.
+ */
+@Composable
+fun CapsuleTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    label: String? = null,
+    labelStyle: TextStyle = ElementTheme.typography.fontBodyMdRegular,
+    placeholder: String? = null,
+    elevation: Dp = 3.dp,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    singleLine: Boolean = true,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    onTextLayout: (TextLayoutResult) -> Unit = {},
+) {
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val capsuleShape = RoundedCornerShape(50.dp)
+
+    Column(modifier = modifier) {
+        if (label != null) {
+            Text(
+                text = label,
+                color = ElementTheme.colors.textPrimary,
+                style = labelStyle,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = Modifier
+                .shadow(elevation = elevation, shape = capsuleShape)
+                .clip(capsuleShape),
+            textStyle = textFieldStyle(enabled),
+            interactionSource = interactionSource,
+            enabled = enabled,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            minLines = minLines,
+            readOnly = readOnly,
+            cursorBrush = SolidColor(ElementTheme.colors.textPrimary),
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            visualTransformation = visualTransformation,
+            onTextLayout = onTextLayout,
+        ) { innerTextField ->
+            Surface(
+                shape = capsuleShape,
+                border = if (readOnly) {
+                    null
+                } else {
+                    BorderStroke(
+                        width = if (isFocused) 2.dp else 0.dp,
+                        color = when {
+                            !enabled -> ElementTheme.colors.borderDisabled
+                            isFocused -> ElementTheme.colors.borderInteractiveHovered
+                            else -> ElementTheme.colors.borderInteractiveSecondary
+                        }
+                    )
+                },
+                color = when {
+                    readOnly -> ElementTheme.colors.bgSubtleSecondary
+                    !enabled -> ElementTheme.colors.bgCanvasDisabled
+                    else -> ElementTheme.colors.bgCanvasDefault
+                },
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (placeholder != null && value.isEmpty()) {
+                            Text(
+                                text = placeholder,
+                                color = ElementTheme.colors.textSecondary,
+                                style = ElementTheme.typography.fontBodyLgRegular,
+                            )
+                        }
+                        innerTextField()
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Preview(group = PreviewGroup.TextFields, heightDp = 1000)

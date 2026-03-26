@@ -24,12 +24,26 @@ import io.element.android.features.rageshake.impl.crash.CrashDataStore
 import io.element.android.features.rageshake.impl.screenshot.ScreenshotHolder
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.architecture.Presenter
-import io.element.android.libraries.core.meta.BuildMeta
-import io.element.android.libraries.core.meta.minBugReportLength
 import io.element.android.libraries.di.annotations.AppCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 问题报告 Presenter
+ *
+ * 负责处理问题报告页面的业务逻辑，包括：
+ * - 收集崩溃日志信息
+ * - 管理问题报告表单状态
+ * - 发送问题报告
+ * - 跟踪上传进度
+ * - 重置所有数据
+ *
+ * @property bugReporter 问题报告器
+ * @property crashDataStore 崩溃数据存储
+ * @property screenshotHolder 截图持有者
+ * @property appCoroutineScope 应用程序协程作用域
+ * @see BugReportState 问题报告状态
+ */
 @Inject
 class BugReportPresenter(
     private val bugReporter: BugReporter,
@@ -37,8 +51,15 @@ class BugReportPresenter(
     private val screenshotHolder: ScreenshotHolder,
     @AppCoroutineScope
     private val appCoroutineScope: CoroutineScope,
-    private val buildMeta: BuildMeta,
 ) : Presenter<BugReportState> {
+    /**
+     * 问题报告上传监听器内部类
+     *
+     * 监听问题报告上传进度和结果，并更新Presenter状态。
+     *
+     * @property sendingProgress 上传进度状态
+     * @property sendingAction 发送动作状态
+     */
     private class BugReporterUploadListener(
         private val sendingProgress: MutableFloatState,
         private val sendingAction: MutableState<AsyncAction<Unit>>
@@ -89,7 +110,7 @@ class BugReportPresenter(
         fun handleEvent(event: BugReportEvents) {
             when (event) {
                 BugReportEvents.SendBugReport -> {
-                    if (formState.value.description.length < buildMeta.minBugReportLength) {
+                    if (formState.value.description.length < 10) {
                         sendingAction.value = AsyncAction.Failure(BugReportFormError.DescriptionTooShort)
                     } else {
                         sendingAction.value = AsyncAction.Loading

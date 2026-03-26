@@ -33,6 +33,7 @@ import androidx.core.app.PictureInPictureModeChangedInfo
 import androidx.core.content.IntentCompat
 import androidx.core.util.Consumer
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import dev.zacsweers.metro.Inject
 import io.element.android.compound.colors.SemanticColorsLightDark
 import io.element.android.features.call.api.CallType
@@ -44,6 +45,7 @@ import io.element.android.features.call.impl.pip.PictureInPicturePresenter
 import io.element.android.features.call.impl.pip.PictureInPictureState
 import io.element.android.features.call.impl.pip.PipView
 import io.element.android.features.call.impl.services.CallForegroundService
+import io.element.android.features.call.impl.utils.ActiveCallManager
 import io.element.android.features.call.impl.utils.CallIntentDataParser
 import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.libraries.androidutils.browser.ConsoleMessageLogger
@@ -55,10 +57,30 @@ import io.element.android.libraries.core.log.logger.LoggerTag
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.designsystem.theme.ElementThemeApp
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/** 通话活动日志标签 */
 private val loggerTag = LoggerTag("ElementCallActivity")
 
+/**
+ * Element Call 主界面 Activity
+ *
+ * 通话功能的主要界面，负责加载和显示 Element Call WebView。
+ * 实现了 CallScreenNavigator 接口用于导航控制，以及 PipView 接口用于画中画支持。
+ *
+ * 此 Activity 处理以下功能：
+ * - 加载 Element Call WebView
+ * - 管理通话权限
+ * - 处理画中画模式
+ * - 管理音频焦点
+ * - 显示通话前台服务通知
+ *
+ * @see CallScreenNavigator 通话界面导航接口
+ * @see PipView 画中画视图接口
+ * @see CallScreenPresenter 通话界面 Presenter
+ * @see CallScreenView 通话界面视图
+ */
 class ElementCallActivity :
     AppCompatActivity(),
     CallScreenNavigator,
@@ -68,6 +90,7 @@ class ElementCallActivity :
     @Inject lateinit var appPreferencesStore: AppPreferencesStore
     @Inject lateinit var enterpriseService: EnterpriseService
     @Inject lateinit var pictureInPicturePresenter: PictureInPicturePresenter
+    @Inject lateinit var activeCallManager: ActiveCallManager
     @Inject lateinit var buildMeta: BuildMeta
     @Inject lateinit var audioFocus: AudioFocus
     @Inject lateinit var consoleMessageLogger: ConsoleMessageLogger
@@ -185,7 +208,28 @@ class ElementCallActivity :
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        lifecycleScope.launch {
+            activeCallManager.clearIncomingCallNotification()
+        }
         setCallType(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launch {
+            activeCallManager.setIncomingCallUiVisible(true)
+        }
+        CallForegroundService.stop(this)
+    }
+
+    override fun onStop() {
+        lifecycleScope.launch {
+            activeCallManager.setIncomingCallUiVisible(false)
+        }
+        if (!isFinishing && webViewTarget.value != null) {
+            CallForegroundService.start(this)
+        }
+        super.onStop()
     }
 
     override fun onDestroy() {

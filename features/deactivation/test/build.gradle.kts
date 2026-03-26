@@ -16,5 +16,4 @@ android {
 dependencies {
     implementation(projects.features.deactivation.api)
     implementation(projects.libraries.architecture)
-    implementation(projects.tests.testutils)
 }

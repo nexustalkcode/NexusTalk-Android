@@ -22,6 +22,16 @@ import io.element.android.features.login.impl.util.openLearnMorePage
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.matrix.api.auth.OidcDetails
 
+/**
+ * 选择账户提供商节点
+ *
+ * 允许用户选择要登录的账户提供商的页面节点。
+ * 根据服务器支持的认证方式导航到相应的登录流程。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenter 业务逻辑 presenter
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class ChooseAccountProviderNode(
@@ -29,9 +39,15 @@ class ChooseAccountProviderNode(
     @Assisted plugins: List<Plugin>,
     private val presenter: ChooseAccountProviderPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 选择账户提供商回调接口
+     */
     interface Callback : Plugin {
+        /** 导航到密码登录页面 */
         fun navigateToLoginPassword()
+        /** 导航到 OIDC 登录 */
         fun navigateToOidc(oidcDetails: OidcDetails)
+        /** 导航到账户创建页面 */
         fun navigateToCreateAccount(url: String)
     }
 

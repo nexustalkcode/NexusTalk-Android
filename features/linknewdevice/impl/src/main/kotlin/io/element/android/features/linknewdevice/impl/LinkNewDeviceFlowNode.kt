@@ -78,19 +78,24 @@ class LinkNewDeviceFlowNode(
 
     override fun onBuilt() {
         super.onBuilt()
+        // 保存协程 Job，便于生命周期结束时取消
         var linkMobileHandlerJob: Job? = null
         var linkDesktopHandlerJob: Job? = null
 
         lifecycle.subscribe(
             onCreate = {
+                // 每次进入流程时重置处理器，确保从干净状态开始
                 linkNewMobileHandler.reset()
                 linkNewDesktopHandler.reset()
                 @Suppress("AssignedValueIsNeverRead")
+                // 监听移动端流程状态
                 linkMobileHandlerJob = observeLinkNewMobileHandler()
                 @Suppress("AssignedValueIsNeverRead")
+                // 监听桌面端流程状态
                 linkDesktopHandlerJob = observeLinkNewDesktopHandler()
             },
             onDestroy = {
+                // 避免生命周期结束后继续收集状态
                 linkMobileHandlerJob?.cancel()
                 linkDesktopHandlerJob?.cancel()
             }
@@ -98,24 +103,29 @@ class LinkNewDeviceFlowNode(
     }
 
     sealed interface NavTarget : Parcelable {
-        // Will display the not supported state or the device type selection
+        // 根节点：显示设备类型选择或不支持提示
         @Parcelize
         data object Root : NavTarget
 
+        // 移动端：展示二维码
         @Parcelize
         data class MobileShowQrCode(
             val data: String,
         ) : NavTarget
 
+        // 移动端：输入校验码
         @Parcelize
         data object MobileEnterNumber : NavTarget
 
+        // 桌面端：提示说明页
         @Parcelize
         data object DesktopNotice : NavTarget
 
+        // 桌面端：扫码页
         @Parcelize
         data object DesktopScanQrCode : NavTarget
 
+        // 错误页
         @Parcelize
         data class Error(
             val errorScreenType: ErrorScreenType,
@@ -130,26 +140,30 @@ class LinkNewDeviceFlowNode(
                 when (linkMobileStep) {
                     LinkMobileStep.Uninitialized -> Unit
                     LinkMobileStep.Done -> {
+                        // 流程完成，通知上层关闭
                         callback.onDone()
                     }
                     is LinkMobileStep.Error -> {
+                        // 移动端流程出现错误，跳转错误页
                         navigateToError(linkMobileStep.errorType)
                     }
                     is LinkMobileStep.QrReady -> {
-                        // The QrCode is ready, navigate to its display
+                        // 二维码准备好后展示给用户
                         backstack.push(NavTarget.MobileShowQrCode(linkMobileStep.data))
                     }
                     is LinkMobileStep.QrScanned -> {
+                        // 二维码已被桌面端扫到，进入输入校验码流程
                         backstack.replace(NavTarget.MobileEnterNumber)
                     }
                     LinkMobileStep.Starting -> {
-                        // This step is not received at the moment, so do nothing
+                        // 目前不会收到该状态，保持不变
                     }
                     LinkMobileStep.SyncingSecrets -> {
-                        // LinkMobileStep.Done is not received at the moment, so consider that the flow is done here
+                        // 当前没有收到 Done，视为完成
                         callback.onDone()
                     }
                     is LinkMobileStep.WaitingForAuth -> {
+                        // 需要用户在浏览器完成验证
                         navigateToBrowser(linkMobileStep.verificationUri)
                     }
                 }
@@ -164,16 +178,18 @@ class LinkNewDeviceFlowNode(
             when (linkDesktopStep) {
                 LinkDesktopStep.Done -> callback.onDone()
                 is LinkDesktopStep.Error -> {
+                    // 桌面端流程错误，显示错误页
                     navigateToError(linkDesktopStep.errorType)
                 }
                 is LinkDesktopStep.EstablishingSecureChannel -> Unit
                 is LinkDesktopStep.InvalidQrCode -> {
-                    // This error will be handled by the ScanQrCodeNode
+                    // 扫码页自身会处理该错误
                 }
                 LinkDesktopStep.Starting -> Unit
                 LinkDesktopStep.SyncingSecrets -> Unit
                 LinkDesktopStep.Uninitialized -> Unit
                 is LinkDesktopStep.WaitingForAuth -> {
+                    // 需要用户在浏览器完成授权
                     navigateToBrowser(linkDesktopStep.verificationUri)
                 }
             }
@@ -182,23 +198,18 @@ class LinkNewDeviceFlowNode(
     }
 
     private fun navigateToError(errorType: ErrorType) {
-        // Map the error to an error screen
+        // 将底层错误映射到 UI 错误页类型
         // TODO Update this mapping
         val error = when (errorType) {
             is ErrorType.DeviceIdAlreadyInUse -> ErrorScreenType.UnknownError
             is ErrorType.InvalidCheckCode -> ErrorScreenType.InsecureChannelDetected
             is ErrorType.MissingSecretsBackup -> ErrorScreenType.UnknownError
             is ErrorType.NotFound -> ErrorScreenType.Expired
-            is ErrorType.DeviceNotFound -> ErrorScreenType.UnknownError
+            is ErrorType.UnableToCreateDevice -> ErrorScreenType.UnknownError
             is ErrorType.Unknown -> ErrorScreenType.UnknownError
             is ErrorType.UnsupportedProtocol -> ErrorScreenType.UnknownError
-            is ErrorType.Cancelled -> ErrorScreenType.UnknownError
-            is ErrorType.ConnectionInsecure -> ErrorScreenType.InsecureChannelDetected
-            is ErrorType.Expired -> ErrorScreenType.Expired
-            is ErrorType.OtherDeviceAlreadySignedIn -> ErrorScreenType.UnknownError
         }
-        // It is OK to push on backstack, since when user leaves the error screen, a new root will be set,
-        // or the whole flow will be popped.
+        // 直接压栈错误页即可，退出错误页时会重置为新根
         backstack.push(NavTarget.Error(error))
     }
 
@@ -207,10 +218,12 @@ class LinkNewDeviceFlowNode(
             NavTarget.Root -> {
                 val callback = object : LinkNewDeviceRootNode.Callback {
                     override fun onDone() {
+                        // 根页完成，直接透传到入口回调
                         callback.onDone()
                     }
 
                     override fun linkDesktopDevice() {
+                        // 切到桌面端流程前先重置处理器
                         linkNewDesktopHandler.reset()
                         backstack.push(NavTarget.DesktopNotice)
                     }
@@ -220,10 +233,12 @@ class LinkNewDeviceFlowNode(
             NavTarget.DesktopNotice -> {
                 val callback = object : DesktopNoticeNode.Callback {
                     override fun navigateBack() {
+                        // 返回上一层
                         backstack.pop()
                     }
 
                     override fun navigateToQrCodeScanner() {
+                        // 进入桌面端扫码页
                         backstack.push(NavTarget.DesktopScanQrCode)
                     }
                 }
@@ -232,6 +247,7 @@ class LinkNewDeviceFlowNode(
             NavTarget.DesktopScanQrCode -> {
                 val callback = object : ScanQrCodeNode.Callback {
                     override fun cancel() {
+                        // 取消扫码，回到上一页
                         backstack.pop()
                     }
                 }
@@ -240,10 +256,12 @@ class LinkNewDeviceFlowNode(
             NavTarget.MobileEnterNumber -> {
                 val callback = object : EnterNumberNode.Callback {
                     override fun navigateToWrongNumberError() {
+                        // 输入校验码错误，展示不匹配错误页
                         backstack.push(NavTarget.Error(ErrorScreenType.Mismatch2Digits))
                     }
 
                     override fun navigateBack() {
+                        // 返回上一层
                         backstack.pop()
                     }
                 }
@@ -252,6 +270,7 @@ class LinkNewDeviceFlowNode(
             is NavTarget.MobileShowQrCode -> {
                 val callback = object : ShowQrCodeNode.Callback {
                     override fun navigateBack() {
+                        // 退出二维码页时重置移动端处理器
                         linkNewMobileHandler.reset()
                         backstack.pop()
                     }
@@ -264,15 +283,10 @@ class LinkNewDeviceFlowNode(
             is NavTarget.Error -> {
                 val callback = object : ErrorNode.Callback {
                     override fun onRetry() {
+                        // 重试时清空两个处理器并回到根页
                         linkNewMobileHandler.reset()
                         linkNewDesktopHandler.reset()
                         backstack.newRoot(NavTarget.Root)
-                    }
-
-                    override fun onCancel() {
-                        linkNewMobileHandler.reset()
-                        linkNewDesktopHandler.reset()
-                        callback.onDone()
                     }
                 }
                 createNode<ErrorNode>(buildContext, listOf(callback, navTarget.errorScreenType))
@@ -281,15 +295,18 @@ class LinkNewDeviceFlowNode(
     }
 
     private fun navigateToBrowser(url: String) {
+        // 使用自定义标签页打开验证链接
         activity?.openUrlInChromeCustomTab(null, darkTheme, url)
     }
 
     @Composable
     override fun View(modifier: Modifier) {
+        // 记录 Activity 引用和当前主题，用于打开浏览器
         activity = requireNotNull(LocalActivity.current)
         darkTheme = !ElementTheme.isLightTheme
         DisposableEffect(Unit) {
             onDispose {
+                // 避免持有失效的 Activity
                 activity = null
             }
         }

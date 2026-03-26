@@ -23,6 +23,15 @@ import io.element.android.libraries.matrix.api.media.isPreviewEnabled
 import io.element.android.libraries.matrix.api.room.BaseRoom
 import kotlinx.collections.immutable.toImmutableSet
 
+/**
+ * 时间线保护 Presenter
+ *
+ * 负责处理时间线内容保护的业务逻辑和状态管理。
+ * 根据媒体预览设置控制内容的显示。
+ *
+ * @property mediaPreviewService 媒体预览服务
+ * @property room 房间
+ */
 @Inject
 class TimelineProtectionPresenter(
     private val mediaPreviewService: MediaPreviewService,
@@ -30,6 +39,11 @@ class TimelineProtectionPresenter(
 ) : Presenter<TimelineProtectionState> {
     private val allowedEvents = mutableStateOf<Set<EventId>>(setOf())
 
+    /**
+     * 生成界面状态
+     *
+     * @return TimelineProtectionState 时间线保护状态
+     */
     @Composable
     override fun present(): TimelineProtectionState {
         val mediaPreviewValue = remember {
@@ -47,6 +61,11 @@ class TimelineProtectionPresenter(
             }
         }
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 时间线保护事件
+         */
         fun handleEvent(event: TimelineProtectionEvent) {
             when (event) {
                 is TimelineProtectionEvent.ShowContent -> {

@@ -31,17 +31,41 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * 举报消息Presenter
+ *
+ * 负责管理举报消息界面的业务逻辑，包括：
+ * - 收集用户输入的举报原因
+ * - 处理是否屏蔽用户的选项
+ * - 执行举报内容操作并更新界面状态
+ *
+ * @property room 已加入的房间实例，用于调用Matrix SDK的举报API
+ * @property inputs 举报所需的输入参数，包括事件ID和发送者ID
+ * @property snackbarDispatcher 提示信息分发器，用于显示操作结果
+ */
 @AssistedInject
 class ReportMessagePresenter(
     private val room: JoinedRoom,
     @Assisted private val inputs: Inputs,
     private val snackbarDispatcher: SnackbarDispatcher,
 ) : Presenter<ReportMessageState> {
+    /**
+     * 举报消息Presenter的输入参数
+     *
+     * @property eventId 要举报的消息事件ID
+     * @property senderId 消息发送者的用户ID
+     */
     data class Inputs(
         val eventId: EventId,
         val senderId: UserId,
     )
 
+    /**
+     * Presenter工厂接口
+     *
+     * 用于创建ReportMessagePresenter实例的工厂方法，
+     * 配合依赖注入框架使用。
+     */
     @AssistedFactory
     interface Factory {
         fun create(inputs: Inputs): ReportMessagePresenter
@@ -54,12 +78,12 @@ class ReportMessagePresenter(
         var blockUser by rememberSaveable { mutableStateOf(false) }
         var result: MutableState<AsyncAction<Unit>> = remember { mutableStateOf(AsyncAction.Uninitialized) }
 
-        fun handleEvent(event: ReportMessageEvent) {
+        fun handleEvent(event: ReportMessageEvents) {
             when (event) {
-                is ReportMessageEvent.UpdateReason -> reason = event.reason
-                ReportMessageEvent.ToggleBlockUser -> blockUser = !blockUser
-                ReportMessageEvent.Report -> coroutineScope.report(inputs.eventId, inputs.senderId, reason, blockUser, result)
-                ReportMessageEvent.ClearError -> result.value = AsyncAction.Uninitialized
+                is ReportMessageEvents.UpdateReason -> reason = event.reason
+                ReportMessageEvents.ToggleBlockUser -> blockUser = !blockUser
+                ReportMessageEvents.Report -> coroutineScope.report(inputs.eventId, inputs.senderId, reason, blockUser, result)
+                ReportMessageEvents.ClearError -> result.value = AsyncAction.Uninitialized
             }
         }
 

@@ -109,7 +109,6 @@
   <string name="action_invite_people_to_app">"Pozvať ľudí do %1$s"</string>
   <string name="action_invites_list">"Pozvánky"</string>
   <string name="action_join">"Pripojiť sa"</string>
-  <string name="action_learn_more">"Zistiť viac"</string>
   <string name="action_leave">"Opustiť"</string>
   <string name="action_leave_conversation">"Opustiť konverzáciu"</string>
   <string name="action_leave_room">"Opustiť miestnosť"</string>
@@ -396,7 +395,7 @@ Dôvod: %1$s."</string>
   <string name="common_waiting_for_decryption_key">"Čaká sa na dešifrovací kľúč"</string>
   <string name="common_you">"Vy"</string>
   <string name="crypto_event_key_forwarded_known_profile_dialog_content">"%1$s (%2$s ) zdieľal túto správu v čase, keď ste neboli v miestnosti, keď bola odoslaná."</string>
-  <string name="crypto_event_key_forwarded_unknown_profile_dialog_content">"%1$s zdieľal túto správu v čase, keď ste neboli v miestnosti, keď bola odoslaná."</string>
+  <string name="crypto_event_key_forwarded_unknown_profile_dialog_content">"%1$s  zdieľal túto správu v čase, keď ste neboli v miestnosti, keď bola odoslaná."</string>
   <string name="crypto_history_visible">"Táto miestnosť bola nakonfigurovaná tak, aby si noví členovia mohli prečítať históriu. %1$s"</string>
   <string name="crypto_identity_change_pin_violation">"Totožnosť používateľa %1$s sa obnovila.%2$s"</string>
   <string name="crypto_identity_change_pin_violation_new">"Totožnosť používateľa %1$s %2$s bola obnovená. %3$s"</string>
@@ -504,4 +503,9 @@ Naozaj chcete pokračovať?"</string>
   <string name="timeline_decryption_failure_historical_event_user_not_joined">"Nemáte prístup k tejto správe"</string>
   <string name="timeline_decryption_failure_unable_to_decrypt">"Správu sa nepodarilo dešifrovať"</string>
   <string name="timeline_decryption_failure_withheld_unverified">"Táto správa bola zablokovaná buď preto, že ste neoverili svoje zariadenie, alebo preto, že odosielateľ potrebuje overiť vašu totožnosť."</string>
+  <string name="common_call_ended">"Hovor ukončený"</string>
+  <string name="action_start_call">"Začať hovor"</string>
+  <string name="screen_roomlist_empty_no_call_title">"Žiadne hovory"</string>
+  <string name="screen_group_roomlist_empty_no_call_title">"Zostaňte v kontakte s komunitami"</string>
+  <string name="action_create_community">"Vytvoriť komunitu"</string>
 </resources>

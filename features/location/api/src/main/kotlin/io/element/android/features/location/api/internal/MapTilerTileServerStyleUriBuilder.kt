@@ -12,10 +12,24 @@ package io.element.android.features.location.api.internal
 
 import io.element.android.features.location.api.BuildConfig
 
+/**
+ * MapTiler 瓦片服务器样式 URI 构建器
+ *
+ * 用于构建 MapLibre 兼容的地图瓦片服务器样式 URI。
+ *
+ * @property baseUrl MapTiler API 基础 URL
+ * @property apiKey MapTiler API 密钥
+ * @property lightMapId 浅色地图样式 ID
+ * @property darkMapId 深色地图样式 ID
+ */
 internal class MapTilerTileServerStyleUriBuilder(
+    /** MapTiler API 基础 URL */
     private val baseUrl: String,
+    /** MapTiler API 密钥 */
     private val apiKey: String,
+    /** 浅色地图样式 ID */
     private val lightMapId: String,
+    /** 深色地图样式 ID */
     private val darkMapId: String,
 ) : TileServerStyleUriBuilder {
     constructor() : this(

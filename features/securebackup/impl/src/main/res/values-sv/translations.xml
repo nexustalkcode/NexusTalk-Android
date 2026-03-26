@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_chat_backup_key_backup_action_disable">"Stäng av säkerhetskopiering"</string>
   <string name="screen_chat_backup_key_backup_action_enable">"Slå på säkerhetskopiering"</string>
-  <string name="screen_chat_backup_key_backup_description">"Lagra din kryptografiska identitet och dina meddelandenycklar säkert på servern. Detta gör att du kan se din meddelandehistorik på alla nya enheter. %1$s."</string>
+  <string name="screen_chat_backup_key_backup_description">"Lagra din kryptografiska identitet och dina meddelandenycklar säkert på servern. Detta gör att du kan se din meddelandehistorik på alla nya enheter. %1$s"</string>
   <string name="screen_chat_backup_key_backup_title">"Nyckellagring"</string>
   <string name="screen_chat_backup_key_storage_disabled_error">"Nyckellagring måste vara aktiverat för att konfigurera återställning."</string>
   <string name="screen_chat_backup_key_storage_toggle_description">"Ladda upp nycklar från den här enheten"</string>

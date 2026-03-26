@@ -41,7 +41,18 @@ import io.element.android.libraries.designsystem.theme.components.Scaffold
 import io.element.android.libraries.designsystem.theme.components.TopAppBar
 
 /**
- * https://www.figma.com/file/o9p34zmiuEpZRyvZXJZAYL/FTUE?type=design&node-id=604-60817
+ * 更改账户提供商视图组件
+ *
+ * 用于显示账户提供商列表和选择界面的可组合组件。
+ * 展示预设的服务器选项，以及搜索其他服务器的入口。
+ *
+ * @param state 更改账户提供商状态
+ * @param onBackClick 返回按钮点击回调
+ * @param onLearnMoreClick 了解更多按钮点击回调
+ * @param onSuccess 成功选择服务器后的回调
+ * @param onOtherProviderClick 点击"其他服务器"选项的回调
+ * @param modifier 修饰符
+ * @see <a href="https://www.figma.com/file/o9p34zmiuEpZRyvZXJZAYL/FTUE?type=design&node-id=604-60817">Figma 设计稿</a>
  */
 @Composable
 fun ChangeAccountProviderView(

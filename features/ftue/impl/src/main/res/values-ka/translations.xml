@@ -9,4 +9,9 @@
   <string name="screen_notification_optin_subtitle">"თქვენ შეგიძლიათ შეცვალოთ თქვენი პარამეტრები მოგვიანებით."</string>
   <string name="screen_notification_optin_title">"ყველა შეტყობინებაზე შეტყობინებების მიღება"</string>
   <string name="screen_session_verification_enter_recovery_key">"შეიყვანეთ აღდგენის გასაღები"</string>
+  <string name="screen_welcome_agreement">"ღილაკზე დაჭერით თანხმობა და გაგრძელება, თანხმდებით ჩვენ %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"კონფიდენციალურობის პოლიტიკა"</string>
+  <string name="screen_welcome_title">"კეთილი იყოს თქვენი მობრძანება %s"</string>
+  <string name="screen_welcome_privacy_notice">"გთხოვთ, წაიკითხეთ ჩვენი კონფიდენციალურობის პოლიტიკა"</string>
+  <string name="screen_welcome_agree">"თანხმობა"</string>
 </resources>

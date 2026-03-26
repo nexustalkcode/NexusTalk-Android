@@ -16,6 +16,16 @@ import io.element.android.libraries.matrix.api.spaces.SpaceRoom
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableSet
 
+/**
+ * 安全与隐私状态提供者
+ *
+ * 用于在预览模式下提供各种状态的 SecurityAndPrivacyState 实例。
+ * 继承自 PreviewParameterProvider，用于 Compose 预览功能。
+ * 提供多种场景的状态，包括：正常状态、加密确认、保存中、保存失败等。
+ *
+ * @see SecurityAndPrivacyState 页面状态
+ * @see PreviewParameterProvider 预览参数提供者基类
+ */
 open class SecurityAndPrivacyStateProvider : PreviewParameterProvider<SecurityAndPrivacyState> {
     override val values: Sequence<SecurityAndPrivacyState>
         get() = commonSecurityAndPrivacyStates(isSpace = false) +

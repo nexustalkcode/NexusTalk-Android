@@ -19,7 +19,7 @@ import java.io.Serializable
 @JvmInline
 value class UserId(val value: String) : Serializable {
     init {
-        if (isInDebug && !MatrixPatterns.isUserId(value) && false) {
+        if (isInDebug && !MatrixPatterns.isUserId(value)) {
             error("`$value` is not a valid user id.\nExample user id: `@name:domain`.")
         }
     }

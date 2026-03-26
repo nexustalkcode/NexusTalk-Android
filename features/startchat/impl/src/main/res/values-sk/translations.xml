@@ -9,4 +9,7 @@
   <string name="screen_start_chat_join_room_by_address_room_found">"Nájdená zodpovedajúca miestnosť"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Miestnosť sa nenašla"</string>
   <string name="screen_start_chat_join_room_by_address_supporting_text">"napr. #nazov-miestnosti:matrix.org"</string>
+  <string name="screen_scan_user_qr_code_title">"Naskenovať QR kód"</string>
+  <string name="screen_scan_user_qr_code_subtitle">"Naskenujte QR kód na pridanie kontaktu"</string>
+  <string name="screen_scan_user_qr_code_success">"QR kód bol úspešne naskenovaný"</string>
 </resources>

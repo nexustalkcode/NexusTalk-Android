@@ -8,6 +8,18 @@
 
 package io.element.android.features.licenses.impl.list
 
+/**
+ * 依赖项许可证列表事件密封接口
+ *
+ * 定义依赖项许可证列表界面中可能发生的用户交互事件。
+ *
+ * @see DependencyLicensesListEvent.SetFilter 设置过滤文本事件
+ */
 sealed interface DependencyLicensesListEvent {
+    /**
+     * 设置过滤文本事件
+     *
+     * @property filter 过滤文本
+     */
     data class SetFilter(val filter: String) : DependencyLicensesListEvent
 }

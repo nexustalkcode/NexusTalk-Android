@@ -22,11 +22,25 @@ import io.element.android.libraries.core.coroutine.mapState
 import io.element.android.libraries.matrix.api.encryption.EncryptionService
 import io.element.android.libraries.matrix.api.encryption.RecoveryState
 
+/**
+ * 选择自验证方式 Presenter
+ *
+ * 负责处理首次用户体验中选择会话验证方式的业务逻辑和状态管理。
+ * 确定用户可用的验证选项（使用另一台设备或输入恢复密钥）。
+ *
+ * @property encryptionService 加密服务
+ * @property directLogoutPresenter 直接退出登录 Presenter
+ */
 @Inject
 class ChooseSelfVerificationModePresenter(
     private val encryptionService: EncryptionService,
     private val directLogoutPresenter: Presenter<DirectLogoutState>,
 ) : Presenter<ChooseSelfVerificationModeState> {
+    /**
+     * 生成界面状态
+     *
+     * @return ChooseSelfVerificationModeState 选择自验证方式状态
+     */
     @Composable
     override fun present(): ChooseSelfVerificationModeState {
         val hasDevicesToVerifyAgainst by encryptionService.hasDevicesToVerifyAgainst.collectAsState()
@@ -60,6 +74,11 @@ class ChooseSelfVerificationModePresenter(
 
         val directLogoutState = directLogoutPresenter.present()
 
+        /**
+         * 处理用户事件
+         *
+         * @param event 选择自验证方式事件
+         */
         fun handleEvent(event: ChooseSelfVerificationModeEvent) {
             when (event) {
                 ChooseSelfVerificationModeEvent.SignOut -> directLogoutState.eventSink(DirectLogoutEvents.Logout(ignoreSdkError = false))

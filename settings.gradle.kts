@@ -21,25 +21,8 @@ dependencyResolutionManagement {
             url = uri("https://www.jitpack.io")
             content {
                 includeModule("com.github.matrix-org", "matrix-analytics-events")
-                includeModule("com.github.SchildiChat", "element-compound-android")
-                includeModule("com.github.beeper.matrix-messageformat-compose", "messageformat-android")
             }
         }
-        // SC forks of upstream Rust projects
-        maven {
-            url = uri("https://maven.spiritcroc.de")
-            content {
-                includeModule("chat.schildi.rustcomponents", "sdk-android")
-                includeModule("chat.schildi", "wysiwyg")
-                includeModule("chat.schildi", "wysiwyg-compose")
-            }
-        }
-        mavenLocal {
-            mavenContent {
-                includeModule("com.beeper.android.messageformat", "messageformat-android")
-            }
-        }
-        // SC forks end
         google()
         mavenCentral()
         maven {
@@ -53,16 +36,12 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "SchildiNext"
+rootProject.name = "ElementX"
 include(":app")
 include(":appnav")
 include(":appconfig")
 include(":appicon:element")
 include(":appicon:enterprise")
-include(":tests:detekt-rules")
-include(":tests:konsist")
-include(":tests:uitests")
-include(":tests:testutils")
 include(":annotations")
 include(":codegen")
 
@@ -85,4 +64,12 @@ includeProjects(File(rootDir, "enterprise"), ":enterprise", maxDepth = 2)
 includeProjects(File(rootDir, "features"), ":features")
 includeProjects(File(rootDir, "libraries"), ":libraries")
 includeProjects(File(rootDir, "services"), ":services")
-includeProjects(File(rootDir, "schildi"), ":schildi")
+
+// Uncomment to include the compound-android module as a local dependency so you can work on it locally.
+// You will also need to clone it in the specified folder.
+// includeBuild("checkouts/compound-android") {
+//    dependencySubstitution {
+//        // substitute remote dependency with local module
+//        substitute(module("io.element.android:compound-android")).using(project(":compound"))
+//    }
+// }

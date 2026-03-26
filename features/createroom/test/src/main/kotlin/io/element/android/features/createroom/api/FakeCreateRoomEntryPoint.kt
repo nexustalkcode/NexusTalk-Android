@@ -10,19 +10,25 @@ package io.element.android.features.createroom.api
 
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
-import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.tests.testutils.lambda.lambdaError
 
+/**
+ * 虚假的创建房间入口点实现
+ *
+ * 用于测试环境中的 Mock 实现。
+ * 任何调用 createNode 的操作都会抛出错误，用于验证是否正确绑定了真实实现。
+ */
 class FakeCreateRoomEntryPoint : CreateRoomEntryPoint {
-    class Builder : CreateRoomEntryPoint.Builder {
-        override fun setIsSpace(isSpace: Boolean): Builder = this
-        override fun setParentSpace(parentSpaceId: RoomId): Builder = this
-        override fun build(): Node = lambdaError()
-    }
-
-    override fun builder(
+    /**
+     * 创建节点（未实现）
+     *
+     * 此方法在测试中不应该被调用，如果被调用会抛出错误
+     */
+    override fun createNode(
+        isSpace: Boolean,
         parentNode: Node,
         buildContext: BuildContext,
         callback: CreateRoomEntryPoint.Callback,
-    ): Builder = lambdaError()
+        addPeopleCallback: CreateRoomEntryPoint.AddPeopleCallback?,
+    ): Node = lambdaError()
 }

@@ -15,6 +15,12 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.features.ftue.api.FtueEntryPoint
 import io.element.android.libraries.architecture.createNode
 
+/**
+ * FTUE 功能默认入口点实现类
+ *
+ * 该类是 FtueEntryPoint 接口的默认实现，负责创建首次用户体验流程的根节点。
+ * 使用 @ContributesBinding 注解将其绑定到 AppScope，使得其他模块可以通过依赖注入获取 FTUE 功能的入口。
+ */
 @ContributesBinding(AppScope::class)
 class DefaultFtueEntryPoint : FtueEntryPoint {
     override fun createNode(parentNode: Node, buildContext: BuildContext): Node {

@@ -23,11 +23,26 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 拒绝并封禁节点
+ *
+ * 表示拒绝邀请并封禁用户功能的界面节点。
+ * 继承自 Node，处理用户拒绝邀请并可选封禁的交互。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property presenterFactory Presenter 工厂
+ */
 class DeclineAndBlockNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     presenterFactory: DeclineAndBlockPresenter.Factory,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 节点输入数据类
+     *
+     * 定义了 DeclineAndBlockNode 需要的输入数据。
+     */
     data class Inputs(val inviteData: InviteData) : NodeInputs
 
     private val inviteData = inputs<Inputs>().inviteData

@@ -6,6 +6,17 @@
  * Please see LICENSE files in the repository root for full details.
  */
 
+/**
+ * 页眉页脚页面组件
+ *
+ * 用于构建通用页面的基础组件。
+ * 包含顶部栏（可选）、页眉（可选）、主体内容和页脚（可选）。
+ * 主体内容支持滚动，是页面布局的基础骨架。
+ *
+ * @author Element Creations Ltd.
+ * @version 1.0.0
+ * @since 2025-01-01
+ */
 package io.element.android.libraries.designsystem.atomic.pages
 
 import androidx.compose.foundation.layout.Box
@@ -36,15 +47,39 @@ import io.element.android.libraries.designsystem.theme.components.Scaffold
 import io.element.android.libraries.designsystem.theme.components.Text
 
 /**
- * @param modifier Classical modifier.
- * @param contentPadding padding values to apply to the content.
- * @param containerColor color of the container. Set to [Color.Transparent] if you provide a background in the [modifier].
- * @param isScrollable if the whole content should be scrollable.
- * @param background optional background component.
- * @param topBar optional topBar.
- * @param header optional header.
- * @param footer optional footer.
- * @param content main content.
+ * 页眉页脚页面组件
+ *
+ * 创建一个标准页面布局，包含顶部栏、页眉、主体内容和页脚。
+ * 支持内容滚动和窗口边距处理。
+ *
+ * @param modifier Modifier 修饰符，用于自定义组件的布局和样式，默认为 Modifier
+ * @param contentPadding PaddingValues 内容区域内边距，默认为 PaddingValues(20.dp)
+ * @param containerColor Color 容器背景颜色，默认为 [ElementTheme.colors.bgCanvasDefault]
+ * @param isScrollable Boolean 内容是否可滚动，默认为 false
+ * @param background @Composable () -> Unit 可选的背景组件
+ * @param topBar @Composable () -> Unit 可选的顶部栏组件
+ * @param header @Composable () -> Unit 可选的页眉组件
+ * @param footer @Composable () -> Unit 可选的页脚组件
+ * @param content @Composable () -> Unit 页面主体内容
+ *
+ * @return Unit
+ *
+ * @see [Scaffold] 脚手架组件
+ *
+ * @example
+ * ```kotlin
+ * HeaderFooterPage(
+ *     header = {
+ *         Text("页面标题")
+ *     },
+ *     content = {
+ *         // 页面内容
+ *     },
+ *     footer = {
+ *         Button("提交")
+ *     }
+ * )
+ * ```
  */
 @Suppress("NAME_SHADOWING")
 @Composable
@@ -128,6 +163,12 @@ fun HeaderFooterPage(
     }
 }
 
+/**
+ * HeaderFooterPage 预览组件
+ *
+ * 用于在设计预览中展示 HeaderFooterPage 组件的默认状态。
+ * 此预览函数支持日夜两种主题模式。
+ */
 @PreviewsDayNight
 @Composable
 internal fun HeaderFooterPagePreview() = ElementPreview {
@@ -170,6 +211,12 @@ internal fun HeaderFooterPagePreview() = ElementPreview {
     )
 }
 
+/**
+ * HeaderFooterPage 可滚动预览组件
+ *
+ * 用于在设计预览中展示 HeaderFooterPage 组件的可滚动状态。
+ * 此预览函数支持日夜两种主题模式。
+ */
 @PreviewsDayNight
 @Composable
 internal fun HeaderFooterPageScrollablePreview() = ElementPreview {

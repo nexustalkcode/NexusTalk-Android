@@ -13,4 +13,9 @@
   <string name="screen_notification_optin_subtitle">"Podes alterar as tuas definições mais tarde."</string>
   <string name="screen_notification_optin_title">"Permite as notificações e nunca percas uma mensagem"</string>
   <string name="screen_session_verification_enter_recovery_key">"Insere a chave de recuperação"</string>
+  <string name="screen_welcome_agreement">"Ao tocar em Concordo e Continuar, aceita os nossos %s"</string>
+  <string name="screen_welcome_privacy_policy_link">"Política de Privacidade"</string>
+  <string name="screen_welcome_title">"Bem-vindo ao %s"</string>
+  <string name="screen_welcome_privacy_notice">"Por favor, lê a nossa Política de Privacidade"</string>
+  <string name="screen_welcome_agree">"Concordo"</string>
 </resources>

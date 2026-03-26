@@ -8,22 +8,26 @@
 
 package io.element.android.features.home.impl.filters
 
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.moleculeFlow
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.home.impl.filters.selection.DefaultFilterSelectionStrategy
 import io.element.android.features.home.impl.filters.selection.FilterSelectionState
+import io.element.android.libraries.matrix.api.roomlist.RoomListService
+import io.element.android.libraries.matrix.test.roomlist.FakeRoomListService
 import io.element.android.tests.testutils.awaitLastSequentialItem
-import io.element.android.tests.testutils.test
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import io.element.android.libraries.matrix.api.roomlist.RoomListFilter as MatrixRoomListFilter
 
 class RoomListFiltersPresenterTest {
     @Test
     fun `present - initial state`() = runTest {
         val presenter = createRoomListFiltersPresenter()
-        presenter.test {
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
             awaitItem().let { state ->
                 assertThat(state.hasAnyFilterSelected).isFalse()
                 assertThat(state.filterSelectionStates).containsExactly(
@@ -39,12 +43,15 @@ class RoomListFiltersPresenterTest {
     }
 
     @Test
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun `present - toggle rooms filter`() = runTest {
-        val presenter = createRoomListFiltersPresenter()
-        presenter.test {
-            awaitItem().eventSink.invoke(RoomListFiltersEvent.ToggleFilter(RoomListFilter.Rooms))
+        val roomListService = FakeRoomListService()
+        val presenter = createRoomListFiltersPresenter(roomListService)
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
+            awaitItem().eventSink.invoke(RoomListFiltersEvents.ToggleFilter(RoomListFilter.Rooms))
             awaitLastSequentialItem().let { state ->
+
                 assertThat(state.hasAnyFilterSelected).isTrue()
                 assertThat(state.filterSelectionStates).containsExactly(
                     filterSelectionState(RoomListFilter.Rooms, true),
@@ -55,9 +62,12 @@ class RoomListFiltersPresenterTest {
                 assertThat(state.selectedFilters()).containsExactly(
                     RoomListFilter.Rooms,
                 )
-                state.eventSink.invoke(RoomListFiltersEvent.ToggleFilter(RoomListFilter.Rooms))
+                val roomListCurrentFilter = roomListService.allRooms.currentFilter.value as MatrixRoomListFilter.All
+                assertThat(roomListCurrentFilter.filters).containsExactly(
+                    MatrixRoomListFilter.Category.Group,
+                )
+                state.eventSink.invoke(RoomListFiltersEvents.ToggleFilter(RoomListFilter.Rooms))
             }
-            advanceUntilIdle()
             awaitLastSequentialItem().let { state ->
                 assertThat(state.hasAnyFilterSelected).isFalse()
                 assertThat(state.filterSelectionStates).containsExactly(
@@ -68,21 +78,24 @@ class RoomListFiltersPresenterTest {
                     filterSelectionState(RoomListFilter.Invites, false),
                 ).inOrder()
                 assertThat(state.selectedFilters()).isEmpty()
+                val roomListCurrentFilter = roomListService.allRooms.currentFilter.value as MatrixRoomListFilter.All
+                assertThat(roomListCurrentFilter.filters).isEmpty()
             }
         }
     }
 
     @Test
-    @OptIn(ExperimentalCoroutinesApi::class)
     fun `present - clear filters event`() = runTest {
-        val presenter = createRoomListFiltersPresenter()
-        presenter.test {
-            awaitItem().eventSink.invoke(RoomListFiltersEvent.ToggleFilter(RoomListFilter.Rooms))
+        val roomListService = FakeRoomListService()
+        val presenter = createRoomListFiltersPresenter(roomListService)
+        moleculeFlow(RecompositionMode.Immediate) {
+            presenter.present()
+        }.test {
+            awaitItem().eventSink.invoke(RoomListFiltersEvents.ToggleFilter(RoomListFilter.Rooms))
             awaitLastSequentialItem().let { state ->
                 assertThat(state.hasAnyFilterSelected).isTrue()
-                state.eventSink.invoke(RoomListFiltersEvent.ClearSelectedFilters)
+                state.eventSink.invoke(RoomListFiltersEvents.ClearSelectedFilters)
             }
-            advanceUntilIdle()
             awaitLastSequentialItem().let { state ->
                 assertThat(state.hasAnyFilterSelected).isFalse()
             }
@@ -95,8 +108,11 @@ private fun filterSelectionState(filter: RoomListFilter, selected: Boolean) = Fi
     isSelected = selected,
 )
 
-private fun TestScope.createRoomListFiltersPresenter(): RoomListFiltersPresenter {
+private fun createRoomListFiltersPresenter(
+    roomListService: RoomListService = FakeRoomListService(),
+): RoomListFiltersPresenter {
     return RoomListFiltersPresenter(
+        roomListService = roomListService,
         filterSelectionStrategy = DefaultFilterSelectionStrategy(),
     )
 }

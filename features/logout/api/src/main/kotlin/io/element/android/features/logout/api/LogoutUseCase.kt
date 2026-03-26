@@ -9,12 +9,14 @@
 package io.element.android.features.logout.api
 
 /**
- * Used to trigger a log out of the current user(s) from any part of the app.
+ * 用于从应用的任何位置触发当前用户退出登录的用例接口
+ *
+ * 此接口定义了退出登录的核心业务逻辑，允许应用的不同模块统一触发退出登录操作。
  */
 interface LogoutUseCase {
     /**
-     * Log out the current user(s) and then perform any needed cleanup tasks.
-     * @param ignoreSdkError if true, the SDK error will be ignored and the user will be logged out anyway.
+     * 退出当前所有用户登录，并执行所需的清理任务
+     * @param ignoreSdkError 如果为 true，则忽略 SDK 错误，用户仍将被强制退出登录
      */
     suspend fun logoutAll(ignoreSdkError: Boolean)
 }

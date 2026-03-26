@@ -10,4 +10,9 @@ package io.element.android.features.ftue.api
 
 import io.element.android.libraries.architecture.SimpleFeatureEntryPoint
 
+/**
+ * 首次用户体验（FTUE）功能入口点接口
+ *
+ * 定义了首次用户体验（新用户引导）功能的入口接口。
+ */
 interface FtueEntryPoint : SimpleFeatureEntryPoint

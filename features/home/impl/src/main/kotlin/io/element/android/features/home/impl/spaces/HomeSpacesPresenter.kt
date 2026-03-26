@@ -25,6 +25,15 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.flow.map
 
+/**
+ * 首页空间 Presenter
+ *
+ * 负责处理空间导航的业务逻辑，管理当前空间、空间列表、邀请状态等功能。
+ *
+ * @property client Matrix 客户端
+ * @property seenInvitesStore 已查看邀请存储
+ * @property featureFlagsService 功能标志服务
+ */
 @Inject
 class HomeSpacesPresenter(
     private val client: MatrixClient,
@@ -36,7 +45,7 @@ class HomeSpacesPresenter(
         val canCreateSpaces by featureFlagsService.isFeatureEnabledFlow(FeatureFlags.CreateSpaces).collectAsState(false)
         val hideInvitesAvatar by client.rememberHideInvitesAvatar()
         val spaceRooms by remember {
-            client.spaceService.topLevelSpacesFlow.map { it.toImmutableList() }
+            client.spaceService.spaceRoomsFlow.map { it.toImmutableList() }
         }.collectAsState(persistentListOf())
 
         val seenSpaceInvites by remember {
@@ -53,7 +62,7 @@ class HomeSpacesPresenter(
             seenSpaceInvites = seenSpaceInvites,
             hideInvitesAvatar = hideInvitesAvatar,
             canCreateSpaces = canCreateSpaces,
-            // TODO enable once we can link to the screen to explore public spaces
+            // TODO 一旦我们可以链接到探索公共空间的屏幕，就启用此功能
             canExploreSpaces = false,
             eventSink = ::handleEvent,
         )

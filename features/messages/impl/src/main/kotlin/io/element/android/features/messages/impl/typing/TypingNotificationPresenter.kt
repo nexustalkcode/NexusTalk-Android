@@ -32,11 +32,25 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+/**
+ * 打字通知 Presenter
+ *
+ * 负责处理房间成员打字通知的业务逻辑和状态管理。
+ * 监听房间成员的输入状态并提供显示通知的数据。
+ *
+ * @property room 已加入的房间
+ * @property sessionPreferencesStore 会话偏好设置存储
+ */
 @Inject
 class TypingNotificationPresenter(
     private val room: JoinedRoom,
     private val sessionPreferencesStore: SessionPreferencesStore,
 ) : Presenter<TypingNotificationState> {
+    /**
+     * 生成界面状态
+     *
+     * @return TypingNotificationState 打字通知状态
+     */
     @Composable
     override fun present(): TypingNotificationState {
         val renderTypingNotifications by remember {
@@ -50,7 +64,7 @@ class TypingNotificationPresenter(
             }
         }
 
-        // This will keep the space reserved for the typing notifications after the first one is displayed
+        // 在显示第一个打字通知后保留打字通知的空间
         var reserveSpace by remember { mutableStateOf(false) }
         LaunchedEffect(renderTypingNotifications, typingMembersState) {
             if (renderTypingNotifications && typingMembersState.isNotEmpty()) {
@@ -65,6 +79,11 @@ class TypingNotificationPresenter(
         )
     }
 
+    /**
+     * 观察房间中正在打字的成员
+     *
+     * @receiver ProduceStateScope 状态作用域
+     */
     private fun ProduceStateScope<ImmutableList<TypingRoomMember>>.observeRoomTypingMembers() {
         combine(room.roomTypingMembersFlow, room.membersStateFlow) { typingMembers, membersState ->
             typingMembers
@@ -83,12 +102,14 @@ class TypingNotificationPresenter(
     }
 }
 
+/** 将房间成员转换为打字房间成员 */
 private fun RoomMember.toTypingRoomMember(): TypingRoomMember {
     return TypingRoomMember(
         disambiguatedDisplayName = disambiguatedDisplayName,
     )
 }
 
+/** 为打字通知创建默认房间成员 */
 private fun createDefaultRoomMemberForTyping(userId: UserId): TypingRoomMember {
     return TypingRoomMember(
         disambiguatedDisplayName = userId.value,

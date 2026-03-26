@@ -42,6 +42,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 编辑用户资料 Presenter
+ *
+ * 负责处理编辑用户资料页面的业务逻辑，包括：
+ * - 获取和显示当前用户资料
+ * - 处理头像选择和相机拍照
+ * - 更新用户显示名称
+ * - 保存用户资料更改
+ *
+ * @property matrixUser 当前 Matrix 用户
+ * @property navigator 编辑用户资料导航器
+ * @property matrixClient Matrix 客户端
+ * @property mediaPickerProvider 媒体选择器提供者
+ * @property mediaPreProcessor 媒体预处理器
+ * @property temporaryUriDeleter 临时 URI 删除器
+ * @property mediaOptimizationConfigProvider 媒体优化配置提供者
+ * @property permissionsPresenterFactory 权限 Presenter 工厂
+ * @see EditUserProfileState 编辑用户资料状态
+ */
 @AssistedInject
 class EditUserProfilePresenter(
     @Assisted private val matrixUser: MatrixUser,
@@ -197,7 +216,13 @@ class EditUserProfilePresenter(
                     Timber.e(it, "Failed to update user's avatar")
                 })
             }
-            if (results.all { it.isSuccess }) Unit else results.first { it.isFailure }.getOrThrow()
+            if (results.all { it.isSuccess }) {
+                // Ensure userProfile flow is refreshed after successful updates
+                matrixClient.getUserProfile().getOrNull()
+                Unit
+            } else {
+                results.first { it.isFailure }.getOrThrow()
+            }
         }.runCatchingUpdatingState(action)
     }
 

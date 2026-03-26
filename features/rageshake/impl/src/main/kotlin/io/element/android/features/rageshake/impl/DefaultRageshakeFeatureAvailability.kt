@@ -15,10 +15,24 @@ import io.element.android.features.rageshake.impl.reporter.BugReporterUrlProvide
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * 默认摇一摇功能可用性实现
+ *
+ * 通过检查问题报告URL是否配置来确定功能是否可用。
+ *
+ * @property bugReporterUrlProvider 问题报告URL提供者
+ */
 @ContributesBinding(AppScope::class)
 class DefaultRageshakeFeatureAvailability(
     private val bugReporterUrlProvider: BugReporterUrlProvider,
 ) : RageshakeFeatureAvailability {
+    /**
+     * 检查功能是否可用
+     *
+     * 根据问题报告URL是否配置来返回功能可用性。
+     *
+     * @return Flow<Boolean> 功能可用性的布尔值流
+     */
     override fun isAvailable(): Flow<Boolean> {
         return bugReporterUrlProvider.provide()
             .map { it != null }

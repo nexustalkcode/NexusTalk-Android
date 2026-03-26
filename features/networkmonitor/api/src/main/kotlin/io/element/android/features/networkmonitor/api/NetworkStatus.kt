@@ -9,18 +9,23 @@
 package io.element.android.features.networkmonitor.api
 
 /**
- * Network connectivity status of the device.
+ * 网络连接状态枚举
  *
- * **Note:** this is *network* connectivity status, not *internet* connectivity status.
+ * 表示设备的网络连接状态。
+ *
+ * **注意：** 这是网络连接状态，不是互联网连接状态。
+ *
+ * @see NetworkStatus.Connected 已连接
+ * @see NetworkStatus.Disconnected 断开连接
  */
 enum class NetworkStatus {
     /**
-     * The device is connected to a network.
+     * 设备已连接到网络
      */
     Connected,
 
     /**
-     * The device is not connected to any networks.
+     * 设备未连接到任何网络
      */
     Disconnected
 }

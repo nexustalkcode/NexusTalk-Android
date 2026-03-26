@@ -43,12 +43,14 @@ class LinkNewDesktopHandler(
     private var handler: LinkDesktopHandler? = null
 
     fun createNewHandler() {
+        // 创建前先取消旧任务，避免重复监听
         currentJob?.cancel()
         currentJob = null
         handler = matrixClient.createLinkDesktopHandler().getOrNull()
     }
 
     fun reset() {
+        // 重置状态并清理当前任务
         currentJob?.cancel()
         currentJob = null
         sessionScope.launch {
@@ -57,16 +59,20 @@ class LinkNewDesktopHandler(
     }
 
     fun onScannedCode(data: ByteArray) {
+        // 扫码后触发桌面端流程
         currentJob?.cancel()
         currentJob = null
         val currentHandler = handler
         if (currentHandler == null) {
+            // 未初始化时给出日志提示
             Timber.tag(loggerTag.value).e("onScannedCode: Handler is not initialized. Call createNewHandler() first.")
         } else {
             currentJob = matrixClient.sessionCoroutineScope.launch {
+                // 监听流程状态并转发到 UI
                 currentHandler.linkDesktopStep.onEach {
                     linkDesktopStepFlow.emit(it)
                 }.launchIn(this)
+                // 处理二维码内容，启动配对流程
                 currentHandler.handleScannedQrCode(data)
             }
         }

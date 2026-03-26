@@ -20,7 +20,6 @@ import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import com.bumble.appyx.core.plugin.Plugin
 import com.bumble.appyx.navmodel.backstack.BackStack
-import com.bumble.appyx.navmodel.backstack.operation.pop
 import com.bumble.appyx.navmodel.backstack.operation.push
 import com.bumble.appyx.navmodel.backstack.operation.singleTop
 import dev.zacsweers.metro.AppScope
@@ -54,6 +53,18 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 登录流程节点
+ *
+ * Appyx FlowNode，管理整个登录流程的导航和状态。
+ * 包含从初始页面到各种登录方式（二维码、密码、OIDC等）的完整登录流程。
+ *
+ * @property buildContext 构建上下文
+ * @property plugins 插件列表
+ * @property accountProviderDataSource 账户提供商数据源
+ * @property oidcActionFlow OIDC 操作流程
+ * @property appCoroutineScope 应用协程作用域
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class LoginFlowNode(
@@ -71,6 +82,12 @@ class LoginFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 节点参数
+     *
+     * @property accountProvider 账户提供商 URL
+     * @property loginHint 登录提示
+     */
     data class Params(
         val accountProvider: String?,
         val loginHint: String?,
@@ -88,10 +105,9 @@ class LoginFlowNode(
             onResume = {
                 if (externalAppStarted) {
                     externalAppStarted = false
-                    // Workaround to detect that the Custom Chrome Tab has been closed
-                    // If there is no coming OidcAction (that would end this Node),
-                    // consider that the user has cancelled the login
-                    // by pressing back or by closing the Custom Chrome Tab.
+                    // 检测自定义 Chrome 标签页是否已关闭的解决方案
+                    // 如果没有即将执行的 OIDC 操作（这将结束此节点），
+                    // 则认为用户通过按返回或关闭自定义 Chrome 标签页取消了登录
                     lifecycleScope.launch {
                         delay(5000)
                         oidcActionFlow.post(OidcAction.GoBack(toUnblock = true))
@@ -101,30 +117,43 @@ class LoginFlowNode(
         )
     }
 
+    /**
+     * 导航目标密封接口
+     *
+     * 定义登录流程中的各个页面目标。
+     */
     sealed interface NavTarget : Parcelable {
+        /** 初始页面 */
         @Parcelize
         data object OnBoarding : NavTarget
 
+        /** 二维码登录页面 */
         @Parcelize
         data object QrCode : NavTarget
 
+        /** 确认账户提供商页面 */
         @Parcelize
         data class ConfirmAccountProvider(
             val isAccountCreation: Boolean,
         ) : NavTarget
 
+        /** 选择账户提供商页面 */
         @Parcelize
         data object ChooseAccountProvider : NavTarget
 
+        /** 更改账户提供商页面 */
         @Parcelize
         data object ChangeAccountProvider : NavTarget
 
+        /** 搜索账户提供商页面 */
         @Parcelize
         data object SearchAccountProvider : NavTarget
 
+        /** 登录密码页面 */
         @Parcelize
         data object LoginPassword : NavTarget
 
+        /** 创建账户页面 */
         @Parcelize
         data class CreateAccount(val url: String) : NavTarget
     }
@@ -197,12 +226,7 @@ class LoginFlowNode(
                 createNode<ChooseAccountProviderNode>(buildContext, listOf(callback))
             }
             NavTarget.QrCode -> {
-                val callback = object : QrCodeLoginFlowNode.Callback {
-                    override fun navigateBack() {
-                        backstack.pop()
-                    }
-                }
-                createNode<QrCodeLoginFlowNode>(buildContext, listOf(callback))
+                createNode<QrCodeLoginFlowNode>(buildContext)
             }
             is NavTarget.ConfirmAccountProvider -> {
                 val inputs = ConfirmAccountProviderNode.Inputs(

@@ -8,6 +8,8 @@
 package io.element.android.features.linknewdevice.impl.screens.scan
 
 sealed interface ScanQrCodeEvent {
+    // 成功扫描到二维码内容
     data class QrCodeScanned(val data: ByteArray) : ScanQrCodeEvent
+    // 用户点击重试
     data object TryAgain : ScanQrCodeEvent
 }
