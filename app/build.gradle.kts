@@ -27,6 +27,7 @@ import extension.setupDependencyInjection
 import extension.setupKover
 import extension.testCommonDependencies
 import java.util.Locale
+import org.gradle.api.reporting.ReportingExtension
 
 plugins {
     id("io.element.android-compose-application")
@@ -341,6 +342,10 @@ fun Project.configureLicensesTasks(reportingExtension: ReportingExtension) {
         }
     }
 }
+
+// Register per-variant Licensee + copy-to-assets tasks so the app can load
+// `assets/licensee-artifacts.json` at runtime.
+configureLicensesTasks(extensions.getByType(ReportingExtension::class.java))
 
 configurations.all {
     resolutionStrategy {
