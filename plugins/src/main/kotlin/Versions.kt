@@ -44,7 +44,7 @@ private const val versionMonth = 3
  * 当月发版序号。取值须在 [0,99]。
  * 请勿手动修改；由发布脚本更新。
  */
-private const val versionReleaseNumber = 25
+private const val versionReleaseNumber = 31
 
 object Versions {
     /**

@@ -8,9 +8,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- To be able to install APK from the application -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
     <application
         android:name=".ElementXApplication"
         android:allowBackup="false"
@@ -28,9 +25,9 @@
         android:theme="@style/Theme.ElementX"
         tools:targetApi="33">
 
-        <meta-data
-            android:name="com.google.android.gms.car.application"
-            android:resource="@xml/automotive_app_desc" />
+        <!--        <meta-data-->
+        <!--            android:name="com.google.android.gms.car.application"-->
+        <!--            android:resource="@xml/automotive_app_desc" />-->
 
         <provider
             android:name="androidx.startup.InitializationProvider"
