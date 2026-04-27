@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_flag_room_directory_search_title">"Room directory search"</string>
+    <string name="feature_flag_room_directory_search_description">"Allow user to search for public rooms in their homeserver"</string>
+    <string name="feature_flag_show_blocked_users_details_title">"Show blocked users details"</string>
+    <string name="feature_flag_show_blocked_users_details_description">"Show the name and avatar of blocked users in the blocked users list"</string>
+    <string name="feature_flag_sync_on_push_title">"Sync on push"</string>
+    <string name="feature_flag_sync_on_push_description">"Subscribe to room sync when a push is received"</string>
+    <string name="feature_flag_only_signed_device_isolation_mode_title">"Exclude insecure devices when sending/receiving messages"</string>
+    <string name="feature_flag_only_signed_device_isolation_mode_description">"This setting controls how end-to-end encryption (E2E) keys are shared. Enabling it will prevent the inclusion of devices that have not been explicitly verified by their owners. You\'ll have to stop and re-open the app manually for that setting to take effect."</string>
+    <string name="feature_flag_enable_key_share_on_invite_title">"Share encrypted history with new members"</string>
+    <string name="feature_flag_enable_key_share_on_invite_description">"When inviting a user to an encrypted room that has history visibility set to \"shared\", share encrypted history with that user, and accept encrypted history when you are invited to such a room.\nRequires an app restart to take effect.\n\nWARNING: this feature is EXPERIMENTAL and not all security precautions are implemented. Do not enable on production accounts."</string>
+    <string name="feature_flag_knock_title">"Ask to join"</string>
+    <string name="feature_flag_knock_description">"Allow creating rooms which users can request access to."</string>
+    <string name="feature_flag_create_spaces_title">"Create spaces"</string>
+    <string name="feature_flag_create_spaces_description">"Allow creating spaces."</string>
+    <string name="feature_flag_space_settings_title">"Space settings"</string>
+    <string name="feature_flag_space_settings_description">"Allow managing space settings such as details, permissions and privacy."</string>
+    <string name="feature_flag_print_logs_to_logcat_title">"Print logs to logcat"</string>
+    <string name="feature_flag_print_logs_to_logcat_description">"Print logs to logcat in addition to log files. Requires an app restart to take effect.\n\nWARNING: this will make the logs visible in the device logs and may affect performance. It\'s not intended for daily usage in release builds."</string>
+    <string name="feature_flag_selectable_media_quality_title">"Select media quality per upload"</string>
+    <string name="feature_flag_selectable_media_quality_description">"You can select the media quality for each attachment you upload."</string>
+    <string name="feature_flag_threads_title">"Threads"</string>
+    <string name="feature_flag_threads_description">"Renders thread messages as a dedicated timeline. Restarting the app is required for this setting to fully take effect."</string>
+    <string name="feature_flag_multi_account_title">"Multi accounts"</string>
+    <string name="feature_flag_multi_account_description">"Allow the application to connect to multiple accounts at the same time.\n\nWARNING: this feature is EXPERIMENTAL and UNSTABLE."</string>
+    <string name="feature_flag_sync_notifications_with_workmanager_title">"Sync notifications with WorkManager"</string>
+    <string name="feature_flag_sync_notifications_with_workmanager_description">"Use WorkManager to schedule notification sync tasks when a push is received. This should improve reliability and battery usage."</string>
+    <string name="feature_flag_qr_code_login_title">"QR Code Login"</string>
+    <string name="feature_flag_qr_code_login_description">"Allow logging in on other devices using a QR code."</string>
+    <string name="feature_flag_sign_in_with_classic_title">"Sign in with Element Classic"</string>
+    <string name="feature_flag_sign_in_with_classic_description">"Allow the application to sign in to the current Element Classic account."</string>
+    <string name="feature_flag_video_call_title">"Video call"</string>
+    <string name="feature_flag_video_call_description">"Show video call entry points in the app."</string>
+</resources>

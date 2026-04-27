@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="common_call_declined_busy_message">The other person is busy.</string>
+</resources>

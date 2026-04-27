@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_roomlist_battery_optimization_explicit_content">"Go to your system battery settings and set %1$s to \"Unrestricted\" or \"No restrictions\" so you can keep receiving new message notifications."</string>
+    <string name="screen_roomlist_battery_optimization_honor_huawei_content">"Go to your system's \"App launch\" page, turn off %1$s's \"Automatic management\", then enable \"Auto-launch\", \"Secondary launch\", and \"Run in background\"."</string>
+    <string name="screen_roomlist_battery_optimization_honor_huawei_action">"Go to system settings"</string>
+</resources>

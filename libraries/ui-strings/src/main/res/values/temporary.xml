@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="a11y_start_video_call">"Start video call"</string>
+    <string name="a11y_start_voice_call">"Start voice call"</string>
+</resources>

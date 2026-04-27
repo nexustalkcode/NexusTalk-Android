@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_developer_settings_feature_flags_section_title">"Feature flags"</string>
+    <string name="screen_developer_settings_rust_sdk_section_title">"Rust SDK"</string>
+    <string name="screen_developer_settings_tracing_log_level">"Tracing log level"</string>
+    <string name="screen_developer_settings_requires_app_reboot">"Requires app reboot"</string>
+    <string name="screen_developer_settings_trace_log_packs_section_title">"Enable trace logs per SDK feature"</string>
+    <string name="screen_developer_settings_trace_log_pack_event_cache">"Event Cache"</string>
+    <string name="screen_developer_settings_trace_log_pack_send_queue">"Send Queue"</string>
+    <string name="screen_developer_settings_trace_log_pack_timeline">"Timeline"</string>
+    <string name="screen_developer_settings_trace_log_pack_notification_client">"Notification Client"</string>
+    <string name="screen_developer_settings_trace_log_pack_sync_profiling">"Sync Profiling"</string>
+    <string name="screen_developer_settings_trace_log_pack_latest_events">"Latest Events"</string>
+    <string name="screen_developer_settings_showkase_section_title">"Showkase"</string>
+    <string name="screen_developer_settings_open_showkase_browser">"Open Showkase browser"</string>
+    <string name="screen_developer_settings_theme_section_title">"Theme"</string>
+    <string name="screen_developer_settings_change_brand_color">"Change brand color"</string>
+    <string name="screen_developer_settings_reset_brand_color">"Reset brand color"</string>
+    <string name="screen_developer_settings_crash_section_title">"Crash"</string>
+    <string name="screen_developer_settings_crash_app">"Crash the app 💥"</string>
+    <string name="screen_developer_settings_crash_test_error">"This crash is a test."</string>
+    <string name="screen_developer_settings_cache_section_title">"Cache"</string>
+    <string name="screen_developer_settings_database_sizes">"Database sizes"</string>
+    <string name="screen_developer_settings_computing">"Computing..."</string>
+    <string name="screen_developer_settings_unknown">"Unknown"</string>
+    <string name="screen_developer_settings_vacuum_stores">"Vacuum stores"</string>
+    <string name="screen_developer_settings_clear_cache">"Clear cache"</string>
+    <string name="screen_developer_settings_element_call_section_title">"Element Call"</string>
+    <string name="screen_developer_settings_tracing_log_level_error">"Error"</string>
+    <string name="screen_developer_settings_tracing_log_level_warn">"Warn"</string>
+    <string name="screen_developer_settings_tracing_log_level_info">"Info"</string>
+    <string name="screen_developer_settings_tracing_log_level_debug">"Debug"</string>
+    <string name="screen_developer_settings_tracing_log_level_trace">"Trace"</string>
+</resources>

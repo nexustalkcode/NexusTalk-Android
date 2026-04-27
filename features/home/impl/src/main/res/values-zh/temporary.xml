@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_roomlist_battery_optimization_explicit_content">"前往系统电池设置，将 %1$s 设为“无限制”或“不受限制”，这样你才能持续收到新消息通知。"</string>
+    <string name="screen_roomlist_battery_optimization_honor_huawei_content">"前往系统的“启动管理”页面，关闭 %1$s 的“自动管理”，并开启“允许自启动”“允许关联启动”“允许后台活动”。"</string>
+    <string name="screen_roomlist_battery_optimization_honor_huawei_action">"前往系统设置"</string>
+</resources>

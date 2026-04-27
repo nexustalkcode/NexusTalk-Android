@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_flag_room_directory_search_title">"房间目录搜索"</string>
+    <string name="feature_flag_room_directory_search_description">"允许用户在其主服务器中搜索公开房间"</string>
+    <string name="feature_flag_show_blocked_users_details_title">"显示已屏蔽用户详情"</string>
+    <string name="feature_flag_show_blocked_users_details_description">"在已屏蔽用户列表中显示已屏蔽用户的名称和头像"</string>
+    <string name="feature_flag_sync_on_push_title">"收到推送时同步"</string>
+    <string name="feature_flag_sync_on_push_description">"收到推送时订阅房间同步"</string>
+    <string name="feature_flag_only_signed_device_isolation_mode_title">"发送/接收消息时排除不安全设备"</string>
+    <string name="feature_flag_only_signed_device_isolation_mode_description">"此设置控制端到端加密（E2E）密钥的共享方式。启用后，将避免包含未经其所有者明确验证的设备。需要手动停止并重新打开应用，此设置才会生效。"</string>
+    <string name="feature_flag_enable_key_share_on_invite_title">"与新成员共享加密历史记录"</string>
+    <string name="feature_flag_enable_key_share_on_invite_description">"邀请用户加入历史可见性设置为“共享”的加密房间时，与该用户共享加密历史记录；当你被邀请加入此类房间时，也接受加密历史记录。\n需要重启应用才会生效。\n\n警告：此功能仍处于实验阶段，尚未实现所有安全防护措施。请勿在生产账号上启用。"</string>
+    <string name="feature_flag_knock_title">"申请加入"</string>
+    <string name="feature_flag_knock_description">"允许创建用户可申请访问的房间。"</string>
+    <string name="feature_flag_create_spaces_title">"创建空间"</string>
+    <string name="feature_flag_create_spaces_description">"允许创建空间。"</string>
+    <string name="feature_flag_space_settings_title">"空间设置"</string>
+    <string name="feature_flag_space_settings_description">"允许管理空间详情、权限和隐私等设置。"</string>
+    <string name="feature_flag_print_logs_to_logcat_title">"将日志打印到 logcat"</string>
+    <string name="feature_flag_print_logs_to_logcat_description">"除日志文件外，也将日志打印到 logcat。需要重启应用才会生效。\n\n警告：这会让日志显示在设备日志中，并可能影响性能。不建议在发布版本中日常使用。"</string>
+    <string name="feature_flag_selectable_media_quality_title">"每次上传时选择媒体质量"</string>
+    <string name="feature_flag_selectable_media_quality_description">"你可以为每个上传的附件选择媒体质量。"</string>
+    <string name="feature_flag_threads_title">"话题"</string>
+    <string name="feature_flag_threads_description">"将话题消息渲染为独立时间线。需要重启应用，此设置才会完全生效。"</string>
+    <string name="feature_flag_multi_account_title">"多账号"</string>
+    <string name="feature_flag_multi_account_description">"允许应用同时连接多个账号。\n\n警告：此功能仍处于实验阶段且不稳定。"</string>
+    <string name="feature_flag_sync_notifications_with_workmanager_title">"使用 WorkManager 同步通知"</string>
+    <string name="feature_flag_sync_notifications_with_workmanager_description">"收到推送时，使用 WorkManager 调度通知同步任务。这应能提升可靠性并减少电量消耗。"</string>
+    <string name="feature_flag_qr_code_login_title">"二维码登录"</string>
+    <string name="feature_flag_qr_code_login_description">"允许使用二维码在其他设备上登录。"</string>
+    <string name="feature_flag_sign_in_with_classic_title">"使用 Element Classic 登录"</string>
+    <string name="feature_flag_sign_in_with_classic_description">"允许应用登录当前 Element Classic 账号。"</string>
+    <string name="feature_flag_video_call_title">"视频通话"</string>
+    <string name="feature_flag_video_call_description">"在应用中显示视频通话入口。"</string>
+</resources>
