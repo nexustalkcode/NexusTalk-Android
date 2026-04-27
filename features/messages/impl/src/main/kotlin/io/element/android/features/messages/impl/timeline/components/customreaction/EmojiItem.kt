@@ -37,6 +37,15 @@ import io.element.android.libraries.designsystem.text.toDp
 import io.element.android.libraries.designsystem.theme.components.Text
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 渲染单个 emoji 选择项。
+ *
+ * @param item 当前 emoji 数据。
+ * @param isSelected 当前用户是否已对该事件添加此 emoji。
+ * @param onSelectEmoji 点击选中 emoji 的回调。
+ * @param modifier 应用于 item 根节点的修饰符。
+ * @param emojiSize emoji 文本尺寸。
+ */
 @Composable
 fun EmojiItem(
     item: Emoji,

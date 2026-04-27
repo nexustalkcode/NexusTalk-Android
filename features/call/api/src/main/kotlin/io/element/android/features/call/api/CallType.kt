@@ -12,6 +12,7 @@ import android.os.Parcelable
 import io.element.android.libraries.architecture.NodeInputs
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -50,6 +51,7 @@ sealed interface CallType : NodeInputs, Parcelable {
     data class RoomCall(
         val sessionId: SessionId,
         val roomId: RoomId,
+        val mode: CallWidgetMode = CallWidgetMode.Video,
     ) : CallType {
         override fun toString(): String {
             return "RoomCall(sessionId=$sessionId, roomId=$roomId)"

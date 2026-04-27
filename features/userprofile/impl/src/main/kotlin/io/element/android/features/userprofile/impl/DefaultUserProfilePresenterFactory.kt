@@ -17,8 +17,18 @@ import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.core.UserId
 
 @ContributesBinding(SessionScope::class)
+/**
+ * 默认的用户资料 Presenter 工厂实现。
+ *
+ * 仅负责把外部工厂接口桥接到 [UserProfilePresenter.Factory]。
+ */
 class DefaultUserProfilePresenterFactory(
     private val factory: UserProfilePresenter.Factory,
 ) : UserProfilePresenterFactory {
+    /**
+     * 为指定用户创建资料页 Presenter。
+     *
+     * @param userId 需要展示资料页的用户 ID。
+     */
     override fun create(userId: UserId): Presenter<UserProfileState> = factory.create(userId)
 }

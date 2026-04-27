@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.model.event
 
+/**
+ * 资料变更事件的 UI 内容模型。
+ */
 data class TimelineItemProfileChangeContent(
     override val body: String,
 ) : TimelineItemStateContent {

@@ -34,6 +34,11 @@ import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.voiceplayer.api.VoiceMessageState
 import io.element.android.wysiwyg.link.Link
 
+/**
+ * 时间线事件内容分发视图。
+ *
+ * 根据 [TimelineItemEventContent] 的具体类型，路由到对应的子视图实现。
+ */
 @Composable
 fun TimelineItemEventContentView(
     content: TimelineItemEventContent,

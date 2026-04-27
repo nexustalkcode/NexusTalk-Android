@@ -8,9 +8,15 @@
 
 package io.element.android.libraries.androidutils.clipboard
 
+/**
+ * 用于预览或测试的剪贴板假实现。
+ */
 class FakeClipboardHelper : ClipboardHelper {
     var clipboardContents: Any? = null
 
+    /**
+     * 把文本保存到内存字段，模拟复制行为。
+     */
     override fun copyPlainText(text: String) {
         clipboardContents = text
     }

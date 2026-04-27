@@ -17,10 +17,16 @@ import io.element.android.libraries.di.annotations.ApplicationContext
 import io.element.android.services.toolbox.api.sdk.BuildVersionSdkIntProvider
 
 @ContributesBinding(AppScope::class)
+/**
+ * 基于 Android Formatter 的文件大小格式化实现。
+ */
 class AndroidFileSizeFormatter(
     @ApplicationContext private val context: Context,
     private val sdkIntProvider: BuildVersionSdkIntProvider,
 ) : FileSizeFormatter {
+    /**
+     * 按 IEC 单位语义格式化文件大小。
+     */
     override fun format(fileSize: Long, useShortFormat: Boolean): String {
         // Since Android O, the system considers that 1kB = 1000 bytes instead of 1024 bytes.
         // We want to avoid that.

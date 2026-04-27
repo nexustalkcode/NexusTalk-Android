@@ -33,24 +33,44 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+/**
+ * 与 Element Classic 进行进程间通信的接口。
+ */
 interface ElementClassicConnection {
+    /** 开始绑定并监听 Element Classic 服务。 */
     fun start()
+    /** 停止绑定并清理当前连接。 */
     fun stop()
+    /** 主动请求 Element Classic 回传当前会话数据。 */
     fun requestData()
+    /** 当前连接状态流。 */
     val stateFlow: StateFlow<ElementClassicConnectionState>
 }
 
+/**
+ * Element Classic 连接状态。
+ */
 sealed interface ElementClassicConnectionState {
+    /** 尚未开始连接。 */
     object Idle : ElementClassicConnectionState
+    /** 设备上未安装可用的 Element Classic。 */
     object ElementClassicNotFound : ElementClassicConnectionState
+    /** 成功连接到 Element Classic，但没有可导入会话。 */
     object ElementClassicReadyNoSession : ElementClassicConnectionState
+    /** 成功连接到 Element Classic，并拿到可导入的用户 ID。 */
     data class ElementClassicReady(val userId: UserId) : ElementClassicConnectionState
+    /** 通信过程中出现错误。 */
     data class Error(val error: String) : ElementClassicConnectionState
 }
 
 private val loggerTag = LoggerTag("ECConnection")
 
 @ContributesBinding(AppScope::class)
+/**
+ * [ElementClassicConnection] 的默认实现。
+ *
+ * 通过 Messenger 与 Element Classic 的 importer service 进行 IPC 通信。
+ */
 class DefaultElementClassicConnection(
     @ApplicationContext
     private val context: Context,

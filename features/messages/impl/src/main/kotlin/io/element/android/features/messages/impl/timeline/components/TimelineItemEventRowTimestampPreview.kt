@@ -19,6 +19,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览时间戳视图在不同消息内容下的表现。
+ */
 internal fun TimelineItemEventRowTimestampPreview(
     @PreviewParameter(TimelineItemEventForTimestampViewProvider::class) event: TimelineItem.Event
 ) = ElementPreview {

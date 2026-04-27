@@ -14,6 +14,9 @@ import io.element.android.libraries.matrix.api.room.CurrentUserMembership
 import io.element.android.libraries.matrix.api.spaces.SpaceRoom
 import io.element.android.libraries.previewutils.room.aSpaceRoom
 
+/**
+ * 为 Space 卡片预览提供样例房间数据。
+ */
 class SpaceRoomProvider : PreviewParameterProvider<SpaceRoom> {
     override val values: Sequence<SpaceRoom> = sequenceOf(
         aSpaceRoom(),

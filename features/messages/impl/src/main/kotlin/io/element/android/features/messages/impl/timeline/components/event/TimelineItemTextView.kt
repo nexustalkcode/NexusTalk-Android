@@ -38,6 +38,9 @@ import io.element.android.wysiwyg.link.Link
 
 private val OUTGOING_MESSAGE_TEXT_COLOR = Color(0xFF0A0A0A)
 
+/**
+ * 渲染文本类消息条目视图。
+ */
 @Composable
 fun TimelineItemTextView(
     content: TimelineItemTextBasedContent,
@@ -73,6 +76,9 @@ fun TimelineItemTextView(
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+/**
+ * 解析并返回带已解析 mention 的文本。
+ */
 @Composable
 internal fun getTextWithResolvedMentions(content: TimelineItemTextBasedContent): CharSequence {
     val mentionSpanUpdater = LocalMentionSpanUpdater.current

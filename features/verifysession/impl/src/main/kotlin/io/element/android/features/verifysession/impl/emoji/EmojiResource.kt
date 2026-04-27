@@ -11,11 +11,17 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import io.element.android.features.verifysession.impl.R
 
+/**
+ * SAS emoji 资源映射结果。
+ */
 internal data class EmojiResource(
     @DrawableRes val drawableRes: Int,
     @StringRes val nameRes: Int
 )
 
+/**
+ * 将 SAS emoji 编号映射为本地图片与名称资源。
+ */
 internal fun Int.toEmojiResource(): EmojiResource {
     return when (this % 64) {
         0 -> EmojiResource(R.drawable.ic_verification_00, R.string.verification_emoji_00)

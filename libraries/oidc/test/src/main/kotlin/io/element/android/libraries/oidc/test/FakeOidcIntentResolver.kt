@@ -11,10 +11,11 @@ package io.element.android.libraries.oidc.test
 import android.content.Intent
 import io.element.android.libraries.oidc.api.OidcAction
 import io.element.android.libraries.oidc.api.OidcIntentResolver
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeOidcIntentResolver(
-    private val resolveResult: (Intent) -> OidcAction? = { lambdaError() }
+    private val resolveResult: (Intent) -> OidcAction? = {
+        error("resolveResult should be provided in tests")
+    }
 ) : OidcIntentResolver {
     override fun resolve(intent: Intent): OidcAction? {
         return resolveResult(intent)

@@ -9,7 +9,7 @@
 package io.element.android.x.di
 
 import dev.zacsweers.metro.ContributesBinding
-import io.element.android.appnav.di.RoomGraphFactory
+import io.element.android.libraries.architecture.RoomGraphFactory
 import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.room.JoinedRoom
 
@@ -27,8 +27,10 @@ import io.element.android.libraries.matrix.api.room.JoinedRoom
 class DefaultRoomGraphFactory(
     private val sessionGraph: SessionGraph,
 ) : RoomGraphFactory {
-    override fun create(room: JoinedRoom): Any {
+    override fun create(room: Any): Any {
+        val joinedRoom = room as? JoinedRoom
+            ?: error("RoomGraphFactory expected JoinedRoom but received ${room::class.qualifiedName}")
         return sessionGraph.roomGraphFactory
-            .create(room, room)
+            .create(joinedRoom, joinedRoom)
     }
 }

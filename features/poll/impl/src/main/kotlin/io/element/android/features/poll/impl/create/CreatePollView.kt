@@ -33,7 +33,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.element.android.compound.tokens.generated.CompoundIcons
-import io.element.android.features.poll.impl.R
+import io.element.android.features.poll.api.R
 import io.element.android.libraries.designsystem.components.button.BackButton
 import io.element.android.libraries.designsystem.components.dialogs.ConfirmationDialog
 import io.element.android.libraries.designsystem.components.dialogs.SaveChangesDialog

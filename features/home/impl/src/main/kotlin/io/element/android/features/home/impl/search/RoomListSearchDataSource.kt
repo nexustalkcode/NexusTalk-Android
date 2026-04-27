@@ -29,12 +29,18 @@ import kotlinx.coroutines.flow.map
 private const val PAGE_SIZE = 30
 
 @AssistedInject
+/**
+ * 首页房间搜索数据源。
+ *
+ * 负责维护单独的搜索 room list，并在搜索激活时增量加载所有结果。
+ */
 class RoomListSearchDataSource(
     @Assisted coroutineScope: CoroutineScope,
     roomListService: RoomListService,
     coroutineDispatchers: CoroutineDispatchers,
     private val roomSummaryFactory: RoomListRoomSummaryFactory,
 ) {
+    /** 创建搜索数据源的 Assisted 工厂。 */
     @AssistedFactory
     interface Factory {
         fun create(coroutineScope: CoroutineScope): RoomListSearchDataSource
@@ -55,6 +61,11 @@ class RoomListSearchDataSource(
         }
         .flowOn(coroutineDispatchers.computation)
 
+    /**
+     * 切换搜索是否激活。
+     *
+     * 激活时会开始增量加载全部房间，关闭时重置搜索结果。
+     */
     suspend fun setIsActive(isActive: Boolean) = coroutineScope {
         if (isActive) {
             roomList.loadAllIncrementally(this)
@@ -63,6 +74,7 @@ class RoomListSearchDataSource(
         }
     }
 
+    /** 根据当前搜索词更新底层过滤器。 */
     suspend fun setSearchQuery(searchQuery: String) = coroutineScope {
         val filter = if (searchQuery.isBlank()) {
             RoomListFilter.None

@@ -10,10 +10,11 @@ package io.element.android.services.toolbox.test.intent
 
 import android.content.Intent
 import io.element.android.services.toolbox.api.intent.ExternalIntentLauncher
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeExternalIntentLauncher(
-    var launchLambda: (Intent) -> Unit = { lambdaError() },
+    var launchLambda: (Intent) -> Unit = {
+        error("launchLambda should be provided in tests")
+    },
 ) : ExternalIntentLauncher {
     override fun launch(intent: Intent) {
         launchLambda(intent)

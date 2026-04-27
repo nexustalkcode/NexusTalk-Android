@@ -21,6 +21,7 @@ import io.element.android.features.call.api.CallType
 import io.element.android.features.call.impl.R
 import io.element.android.features.call.impl.receivers.DeclineCallBroadcastReceiver
 import io.element.android.features.call.impl.ui.IncomingCallActivity
+import io.element.android.features.call.impl.ui.incomingCallTitle
 import io.element.android.features.call.impl.utils.IntentProvider
 import io.element.android.libraries.designsystem.components.avatar.AvatarData
 import io.element.android.libraries.designsystem.components.avatar.AvatarSize
@@ -33,7 +34,11 @@ import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.matrix.ui.media.ImageLoaderHolder
 import io.element.android.libraries.push.api.notifications.NotificationBitmapLoader
+import io.element.android.libraries.push.api.notifications.NotificationIdProvider
+import timber.log.Timber
 import kotlin.time.Duration.Companion.seconds
+
+private const val incomingCallTraceTag = "IncomingCallTrace"
 
 /**
  * 来电通知创建器
@@ -95,8 +100,28 @@ class RingingCallNotificationCreator(
         timestamp: Long,
         expirationTimestamp: Long,
         textContent: String?,
+        useFullScreenIntent: Boolean = true,
+        isDm: Boolean = false,
     ): Notification? {
-        val matrixClient = matrixClientProvider.getOrRestore(sessionId).getOrNull() ?: return null
+        Timber.tag(incomingCallTraceTag).i(
+            "RingingCallNotificationCreator create start sessionId=%s roomId=%s eventId=%s senderId=%s channelId=%s useFullScreenIntent=%s",
+            sessionId,
+            roomId,
+            eventId,
+            senderId,
+            notificationChannelId,
+            useFullScreenIntent,
+        )
+        val matrixClient = matrixClientProvider.getOrRestore(sessionId).getOrNull() ?: run {
+            // Matrix client 恢复失败会直接导致通知创建返回 null，这里单独打点方便和 ActiveCallManager 的失败日志对齐。
+            Timber.tag(incomingCallTraceTag).w(
+                "RingingCallNotificationCreator cannot restore Matrix client sessionId=%s roomId=%s eventId=%s",
+                sessionId,
+                roomId,
+                eventId,
+            )
+            return null
+        }
         val imageLoader = imageLoaderHolder.get(matrixClient)
         val userIcon = notificationBitmapLoader.getUserIcon(
             avatarData = AvatarData(
@@ -116,6 +141,12 @@ class RingingCallNotificationCreator(
             ),
             imageLoader = imageLoader,
         )
+        Timber.tag(incomingCallTraceTag).i(
+            "RingingCallNotificationCreator loaded icons eventId=%s hasUserIcon=%s hasAvatarBitmap=%s",
+            eventId,
+            userIcon != null,
+            avatarBitmap != null,
+        )
 
         val caller = Person.Builder()
             .setName(senderDisplayName)
@@ -123,13 +154,15 @@ class RingingCallNotificationCreator(
             .setImportant(true)
             .build()
 
-        val answerIntent = IntentProvider.getPendingIntent(context, CallType.RoomCall(sessionId, roomId))
+        val requestCode = NotificationIdProvider.getIncomingCallNotificationId(sessionId, eventId)
+        val answerIntent = IntentProvider.getPendingIntent(context, CallType.RoomCall(sessionId, roomId), requestCode)
         val notificationData = CallNotificationData(
             sessionId = sessionId,
             roomId = roomId,
             eventId = eventId,
             senderId = senderId,
             roomName = roomName,
+            isDm = isDm,
             senderName = senderDisplayName,
             avatarUrl = roomAvatarUrl,
             notificationChannelId = notificationChannelId,
@@ -137,37 +170,54 @@ class RingingCallNotificationCreator(
             textContent = textContent,
             expirationTimestamp = expirationTimestamp,
         )
+        val notificationTitle = notificationData.incomingCallTitle()
 
+        val declineAction = "io.element.android.features.call.DECLINE_${eventId.value}"
         val declineIntent = PendingIntentCompat.getBroadcast(
             context,
-            DECLINE_REQUEST_CODE,
+            requestCode,
             Intent(context, DeclineCallBroadcastReceiver::class.java).apply {
+                // 多通来电并存时 requestCode 和 action 都绑定到事件，避免旧 PendingIntent 复用到另一通来电的数据。
+                action = declineAction
                 putExtra(DeclineCallBroadcastReceiver.EXTRA_NOTIFICATION_DATA, notificationData)
             },
             PendingIntent.FLAG_CANCEL_CURRENT,
             false,
         )!!
 
+        val fullScreenAction = "io.element.android.features.call.INCOMING_${eventId.value}"
         val fullScreenIntent = PendingIntentCompat.getActivity(
             context,
-            FULL_SCREEN_INTENT_REQUEST_CODE,
+            requestCode,
             Intent(context, IncomingCallActivity::class.java).apply {
+                // 后台并列通知会共享同一个 Activity 类型，必须用事件唯一 action 保留各自的通知数据。
+                action = fullScreenAction
                 putExtra(IncomingCallActivity.EXTRA_NOTIFICATION_DATA, notificationData)
             },
             PendingIntent.FLAG_CANCEL_CURRENT,
             false
         )!!
+        Timber.tag(incomingCallTraceTag).i(
+            "RingingCallNotificationCreator pending intents ready eventId=%s requestCode=%s declineAction=%s fullScreenAction=%s useFullScreenIntent=%s",
+            eventId,
+            requestCode,
+            declineAction,
+            fullScreenAction,
+            useFullScreenIntent,
+        )
         val incomingCallText = context.getString(R.string.notification_incoming_call)
         val contentView = createIncomingCallRemoteViews(
+            eventId = eventId,
             avatarBitmap = avatarBitmap,
-            senderDisplayName = senderDisplayName,
+            title = notificationTitle,
             subtitle = incomingCallText,
             answerIntent = answerIntent,
             declineIntent = declineIntent,
             contentIntent = fullScreenIntent,
         )
 
-        return NotificationCompat.Builder(context, notificationChannelId)
+        val timeoutAfterMillis = ElementCallConfig.RINGING_CALL_DURATION_SECONDS.seconds.inWholeMilliseconds
+        val notification = NotificationCompat.Builder(context, notificationChannelId)
             .setSmallIcon(CommonDrawables.ic_notification)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_CALL)
@@ -177,32 +227,50 @@ class RingingCallNotificationCreator(
             .setOngoing(true)
             .setShowWhen(false)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentTitle(senderDisplayName)
+            .setContentTitle(notificationTitle)
             .setContentText(incomingCallText)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setCustomContentView(contentView)
             .setCustomHeadsUpContentView(contentView)
             .setCustomBigContentView(contentView)
-            .setTimeoutAfter(ElementCallConfig.RINGING_CALL_DURATION_SECONDS.seconds.inWholeMilliseconds)
+            .setTimeoutAfter(timeoutAfterMillis)
             .setContentIntent(answerIntent)
             .setDeleteIntent(declineIntent)
-            .setFullScreenIntent(fullScreenIntent, true)
+            .apply {
+                if (useFullScreenIntent) {
+                    setFullScreenIntent(fullScreenIntent, true)
+                }
+            }
             .build()
             .apply {
                 flags = flags.or(Notification.FLAG_INSISTENT)
             }
+        Timber.tag(incomingCallTraceTag).i(
+            "RingingCallNotificationCreator built notification eventId=%s timeoutMs=%s flags=%s hasFullScreenIntent=%s",
+            eventId,
+            timeoutAfterMillis,
+            notification.flags,
+            useFullScreenIntent,
+        )
+        return notification
     }
 
     private fun createIncomingCallRemoteViews(
+        eventId: EventId,
         avatarBitmap: android.graphics.Bitmap?,
-        senderDisplayName: String,
+        title: String,
         subtitle: String,
         answerIntent: PendingIntent,
         declineIntent: PendingIntent,
         contentIntent: PendingIntent,
     ): RemoteViews {
+        Timber.tag(incomingCallTraceTag).i(
+            "RingingCallNotificationCreator bind remote views eventId=%s hasAvatarBitmap=%s",
+            eventId,
+            avatarBitmap != null,
+        )
         return RemoteViews(context.packageName, R.layout.view_incoming_call_notification).apply {
-            setTextViewText(R.id.incomingCallTitle, senderDisplayName)
+            setTextViewText(R.id.incomingCallTitle, title)
             setTextViewText(R.id.incomingCallSubtitle, subtitle)
             avatarBitmap?.let {
                 setImageViewBitmap(R.id.incomingCallAvatar, it)

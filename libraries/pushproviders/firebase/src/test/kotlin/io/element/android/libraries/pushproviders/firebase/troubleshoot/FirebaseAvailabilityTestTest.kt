@@ -13,7 +13,6 @@ import io.element.android.libraries.pushproviders.firebase.FakeIsPlayServiceAvai
 import io.element.android.libraries.pushproviders.firebase.FirebaseConfig
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
 import io.element.android.libraries.troubleshoot.api.test.TestFilterData
-import io.element.android.libraries.troubleshoot.test.runAndTestState
 import io.element.android.services.toolbox.test.strings.FakeStringProvider
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

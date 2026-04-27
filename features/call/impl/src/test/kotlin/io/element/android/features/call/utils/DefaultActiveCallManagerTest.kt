@@ -24,6 +24,7 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.room.JoinedRoom
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.matrix.test.AN_EVENT_ID
 import io.element.android.libraries.matrix.test.AN_EVENT_ID_2
 import io.element.android.libraries.matrix.test.A_ROOM_ID
@@ -34,8 +35,8 @@ import io.element.android.libraries.matrix.test.FakeMatrixClientProvider
 import io.element.android.libraries.matrix.test.room.FakeBaseRoom
 import io.element.android.libraries.matrix.test.room.FakeJoinedRoom
 import io.element.android.libraries.matrix.test.room.aRoomInfo
+import io.element.android.libraries.matrix.test.timeline.FakeTimeline
 import io.element.android.libraries.matrix.ui.media.test.FakeImageLoaderHolder
-import io.element.android.libraries.push.api.notifications.ForegroundServiceType
 import io.element.android.libraries.push.api.notifications.NotificationIdProvider
 import io.element.android.libraries.push.test.notifications.FakeOnMissedCallNotificationHandler
 import io.element.android.libraries.push.test.notifications.push.FakeNotificationBitmapLoader
@@ -43,9 +44,9 @@ import io.element.android.services.appnavstate.test.FakeAppForegroundStateServic
 import io.element.android.services.toolbox.test.systemclock.A_FAKE_TIMESTAMP
 import io.element.android.services.toolbox.test.systemclock.FakeSystemClock
 import io.element.android.tests.testutils.lambda.lambdaRecorder
-import io.element.android.tests.testutils.lambda.value
 import io.element.android.tests.testutils.plantTestTimber
 import io.mockk.coVerify
+import io.mockk.match
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -60,11 +61,12 @@ import org.robolectric.Shadows.shadowOf
 
 @RunWith(RobolectricTestRunner::class)
 class DefaultActiveCallManagerTest {
-    private val notificationId = NotificationIdProvider.getForegroundServiceNotificationId(ForegroundServiceType.INCOMING_CALL)
+    private val notificationId = NotificationIdProvider.getIncomingCallNotificationId(A_SESSION_ID, AN_EVENT_ID)
+    private val notificationId2 = NotificationIdProvider.getIncomingCallNotificationId(A_SESSION_ID, AN_EVENT_ID_2)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `registerIncomingCall - sets the incoming call as active`() = runTest {
+    fun `registerIncomingCall - stores the incoming call as ringing`() = runTest {
         setupShadowPowerManager()
         val notificationManagerCompat = mockk<NotificationManagerCompat>(relaxed = true)
         val manager = createActiveCallManager(notificationManagerCompat = notificationManagerCompat)
@@ -75,15 +77,8 @@ class DefaultActiveCallManagerTest {
         val callNotificationData = aCallNotificationData()
         manager.registerIncomingCall(callNotificationData)
 
-        assertThat(manager.activeCall.value).isEqualTo(
-            ActiveCall(
-                callType = CallType.RoomCall(
-                    sessionId = callNotificationData.sessionId,
-                    roomId = callNotificationData.roomId,
-                ),
-                callState = CallState.Ringing(callNotificationData)
-            )
-        )
+        assertThat(manager.activeCall.value).isNull()
+        assertThat(manager.ringingCalls.value).containsExactly(callNotificationData)
 
         runCurrent()
 
@@ -93,29 +88,54 @@ class DefaultActiveCallManagerTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `registerIncomingCall - when there is an already active call adds missed call notification`() = runTest {
+    fun `registerIncomingCall - posts one notification per background ringing call`() = runTest {
         val addMissedCallNotificationLambda = lambdaRecorder<SessionId, RoomId, EventId, Unit> { _, _, _ -> }
         val onMissedCallNotificationHandler = FakeOnMissedCallNotificationHandler(addMissedCallNotificationLambda = addMissedCallNotificationLambda)
+        val notificationManagerCompat = mockk<NotificationManagerCompat>(relaxed = true)
         val manager = createActiveCallManager(
             onMissedCallNotificationHandler = onMissedCallNotificationHandler,
+            notificationManagerCompat = notificationManagerCompat,
         )
 
-        // Register existing call
-        val callNotificationData = aCallNotificationData()
-        manager.registerIncomingCall(callNotificationData)
-        val activeCall = manager.activeCall.value
+        val firstCall = aCallNotificationData()
+        val secondCall = aCallNotificationData(roomId = A_ROOM_ID_2, eventId = AN_EVENT_ID_2)
 
-        // Now add a new call
-        manager.registerIncomingCall(aCallNotificationData(roomId = A_ROOM_ID_2))
+        manager.registerIncomingCall(firstCall)
+        manager.registerIncomingCall(secondCall)
 
-        assertThat(manager.activeCall.value).isEqualTo(activeCall)
-        assertThat((manager.activeCall.value?.callType as? CallType.RoomCall)?.roomId).isNotEqualTo(A_ROOM_ID_2)
+        assertThat(manager.ringingCalls.value).containsExactly(firstCall, secondCall).inOrder()
+        assertThat(manager.activeCall.value).isNull()
 
         advanceTimeBy(1)
 
-        addMissedCallNotificationLambda.assertions()
-            .isCalledOnce()
-            .with(value(A_SESSION_ID), value(A_ROOM_ID_2), value(AN_EVENT_ID))
+        addMissedCallNotificationLambda.assertions().isNeverCalled()
+        verify { notificationManagerCompat.notify(notificationId, any()) }
+        verify { notificationManagerCompat.notify(notificationId2, any()) }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `registerIncomingCall - only the first background ringing call uses full screen intent`() = runTest {
+        val notificationManagerCompat = mockk<NotificationManagerCompat>(relaxed = true)
+        val manager = createActiveCallManager(notificationManagerCompat = notificationManagerCompat)
+
+        manager.registerIncomingCall(aCallNotificationData())
+        manager.registerIncomingCall(aCallNotificationData(roomId = A_ROOM_ID_2, eventId = AN_EVENT_ID_2))
+
+        runCurrent()
+
+        verify {
+            notificationManagerCompat.notify(
+                notificationId,
+                match { it.fullScreenIntent != null },
+            )
+        }
+        verify {
+            notificationManagerCompat.notify(
+                notificationId2,
+                match { it.fullScreenIntent == null },
+            )
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -129,12 +149,12 @@ class DefaultActiveCallManagerTest {
 
         val callNotificationData = aCallNotificationData()
         manager.registerIncomingCall(callNotificationData)
-        val activeCall = manager.activeCall.value
+        val ringingCalls = manager.ringingCalls.value
 
         manager.registerIncomingCall(callNotificationData)
         advanceTimeBy(1)
 
-        assertThat(manager.activeCall.value).isEqualTo(activeCall)
+        assertThat(manager.ringingCalls.value).isEqualTo(ringingCalls)
         addMissedCallNotificationLambda.assertions().isNeverCalled()
     }
 
@@ -162,37 +182,35 @@ class DefaultActiveCallManagerTest {
         )
 
         manager.registerIncomingCall(aCallNotificationData())
-        assertThat(manager.activeCall.value).isNotNull()
+        assertThat(manager.ringingCalls.value).isNotEmpty()
         assertThat(manager.activeWakeLock?.isHeld).isTrue()
 
         manager.incomingCallTimedOut(displayMissedCallNotification = true)
         advanceTimeBy(1)
 
-        assertThat(manager.activeCall.value).isNull()
+        assertThat(manager.ringingCalls.value).isEmpty()
         assertThat(manager.activeWakeLock?.isHeld).isFalse()
         addMissedCallNotificationLambda.assertions().isCalledOnce()
         verify { notificationManagerCompat.cancel(notificationId) }
     }
 
     @Test
-    fun `clearIncomingCallNotification - cancels the incoming call notification without clearing the active call`() = runTest {
+    fun `clearIncomingCallNotification - cancels the incoming call notification without clearing the ringing call`() = runTest {
         val notificationManagerCompat = mockk<NotificationManagerCompat>(relaxed = true)
-        val manager = createActiveCallManager(notificationManagerCompat = notificationManagerCompat)
+        val appForegroundStateService = FakeAppForegroundStateService()
+        val manager = createActiveCallManager(
+            notificationManagerCompat = notificationManagerCompat,
+            appForegroundStateService = appForegroundStateService,
+        )
 
         val notificationData = aCallNotificationData()
         manager.registerIncomingCall(notificationData)
 
         manager.clearIncomingCallNotification()
 
-        assertThat(manager.activeCall.value).isEqualTo(
-            ActiveCall(
-                callType = CallType.RoomCall(
-                    sessionId = notificationData.sessionId,
-                    roomId = notificationData.roomId,
-                ),
-                callState = CallState.Ringing(notificationData)
-            )
-        )
+        assertThat(manager.activeCall.value).isNull()
+        assertThat(manager.ringingCalls.value).containsExactly(notificationData)
+        assertThat(appForegroundStateService.hasRingingCall.value).isTrue()
         verify { notificationManagerCompat.cancel(notificationId) }
     }
 
@@ -200,15 +218,37 @@ class DefaultActiveCallManagerTest {
     @Test
     fun `setIncomingCallUiVisible - suppresses the incoming call notification while the UI is visible`() = runTest {
         val notificationManagerCompat = mockk<NotificationManagerCompat>(relaxed = true)
-        val manager = createActiveCallManager(notificationManagerCompat = notificationManagerCompat)
+        val appForegroundStateService = FakeAppForegroundStateService()
+        val manager = createActiveCallManager(
+            notificationManagerCompat = notificationManagerCompat,
+            appForegroundStateService = appForegroundStateService,
+        )
 
         manager.setIncomingCallUiVisible(true)
         manager.registerIncomingCall(aCallNotificationData())
 
         runCurrent()
 
-        verify { notificationManagerCompat.cancel(notificationId) }
-        verify(exactly = 0) { notificationManagerCompat.notify(notificationId, any()) }
+        assertThat(appForegroundStateService.hasRingingCall.value).isTrue()
+        verify(exactly = 0) { notificationManagerCompat.notify(any(), any()) }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `registerIncomingCall - suppresses the incoming call notification while the app is foreground`() = runTest {
+        val notificationManagerCompat = mockk<NotificationManagerCompat>(relaxed = true)
+        val appForegroundStateService = FakeAppForegroundStateService(initialForegroundValue = true)
+        val manager = createActiveCallManager(
+            notificationManagerCompat = notificationManagerCompat,
+            appForegroundStateService = appForegroundStateService,
+        )
+
+        manager.registerIncomingCall(aCallNotificationData())
+
+        runCurrent()
+
+        assertThat(appForegroundStateService.hasRingingCall.value).isTrue()
+        verify(exactly = 0) { notificationManagerCompat.notify(any(), any()) }
     }
 
     @Test
@@ -219,14 +259,25 @@ class DefaultActiveCallManagerTest {
 
         val notificationData = aCallNotificationData()
         manager.registerIncomingCall(notificationData)
-        assertThat(manager.activeCall.value).isNotNull()
+        assertThat(manager.ringingCalls.value).containsExactly(notificationData)
         assertThat(manager.activeWakeLock?.isHeld).isTrue()
 
         manager.hangUpCall(CallType.RoomCall(notificationData.sessionId, notificationData.roomId))
+        assertThat(manager.ringingCalls.value).isEmpty()
         assertThat(manager.activeCall.value).isNull()
         assertThat(manager.activeWakeLock?.isHeld).isFalse()
 
         verify { notificationManagerCompat.cancel(notificationId) }
+    }
+
+    @Test
+    fun `hangUpCall - ignores RoomCall mode when matching the active room call`() = runTest {
+        val manager = createActiveCallManager()
+
+        manager.joinedCall(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID, mode = CallWidgetMode.Audio))
+        manager.hangUpCall(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID, mode = CallWidgetMode.Video))
+
+        assertThat(manager.activeCall.value).isNull()
     }
 
     @Test
@@ -254,6 +305,72 @@ class DefaultActiveCallManagerTest {
         coVerify {
             room.declineCall(notificationEventId = notificationData.eventId)
         }
+    }
+
+    @Test
+    fun `Decline event - Hangup on a DM ringing call while already in another call sends a busy text message`() = runTest {
+        val sentMessages = mutableListOf<String>()
+        val timeline = FakeTimeline().apply {
+            sendMessageLambda = { body, _, _ ->
+                sentMessages += body
+                Result.success(Unit)
+            }
+        }
+        val room = FakeJoinedRoom(
+            baseRoom = FakeBaseRoom(),
+            liveTimeline = timeline,
+        )
+        val matrixClient = FakeMatrixClient().apply {
+            givenGetRoomResult(A_ROOM_ID_2, room)
+        }
+        val clientProvider = FakeMatrixClientProvider({ Result.success(matrixClient) })
+        val manager = createActiveCallManager(matrixClientProvider = clientProvider)
+
+        manager.joinedCall(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID))
+        manager.registerIncomingCall(
+            aCallNotificationData(
+                roomId = A_ROOM_ID_2,
+                eventId = AN_EVENT_ID_2,
+                isDm = true,
+            )
+        )
+
+        manager.hangUpCall(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID_2))
+
+        assertThat(sentMessages).containsExactly("The other person is busy right now.")
+    }
+
+    @Test
+    fun `Decline event - Hangup on a non DM ringing call while already in another call does not send a busy text message`() = runTest {
+        val sentMessages = mutableListOf<String>()
+        val timeline = FakeTimeline().apply {
+            sendMessageLambda = { body, _, _ ->
+                sentMessages += body
+                Result.success(Unit)
+            }
+        }
+        val room = FakeJoinedRoom(
+            baseRoom = FakeBaseRoom(),
+            liveTimeline = timeline,
+        )
+        val matrixClient = FakeMatrixClient().apply {
+            givenGetRoomResult(A_ROOM_ID_2, room)
+        }
+        val clientProvider = FakeMatrixClientProvider({ Result.success(matrixClient) })
+        val manager = createActiveCallManager(matrixClientProvider = clientProvider)
+
+        manager.joinedCall(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID))
+        manager.registerIncomingCall(
+            aCallNotificationData(
+                roomId = A_ROOM_ID_2,
+                eventId = AN_EVENT_ID_2,
+                isDm = false,
+            )
+        )
+
+        manager.hangUpCall(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID_2))
+
+        assertThat(sentMessages).isEmpty()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -284,7 +401,7 @@ class DefaultActiveCallManagerTest {
 
         runCurrent()
 
-        assertThat(manager.activeCall.value).isNull()
+        assertThat(manager.ringingCalls.value).isEmpty()
         assertThat(manager.activeWakeLock?.isHeld).isFalse()
 
         verify { notificationManagerCompat.cancel(notificationId) }
@@ -319,7 +436,7 @@ class DefaultActiveCallManagerTest {
 
         runCurrent()
 
-        assertThat(manager.activeCall.value).isNotNull()
+        assertThat(manager.ringingCalls.value).containsExactly(notificationData)
         assertThat(manager.activeWakeLock?.isHeld).isTrue()
 
         verify(exactly = 0) { notificationManagerCompat.cancel(notificationId) }
@@ -332,11 +449,11 @@ class DefaultActiveCallManagerTest {
         val manager = createActiveCallManager(notificationManagerCompat = notificationManagerCompat)
 
         manager.registerIncomingCall(aCallNotificationData())
-        assertThat(manager.activeCall.value).isNotNull()
+        assertThat(manager.ringingCalls.value).isNotEmpty()
         assertThat(manager.activeWakeLock?.isHeld).isTrue()
 
         manager.hangUpCall(CallType.ExternalUrl("https://example.com"))
-        assertThat(manager.activeCall.value).isNotNull()
+        assertThat(manager.ringingCalls.value).isNotEmpty()
         assertThat(manager.activeWakeLock?.isHeld).isTrue()
 
         verify(exactly = 0) { notificationManagerCompat.cancel(notificationId) }
@@ -347,7 +464,7 @@ class DefaultActiveCallManagerTest {
     fun `joinedCall - register an ongoing call and tries sending the call notify event`() = runTest {
         val notificationManagerCompat = mockk<NotificationManagerCompat>(relaxed = true)
         val manager = createActiveCallManager(notificationManagerCompat = notificationManagerCompat)
-        assertThat(manager.activeCall.value).isNull()
+        assertThat(manager.ringingCalls.value).isEmpty()
 
         manager.joinedCall(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID))
         assertThat(manager.activeCall.value).isEqualTo(
@@ -359,10 +476,38 @@ class DefaultActiveCallManagerTest {
                 callState = CallState.InCall,
             )
         )
+        runCurrent()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `registerIncomingCall - ignores ringing state for the same room while already in call`() = runTest {
+        val notificationManagerCompat = mockk<NotificationManagerCompat>(relaxed = true)
+        val manager = createActiveCallManager(notificationManagerCompat = notificationManagerCompat)
+
+        manager.joinedCall(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID))
+        manager.registerIncomingCall(
+            aCallNotificationData(
+                sessionId = A_SESSION_ID,
+                roomId = A_ROOM_ID,
+                eventId = AN_EVENT_ID,
+            )
+        )
+
+        assertThat(manager.activeCall.value).isEqualTo(
+            ActiveCall(
+                callType = CallType.RoomCall(
+                    sessionId = A_SESSION_ID,
+                    roomId = A_ROOM_ID,
+                ),
+                callState = CallState.InCall,
+            )
+        )
+        assertThat(manager.ringingCalls.value).isEmpty()
 
         runCurrent()
 
-        verify { notificationManagerCompat.cancel(notificationId) }
+        verify(exactly = 0) { notificationManagerCompat.notify(any(), any()) }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -387,6 +532,7 @@ class DefaultActiveCallManagerTest {
         advanceTimeBy(1)
 
         assertThat(manager.activeCall.value).isNull()
+        assertThat(manager.ringingCalls.value).isEmpty()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -410,8 +556,8 @@ class DefaultActiveCallManagerTest {
         room.givenRoomInfo(aRoomInfo(hasRoomCall = false))
         advanceTimeBy(1)
 
-        // The call should still be active
-        assertThat(manager.activeCall.value).isNotNull()
+        // The call should still be ringing
+        assertThat(manager.ringingCalls.value).isNotEmpty()
 
         // No room
         client.givenGetRoomResult(A_ROOM_ID, null)
@@ -424,8 +570,8 @@ class DefaultActiveCallManagerTest {
         room.givenRoomInfo(aRoomInfo(hasRoomCall = false))
         advanceTimeBy(1)
 
-        // The call should still be active
-        assertThat(manager.activeCall.value).isNotNull()
+        // The call should still be ringing
+        assertThat(manager.ringingCalls.value).isNotEmpty()
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -452,15 +598,8 @@ class DefaultActiveCallManagerTest {
         clock.epochMillisResult = eventTimestamp + 10_000
         manager.registerIncomingCall(callNotificationData)
 
-        assertThat(manager.activeCall.value).isEqualTo(
-            ActiveCall(
-                callType = CallType.RoomCall(
-                    sessionId = callNotificationData.sessionId,
-                    roomId = callNotificationData.roomId,
-                ),
-                callState = CallState.Ringing(callNotificationData)
-            )
-        )
+        assertThat(manager.activeCall.value).isNull()
+        assertThat(manager.ringingCalls.value).containsExactly(callNotificationData)
 
         runCurrent()
 
@@ -499,6 +638,7 @@ class DefaultActiveCallManagerTest {
         manager.registerIncomingCall(callNotificationData)
 
         assertThat(manager.activeCall.value).isNull()
+        assertThat(manager.ringingCalls.value).isEmpty()
 
         runCurrent()
 
@@ -517,6 +657,7 @@ class DefaultActiveCallManagerTest {
         onMissedCallNotificationHandler: FakeOnMissedCallNotificationHandler = FakeOnMissedCallNotificationHandler(),
         notificationManagerCompat: NotificationManagerCompat = mockk(relaxed = true),
         systemClock: FakeSystemClock = FakeSystemClock(),
+        appForegroundStateService: FakeAppForegroundStateService = FakeAppForegroundStateService(initialForegroundValue = false),
     ) = DefaultActiveCallManager(
         context = InstrumentationRegistry.getInstrumentation().targetContext,
         coroutineScope = backgroundScope,
@@ -530,7 +671,7 @@ class DefaultActiveCallManagerTest {
         notificationManagerCompat = notificationManagerCompat,
         matrixClientProvider = matrixClientProvider,
         defaultCurrentCallService = DefaultCurrentCallService(),
-        appForegroundStateService = FakeAppForegroundStateService(),
+        appForegroundStateService = appForegroundStateService,
         imageLoaderHolder = FakeImageLoaderHolder(),
         systemClock = systemClock,
     )

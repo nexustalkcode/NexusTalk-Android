@@ -33,6 +33,9 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染房间列表项的上下文菜单。
+ */
 @Composable
 fun RoomListContextMenu(
     contextMenu: RoomListState.ContextMenu.Shown,
@@ -78,6 +81,9 @@ fun RoomListContextMenu(
     }
 }
 
+/**
+ * 渲染上下文菜单主体内容。
+ */
 @Composable
 private fun RoomListModalBottomSheetContent(
     contextMenu: RoomListState.ContextMenu.Shown,
@@ -212,6 +218,9 @@ private fun RoomListModalBottomSheetContent(
 // Remove this preview when the issue is fixed.
 @PreviewsDayNight
 @Composable
+/**
+ * 房间上下文菜单预览。
+ */
 internal fun RoomListModalBottomSheetContentPreview(
     @PreviewParameter(RoomListStateContextMenuShownProvider::class) contextMenu: RoomListState.ContextMenu.Shown
 ) = ElementPreview {

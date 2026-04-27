@@ -10,17 +10,19 @@ package io.element.android.features.migration.impl
 
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * 应用迁移版本存储接口。
+ */
 interface MigrationStore {
     /**
-     * Return of flow of the current value for application migration version.
-     * If the value is not set, it will emit 0.
-     * If the emitted value is lower than the current application migration version, it means
-     * that a migration should occur, and at the end [setApplicationMigrationVersion] should be called.
+     * 返回当前应用迁移版本流。
+     *
+     * 如果流中的版本低于当前应用支持的最新迁移版本，则说明需要继续执行迁移。
      */
     fun applicationMigrationVersion(): Flow<Int>
 
     /**
-     * Set the application migration version, typically after a migration has been done.
+     * 设置当前应用迁移版本，通常在某个迁移完成后调用。
      */
     suspend fun setApplicationMigrationVersion(version: Int)
 }

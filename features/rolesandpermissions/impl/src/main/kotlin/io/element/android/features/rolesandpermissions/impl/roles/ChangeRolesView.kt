@@ -74,6 +74,9 @@ import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染修改成员角色页面。
+ */
 fun ChangeRolesView(
     state: ChangeRolesState,
     modifier: Modifier = Modifier,
@@ -207,6 +210,9 @@ fun ChangeRolesView(
 }
 
 @Composable
+/**
+ * 渲染搜索结果与分组成员列表。
+ */
 private fun SearchResultsList(
     currentRole: RoomMember.Role,
     searchResults: MembersByRole,
@@ -291,6 +297,9 @@ private fun SearchResultsList(
 }
 
 @Composable
+/**
+ * 渲染成员分组头部。
+ */
 private fun ListSectionHeader(text: String) {
     Text(
         modifier = Modifier
@@ -303,6 +312,9 @@ private fun ListSectionHeader(text: String) {
 }
 
 @Composable
+/**
+ * 渲染单个成员选择项。
+ */
 private fun ListMemberItem(
     roomMember: RoomMember,
     canRemoveMember: (UserId) -> Boolean,
@@ -332,6 +344,9 @@ private fun ListMemberItem(
 }
 
 @Composable
+/**
+ * 渲染成员行。
+ */
 private fun MemberRow(
     avatarData: AvatarData,
     name: String,

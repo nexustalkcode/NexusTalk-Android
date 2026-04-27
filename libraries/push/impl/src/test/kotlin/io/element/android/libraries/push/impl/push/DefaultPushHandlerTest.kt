@@ -310,7 +310,7 @@ class DefaultPushHandlerTest {
             val pushHistoryService = FakePushHistoryService(
                 onPushReceivedResult = onPushReceivedResult,
             )
-            val showBatteryOptimizationBannerResult = lambdaRecorder<Unit> {}
+            val showBatteryOptimizationBannerResult = lambdaRecorder<String, Unit> { }
             val defaultPushHandler = createDefaultPushHandler(
                 onNotifiableEventsReceived = onNotifiableEventsReceived,
                 notifiableEventsResult = notifiableEventResult,
@@ -341,7 +341,12 @@ class DefaultPushHandlerTest {
                 .with(any(), value(AN_EVENT_ID), value(A_ROOM_ID), value(A_USER_ID), value(false), value(true), any())
             showBatteryOptimizationBannerResult.assertions().let {
                 if (shouldSetOptimizationBatteryBanner) {
-                    it.isCalledOnce()
+                    it.isCalledOnce().with(
+                        matching<String> { reason ->
+                            reason.contains("notification_resolver_failure:") &&
+                                reason.contains("provider=$A_PUSHER_INFO")
+                        }
+                    )
                 } else {
                     it.isNeverCalled()
                 }

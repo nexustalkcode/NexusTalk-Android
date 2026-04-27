@@ -62,6 +62,7 @@ import io.element.android.libraries.matrix.api.room.JoinedRoom
 import io.element.android.libraries.matrix.api.room.alias.matches
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.libraries.matrix.api.timeline.item.TimelineItemDebugInfo
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.mediaplayer.api.MediaPlayer
 import io.element.android.services.analytics.api.AnalyticsService
 import io.element.android.services.appnavstate.api.AppNavigationStateService
@@ -149,7 +150,7 @@ class ThreadedMessagesNode(
         fun navigateToSendLocation()
         fun navigateToCreatePoll()
         fun navigateToEditPoll(eventId: EventId)
-        fun navigateToRoomCall(roomId: RoomId)
+        fun navigateToRoomCall(roomId: RoomId, callMode: CallWidgetMode = CallWidgetMode.Video)
         fun navigateToThread(threadRootId: ThreadId, focusedEventId: EventId?)
     }
 
@@ -294,6 +295,8 @@ class ThreadedMessagesNode(
                 onSendLocationClick = callback::navigateToSendLocation,
                 onCreatePollClick = callback::navigateToCreatePoll,
                 onJoinCallClick = { callback.navigateToRoomCall(room.roomId) },
+                onStartVoiceCallClick = { callback.navigateToRoomCall(room.roomId, CallWidgetMode.Audio) },
+                onStartVideoCallClick = { callback.navigateToRoomCall(room.roomId, CallWidgetMode.Video) },
                 onViewAllPinnedMessagesClick = {},
                 modifier = modifier,
                 knockRequestsBannerView = {},

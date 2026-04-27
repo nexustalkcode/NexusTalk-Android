@@ -12,6 +12,9 @@ import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 
+/**
+ * 默认的 DataStore Preferences 损坏处理器工厂。
+ */
 object DefaultPreferencesCorruptionHandlerFactory {
     /**
      * Creates a [ReplaceFileCorruptionHandler] that will replace the corrupted preferences file with an empty preferences object.

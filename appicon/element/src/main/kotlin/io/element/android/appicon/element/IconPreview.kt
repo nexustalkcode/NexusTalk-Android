@@ -22,6 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
+/**
+ * 预览默认应用图标。
+ */
 internal fun IconPreview() {
     Box {
         Image(
@@ -38,6 +41,9 @@ internal fun IconPreview() {
 
 @Preview
 @Composable
+/**
+ * 预览圆形应用图标。
+ */
 internal fun RoundIconPreview() {
     Box(modifier = Modifier.clip(shape = CircleShape)) {
         Image(
@@ -54,6 +60,9 @@ internal fun RoundIconPreview() {
 
 @Preview
 @Composable
+/**
+ * 预览单色应用图标。
+ */
 internal fun MonochromeIconPreview() {
     Box(
         modifier = Modifier

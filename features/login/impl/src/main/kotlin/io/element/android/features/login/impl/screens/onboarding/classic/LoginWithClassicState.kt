@@ -9,6 +9,13 @@ package io.element.android.features.login.impl.screens.onboarding.classic
 
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * “使用 Element Classic 登录”页面展示状态。
+ *
+ * @property canLoginWithClassic 当前是否允许执行导入登录。
+ * @property loginWithClassicAction 当前登录动作异步状态。
+ * @property eventSink 页面事件分发函数。
+ */
 data class LoginWithClassicState(
     val canLoginWithClassic: Boolean,
     val loginWithClassicAction: AsyncAction<Unit>,

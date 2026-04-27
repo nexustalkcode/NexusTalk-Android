@@ -10,25 +10,26 @@ package io.element.android.features.linknewdevice.impl.screens.scan
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 为扫描二维码页面预览提供样例状态。
+ */
 open class ScanQrCodeStateProvider : PreviewParameterProvider<ScanQrCodeState> {
     override val values: Sequence<ScanQrCodeState>
         get() = sequenceOf(
-            // 默认状态
             aScanQrCodeState(),
-            // 扫描中
             aScanQrCodeState(scanAction = AsyncAction.Loading),
-            // 扫描完成
             aScanQrCodeState(scanAction = AsyncAction.Success(Unit)),
-            // 扫描失败
             aScanQrCodeState(scanAction = AsyncAction.Failure(Exception("Scan failed"))),
         )
 }
 
-// 便捷创建预览状态
+/**
+ * 构造一份扫描二维码页面样例状态。
+ */
 fun aScanQrCodeState(
     scanAction: AsyncAction<Unit> = AsyncAction.Uninitialized,
     eventSink: (ScanQrCodeEvent) -> Unit = {},
 ) = ScanQrCodeState(
     scanAction = scanAction,
-    eventSink = eventSink
+    eventSink = eventSink,
 )

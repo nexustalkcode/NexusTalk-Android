@@ -123,6 +123,7 @@ fun aNotifiableCallEvent(
     rtcNotificationType: RtcNotificationType = RtcNotificationType.NOTIFY,
     timestamp: Long = 0L,
     expirationTimestamp: Long = 0L,
+    isDm: Boolean = false,
 ) = NotifiableRingingCallEvent(
     sessionId = sessionId,
     eventId = eventId,
@@ -140,4 +141,5 @@ fun aNotifiableCallEvent(
     roomAvatarUrl = roomAvatarUrl,
     senderAvatarUrl = senderAvatarUrl,
     rtcNotificationType = rtcNotificationType,
+    isDm = isDm,
 )

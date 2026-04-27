@@ -8,8 +8,16 @@
 
 package io.element.android.features.startchat.impl.joinbyaddress
 
+/**
+ * “按地址加入房间”页面可能产生的用户事件。
+ */
 sealed interface JoinRoomByAddressEvent {
+    /** 关闭当前页面。 */
     data object Dismiss : JoinRoomByAddressEvent
+
+    /** 确认继续，尝试加入解析出的房间。 */
     data object Continue : JoinRoomByAddressEvent
+
+    /** 更新用户输入的房间地址。 */
     data class UpdateAddress(val address: String) : JoinRoomByAddressEvent
 }

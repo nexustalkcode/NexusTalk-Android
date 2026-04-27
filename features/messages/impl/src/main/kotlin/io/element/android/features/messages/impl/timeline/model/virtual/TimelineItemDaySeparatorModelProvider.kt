@@ -10,6 +10,9 @@ package io.element.android.features.messages.impl.timeline.model.virtual
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
+/**
+ * 为日期分隔虚拟项预览提供样例数据。
+ */
 class TimelineItemDaySeparatorModelProvider : PreviewParameterProvider<TimelineItemDaySeparatorModel> {
     override val values = sequenceOf(
         aTimelineItemDaySeparatorModel("Today"),
@@ -17,6 +20,9 @@ class TimelineItemDaySeparatorModelProvider : PreviewParameterProvider<TimelineI
     )
 }
 
+/**
+ * 构造一份日期分隔虚拟项样例。
+ */
 fun aTimelineItemDaySeparatorModel(formattedDate: String) = TimelineItemDaySeparatorModel(
     formattedDate = formattedDate
 )

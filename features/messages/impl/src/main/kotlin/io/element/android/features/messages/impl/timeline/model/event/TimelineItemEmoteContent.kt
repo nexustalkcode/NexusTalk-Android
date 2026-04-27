@@ -11,6 +11,9 @@ package io.element.android.features.messages.impl.timeline.model.event
 import io.element.android.libraries.matrix.ui.messages.toPlainText
 import org.jsoup.nodes.Document
 
+/**
+ * `/me` emote 消息的 UI 内容模型。
+ */
 data class TimelineItemEmoteContent(
     override val body: String,
     override val htmlDocument: Document?,
@@ -18,5 +21,8 @@ data class TimelineItemEmoteContent(
     override val isEdited: Boolean,
 ) : TimelineItemTextBasedContent {
     override val type: String = "TimelineItemEmoteContent"
+    /**
+     * 供无障碍与复制等场景使用的纯文本内容。
+     */
     override val plainText: String = htmlDocument?.toPlainText() ?: body
 }

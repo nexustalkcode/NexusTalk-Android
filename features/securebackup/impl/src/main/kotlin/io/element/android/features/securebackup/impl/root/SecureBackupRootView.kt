@@ -41,6 +41,9 @@ import io.element.android.libraries.matrix.api.encryption.RecoveryState
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染安全备份主页。
+ */
 fun SecureBackupRootView(
     state: SecureBackupRootState,
     onBackClick: () -> Unit,
@@ -235,6 +238,9 @@ fun SecureBackupRootView(
 }
 
 @Composable
+/**
+ * 渲染通用加载指示器。
+ */
 private fun LoadingView() {
     CircularProgressIndicator(
         modifier = Modifier

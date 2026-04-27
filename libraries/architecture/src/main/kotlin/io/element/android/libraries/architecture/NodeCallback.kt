@@ -11,10 +11,16 @@ package io.element.android.libraries.architecture
 import com.bumble.appyx.core.node.Node
 import com.bumble.appyx.core.plugin.Plugin
 
+/**
+ * 从当前节点插件列表中解析单个回调接口实现。
+ */
 inline fun <reified I : Plugin> Node.callback(): I {
     return plugins.callback()
 }
 
+/**
+ * 从插件列表中解析单个回调接口实现。
+ */
 inline fun <reified I : Plugin> List<Plugin>.callback(): I {
     return requireNotNull(filterIsInstance<I>().singleOrNull()) { "Make sure to actually pass a Callback plugin to your node" }
 }

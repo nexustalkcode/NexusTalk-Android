@@ -16,9 +16,15 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.timeline.item.event.PollContent
 
 @Inject
+/**
+ * 投票事件内容工厂。
+ */
 class TimelineItemContentPollFactory(
     private val pollContentStateFactory: PollContentStateFactory,
 ) {
+    /**
+     * 将底层投票内容转换为 UI 内容模型。
+     */
     suspend fun create(
         eventId: EventId?,
         isEditable: Boolean,

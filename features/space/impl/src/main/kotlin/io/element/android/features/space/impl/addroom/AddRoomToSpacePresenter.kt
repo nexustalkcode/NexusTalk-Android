@@ -37,11 +37,19 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
 @Inject
+/**
+ * “向 Space 添加房间”页面 Presenter。
+ *
+ * 负责管理搜索、选中房间和批量添加动作。
+ */
 class AddRoomToSpacePresenter(
     private val spaceRoomList: SpaceRoomList,
     private val spaceService: SpaceService,
     private val dataSourceFactory: AddRoomToSpaceSearchDataSource.Factory,
 ) : Presenter<AddRoomToSpaceState> {
+    /**
+     * 生成页面状态并处理用户事件。
+     */
     @Composable
     override fun present(): AddRoomToSpaceState {
         var selectedRooms: ImmutableList<SelectRoomInfo> by remember { mutableStateOf(persistentListOf()) }
@@ -111,6 +119,9 @@ class AddRoomToSpacePresenter(
         )
     }
 
+    /**
+     * 将当前选中的房间批量添加到目标 Space。
+     */
     private fun CoroutineScope.addRoomsToSpace(
         selectedRooms: ImmutableList<SelectRoomInfo>,
         addAction: MutableState<AsyncAction<Unit>>,

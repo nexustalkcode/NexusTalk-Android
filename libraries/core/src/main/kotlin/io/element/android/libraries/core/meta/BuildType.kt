@@ -8,6 +8,9 @@
 
 package io.element.android.libraries.core.meta
 
+/**
+ * 应用构建类型。
+ */
 enum class BuildType {
     RELEASE,
     NIGHTLY,

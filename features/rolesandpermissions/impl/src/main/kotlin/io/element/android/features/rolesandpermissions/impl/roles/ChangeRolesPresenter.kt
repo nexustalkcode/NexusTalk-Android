@@ -53,6 +53,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AssistedInject
+/**
+ * 修改成员角色页面 Presenter。
+ *
+ * 负责搜索成员、维护已选成员列表，并驱动保存角色修改的流程。
+ */
 class ChangeRolesPresenter(
     @Assisted private val role: RoomMember.Role,
     private val room: JoinedRoom,
@@ -60,6 +65,9 @@ class ChangeRolesPresenter(
     private val analyticsService: AnalyticsService,
     @RoomCoroutineScope private val roomCoroutineScope: CoroutineScope,
 ) : Presenter<ChangeRolesState> {
+    /**
+     * 创建 Presenter 的 Assisted 工厂。
+     */
     @AssistedFactory
     fun interface Factory {
         fun create(role: RoomMember.Role): ChangeRolesPresenter
@@ -67,6 +75,9 @@ class ChangeRolesPresenter(
 
     private val powerLevelRoomMemberComparator = PowerLevelRoomMemberComparator()
 
+    /**
+     * 生成页面状态并处理用户事件。
+     */
     @Composable
     override fun present(): ChangeRolesState {
         val queryState = rememberTextFieldState()
@@ -198,10 +209,16 @@ class ChangeRolesPresenter(
         )
     }
 
+    /**
+     * 按角色对房间成员进行分组。
+     */
     private fun List<RoomMember>.groupedByRole(): MembersByRole {
         return MembersByRole(this, powerLevelRoomMemberComparator)
     }
 
+    /**
+     * 保存当前的成员角色变更。
+     */
     private fun CoroutineScope.save(
         usersWithRole: ImmutableList<MatrixUser>,
         selectedUsers: MutableState<ImmutableList<MatrixUser>>,
@@ -224,6 +241,9 @@ class ChangeRolesPresenter(
         }
     }
 
+    /**
+     * 将内部角色模型映射为分析埋点使用的角色。
+     */
     internal fun RoomMember.Role.toAnalyticsMemberRole(): RoomModeration.Role = when (this) {
         is RoomMember.Role.Owner -> RoomModeration.Role.Administrator // TODO - distinguish creator from admin
         RoomMember.Role.Admin -> RoomModeration.Role.Administrator

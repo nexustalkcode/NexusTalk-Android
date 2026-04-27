@@ -25,6 +25,13 @@ import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.supervisorScope
 
+/**
+ * 负责聚合、过滤并处理房间中的敲门请求。
+ *
+ * 该服务把底层 Matrix 的敲门请求流转换成 UI 可消费的数据，
+ * 同时维护一个“已处理请求”集合，用于在本地先行隐藏已经接受或拒绝的请求，
+ * 避免等待下一次 sync 才反映到界面。
+ */
 class KnockRequestsService(
     knockRequestsFlow: Flow<List<KnockRequest>>,
     permissionsFlow: Flow<KnockRequestPermissions>,
@@ -63,9 +70,10 @@ class KnockRequestsService(
     }
 
     /**
-     * Accept a knock request.
-     * @param knockRequest The knock request to accept.
-     * @param optimistic If true, the request will be marked as handled before the server responds.
+     * 接受一条敲门请求。
+     *
+     * @param knockRequest 需要接受的敲门请求。
+     * @param optimistic 是否在服务端返回前先把请求标记为已处理。
      */
     suspend fun acceptKnockRequest(knockRequest: KnockRequestPresentable, optimistic: Boolean = false): Result<Unit> {
         val wrapped = getKnockRequestById(knockRequest.eventId) ?: return knockRequestNotFoundResult()
@@ -73,9 +81,10 @@ class KnockRequestsService(
     }
 
     /**
-     * Decline a knock request.
-     * @param knockRequest The knock request to decline.
-     * @param optimistic If true, the request will be marked as handled before the server responds.
+     * 拒绝一条敲门请求。
+     *
+     * @param knockRequest 需要拒绝的敲门请求。
+     * @param optimistic 是否在服务端返回前先把请求标记为已处理。
      */
     suspend fun declineKnockRequest(knockRequest: KnockRequestPresentable, optimistic: Boolean = false): Result<Unit> {
         val wrapped = getKnockRequestById(knockRequest.eventId) ?: return knockRequestNotFoundResult()
@@ -83,9 +92,10 @@ class KnockRequestsService(
     }
 
     /**
-     * Decline a knock request by banning the user.
-     * @param knockRequest The knock request to decline.
-     * @param optimistic If true, the request will be marked as handled before the server responds.
+     * 通过封禁用户的方式拒绝一条敲门请求。
+     *
+     * @param knockRequest 需要拒绝并封禁的敲门请求。
+     * @param optimistic 是否在服务端返回前先把请求标记为已处理。
      */
     suspend fun declineAndBanKnockRequest(knockRequest: KnockRequestPresentable, optimistic: Boolean = false): Result<Unit> {
         val wrapped = getKnockRequestById(knockRequest.eventId) ?: return knockRequestNotFoundResult()
@@ -93,8 +103,9 @@ class KnockRequestsService(
     }
 
     /**
-     * Accept all currently known knock requests.
-     * @param optimistic If true, the requests will be marked as handled before the server responds.
+     * 接受当前已知的全部敲门请求。
+     *
+     * @param optimistic 是否在服务端返回前先把这些请求标记为已处理。
      */
     suspend fun acceptAllKnockRequests(optimistic: Boolean = false): Result<Unit> = supervisorScope {
         val results = knockRequestsList()
@@ -112,7 +123,7 @@ class KnockRequestsService(
     }
 
     /**
-     * Mark all currently known knock requests as seen.
+     * 将当前已知的全部敲门请求标记为已读。
      */
     suspend fun markAllKnockRequestsAsSeen() = supervisorScope {
         knockRequestsList()
@@ -122,6 +133,13 @@ class KnockRequestsService(
             .awaitAll()
     }
 
+    /**
+     * 统一处理单条敲门请求的乐观更新与回滚逻辑。
+     *
+     * @param knockRequest 当前需要处理的敲门请求包装对象。
+     * @param optimistic 是否启用乐观更新。
+     * @param action 真正发给底层 SDK 的处理动作。
+     */
     private suspend fun handleKnockRequest(
         knockRequest: KnockRequestWrapper,
         optimistic: Boolean,
@@ -144,4 +162,7 @@ class KnockRequestsService(
     }
 }
 
+/**
+ * 生成“请求不存在”的统一失败结果。
+ */
 private fun knockRequestNotFoundResult() = Result.failure<Unit>(KnockRequestsException.KnockRequestNotFound)

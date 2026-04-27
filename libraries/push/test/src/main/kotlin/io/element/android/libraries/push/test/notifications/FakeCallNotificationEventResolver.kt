@@ -12,11 +12,10 @@ import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.notification.NotificationData
 import io.element.android.libraries.push.impl.notifications.CallNotificationEventResolver
 import io.element.android.libraries.push.impl.notifications.model.NotifiableEvent
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeCallNotificationEventResolver(
     var resolveEventLambda: (sessionId: SessionId, notificationData: NotificationData, forceNotify: Boolean) -> Result<NotifiableEvent> = { _, _, _ ->
-        lambdaError()
+        error("resolveEventLambda should be provided in tests")
     },
 ) : CallNotificationEventResolver {
     override suspend fun resolveEvent(sessionId: SessionId, notificationData: NotificationData, forceNotify: Boolean): Result<NotifiableEvent> {

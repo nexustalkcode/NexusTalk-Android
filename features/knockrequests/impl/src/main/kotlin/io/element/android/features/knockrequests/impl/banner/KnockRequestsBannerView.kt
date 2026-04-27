@@ -56,6 +56,13 @@ import kotlinx.collections.immutable.toImmutableList
 
 private const val MAX_AVATAR_COUNT = 3
 
+/**
+ * 渲染房间顶部的敲门请求横幅。
+ *
+ * @param state 横幅的展示状态。
+ * @param onViewRequestsClick 点击“查看请求”后的回调。
+ * @param modifier 应用于横幅根节点的修饰符。
+ */
 @Composable
 fun KnockRequestsBannerView(
     state: KnockRequestsBannerState,
@@ -84,6 +91,12 @@ fun KnockRequestsBannerView(
     }
 }
 
+/**
+ * 显示接受敲门请求失败时的异步错误提示。
+ *
+ * @param displayError 是否需要展示错误提示。
+ * @param modifier 应用于提示宿主的修饰符。
+ */
 @Composable
 private fun KnockRequestsAcceptErrorView(
     displayError: Boolean,
@@ -102,6 +115,13 @@ private fun KnockRequestsAcceptErrorView(
     }
 }
 
+/**
+ * 渲染横幅主体内容。
+ *
+ * @param state 当前横幅状态。
+ * @param onViewRequestsClick 点击“查看请求”后的回调。
+ * @param modifier 应用于内容容器的修饰符。
+ */
 @Composable
 private fun KnockRequestsBannerContent(
     state: KnockRequestsBannerState,
@@ -190,6 +210,12 @@ private fun KnockRequestsBannerContent(
     }
 }
 
+/**
+ * 根据敲门请求数量渲染头像区域。
+ *
+ * @param knockRequests 需要在头像区域表示的敲门请求列表。
+ * @param modifier 应用于头像容器的修饰符。
+ */
 @Composable
 private fun KnockRequestAvatarView(
     knockRequests: ImmutableList<KnockRequestPresentable>,
@@ -207,6 +233,12 @@ private fun KnockRequestAvatarView(
     }
 }
 
+/**
+ * 以叠放头像的形式展示多条敲门请求。
+ *
+ * @param knockRequests 需要展示的敲门请求列表。
+ * @param modifier 应用于头像行的修饰符。
+ */
 @Composable
 private fun KnockRequestAvatarListView(
     knockRequests: ImmutableList<KnockRequestPresentable>,

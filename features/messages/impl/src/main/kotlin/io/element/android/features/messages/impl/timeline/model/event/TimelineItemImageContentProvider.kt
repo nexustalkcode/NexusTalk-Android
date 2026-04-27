@@ -13,6 +13,9 @@ import androidx.media3.common.MimeTypes
 import io.element.android.libraries.matrix.api.media.MediaSource
 import io.element.android.libraries.matrix.ui.components.A_BLUR_HASH
 
+/**
+ * 为图片消息内容预览提供样例数据。
+ */
 open class TimelineItemImageContentProvider : PreviewParameterProvider<TimelineItemImageContent> {
     override val values: Sequence<TimelineItemImageContent>
         get() = sequenceOf(
@@ -23,6 +26,9 @@ open class TimelineItemImageContentProvider : PreviewParameterProvider<TimelineI
         )
 }
 
+/**
+ * 构造一份图片消息内容样例。
+ */
 fun aTimelineItemImageContent(
     aspectRatio: Float? = 0.5f,
     blurhash: String? = A_BLUR_HASH,

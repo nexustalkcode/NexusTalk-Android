@@ -9,6 +9,7 @@
 package io.element.android.libraries.eventformatter.impl
 
 import dev.zacsweers.metro.Inject
+import io.element.android.libraries.eventformatter.R
 import io.element.android.libraries.eventformatter.impl.mode.RenderingMode
 import io.element.android.libraries.matrix.api.timeline.item.event.OtherState
 import io.element.android.libraries.matrix.api.timeline.item.event.StateContent

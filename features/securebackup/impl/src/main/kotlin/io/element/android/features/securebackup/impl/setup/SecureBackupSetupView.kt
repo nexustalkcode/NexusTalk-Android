@@ -34,6 +34,9 @@ import io.element.android.libraries.designsystem.theme.components.OutlinedButton
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染安全备份设置页面。
+ */
 fun SecureBackupSetupView(
     state: SecureBackupSetupState,
     onSuccess: () -> Unit,
@@ -74,11 +77,17 @@ fun SecureBackupSetupView(
     }
 }
 
+/**
+ * 判断当前设置页是否允许返回上一步。
+ */
 private fun SecureBackupSetupState.canGoBack(): Boolean {
     return recoveryKeyViewState.formattedRecoveryKey == null
 }
 
 @Composable
+/**
+ * 返回页面标题文案。
+ */
 private fun title(state: SecureBackupSetupState): String {
     return when (state.setupState) {
         SetupState.Init,
@@ -95,6 +104,9 @@ private fun title(state: SecureBackupSetupState): String {
 }
 
 @Composable
+/**
+ * 返回页面副标题文案。
+ */
 private fun subtitle(state: SecureBackupSetupState): String {
     return when (state.setupState) {
         SetupState.Init,
@@ -111,6 +123,9 @@ private fun subtitle(state: SecureBackupSetupState): String {
 }
 
 @Composable
+/**
+ * 渲染设置页主体内容。
+ */
 private fun Content(
     state: SecureBackupSetupState,
 ) {
@@ -145,6 +160,9 @@ private fun Content(
 }
 
 @Composable
+/**
+ * 渲染底部按钮区。
+ */
 private fun ColumnScope.Buttons(
     state: SecureBackupSetupState,
     onFinish: () -> Unit,

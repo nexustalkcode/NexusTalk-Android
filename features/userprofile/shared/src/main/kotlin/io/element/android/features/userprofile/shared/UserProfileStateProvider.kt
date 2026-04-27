@@ -20,6 +20,9 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.matrix.ui.components.aMatrixUser
 
+/**
+ * 为用户资料页预览提供样例状态。
+ */
 open class UserProfileStateProvider : PreviewParameterProvider<UserProfileState> {
     override val values: Sequence<UserProfileState>
         get() = sequenceOf(
@@ -36,6 +39,9 @@ open class UserProfileStateProvider : PreviewParameterProvider<UserProfileState>
         )
 }
 
+/**
+ * 构造一份用户资料页样例状态。
+ */
 fun aUserProfileState(
     userId: UserId = UserId("@daniel:domain.com"),
     userName: String? = "Daniel",

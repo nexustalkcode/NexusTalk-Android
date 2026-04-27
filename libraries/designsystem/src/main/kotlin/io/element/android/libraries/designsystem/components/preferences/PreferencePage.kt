@@ -8,16 +8,13 @@
 
 package io.element.android.libraries.designsystem.components.preferences
 
-import androidx.compose.foundation.background
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -35,10 +32,15 @@ fun PreferencePage(
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    handleSystemBack: Boolean = false,
     snackbarHost: @Composable () -> Unit = {},
     topBarBackgroundColor: Color? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    if (handleSystemBack) {
+        BackHandler(onBack = onBackClick)
+    }
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()

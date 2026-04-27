@@ -33,16 +33,27 @@ import kotlin.time.Duration.Companion.seconds
 private const val ADDRESS_RESOLVE_TIMEOUT_IN_SECONDS = 10
 
 @AssistedInject
+/**
+ * “按地址加入房间”页面 Presenter。
+ *
+ * 负责处理地址输入、别名解析、校验结果展示以及成功后的导航跳转。
+ */
 class JoinRoomByAddressPresenter(
     @Assisted private val navigator: StartChatNavigator,
     private val client: MatrixClient,
     private val roomAliasHelper: RoomAliasHelper,
 ) : Presenter<JoinRoomByAddressState> {
+    /**
+     * 创建 Presenter 的 Assisted 工厂。
+     */
     @AssistedFactory
     interface Factory {
         fun create(navigator: StartChatNavigator): JoinRoomByAddressPresenter
     }
 
+    /**
+     * 生成页面状态并处理用户事件。
+     */
     @Composable
     override fun present(): JoinRoomByAddressState {
         var address by remember { mutableStateOf("") }
@@ -93,6 +104,11 @@ class JoinRoomByAddressPresenter(
         )
     }
 
+    /**
+     * 当地址成功解析到房间后，关闭浮层并交给导航器打开房间。
+     *
+     * @param state 当前解析成功的房间状态。
+     */
     private fun onRoomFound(state: RoomAddressState.RoomFound) {
         navigator.onDismissJoinRoomByAddress()
         navigator.onRoomCreated(
@@ -101,6 +117,12 @@ class JoinRoomByAddressPresenter(
         )
     }
 
+    /**
+     * 监听地址变化并异步解析房间别名。
+     *
+     * @param fullAddress 用户当前输入的完整地址。
+     * @param onRoomAddressStateChange 用于回写地址解析状态的回调。
+     */
     @Composable
     private fun RoomAddressStateEffect(
         fullAddress: String,
@@ -122,6 +144,11 @@ class JoinRoomByAddressPresenter(
         }
     }
 
+    /**
+     * 调用 Matrix 层解析房间别名，并在超时后返回“未找到”状态。
+     *
+     * @param roomAlias 需要解析的房间别名。
+     */
     private suspend fun MatrixClient.resolveRoomAddress(roomAlias: RoomAlias): RoomAddressState {
         return withTimeoutOrNull(ADDRESS_RESOLVE_TIMEOUT_IN_SECONDS.seconds) {
             resolveRoomAlias(roomAlias)
@@ -140,6 +167,9 @@ class JoinRoomByAddressPresenter(
         } ?: RoomAddressState.RoomNotFound
     }
 
+    /**
+     * 根据别名格式是否有效，把解析失败区分为“无效地址”或“房间不存在”。
+     */
     private fun RoomAlias.toInvalidOrNotFound(): RoomAddressState {
         return if (roomAliasHelper.isRoomAliasValid(this)) {
             RoomAddressState.RoomNotFound

@@ -42,6 +42,14 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import kotlinx.coroutines.delay
 
+/**
+ * 渲染数字校验码输入框。
+ *
+ * @param number 当前数字模型。
+ * @param onValueChange 输入变化回调。
+ * @param onDone 点击输入法完成键时的回调。
+ * @param modifier 应用于输入框根节点的修饰符。
+ */
 @Composable
 fun NumberTextField(
     number: Number,
@@ -78,6 +86,7 @@ fun NumberTextField(
 }
 
 @OptIn(ExperimentalLayoutApi::class)
+/** 渲染数字输入框的可视化格子行。 */
 @Composable
 private fun NumberRow(
     number: Number,
@@ -98,6 +107,7 @@ private fun NumberRow(
     }
 }
 
+/** 渲染单个数字格子。 */
 @Composable
 private fun DigitView(
     digit: Digit,
@@ -137,6 +147,7 @@ private fun DigitView(
     }
 }
 
+/** 渲染闪烁光标。 */
 @Composable
 private fun BlinkingCursor() {
     var isCursorVisible by remember { mutableStateOf(true) }

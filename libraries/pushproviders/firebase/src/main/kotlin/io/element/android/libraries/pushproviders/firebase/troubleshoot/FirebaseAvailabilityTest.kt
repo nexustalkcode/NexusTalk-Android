@@ -10,9 +10,9 @@ package io.element.android.libraries.pushproviders.firebase.troubleshoot
 
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
+import io.element.android.libraries.pushproviders.R
 import io.element.android.libraries.pushproviders.firebase.FirebaseConfig
 import io.element.android.libraries.pushproviders.firebase.IsPlayServiceAvailable
-import io.element.android.libraries.pushproviders.firebase.R
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTest
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestDelegate
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
@@ -27,6 +27,9 @@ class FirebaseAvailabilityTest(
     private val stringProvider: StringProvider,
 ) : NotificationTroubleshootTest {
     override val order = 300
+
+    // pushproviders 已经合并为单一 Android library 模块，release AAR 中只会产出根 namespace 的 R。
+    // 如果这里继续引用历史 firebase 子命名空间的 R，宿主 app 在 R8 shrink 阶段就会报 missing class。
     private val delegate = NotificationTroubleshootTestDelegate(
         defaultName = stringProvider.getString(R.string.troubleshoot_notifications_test_firebase_availability_title),
         defaultDescription = stringProvider.getString(R.string.troubleshoot_notifications_test_firebase_availability_description),

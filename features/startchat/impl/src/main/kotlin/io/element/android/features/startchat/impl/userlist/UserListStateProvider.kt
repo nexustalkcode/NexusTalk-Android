@@ -19,6 +19,9 @@ import io.element.android.libraries.usersearch.api.UserSearchResult
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为用户列表组件预览提供样例状态。
+ */
 open class UserListStateProvider : PreviewParameterProvider<UserListState> {
     override val values: Sequence<UserListState>
         get() = sequenceOf(
@@ -60,6 +63,9 @@ open class UserListStateProvider : PreviewParameterProvider<UserListState> {
         )
 }
 
+/**
+ * 构造一份用户列表组件样例状态。
+ */
 fun aUserListState(
     searchQuery: String = "",
     isSearchActive: Boolean = false,
@@ -80,9 +86,18 @@ fun aUserListState(
     eventSink = eventSink
 )
 
+/**
+ * 构造一组已选用户样例。
+ */
 fun aListOfSelectedUsers() = aMatrixUserList().take(6).toImmutableList()
+/**
+ * 构造一组用户搜索结果样例。
+ */
 fun aListOfUserSearchResults() = aMatrixUserList().take(6).map { UserSearchResult(it) }.toImmutableList()
 
+/**
+ * 构造最近私聊房间样例。
+ */
 fun aRecentDirectRoomList(
     count: Int = 5
 ): List<RecentDirectRoom> = aMatrixUserList()

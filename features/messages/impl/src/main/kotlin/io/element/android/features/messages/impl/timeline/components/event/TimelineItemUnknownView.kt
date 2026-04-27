@@ -18,6 +18,9 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染未知事件类型的提示视图。
+ */
 @Composable
 fun TimelineItemUnknownView(
     @Suppress("UNUSED_PARAMETER") content: TimelineItemUnknownContent,

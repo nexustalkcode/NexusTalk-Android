@@ -233,11 +233,21 @@ class RustEncryptionService(
     }
 
     override suspend fun startIdentityReset(): Result<IdentityResetHandle?> {
+        Timber.tag("ResetIdentityTrace").i("RustEncryptionService.startIdentityReset begin")
         return runCatchingExceptions {
             service.resetIdentity()
         }.flatMap { handle ->
             RustIdentityResetHandleFactory.create(sessionId, handle)
         }
+            .onSuccess { handle ->
+                Timber.tag("ResetIdentityTrace").i(
+                    "RustEncryptionService.startIdentityReset success handle=%s",
+                    handle?.let { it::class.simpleName } ?: "null",
+                )
+            }
+            .onFailure { failure ->
+                Timber.tag("ResetIdentityTrace").e(failure, "RustEncryptionService.startIdentityReset failed")
+            }
     }
 
     override suspend fun pinUserIdentity(userId: UserId): Result<Unit> = runCatchingExceptions {

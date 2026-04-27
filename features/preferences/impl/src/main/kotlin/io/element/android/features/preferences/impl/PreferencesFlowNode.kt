@@ -51,6 +51,11 @@ import kotlinx.parcelize.Parcelize
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 设置总流程节点。
+ *
+ * 负责在设置主页、通知、锁屏、关于、用户资料、退出登录等子页面之间进行导航。
+ */
 class PreferencesFlowNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -68,6 +73,9 @@ class PreferencesFlowNode(
     buildContext = buildContext,
     plugins = plugins
 ) {
+    /**
+     * 设置流程中的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         @Parcelize
         data object Root : NavTarget
@@ -123,6 +131,9 @@ class PreferencesFlowNode(
 
     private val callback: PreferencesEntryPoint.Callback = callback()
 
+    /**
+     * 根据导航目标创建对应设置子节点。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             NavTarget.Root -> {
@@ -348,6 +359,9 @@ class PreferencesFlowNode(
         }
     }
 
+    /**
+     * 渲染当前设置流程的 back stack。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         BackstackView()

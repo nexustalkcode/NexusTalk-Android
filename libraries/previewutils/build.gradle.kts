@@ -16,7 +16,7 @@ android {
 
 dependencies {
     implementation(projects.libraries.designsystem)
-    implementation(projects.libraries.matrix.api)
+    implementation(project(":libraries:matrix"))
 
     implementation(libs.kotlinx.collections.immutable)
 }

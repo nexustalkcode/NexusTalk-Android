@@ -22,11 +22,17 @@ import io.element.android.libraries.di.RoomScope
 
 @ContributesNode(RoomScope::class)
 @AssistedInject
+/**
+ * 角色与权限主页节点。
+ */
 class RolesAndPermissionsNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: RolesAndPermissionsPresenter,
 ) : Node(buildContext, plugins = plugins), RolesAndPermissionsNavigator {
+    /**
+     * 主页向上抛出的导航回调。
+     */
     interface Callback : Plugin, RolesAndPermissionsNavigator {
         override fun openAdminList()
         override fun openModeratorList()
@@ -38,12 +44,18 @@ class RolesAndPermissionsNode(
     private val callback: Callback = callback()
 
     @Stable
+    /**
+     * 在默认导航回调基础上补充统一的返回逻辑。
+     */
     private val navigator = object : RolesAndPermissionsNavigator by callback {
         override fun onBackClick() {
             navigateUp()
         }
     }
 
+    /**
+     * 渲染角色与权限主页。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()
@@ -55,6 +67,9 @@ class RolesAndPermissionsNode(
     }
 }
 
+/**
+ * 角色与权限页内部导航接口。
+ */
 interface RolesAndPermissionsNavigator {
     fun onBackClick() {}
     fun openAdminList() {}

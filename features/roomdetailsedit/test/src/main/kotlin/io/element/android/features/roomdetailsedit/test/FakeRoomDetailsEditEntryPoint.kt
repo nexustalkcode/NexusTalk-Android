@@ -10,10 +10,9 @@ package io.element.android.features.roomdetailsedit.test
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import io.element.android.features.roomdetailsedit.api.RoomDetailsEditEntryPoint
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeRoomDetailsEditEntryPoint : RoomDetailsEditEntryPoint {
     override fun createNode(parentNode: Node, buildContext: BuildContext): Node {
-        lambdaError()
+        error("FakeRoomDetailsEditEntryPoint.createNode must be provided in tests")
     }
 }

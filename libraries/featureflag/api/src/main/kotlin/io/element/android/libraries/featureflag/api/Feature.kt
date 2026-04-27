@@ -17,14 +17,26 @@ interface Feature {
     val key: String
 
     /**
-     * Title to show in the UI. Not needed to be translated as it's only dev accessible.
+     * English fallback title to show when no localized resource is available.
      */
     val title: String
 
     /**
-     * Optional description to give more context on the feature.
+     * Localized title resource to use in UI surfaces that can resolve Android resources.
+     */
+    val titleResource: Int?
+        get() = null
+
+    /**
+     * Optional English fallback description to give more context on the feature.
      */
     val description: String?
+
+    /**
+     * Localized description resource to use in UI surfaces that can resolve Android resources.
+     */
+    val descriptionResource: Int?
+        get() = null
 
     /**
      * Calculate the default value of the feature (enabled or disabled) given a [BuildMeta].

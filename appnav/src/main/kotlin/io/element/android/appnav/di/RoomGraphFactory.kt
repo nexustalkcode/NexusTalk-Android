@@ -8,8 +8,7 @@
 
 package io.element.android.appnav.di
 
-import io.element.android.libraries.matrix.api.room.JoinedRoom
-
-fun interface RoomGraphFactory {
-    fun create(room: JoinedRoom): Any
-}
+/**
+ * AppNav 层复用 architecture 中的 RoomGraphFactory 类型。
+ */
+typealias RoomGraphFactory = io.element.android.libraries.architecture.RoomGraphFactory

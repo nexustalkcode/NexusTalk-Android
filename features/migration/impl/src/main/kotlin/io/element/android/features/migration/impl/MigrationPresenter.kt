@@ -26,6 +26,11 @@ import timber.log.Timber
 
 @SingleIn(AppScope::class)
 @Inject
+/**
+ * 应用迁移 Presenter。
+ *
+ * 负责比较当前存储版本与目标版本，并按顺序执行待处理迁移。
+ */
 class MigrationPresenter(
     private val migrationStore: MigrationStore,
     migrations: Set<@JvmSuppressWildcards AppMigration>,
@@ -34,6 +39,9 @@ class MigrationPresenter(
     private val lastMigration: Int = orderedMigrations.lastOrNull()?.order ?: 0
     private var isFreshInstall = false
 
+    /**
+     * 生成迁移状态并在需要时执行迁移。
+     */
     @Composable
     override fun present(): MigrationState {
         val migrationStoreVersion by remember {

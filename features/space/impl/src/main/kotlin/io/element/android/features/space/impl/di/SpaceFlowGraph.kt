@@ -16,9 +16,15 @@ import io.element.android.libraries.di.RoomScope
 import io.element.android.libraries.matrix.api.spaces.SpaceRoomList
 
 @GraphExtension(SpaceFlowScope::class)
+/**
+ * Space 流程的依赖注入图。
+ */
 interface SpaceFlowGraph : NodeFactoriesBindings {
     @ContributesTo(RoomScope::class)
     @GraphExtension.Factory
+    /**
+     * 创建 Space 流程依赖图。
+     */
     interface Factory {
         fun create(@Provides spaceRoomList: SpaceRoomList): SpaceFlowGraph
     }

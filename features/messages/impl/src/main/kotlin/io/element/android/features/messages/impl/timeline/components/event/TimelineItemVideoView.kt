@@ -68,6 +68,11 @@ import io.element.android.libraries.ui.utils.time.isTalkbackActive
 import io.element.android.wysiwyg.compose.EditorStyledText
 import io.element.android.wysiwyg.link.Link
 
+/**
+ * 渲染视频消息条目视图。
+ *
+ * 支持媒体保护、点击预览以及带格式的视频说明文案。
+ */
 @Composable
 fun TimelineItemVideoView(
     content: TimelineItemVideoContent,

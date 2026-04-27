@@ -18,8 +18,14 @@ internal const val ANDROID_KEYSTORE = "AndroidKeyStore"
 
 @ContributesTo(AppScope::class)
 @BindingContainer
+/**
+ * 加密相关依赖提供模块。
+ */
 object CryptographyModule {
     @Provides
+    /**
+     * 提供已加载的 AndroidKeyStore 实例。
+     */
     fun providesAndroidKeyStore(): KeyStore {
         return KeyStore.getInstance(ANDROID_KEYSTORE).apply {
             load(null)

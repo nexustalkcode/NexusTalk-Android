@@ -11,6 +11,14 @@ package io.element.android.features.userprofile.api
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.matrix.api.core.UserId
 
+/**
+ * 创建用户资料页 Presenter 的工厂接口。
+ */
 fun interface UserProfilePresenterFactory {
+    /**
+     * 为指定用户创建资料页 Presenter。
+     *
+     * @param userId 需要展示资料页的用户 ID。
+     */
     fun create(userId: UserId): Presenter<UserProfileState>
 }

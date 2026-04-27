@@ -24,11 +24,19 @@ import io.element.android.libraries.architecture.callback
 
 @ContributesNode(SpaceFlowScope::class)
 @AssistedInject
+/**
+ * Space 设置主页节点。
+ *
+ * 负责收集 [SpaceSettingsPresenter] 状态并把设置项点击事件桥接到流程回调。
+ */
 class SpaceSettingsNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: SpaceSettingsPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 设置主页向上抛出的导航回调。
+     */
     interface Callback : Plugin {
         fun closeSettings()
 
@@ -42,6 +50,11 @@ class SpaceSettingsNode(
     private val callback: Callback = callback()
     private val stateFlow = launchMolecule { presenter.present() }
 
+    /**
+     * 渲染 Space 设置主页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state by stateFlow.collectAsState()

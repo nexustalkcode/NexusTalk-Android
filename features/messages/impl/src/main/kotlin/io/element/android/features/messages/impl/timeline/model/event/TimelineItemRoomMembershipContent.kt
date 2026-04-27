@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.model.event
 
+/**
+ * 房间成员关系变更事件的 UI 内容模型。
+ */
 data class TimelineItemRoomMembershipContent(
     override val body: String,
 ) : TimelineItemStateContent {

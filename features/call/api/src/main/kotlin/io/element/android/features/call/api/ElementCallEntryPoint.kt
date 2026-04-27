@@ -49,5 +49,6 @@ interface ElementCallEntryPoint {
         expirationTimestamp: Long,
         notificationChannelId: String,
         textContent: String?,
+        isDm: Boolean = false,
     )
 }

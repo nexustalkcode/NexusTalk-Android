@@ -115,7 +115,3 @@ lint/tmp/
 .DS_Store
 
 checkouts/**
-
-# Local signing and local gradle cache
-app.jks
-.gradle-user-home/

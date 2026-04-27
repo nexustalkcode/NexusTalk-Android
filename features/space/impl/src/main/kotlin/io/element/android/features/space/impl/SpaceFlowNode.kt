@@ -43,6 +43,11 @@ import kotlinx.parcelize.Parcelize
 
 @ContributesNode(RoomScope::class)
 @AssistedInject
+/**
+ * Space 总流程节点。
+ *
+ * 负责在 Space 主页、设置、离开流程和添加房间流程之间导航切换。
+ */
 class SpaceFlowNode(
     @Assisted val buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -61,6 +66,9 @@ class SpaceFlowNode(
     private val spaceRoomList = spaceService.spaceRoomList(room.roomId)
     override val graph = graphFactory.create(spaceRoomList)
 
+    /**
+     * Space 流程中的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         @Parcelize
         data object Root : NavTarget
@@ -75,6 +83,9 @@ class SpaceFlowNode(
         data object AddRoom : NavTarget
     }
 
+    /**
+     * 在节点销毁时释放 Space 房间列表资源。
+     */
     override fun onBuilt() {
         super.onBuilt()
         lifecycle.subscribe(
@@ -84,6 +95,9 @@ class SpaceFlowNode(
         )
     }
 
+    /**
+     * 根据导航目标创建对应子节点。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             NavTarget.Leave -> {
@@ -151,6 +165,9 @@ class SpaceFlowNode(
         }
     }
 
+    /**
+     * 渲染当前 Space 流程的 back stack。
+     */
     @Composable
     override fun View(modifier: Modifier) = BackstackView()
 }

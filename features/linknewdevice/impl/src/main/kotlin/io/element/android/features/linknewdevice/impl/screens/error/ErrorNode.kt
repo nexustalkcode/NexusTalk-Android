@@ -21,10 +21,18 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 设备关联流程的错误页节点。
+ *
+ * 根据注入的 [ErrorScreenType] 渲染不同错误文案，并提供统一的重试出口。
+ */
 class ErrorNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
 ) : Node(buildContext = buildContext, plugins = plugins) {
+    /**
+     * 错误页回调。
+     */
     interface Callback : Plugin {
         fun onRetry()
     }
@@ -32,6 +40,11 @@ class ErrorNode(
     private val callback: Callback = callback()
     private val errorScreenType = inputs<ErrorScreenType>()
 
+    /**
+     * 渲染错误页面。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         ErrorView(

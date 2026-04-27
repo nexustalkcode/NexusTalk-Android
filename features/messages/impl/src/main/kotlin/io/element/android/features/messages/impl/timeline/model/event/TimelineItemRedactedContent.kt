@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.model.event
 
+/**
+ * 已撤回消息的 UI 内容模型。
+ */
 data object TimelineItemRedactedContent : TimelineItemEventContent {
     override val type: String = "TimelineItemRedactedContent"
 }

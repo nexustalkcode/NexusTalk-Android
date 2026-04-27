@@ -15,6 +15,9 @@ import io.element.android.libraries.matrix.api.room.powerlevels.RoomPowerLevelsV
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 
+/**
+ * 为修改房间权限页面预览提供样例状态。
+ */
 class ChangeRoomPermissionsStateProvider : PreviewParameterProvider<ChangeRoomPermissionsState> {
     override val values: Sequence<ChangeRoomPermissionsState>
         get() = sequenceOf(
@@ -31,6 +34,9 @@ class ChangeRoomPermissionsStateProvider : PreviewParameterProvider<ChangeRoomPe
         )
 }
 
+/**
+ * 构造一份修改房间权限页面样例状态。
+ */
 internal fun aChangeRoomPermissionsState(
     ownPowerLevel: Long = RoomMember.Role.Admin.powerLevel,
     currentPermissions: RoomPowerLevelsValues = previewPermissions(),
@@ -47,6 +53,9 @@ internal fun aChangeRoomPermissionsState(
     eventSink = eventSink,
 )
 
+/**
+ * 构造一份用于预览的房间权限值。
+ */
 private fun previewPermissions(): RoomPowerLevelsValues {
     return RoomPowerLevelsValues(
         // MembershipModeration section

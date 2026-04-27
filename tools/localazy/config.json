@@ -86,7 +86,7 @@
       ]
     },
     {
-      "name" : ":libraries:textcomposer:impl",
+      "name" : ":libraries:textcomposer",
       "includeRegex" : [
         "rich_text_editor.*",
         ".*voice_message_tooltip",
@@ -125,7 +125,7 @@
       ]
     },
     {
-      "name" : ":libraries:push:impl",
+      "name" : ":libraries:push",
       "includeRegex" : [
         "push_.*",
         "notification_.*",
@@ -144,13 +144,13 @@
       ]
     },
     {
-      "name" : ":libraries:pushproviders:firebase",
+      "name" : ":libraries:pushproviders",
       "includeRegex" : [
         "troubleshoot_notifications_test_firebase_.*"
       ]
     },
     {
-      "name" : ":libraries:pushproviders:unifiedpush",
+      "name" : ":libraries:pushproviders",
       "includeRegex" : [
         "troubleshoot_notifications_test_unified_push_.*"
       ]
@@ -215,9 +215,7 @@
         "screen_polls_history_title",
         "screen_notification_settings_mentions_only_disclaimer",
         "screen_room_change_.*",
-        "screen_room_roles_.*",
-        "screen\\.edit_room_address\\..*",
-        "screen\\.security_and_privacy\\..*"
+        "screen_room_roles_.*"
       ]
     },
     {
@@ -239,7 +237,7 @@
       ]
     },
     {
-      "name" : ":features:userprofile:shared",
+      "name" : ":features:userprofile",
       "includeRegex" : [
         "screen_start_chat_error_starting_chat",
         "screen_dm_details_.*",
@@ -331,7 +329,7 @@
       ]
     },
     {
-      "name" : ":libraries:troubleshoot:impl",
+      "name" : ":libraries:troubleshoot",
       "includeRegex" : [
         "troubleshoot_notifications_screen_.*",
         "screen\\.push_history\\..*"

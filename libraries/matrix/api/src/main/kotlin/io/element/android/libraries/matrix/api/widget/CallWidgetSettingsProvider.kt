@@ -17,5 +17,6 @@ interface CallWidgetSettingsProvider {
         encrypted: Boolean,
         direct: Boolean,
         hasActiveCall: Boolean,
+        callMode: CallWidgetMode = CallWidgetMode.Video,
     ): MatrixWidgetSettings
 }

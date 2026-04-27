@@ -13,6 +13,9 @@ import io.element.android.features.messages.impl.timeline.model.ReadReceiptData
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.timeline.item.event.LocalEventSendState
 
+/**
+ * 为时间线事件行中的已读回执视图预览提供样例状态。
+ */
 class ReadReceiptViewStateForTimelineItemEventRowProvider :
     PreviewParameterProvider<ReadReceiptViewState> {
     override val values: Sequence<ReadReceiptViewState>

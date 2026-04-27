@@ -12,4 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * 应用时间线内容的默认内边距。
+ */
 fun Modifier.defaultTimelineContentPadding() = padding(horizontal = 12.dp, vertical = 6.dp)

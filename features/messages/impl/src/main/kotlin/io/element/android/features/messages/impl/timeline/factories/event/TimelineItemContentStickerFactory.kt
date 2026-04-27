@@ -17,10 +17,16 @@ import io.element.android.libraries.matrix.api.timeline.item.event.StickerConten
 import io.element.android.libraries.mediaviewer.api.util.FileExtensionExtractor
 
 @Inject
+/**
+ * 贴纸事件内容工厂。
+ */
 class TimelineItemContentStickerFactory(
     private val fileSizeFormatter: FileSizeFormatter,
     private val fileExtensionExtractor: FileExtensionExtractor
 ) {
+    /**
+     * 计算贴纸宽高比。
+     */
     private fun aspectRatioOf(width: Long?, height: Long?): Float? {
         val result = if (height != null && width != null) {
             width.toFloat() / height.toFloat()
@@ -31,6 +37,9 @@ class TimelineItemContentStickerFactory(
         return result?.takeIf { it.isFinite() }
     }
 
+    /**
+     * 将底层贴纸内容转换为 UI 内容模型。
+     */
     fun create(content: StickerContent): TimelineItemEventContent {
         val aspectRatio = aspectRatioOf(content.info.width, content.info.height)
 

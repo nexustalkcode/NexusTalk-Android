@@ -51,6 +51,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 已加入房间流程节点。
+ *
+ * 负责等待房间加载完成，并在加载态与已加载态之间切换。
+ */
 @ContributesNode(SessionScope::class)
 @AssistedInject
 class JoinedRoomFlowNode(
@@ -67,6 +72,9 @@ class JoinedRoomFlowNode(
         buildContext = buildContext,
         plugins = plugins
     ) {
+    /**
+     * 已加入房间流程输入参数。
+     */
     data class Inputs(
         val roomId: RoomId,
         val joinedRoom: JoinedRoom?,
@@ -76,6 +84,9 @@ class JoinedRoomFlowNode(
     private val inputs: Inputs = inputs()
     private val loadingRoomStateStateFlow = loadingRoomStateFlowFactory.create(lifecycleScope, inputs.roomId, inputs.joinedRoom)
 
+    /**
+     * 已加入房间流程中的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         @Parcelize
         data object Loading : NavTarget
@@ -84,6 +95,9 @@ class JoinedRoomFlowNode(
         data object Loaded : NavTarget
     }
 
+    /**
+     * 构建完成后开始观察房间加载状态。
+     */
     override fun onBuilt() {
         super.onBuilt()
 
@@ -106,6 +120,9 @@ class JoinedRoomFlowNode(
             .launchIn(lifecycleScope)
     }
 
+    /**
+     * 根据导航目标创建对应子节点。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             NavTarget.Loaded -> {
@@ -127,6 +144,9 @@ class JoinedRoomFlowNode(
         }
     }
 
+    /**
+     * 创建房间加载中的占位节点。
+     */
     private fun loadingNode(buildContext: BuildContext, onBackClick: () -> Unit) = node(buildContext) { modifier ->
         val loadingRoomState by loadingRoomStateStateFlow.collectAsState()
         LoadingRoomNodeView(
@@ -136,12 +156,18 @@ class JoinedRoomFlowNode(
         )
     }
 
+    /**
+     * 将线程导航附着到已加载房间流程。
+     */
     suspend fun attachThread(threadId: ThreadId, focusedEventId: EventId?) {
         waitForChildAttached<JoinedRoomLoadedFlowNode>()
             .attachThread(threadId, focusedEventId)
     }
 
     @Composable
+    /**
+     * 渲染已加入房间流程的 back stack。
+     */
     override fun View(modifier: Modifier) {
         BackstackView(
             transitionHandler = JumpToEndTransitionHandler(),

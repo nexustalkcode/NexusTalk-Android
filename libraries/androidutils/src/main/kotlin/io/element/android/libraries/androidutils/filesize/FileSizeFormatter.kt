@@ -8,6 +8,9 @@
 
 package io.element.android.libraries.androidutils.filesize
 
+/**
+ * 文件大小格式化接口。
+ */
 interface FileSizeFormatter {
     /**
      * Formats a content size to be in the form of bytes, kilobytes, megabytes, etc.

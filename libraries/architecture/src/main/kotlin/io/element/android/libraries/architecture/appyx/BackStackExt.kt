@@ -10,6 +10,9 @@ package io.element.android.libraries.architecture.appyx
 
 import com.bumble.appyx.navmodel.backstack.BackStack
 
+/**
+ * 判断当前 BackStack 是否存在可返回的 stashed 元素。
+ */
 fun <T : Any> BackStack<T>.canPop(): Boolean {
     val elements = elements.value
     return elements.any { it.targetState == BackStack.State.ACTIVE } &&

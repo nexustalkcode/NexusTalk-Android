@@ -16,6 +16,7 @@ import io.element.android.libraries.matrix.api.encryption.IdentityResetHandle
 import org.matrix.rustcomponents.sdk.AuthData
 import org.matrix.rustcomponents.sdk.AuthDataPasswordDetails
 import org.matrix.rustcomponents.sdk.CrossSigningResetAuthType
+import timber.log.Timber
 
 object RustIdentityResetHandleFactory {
     fun create(
@@ -52,10 +53,18 @@ class RustOidcIdentityResetHandle(
     override val url: String,
 ) : IdentityOidcResetHandle {
     override suspend fun resetOidc(): Result<Unit> {
+        Timber.tag("ResetIdentityTrace").i("RustOidcIdentityResetHandle.resetOidc begin")
         return runCatchingExceptions { identityResetHandle.reset(null) }
+            .onSuccess {
+                Timber.tag("ResetIdentityTrace").i("RustOidcIdentityResetHandle.resetOidc success")
+            }
+            .onFailure { failure ->
+                Timber.tag("ResetIdentityTrace").e(failure, "RustOidcIdentityResetHandle.resetOidc failed")
+            }
     }
 
     override suspend fun cancel() {
+        Timber.tag("ResetIdentityTrace").i("RustOidcIdentityResetHandle.cancel")
         identityResetHandle.cancelAndDestroy()
     }
 }

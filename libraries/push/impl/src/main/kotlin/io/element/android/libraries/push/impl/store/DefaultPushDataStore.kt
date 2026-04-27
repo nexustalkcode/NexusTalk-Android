@@ -10,6 +10,7 @@ package io.element.android.libraries.push.impl.store
 
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import dev.zacsweers.metro.AppScope
@@ -28,6 +29,9 @@ import io.element.android.libraries.push.impl.store.DefaultPushDataStore.Compani
 import io.element.android.libraries.push.impl.store.DefaultPushDataStore.Companion.BATTERY_OPTIMIZATION_BANNER_STATE_SHOW
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
+
+private const val batteryOptimizationDebugTag = "BatteryOptimizationDebug"
 
 @ContributesBinding(AppScope::class)
 class DefaultPushDataStore(
@@ -48,6 +52,7 @@ class DefaultPushDataStore(
      * [BATTERY_OPTIMIZATION_BANNER_STATE_DISMISSED]: Banner has been shown and user has dismissed it
      */
     private val batteryOptimizationBannerState = intPreferencesKey("battery_optimization_banner_state")
+    private val batteryOptimizationBannerReason = stringPreferencesKey("battery_optimization_banner_reason")
 
     override val pushCounterFlow: Flow<Int> = dataStore.data.map { preferences ->
         preferences[pushCounter] ?: 0
@@ -55,7 +60,16 @@ class DefaultPushDataStore(
 
     @Suppress("UnnecessaryParentheses")
     override val shouldDisplayBatteryOptimizationBannerFlow: Flow<Boolean> = dataStore.data.map { preferences ->
-        (preferences[batteryOptimizationBannerState] ?: BATTERY_OPTIMIZATION_BANNER_STATE_INIT) == BATTERY_OPTIMIZATION_BANNER_STATE_SHOW
+        val rawState = preferences[batteryOptimizationBannerState] ?: BATTERY_OPTIMIZATION_BANNER_STATE_INIT
+        val persistedReason = preferences[batteryOptimizationBannerReason]
+        val shouldDisplayBanner = rawState == BATTERY_OPTIMIZATION_BANNER_STATE_SHOW
+        Timber.tag(batteryOptimizationDebugTag).i(
+            "DefaultPushDataStore.emit_battery_banner_state raw=%s shouldDisplay=%s persistedReason=%s",
+            rawState,
+            shouldDisplayBanner,
+            persistedReason,
+        )
+        shouldDisplayBanner
     }
 
     suspend fun incrementPushCounter() {
@@ -65,14 +79,39 @@ class DefaultPushDataStore(
         }
     }
 
-    suspend fun setBatteryOptimizationBannerState(newState: Int) {
+    suspend fun setBatteryOptimizationBannerState(
+        newState: Int,
+        reason: String? = null,
+    ) {
         dataStore.edit { settings ->
             val currentValue = settings[batteryOptimizationBannerState] ?: BATTERY_OPTIMIZATION_BANNER_STATE_INIT
-            settings[batteryOptimizationBannerState] = when (currentValue) {
+            val currentReason = settings[batteryOptimizationBannerReason]
+            val resolvedState = when (currentValue) {
                 BATTERY_OPTIMIZATION_BANNER_STATE_INIT,
                 BATTERY_OPTIMIZATION_BANNER_STATE_SHOW -> newState
                 BATTERY_OPTIMIZATION_BANNER_STATE_DISMISSED -> currentValue
                 else -> error("Invalid value for showBatteryOptimizationBanner: $currentValue")
+            }
+            val resolvedReason = when (resolvedState) {
+                BATTERY_OPTIMIZATION_BANNER_STATE_SHOW -> reason ?: currentReason
+                BATTERY_OPTIMIZATION_BANNER_STATE_INIT,
+                BATTERY_OPTIMIZATION_BANNER_STATE_DISMISSED -> null
+                else -> currentReason
+            }
+            Timber.tag(batteryOptimizationDebugTag).i(
+                "DefaultPushDataStore.set_battery_banner_state current=%s requested=%s resolved=%s currentReason=%s requestedReason=%s resolvedReason=%s",
+                currentValue,
+                newState,
+                resolvedState,
+                currentReason,
+                reason,
+                resolvedReason,
+            )
+            settings[batteryOptimizationBannerState] = resolvedState
+            if (resolvedReason == null) {
+                settings.remove(batteryOptimizationBannerReason)
+            } else {
+                settings[batteryOptimizationBannerReason] = resolvedReason
             }
         }
     }

@@ -29,6 +29,7 @@ import io.element.android.libraries.designsystem.atomic.molecules.ButtonColumnMo
 import io.element.android.libraries.designsystem.atomic.molecules.IconTitleSubtitleMolecule
 import io.element.android.libraries.designsystem.atomic.pages.HeaderFooterPage
 import io.element.android.libraries.designsystem.components.BigIcon
+import io.element.android.libraries.designsystem.components.button.BackButton
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Button
@@ -70,6 +71,11 @@ fun ChooseSelfVerificationModeView(
         topBar = {
             TopAppBar(
                 title = {},
+                // 按照 FTUE 流程页的统一导航约定，在左上角展示标准返回按钮，
+                // 同时保留右上角的登出操作，避免改变现有页面的主操作入口。
+                navigationIcon = {
+                    BackButton(onClick = onBack)
+                },
                 actions = {
                     TextButton(
                         text = stringResource(CommonStrings.action_signout),

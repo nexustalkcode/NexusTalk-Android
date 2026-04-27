@@ -36,8 +36,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
+import io.element.android.features.poll.api.R
 import io.element.android.features.poll.api.pollcontent.PollContentView
-import io.element.android.features.poll.impl.R
 import io.element.android.features.poll.impl.history.model.PollHistoryFilter
 import io.element.android.features.poll.impl.history.model.PollHistoryItem
 import io.element.android.libraries.designsystem.components.button.BackButton

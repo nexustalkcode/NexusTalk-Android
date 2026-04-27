@@ -37,6 +37,9 @@ import io.element.android.libraries.matrix.api.verification.SessionVerificationD
 import io.element.android.libraries.matrix.api.verification.VerificationEmoji
 
 @Composable
+/**
+ * 渲染验证流程中的比对内容。
+ */
 internal fun VerificationContentVerifying(
     data: SessionVerificationData,
     modifier: Modifier = Modifier,
@@ -85,6 +88,9 @@ internal fun VerificationContentVerifying(
 }
 
 @Composable
+/**
+ * 渲染单个 emoji 比对项。
+ */
 private fun EmojiItemView(emoji: VerificationEmoji, modifier: Modifier = Modifier) {
     val emojiResource = emoji.number.toEmojiResource()
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {

@@ -16,7 +16,7 @@ dependencies {
     api(projects.features.${MODULE_NAME}.api)
     implementation(projects.libraries.core)
     implementation(projects.libraries.architecture)
-    implementation(projects.libraries.matrix.api)
+    implementation(project(":libraries:matrix"))
     implementation(projects.libraries.matrixui)
     implementation(projects.libraries.designsystem)
 

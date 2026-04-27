@@ -14,16 +14,24 @@ import io.element.android.libraries.matrix.api.room.JoinedRoom
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 房间流程的初始导航目标。
+ */
 sealed interface RoomNavigationTarget : Parcelable {
+    /**
+     * 房间主页目标，可携带聚焦事件或已加载房间实例。
+     */
     @Parcelize
     data class Root(
         val eventId: EventId? = null,
         @IgnoredOnParcel val joinedRoom: JoinedRoom? = null,
     ) : RoomNavigationTarget
 
+    /** 房间详情页目标。 */
     @Parcelize
     data object Details : RoomNavigationTarget
 
+    /** 房间通知设置页目标。 */
     @Parcelize
     data object NotificationSettings : RoomNavigationTarget
 }

@@ -8,17 +8,10 @@
 
 package io.element.android.features.messages.api
 
-import io.element.android.libraries.textcomposer.model.MessageComposerMode
-
 /**
- * 消息撰写器上下文的可提升状态接口
+ * 消息输入框上下文类型别名。
  *
- * 这是一个可被提升（hoist）的状态接口，主要用于在其他Presenter中获取
- * 消息撰写器的状态信息，例如：撰写器是否在回复线程中、是否正在编辑消息等。
- *
- * @see MessageComposerMode 消息撰写器模式
+ * 复用文本编辑器库中的 [io.element.android.libraries.textcomposer.model.MessageComposerContext] 定义，
+ * 以便 feature 层对外暴露稳定的 API 入口。
  */
-interface MessageComposerContext {
-    /** 消息撰写器当前模式 */
-    val composerMode: MessageComposerMode
-}
+typealias MessageComposerContext = io.element.android.libraries.textcomposer.model.MessageComposerContext

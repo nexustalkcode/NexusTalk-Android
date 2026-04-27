@@ -13,6 +13,9 @@ import io.element.android.features.messages.impl.timeline.FocusRequestState
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.room.errors.FocusEventException
 
+/**
+ * 为焦点请求状态视图预览提供样例数据。
+ */
 open class FocusRequestStateProvider : PreviewParameterProvider<FocusRequestState> {
     override val values: Sequence<FocusRequestState>
         get() = sequenceOf(

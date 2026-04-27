@@ -12,9 +12,11 @@ import android.net.Uri
 import androidx.core.net.toUri
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
-import io.element.android.appconfig.MatrixConfiguration
 import io.element.android.libraries.core.extensions.replacePrefix
 import io.element.android.libraries.matrix.api.permalink.MatrixToConverter
+import timber.log.Timber
+
+private const val permalinkDebugTag = "PermalinkDebug"
 
 /**
  * Mapping of an input URI to a matrix.to compliant URI.
@@ -29,30 +31,51 @@ class DefaultMatrixToConverter : MatrixToConverter {
      * - https://app.element.io/#/room/#element-android:matrix.org   ->  https://matrix.to/#/#element-android:matrix.org
      * - https://www.example.org/#/room/#element-android:matrix.org  ->  https://matrix.to/#/#element-android:matrix.org
      * Also convert links coming from the matrix.to website:
-     * - element://room/#element-android:matrix.org                  ->  https://matrix.to/#/#element-android:matrix.org
-     * - element://user/@alice:matrix.org                            ->  https://matrix.to/#/@alice:matrix.org
+     * - nexustalk://room/#element-android:matrix.org                ->  https://matrix.to/#/#element-android:matrix.org
+     * - nexustalk://user/@alice:matrix.org                          ->  https://matrix.to/#/@alice:matrix.org
      */
     override fun convert(uri: Uri): Uri? {
+        // 这里记录原始 URI 的拆解结果，方便判断 H5 传来的 scheme/host/path/query 是否和应用预期一致。
+        Timber.tag(permalinkDebugTag).i(
+            "MatrixToConverter.convert input=%s scheme=%s host=%s path=%s encodedPath=%s query=%s fragment=%s",
+            uri,
+            uri.scheme,
+            uri.host,
+            uri.path,
+            uri.encodedPath,
+            uri.query,
+            uri.fragment,
+        )
         val uriString = uri.toString()
             // Handle links coming from the matrix.to website.
             .replacePrefix(MATRIX_TO_CUSTOM_SCHEME_BASE_URL, "https://app.element.io/#/")
-        val baseUrl = MatrixConfiguration.MATRIX_TO_PERMALINK_BASE_URL
+        // 这里必须固定归一化到 matrix.to 规范 permalink，而不是品牌站点的分享基址。
+        // 否则后续 parseMatrixEntityFrom() 无法稳定识别 room/user 链接，最终会退化成 FallbackLink。
+        val canonicalBaseUrl = MATRIX_TO_CANONICAL_BASE_URL
+        Timber.tag(permalinkDebugTag).i("MatrixToConverter.convert normalizedUriString=%s canonicalBaseUrl=%s", uriString, canonicalBaseUrl)
 
         return when {
             // URL is already a matrix.to
-            uriString.startsWith(baseUrl) -> uri
+            uriString.startsWith(canonicalBaseUrl) -> uri.also {
+                Timber.tag(permalinkDebugTag).i("MatrixToConverter.convert alreadyNormalized=%s", it)
+            }
             // Web or client url
             SUPPORTED_PATHS.any { it in uriString } -> {
                 val path = SUPPORTED_PATHS.first { it in uriString }
-                (baseUrl + uriString.substringAfter(path)).toUri()
+                (canonicalBaseUrl + uriString.substringAfter(path)).toUri().also {
+                    Timber.tag(permalinkDebugTag).i("MatrixToConverter.convert matchedPath=%s output=%s", path, it)
+                }
             }
             // URL is not supported
-            else -> null
+            else -> null.also {
+                Timber.tag(permalinkDebugTag).w("MatrixToConverter.convert unsupported input=%s", uri)
+            }
         }
     }
 
     companion object {
-        private const val MATRIX_TO_CUSTOM_SCHEME_BASE_URL = "element://"
+        private const val MATRIX_TO_CUSTOM_SCHEME_BASE_URL = "nexustalk://"
+        private const val MATRIX_TO_CANONICAL_BASE_URL = "https://matrix.to/#/"
         private val SUPPORTED_PATHS = listOf(
             "/#/room/",
             "/#/user/",

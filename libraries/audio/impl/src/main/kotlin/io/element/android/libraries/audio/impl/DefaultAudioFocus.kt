@@ -21,6 +21,9 @@ import io.element.android.libraries.audio.api.AudioFocusRequester
 import io.element.android.libraries.di.annotations.ApplicationContext
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的 Android 音频焦点管理实现。
+ */
 class DefaultAudioFocus(
     @ApplicationContext private val context: Context,
 ) : AudioFocus {
@@ -30,6 +33,9 @@ class DefaultAudioFocus(
     private var audioFocusChangeListener: AudioManager.OnAudioFocusChangeListener? = null
 
     @Suppress("DEPRECATION")
+    /**
+     * 请求音频焦点，并在焦点丢失时执行回调。
+     */
     override fun requestAudioFocus(
         requester: AudioFocusRequester,
         onFocusLost: () -> Unit,
@@ -69,6 +75,9 @@ class DefaultAudioFocus(
     }
 
     @Suppress("DEPRECATION")
+    /**
+     * 释放当前音频焦点请求。
+     */
     override fun releaseAudioFocus() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioFocusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
@@ -78,6 +87,9 @@ class DefaultAudioFocus(
     }
 }
 
+/**
+ * 将业务场景映射为 AudioAttributes usage。
+ */
 private fun AudioFocusRequester.toAudioUsage(): Int {
     return when (this) {
         AudioFocusRequester.ElementCall,
@@ -86,6 +98,9 @@ private fun AudioFocusRequester.toAudioUsage(): Int {
     }
 }
 
+/**
+ * 将业务场景映射为旧版 AudioManager stream。
+ */
 private fun AudioFocusRequester.toAudioStream(): Int {
     return when (this) {
         AudioFocusRequester.ElementCall,
@@ -94,6 +109,9 @@ private fun AudioFocusRequester.toAudioStream(): Int {
     }
 }
 
+/**
+ * 判断当前业务场景在 ducking 时是否应暂停。
+ */
 private fun AudioFocusRequester.willPausedWhenDucked(): Boolean {
     return when (this) {
         // (note that for Element Call, there is no action when the focus is lost)

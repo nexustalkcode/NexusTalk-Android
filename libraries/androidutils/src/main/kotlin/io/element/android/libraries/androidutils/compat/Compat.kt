@@ -14,6 +14,9 @@ import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.Build
 
+/**
+ * 兼容不同 Android 版本的 queryIntentActivities 调用。
+ */
 fun PackageManager.queryIntentActivitiesCompat(data: Intent, flags: Int): List<ResolveInfo> {
     return when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> queryIntentActivities(
@@ -24,6 +27,9 @@ fun PackageManager.queryIntentActivitiesCompat(data: Intent, flags: Int): List<R
     }
 }
 
+/**
+ * 兼容不同 Android 版本的 getApplicationInfo 调用。
+ */
 fun PackageManager.getApplicationInfoCompat(packageName: String, flags: Int): ApplicationInfo {
     return when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> getApplicationInfo(

@@ -23,11 +23,17 @@ import io.element.android.libraries.architecture.callback
 
 @ContributesNode(SpaceFlowScope::class)
 @AssistedInject
+/**
+ * “向 Space 添加房间”页面节点。
+ */
 class AddRoomToSpaceNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: AddRoomToSpacePresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 页面向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun onFinish()
     }
@@ -35,6 +41,9 @@ class AddRoomToSpaceNode(
     private val callback: Callback = callback()
     private val stateFlow = launchMolecule { presenter.present() }
 
+    /**
+     * 渲染“向 Space 添加房间”页面。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state by stateFlow.collectAsState()

@@ -89,6 +89,11 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染 Space 页面。
+ *
+ * 负责展示 Space 头部、子房间列表、邀请操作和管理模式。
+ */
 @Composable
 fun SpaceView(
     state: SpaceState,
@@ -188,6 +193,9 @@ fun SpaceView(
     }
 }
 
+/**
+ * 渲染加入失败时的异步提示。
+ */
 @Composable
 private fun JoinFailuresEffect(
     hasAnyFailure: Boolean,
@@ -209,6 +217,9 @@ private fun JoinFailuresEffect(
     }
 }
 
+/**
+ * 渲染 Space 描述查看底部弹窗。
+ */
 @Composable
 private fun TopicViewerBottomSheet(
     topicViewerState: TopicViewerState.Shown,
@@ -229,6 +240,9 @@ private fun TopicViewerBottomSheet(
     }
 }
 
+/**
+ * 渲染 Space 页面主体内容。
+ */
 @Composable
 private fun SpaceViewContent(
     state: SpaceState,
@@ -314,6 +328,9 @@ private fun SpaceViewContent(
     }
 }
 
+/**
+ * 渲染“加载更多”指示器。
+ */
 @Composable
 private fun LoadingMoreIndicator(
     eventSink: (SpaceEvents) -> Unit,
@@ -335,6 +352,9 @@ private fun LoadingMoreIndicator(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染普通模式下的 Space 顶栏。
+ */
 @Composable
 private fun SpaceViewTopBar(
     spaceInfo: RoomInfo,
@@ -439,6 +459,9 @@ private fun SpaceViewTopBar(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染管理模式顶栏。
+ */
 @Composable
 private fun ManageModeTopBar(
     selectedCount: Int,
@@ -471,6 +494,9 @@ private fun ManageModeTopBar(
     )
 }
 
+/**
+ * 渲染 Space 顶栏菜单项。
+ */
 @Composable
 private fun SpaceMenuItem(
     @StringRes titleRes: Int,
@@ -496,6 +522,9 @@ private fun SpaceMenuItem(
     )
 }
 
+/**
+ * 渲染 Space 头像和名称行。
+ */
 @Composable
 private fun SpaceAvatarAndNameRow(
     name: String?,
@@ -525,6 +554,9 @@ private fun SpaceAvatarAndNameRow(
     }
 }
 
+/**
+ * 根据当前房间状态返回尾部操作按钮。
+ */
 private fun SpaceRoom.trailingAction(
     isCurrentlyJoining: Boolean,
     onClick: () -> Unit
@@ -542,6 +574,9 @@ private fun SpaceRoom.trailingAction(
     }
 }
 
+/**
+ * 根据当前房间状态返回邀请操作按钮。
+ */
 private fun SpaceRoom.inviteButtons(
     onAcceptClick: () -> Unit,
     onDeclineClick: () -> Unit,
@@ -559,6 +594,9 @@ private fun SpaceRoom.inviteButtons(
     }
 }
 
+/**
+ * 渲染移除房间动作的异步反馈。
+ */
 @Composable
 private fun RemoveRoomsActionView(
     spaceDisplayName: String,

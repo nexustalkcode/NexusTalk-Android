@@ -38,7 +38,7 @@ dependencies {
     implementation(projects.libraries.androidutils)
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.core)
-    implementation(projects.libraries.preferences.api)
+    implementation(project(":libraries:preferences"))
     implementation(projects.libraries.testtags)
     implementation(projects.libraries.uiStrings)
 

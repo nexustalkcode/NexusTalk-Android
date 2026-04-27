@@ -19,6 +19,9 @@ import kotlinx.coroutines.flow.map
 private val applicationMigrationVersion = intPreferencesKey("applicationMigrationVersion")
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的迁移版本存储实现。
+ */
 class DefaultMigrationStore(
     preferenceDataStoreFactory: PreferenceDataStoreFactory,
 ) : MigrationStore {
@@ -30,6 +33,9 @@ class DefaultMigrationStore(
         }
     }
 
+    /**
+     * 返回当前应用迁移版本流。
+     */
     override fun applicationMigrationVersion(): Flow<Int> {
         return store.data.map { prefs ->
             prefs[applicationMigrationVersion] ?: -1

@@ -85,6 +85,8 @@ internal fun MessagesViewTopBar(
     dmUserIdentityState: IdentityState?,
     onRoomDetailsClick: () -> Unit,
     onJoinCallClick: () -> Unit,
+    onStartVoiceCallClick: () -> Unit,
+    onStartVideoCallClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -134,6 +136,8 @@ internal fun MessagesViewTopBar(
             CallMenuItem(
                 roomCallState = roomCallState,
                 onJoinCallClick = onJoinCallClick,
+                onStartVoiceCallClick = onStartVoiceCallClick,
+                onStartVideoCallClick = onStartVideoCallClick,
             )
             Spacer(Modifier.width(8.dp))
         },
@@ -198,6 +202,8 @@ internal fun MessagesViewTopBarPreview() = ElementPreview {
         dmUserIdentityState = dmUserIdentityState,
         onRoomDetailsClick = {},
         onJoinCallClick = {},
+        onStartVoiceCallClick = {},
+        onStartVideoCallClick = {},
         onBackClick = {},
     )
     Column {

@@ -16,6 +16,9 @@ import io.element.android.features.poll.impl.history.model.PollHistoryItem
 import io.element.android.features.poll.impl.history.model.PollHistoryItems
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为投票历史页面预览提供样例状态。
+ */
 class PollHistoryStateProvider : PreviewParameterProvider<PollHistoryState> {
     override val values: Sequence<PollHistoryState>
         get() = sequenceOf(
@@ -41,6 +44,9 @@ class PollHistoryStateProvider : PreviewParameterProvider<PollHistoryState> {
         )
 }
 
+/**
+ * 构造一份投票历史页面样例状态。
+ */
 internal fun aPollHistoryState(
     isLoading: Boolean = false,
     hasMoreToLoad: Boolean = false,
@@ -60,6 +66,9 @@ internal fun aPollHistoryState(
     eventSink = eventSink,
 )
 
+/**
+ * 构造一条投票历史列表项样例。
+ */
 internal fun aPollHistoryItem(
     formattedDate: String = "01/12/2023",
     state: PollContentState = aPollContentState(),

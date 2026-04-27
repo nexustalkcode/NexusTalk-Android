@@ -22,7 +22,6 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import im.vector.app.features.analytics.plan.Composer
 import im.vector.app.features.analytics.plan.PollCreation
-import io.element.android.features.messages.api.MessageComposerContext
 import io.element.android.features.poll.api.create.CreatePollMode
 import io.element.android.features.poll.impl.PollConstants.MAX_SELECTIONS
 import io.element.android.features.poll.impl.data.PollRepository
@@ -31,6 +30,7 @@ import io.element.android.libraries.matrix.api.poll.PollAnswer
 import io.element.android.libraries.matrix.api.poll.PollKind
 import io.element.android.libraries.matrix.api.poll.isDisclosed
 import io.element.android.libraries.matrix.api.timeline.Timeline
+import io.element.android.libraries.textcomposer.model.MessageComposerContext
 import io.element.android.services.analytics.api.AnalyticsService
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

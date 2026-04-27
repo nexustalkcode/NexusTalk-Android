@@ -16,6 +16,9 @@ import androidx.core.text.inSpans
 import io.element.android.libraries.matrix.api.timeline.item.event.UnableToDecryptContent
 import org.jsoup.nodes.Document
 
+/**
+ * 为任意事件内容视图预览提供样例数据。
+ */
 class TimelineItemEventContentProvider : PreviewParameterProvider<TimelineItemEventContent> {
     override val values = sequenceOf(
         aTimelineItemEmoteContent(),
@@ -41,6 +44,9 @@ class TimelineItemEventContentProvider : PreviewParameterProvider<TimelineItemEv
 
 const val AN_EMOJI_ONLY_TEXT = "😁"
 
+/**
+ * 为文本类事件内容视图预览提供样例数据。
+ */
 class TimelineItemTextBasedContentProvider : PreviewParameterProvider<TimelineItemTextBasedContent> {
     private fun buildSpanned(text: String) = buildSpannedString {
         inSpans(StyleSpan(Typeface.BOLD)) {
@@ -60,6 +66,9 @@ class TimelineItemTextBasedContentProvider : PreviewParameterProvider<TimelineIt
     )
 }
 
+/**
+ * 构造一份 emote 消息内容样例。
+ */
 fun aTimelineItemEmoteContent(
     body: String = "Emote",
     htmlDocument: Document? = null,
@@ -72,10 +81,16 @@ fun aTimelineItemEmoteContent(
     isEdited = isEdited,
 )
 
+/**
+ * 构造一份无法解密消息内容样例。
+ */
 fun aTimelineItemEncryptedContent() = TimelineItemEncryptedContent(
     data = UnableToDecryptContent.Data.Unknown
 )
 
+/**
+ * 构造一份 notice 消息内容样例。
+ */
 fun aTimelineItemNoticeContent(
     body: String = "Notice",
     htmlDocument: Document? = null,
@@ -88,8 +103,14 @@ fun aTimelineItemNoticeContent(
     isEdited = isEdited,
 )
 
+/**
+ * 构造一份 redacted 消息内容样例。
+ */
 fun aTimelineItemRedactedContent() = TimelineItemRedactedContent
 
+/**
+ * 构造一份文本消息内容样例。
+ */
 fun aTimelineItemTextContent(
     body: String = "Text",
     htmlDocument: Document? = null,
@@ -102,8 +123,14 @@ fun aTimelineItemTextContent(
     isEdited = isEdited,
 )
 
+/**
+ * 构造一份未知事件内容样例。
+ */
 fun aTimelineItemUnknownContent() = TimelineItemUnknownContent
 
+/**
+ * 构造一份状态事件文本内容样例。
+ */
 fun aTimelineItemStateEventContent(
     body: String = "A state event",
 ) = TimelineItemStateEventContent(

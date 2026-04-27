@@ -15,6 +15,9 @@ import io.element.android.features.userprofile.api.UserProfileState
 import io.element.android.features.userprofile.shared.R
 import io.element.android.libraries.designsystem.components.dialogs.ConfirmationDialog
 
+/**
+ * 渲染拉黑/取消拉黑相关确认弹窗。
+ */
 @Composable
 fun BlockUserDialogs(state: UserProfileState) {
     when (state.displayConfirmationDialog) {
@@ -46,6 +49,9 @@ fun BlockUserDialogs(state: UserProfileState) {
     }
 }
 
+/**
+ * 拉黑用户确认弹窗。
+ */
 @Composable
 private fun BlockConfirmationDialog(
     onBlockAction: () -> Unit,
@@ -60,6 +66,9 @@ private fun BlockConfirmationDialog(
     )
 }
 
+/**
+ * 取消拉黑用户确认弹窗。
+ */
 @Composable
 private fun UnblockConfirmationDialog(
     onUnblockAction: () -> Unit,

@@ -158,7 +158,7 @@ class LogoutPresenter(
     ) = launch {
         suspend {
             // 取消任何待处理的工作（如通知同步）
-            workManagerScheduler.cancel(matrixClient.sessionId)
+                    workManagerScheduler.cancel(matrixClient.sessionId.value)
 
             matrixClient.logout(userInitiated = true, ignoreSdkError)
         }.runCatchingUpdatingState(logoutAction)

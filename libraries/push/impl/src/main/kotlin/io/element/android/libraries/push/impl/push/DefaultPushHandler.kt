@@ -11,14 +11,13 @@ package io.element.android.libraries.push.impl.push
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
-import io.element.android.features.call.api.CallType
-import io.element.android.features.call.api.ElementCallEntryPoint
 import io.element.android.libraries.core.log.logger.LoggerTag
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.di.annotations.AppCoroutineScope
 import io.element.android.libraries.featureflag.api.FeatureFlagService
 import io.element.android.libraries.featureflag.api.FeatureFlags
 import io.element.android.libraries.matrix.api.exception.NotificationResolverException
+import io.element.android.libraries.push.api.notifications.IncomingCallNotificationHandler
 import io.element.android.libraries.push.api.push.NotificationEventRequest
 import io.element.android.libraries.push.api.push.SyncOnNotifiableEvent
 import io.element.android.libraries.push.impl.history.PushHistoryService
@@ -48,6 +47,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 private val loggerTag = LoggerTag("PushHandler", LoggerTag.PushLoggerTag)
+private const val batteryOptimizationDebugTag = "BatteryOptimizationDebug"
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -60,7 +60,7 @@ class DefaultPushHandler(
     private val pushClientSecret: PushClientSecret,
     private val buildMeta: BuildMeta,
     private val diagnosticPushHandler: DiagnosticPushHandler,
-    private val elementCallEntryPoint: ElementCallEntryPoint,
+    private val incomingCallNotificationHandler: IncomingCallNotificationHandler,
     private val notificationChannels: NotificationChannels,
     private val pushHistoryService: PushHistoryService,
     private val resolverQueue: NotificationResolverQueue,
@@ -126,6 +126,15 @@ class DefaultPushHandler(
                                         is NotificationResolverException.EventNotFound -> "Event not found"
                                         else -> "Unknown error: ${exception.message}"
                                     }
+                                    Timber.tag(batteryOptimizationDebugTag).w(
+                                        exception,
+                                        "DefaultPushHandler.trigger_battery_banner providerInfo=%s eventId=%s roomId=%s sessionId=%s reason=%s",
+                                        request.providerInfo,
+                                        request.eventId,
+                                        request.roomId,
+                                        request.sessionId,
+                                        reason,
+                                    )
                                     pushHistoryService.onUnableToResolveEvent(
                                         providerInfo = request.providerInfo,
                                         eventId = request.eventId,
@@ -133,7 +142,9 @@ class DefaultPushHandler(
                                         sessionId = request.sessionId,
                                         reason = "$reason - Showing fallback notification",
                                     )
-                                    mutableBatteryOptimizationStore.showBatteryOptimizationBanner()
+                                    mutableBatteryOptimizationStore.showBatteryOptimizationBanner(
+                                        reason = "notification_resolver_failure:$reason provider=${request.providerInfo} eventId=${request.eventId} roomId=${request.roomId} sessionId=${request.sessionId}"
+                                    )
                                 }
                             }
                         )
@@ -277,8 +288,9 @@ class DefaultPushHandler(
 
     private suspend fun handleRingingCallEvent(notifiableEvent: NotifiableRingingCallEvent) {
         Timber.i("## handleInternal() : Incoming call.")
-        elementCallEntryPoint.handleIncomingCall(
-            callType = CallType.RoomCall(notifiableEvent.sessionId, notifiableEvent.roomId),
+        incomingCallNotificationHandler.handleIncomingCall(
+            sessionId = notifiableEvent.sessionId,
+            roomId = notifiableEvent.roomId,
             eventId = notifiableEvent.eventId,
             senderId = notifiableEvent.senderId,
             roomName = notifiableEvent.roomName,
@@ -288,6 +300,7 @@ class DefaultPushHandler(
             expirationTimestamp = notifiableEvent.expirationTimestamp,
             notificationChannelId = notificationChannels.getChannelForIncomingCall(ring = true),
             textContent = notifiableEvent.description,
+            isDm = notifiableEvent.isDm,
         )
     }
 }

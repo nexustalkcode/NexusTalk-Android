@@ -10,6 +10,9 @@ package io.element.android.features.messages.impl.timeline.model.event
 
 import io.element.android.libraries.matrix.api.media.MediaSource
 
+/**
+ * 贴纸消息的 UI 内容模型。
+ */
 data class TimelineItemStickerContent(
     override val filename: String,
     override val fileSize: Long?,
@@ -28,7 +31,8 @@ data class TimelineItemStickerContent(
 ) : TimelineItemEventContentWithAttachment {
     override val type: String = "TimelineItemStickerContent"
 
-    /* Stickers are supposed to be small images so
-       we allow using the mediaSource (unless the url is empty) */
+    /**
+     * 贴纸优先使用原图；当原图地址为空时回退到缩略图。
+     */
     val preferredMediaSource = if (mediaSource.url.isEmpty()) thumbnailSource else mediaSource
 }

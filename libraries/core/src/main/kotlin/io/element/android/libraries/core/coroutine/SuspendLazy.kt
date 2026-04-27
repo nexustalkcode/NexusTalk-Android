@@ -15,6 +15,9 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
+/**
+ * 创建一个惰性启动的挂起任务。
+ */
 fun <T> suspendLazy(coroutineContext: CoroutineContext = EmptyCoroutineContext, block: suspend () -> T): Lazy<Deferred<T>> {
     return lazy(LazyThreadSafetyMode.NONE) {
         val deferred = CompletableDeferred<T>()

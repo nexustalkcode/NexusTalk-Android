@@ -28,12 +28,20 @@ import io.element.android.libraries.matrix.api.user.MatrixUser
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 设置主页节点。
+ *
+ * 负责连接设置主页 Presenter 与视图，并桥接各个设置入口的导航动作。
+ */
 class PreferencesRootNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: PreferencesRootPresenter,
     private val directLogoutView: DirectLogoutView,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 设置主页向上抛出的导航回调。
+     */
     interface Callback : Plugin {
         fun navigateToAddAccount()
         fun navigateToBugReport()
@@ -55,6 +63,9 @@ class PreferencesRootNode(
 
     private val callback: Callback = callback()
 
+    /**
+     * 使用 Chrome Custom Tab 打开账号管理相关链接。
+     */
     private fun onManageAccountClick(
         activity: Activity,
         url: String?,
@@ -69,6 +80,9 @@ class PreferencesRootNode(
         }
     }
 
+    /**
+     * 渲染设置主页。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

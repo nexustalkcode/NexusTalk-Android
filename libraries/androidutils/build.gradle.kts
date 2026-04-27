@@ -26,7 +26,7 @@ dependencies {
     implementation(projects.libraries.di)
 
     implementation(projects.libraries.core)
-    implementation(projects.services.toolbox.api)
+    implementation(project(":services:toolbox"))
     implementation(libs.timber)
     implementation(libs.androidx.corektx)
     implementation(libs.androidx.activity.activity)
@@ -37,5 +37,5 @@ dependencies {
     api(libs.androidx.browser)
 
     testImplementation(libs.coroutines.core)
-    testImplementation(projects.services.toolbox.test)
+    testImplementation(project(":services:toolbox"))
 }

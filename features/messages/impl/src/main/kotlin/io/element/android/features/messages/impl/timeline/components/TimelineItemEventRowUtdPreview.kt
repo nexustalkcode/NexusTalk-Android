@@ -21,6 +21,9 @@ import io.element.android.libraries.matrix.api.timeline.item.event.UtdCause
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览不同 UTD 原因下的事件行。
+ */
 internal fun TimelineItemEventRowUtdPreview() = ElementPreview {
     Column {
         ATimelineItemEventRow(

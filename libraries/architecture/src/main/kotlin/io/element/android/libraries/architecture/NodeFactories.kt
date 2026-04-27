@@ -14,6 +14,9 @@ import com.bumble.appyx.core.plugin.Plugin
 import dev.zacsweers.metro.Multibinds
 import kotlin.reflect.KClass
 
+/**
+ * 从当前节点作用域创建指定类型的子节点。
+ */
 inline fun <reified N : Node> Node.createNode(
     buildContext: BuildContext,
     plugins: List<Plugin> = emptyList()
@@ -22,6 +25,9 @@ inline fun <reified N : Node> Node.createNode(
     return bindings.createNode(buildContext, plugins)
 }
 
+/**
+ * 从 NodeFactoriesBindings 中创建指定类型的节点。
+ */
 inline fun <reified N : Node> NodeFactoriesBindings.createNode(
     buildContext: BuildContext,
     plugins: List<Plugin>,
@@ -38,6 +44,9 @@ inline fun <reified N : Node> NodeFactoriesBindings.createNode(
     return node as N
 }
 
+/**
+ * 提供节点工厂映射的绑定接口。
+ */
 fun interface NodeFactoriesBindings {
     @Multibinds
     fun nodeFactories(): Map<KClass<out Node>, AssistedNodeFactory<*>>

@@ -63,9 +63,15 @@ class PictureInPicturePresenter(
         fun handleEvent(event: PictureInPictureEvents) {
             when (event) {
                 is PictureInPictureEvents.SetPipController -> {
+                    Timber.tag(loggerTag.value).d("Set PiP controller: controller=%s", event.pipController::class.simpleName)
                     pipController = event.pipController
                 }
                 PictureInPictureEvents.EnterPictureInPicture -> {
+                    Timber.tag(loggerTag.value).d(
+                        "Received EnterPictureInPicture event: hasController=%s isPipSupported=%s",
+                        pipController != null,
+                        isPipSupported,
+                    )
                     coroutineScope.launch {
                         switchToPip(pipController)
                     }
@@ -116,7 +122,13 @@ class PictureInPicturePresenter(
             if (pipController == null) {
                 Timber.tag(loggerTag.value).w("webPipApi is not available")
             }
-            if (pipController == null || pipController.canEnterPip()) {
+            val canEnterPip = pipController == null || pipController.canEnterPip()
+            Timber.tag(loggerTag.value).d(
+                "switchToPip pre-check: hasController=%s canEnterPip=%s",
+                pipController != null,
+                canEnterPip,
+            )
+            if (canEnterPip) {
                 Timber.tag(loggerTag.value).d("Switch to PiP mode")
                 pipView?.enterPipMode()
                     ?.also { Timber.tag(loggerTag.value).d("Switch to PiP mode result: $it") }

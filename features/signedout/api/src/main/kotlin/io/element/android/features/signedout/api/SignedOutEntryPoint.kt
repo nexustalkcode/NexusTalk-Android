@@ -13,11 +13,22 @@ import com.bumble.appyx.core.node.Node
 import io.element.android.libraries.architecture.FeatureEntryPoint
 import io.element.android.libraries.matrix.api.core.SessionId
 
+/**
+ * 已登出页面入口接口。
+ */
 interface SignedOutEntryPoint : FeatureEntryPoint {
+    /**
+     * 已登出页面所需参数。
+     *
+     * @property sessionId 被标记为已登出的会话 ID。
+     */
     data class Params(
         val sessionId: SessionId,
     )
 
+    /**
+     * 创建已登出页面节点。
+     */
     fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

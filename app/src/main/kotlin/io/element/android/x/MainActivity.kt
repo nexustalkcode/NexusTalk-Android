@@ -32,37 +32,42 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumble.appyx.core.integration.NodeHost
 import com.bumble.appyx.core.integrationpoint.NodeActivity
 import com.bumble.appyx.core.plugin.NodeReadyObserver
+import io.element.android.features.call.api.CallType
 import io.element.android.compound.colors.SemanticColorsLightDark
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.call.impl.ui.IncomingCallActivity
+import io.element.android.features.call.impl.ui.IncomingCallOverlayCall
+import io.element.android.features.call.impl.ui.IncomingCallOverlayHost
+import io.element.android.features.call.impl.ui.IncomingCallOverlayState
+import io.element.android.features.call.impl.ui.incomingCallAvatarId
+import io.element.android.features.call.impl.ui.incomingCallAvatarName
+import io.element.android.features.call.impl.ui.incomingCallSubtitle
+import io.element.android.features.call.impl.ui.incomingCallTitle
+import io.element.android.features.call.impl.utils.CallState
 import io.element.android.features.lockscreen.api.LockScreenEntryPoint
 import io.element.android.features.lockscreen.api.LockScreenLockState
 import io.element.android.features.lockscreen.api.LockScreenService
 import io.element.android.features.lockscreen.api.handleSecureFlag
 import io.element.android.libraries.architecture.bindings
 import io.element.android.libraries.core.log.logger.LoggerTag
+import io.element.android.libraries.designsystem.components.avatar.AvatarData
+import io.element.android.libraries.designsystem.components.avatar.AvatarSize
+import io.element.android.libraries.designsystem.components.avatar.AvatarType
 import io.element.android.libraries.designsystem.theme.ElementThemeApp
 import io.element.android.libraries.designsystem.utils.snackbar.LocalSnackbarDispatcher
 import io.element.android.services.analytics.compose.LocalAnalyticsService
 import io.element.android.x.di.AppBindings
 import io.element.android.x.intent.SafeUriHandler
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 private val loggerTag = LoggerTag("MainActivity")
+private const val startupTraceTag = "StartupTrace"
+private const val incomingCallTraceTag = "IncomingCallTrace"
 
 /**
- * ElementX 应用的主 Activity 类。
- *
- * 继承自 NodeActivity，作为应用导航结构的宿主 Activity。
- * 负责以下核心功能：
- * - 使用 Jetpack Compose 设置应用主界面内容，应用 Element 主题
- * - 管理锁屏状态，处理应用锁定/解锁流程
- * - 处理来自外部的 Intent（深链接、通知点击等）
- * - 托管 MainNode 作为应用导航树的根节点
- *
- * 与 AppBindings 协作获取各种应用服务，
- * 包括偏好设置存储、分析服务、企业服务等。
+ * ElementX 应用主 Activity。
  */
 class MainActivity : NodeActivity() {
     private lateinit var mainNode: MainNode
@@ -73,6 +78,7 @@ class MainActivity : NodeActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         appBindings = bindings()
+        Timber.tag(incomingCallTraceTag).i("MainActivity.onCreate start foreground incoming call observer")
         appBindings.foregroundIncomingCallObserver().start()
         setupLockManagement(appBindings.lockScreenService(), appBindings.lockScreenEntryPoint())
         enableEdgeToEdge()
@@ -82,19 +88,25 @@ class MainActivity : NodeActivity() {
     }
 
     /**
-     * 应用启动入口，包含启动页和主内容的切换逻辑
+     * 应用启动入口，负责在自定义启动页和真实业务界面之间切换。
      */
     @Composable
     private fun SplashScreenApp(appBindings: AppBindings) {
         var showSplashScreen by remember { mutableStateOf(true) }
 
+        // 这里专门记录自定义启动页何时退出，便于和后续导航日志对齐，判断空白是否发生在 splash 之后。
+        LaunchedEffect(showSplashScreen) {
+            Timber.tag(startupTraceTag).i("MainActivity.SplashScreenApp stage changed: showSplashScreen=$showSplashScreen")
+        }
+
         if (showSplashScreen) {
             SplashScreenContent(
                 modifier = Modifier.fillMaxSize(),
             )
-            // 延迟 2 秒后隐藏启动页，进入主应用
             LaunchedEffect(Unit) {
+                Timber.tag(startupTraceTag).i("MainActivity custom splash visible, start fixed 2000ms delay")
                 kotlinx.coroutines.delay(2000)
+                Timber.tag(startupTraceTag).i("MainActivity custom splash delay finished, switch to MainContent")
                 showSplashScreen = false
             }
         } else {
@@ -105,19 +117,95 @@ class MainActivity : NodeActivity() {
     @Composable
     private fun MainContent(appBindings: AppBindings) {
         val migrationState = appBindings.migrationEntryPoint().present()
-        val hasRingingCall by appBindings.appForegroundStateService().hasRingingCall.collectAsState()
+        val activeCall by appBindings.activeCallManager().activeCall.collectAsState()
+        val ringingCalls by appBindings.activeCallManager().ringingCalls.collectAsState()
         val colors by remember {
             appBindings.enterpriseService().semanticColorsFlow(sessionId = null)
         }.collectAsState(SemanticColorsLightDark.default)
-        var hasLaunchedIncomingCallFallback by remember { mutableStateOf(false) }
+        val incomingCallOverlayState = remember(ringingCalls) {
+            IncomingCallOverlayState(
+                calls = ringingCalls.map { notificationData ->
+                    IncomingCallOverlayCall(
+                        id = notificationData.eventId.value,
+                        title = notificationData.incomingCallTitle(),
+                        subtitle = notificationData.incomingCallSubtitle(),
+                        avatarData = AvatarData(
+                            id = notificationData.incomingCallAvatarId(),
+                            name = notificationData.incomingCallAvatarName(),
+                            url = notificationData.avatarUrl,
+                            size = AvatarSize.RoomDetailsHeader,
+                        ),
+                        avatarType = if (notificationData.isDm) AvatarType.User else AvatarType.Room(),
+                        onAnswerClick = {
+                            appBindings.elementCallEntryPoint().startCall(
+                                CallType.RoomCall(
+                                    sessionId = notificationData.sessionId,
+                                    roomId = notificationData.roomId,
+                                )
+                            )
+                        },
+                        onDeclineClick = {
+                            lifecycleScope.launch {
+                                appBindings.activeCallManager().hangUpCall(
+                                    callType = CallType.RoomCall(
+                                        sessionId = notificationData.sessionId,
+                                        roomId = notificationData.roomId,
+                                    ),
+                                    notificationData = notificationData,
+                                )
+                            }
+                        },
+                    )
+                }.toImmutableList(),
+            )
+        }
+        var launchedIncomingCallEventId by remember { mutableStateOf<String?>(null) }
 
-        LaunchedEffect(hasRingingCall) {
-            if (!hasRingingCall) {
-                hasLaunchedIncomingCallFallback = false
-            } else if (!hasLaunchedIncomingCallFallback) {
-                hasLaunchedIncomingCallFallback = true
-                startActivity(Intent(this@MainActivity, IncomingCallActivity::class.java))
+        LaunchedEffect(incomingCallOverlayState.calls) {
+            Timber.tag(incomingCallTraceTag).w(
+                "MainActivity overlay mapped callCount=%s items=%s",
+                incomingCallOverlayState.calls.size,
+                incomingCallOverlayState.calls.joinToString { call ->
+                    "id=${call.id},title=${call.title},subtitle=${call.subtitle}"
+                },
+            )
+        }
+
+        LaunchedEffect(ringingCalls, activeCall) {
+            val firstRingingCall = ringingCalls.firstOrNull()
+            val isInCall = activeCall?.callState is CallState.InCall
+            Timber.tag(incomingCallTraceTag).w(
+                "MainActivity observed ringingCount=%s, firstEventId=%s, fallbackEventId=%s, isInCall=%s",
+                ringingCalls.size,
+                firstRingingCall?.eventId,
+                launchedIncomingCallEventId,
+                isInCall,
+            )
+            if (firstRingingCall == null) {
+                launchedIncomingCallEventId = null
+            } else if (isInCall) {
+                Timber.tag(incomingCallTraceTag).i(
+                    "MainActivity skipping IncomingCallActivity fallback because call is already active currentCall=%s",
+                    activeCall,
+                )
+            } else if (launchedIncomingCallEventId == null) {
+                launchedIncomingCallEventId = firstRingingCall.eventId.value
+                Timber.tag(incomingCallTraceTag).w("MainActivity launching IncomingCallActivity fallback")
+                startActivity(
+                    Intent(this@MainActivity, IncomingCallActivity::class.java).apply {
+                        putExtra(IncomingCallActivity.EXTRA_NOTIFICATION_DATA, firstRingingCall)
+                    }
+                )
             }
+        }
+
+        // 这里用于区分“还卡在迁移页”还是“已经进入导航宿主但页面仍然空白”。
+        LaunchedEffect(migrationState.migrationAction.isSuccess()) {
+            Timber.tag(startupTraceTag).i(
+                "MainActivity.MainContent migration ready=%s action=%s",
+                migrationState.migrationAction.isSuccess(),
+                migrationState.migrationAction,
+            )
         }
 
         ElementThemeApp(
@@ -144,6 +232,14 @@ class MainActivity : NodeActivity() {
                             modifier = Modifier,
                         )
                     }
+                    /**
+                     * 顶部来电列表只挂在 MainActivity 上层，避免把页面过滤逻辑塞进组件内部。
+                     * 这样既能满足产品只在指定 Activity 显示的要求，也方便后续继续排查展示问题。
+                     */
+                    IncomingCallOverlayHost(
+                        state = incomingCallOverlayState,
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
             }
         }
@@ -151,6 +247,9 @@ class MainActivity : NodeActivity() {
 
     @Composable
     private fun MainNodeHost() {
+        LaunchedEffect(Unit) {
+            Timber.tag(startupTraceTag).i("MainActivity.MainNodeHost composed")
+        }
         NodeHost(integrationPoint = appyxV1IntegrationPoint) {
             MainNode(
                 it,
@@ -184,19 +283,9 @@ class MainActivity : NodeActivity() {
         }
     }
 
-    /**
-     * 在以下情况会被调用：
-     * - 点击应用图标时（如果应用已在运行）；
-     * - 点击通知时；
-     * - 点击深链接时；
-     * - 应用进入后台时（<- 这有点奇怪）
-     */
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         Timber.tag(loggerTag.value).w("onNewIntent")
-        // 如果 mainNode 尚未初始化，保留 intent 以便稍后处理。
-        // 这种情况可能发生在 Activity 被系统杀死时。方法调用顺序如下：
-        // onCreate(savedInstanceState=true) -> onNewIntent -> onResume -> onMainNodeInit
         if (::mainNode.isInitialized) {
             mainNode.handleIntent(intent)
         } else {

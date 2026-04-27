@@ -13,6 +13,12 @@ import io.element.android.features.knockrequests.impl.data.KnockRequestPresentab
 import io.element.android.features.knockrequests.impl.data.aKnockRequestPresentable
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为敲门请求横幅预览提供样例状态。
+ *
+ * 覆盖了单条请求、多条请求、错误态、不可接受态以及长文案场景，
+ * 便于在 Compose Preview 中检查布局和截断表现。
+ */
 class KnockRequestsBannerStateProvider : PreviewParameterProvider<KnockRequestsBannerState> {
     override val values: Sequence<KnockRequestsBannerState>
         get() = sequenceOf(
@@ -56,6 +62,15 @@ class KnockRequestsBannerStateProvider : PreviewParameterProvider<KnockRequestsB
         )
 }
 
+/**
+ * 构造一份敲门请求横幅样例状态。
+ *
+ * @param knockRequests 当前待展示的敲门请求列表。
+ * @param displayAcceptError 是否显示接受失败提示。
+ * @param canAccept 当前是否允许直接接受请求。
+ * @param isVisible 横幅是否可见。
+ * @param eventSink 横幅事件的分发函数。
+ */
 fun aKnockRequestsBannerState(
     knockRequests: List<KnockRequestPresentable> = listOf(aKnockRequestPresentable()),
     displayAcceptError: Boolean = false,

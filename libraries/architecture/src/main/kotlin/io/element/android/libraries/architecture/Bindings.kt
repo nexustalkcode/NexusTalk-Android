@@ -13,9 +13,18 @@ import android.content.ContextWrapper
 import com.bumble.appyx.core.node.Node
 import io.element.android.libraries.di.DependencyInjectionGraphOwner
 
+/**
+ * 按类型从当前节点作用域解析绑定。
+ */
 inline fun <reified T : Any> Node.bindings() = bindings(T::class.java)
+/**
+ * 按类型从当前上下文作用域解析绑定。
+ */
 inline fun <reified T : Any> Context.bindings() = bindings(T::class.java)
 
+/**
+ * 从上下文链和应用上下文中查找指定类型的绑定实例。
+ */
 fun <T : Any> Context.bindings(klass: Class<T>): T {
     // search the components in the dependency injection graph
     return generateSequence(this) { (it as? ContextWrapper)?.baseContext }
@@ -28,6 +37,9 @@ fun <T : Any> Context.bindings(klass: Class<T>): T {
         ?: error("Unable to find bindings for ${klass.name}")
 }
 
+/**
+ * 从节点父链中查找指定类型的绑定实例。
+ */
 fun <T : Any> Node.bindings(klass: Class<T>): T {
     // search the components in the node hierarchy
     return generateSequence(this, Node::parent)

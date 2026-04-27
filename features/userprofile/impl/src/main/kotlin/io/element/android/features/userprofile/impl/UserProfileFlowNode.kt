@@ -42,6 +42,12 @@ import kotlinx.parcelize.Parcelize
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 用户资料流转节点。
+ *
+ * 负责在资料主页、头像预览和发起验证之间进行导航切换，
+ * 同时把页面操作转交给通话、媒体查看和验证等功能入口。
+ */
 class UserProfileFlowNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -57,6 +63,9 @@ class UserProfileFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 用户资料流程中的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         @Parcelize
         data object Root : NavTarget
@@ -71,6 +80,12 @@ class UserProfileFlowNode(
     private val callback: UserProfileEntryPoint.Callback = callback()
     private val inputs = inputs<UserProfileEntryPoint.Params>()
 
+    /**
+     * 根据导航目标创建对应子节点。
+     *
+     * @param navTarget 当前需要解析的导航目标。
+     * @param buildContext 子节点构建上下文。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             NavTarget.Root -> {
@@ -146,6 +161,11 @@ class UserProfileFlowNode(
         }
     }
 
+    /**
+     * 渲染当前资料流程的 back stack。
+     *
+     * @param modifier 应用于根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         BackstackView()

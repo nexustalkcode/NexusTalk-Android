@@ -21,6 +21,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Modifier
 import androidx.core.app.PictureInPictureModeChangedInfo
 import androidx.core.content.IntentCompat
 import androidx.core.util.Consumer
@@ -38,6 +41,7 @@ import dev.zacsweers.metro.Inject
 import io.element.android.compound.colors.SemanticColorsLightDark
 import io.element.android.features.call.api.CallType
 import io.element.android.features.call.api.CallType.ExternalUrl
+import io.element.android.features.call.api.ElementCallEntryPoint
 import io.element.android.features.call.impl.DefaultElementCallEntryPoint
 import io.element.android.features.call.impl.di.CallBindings
 import io.element.android.features.call.impl.pip.PictureInPictureEvents
@@ -62,6 +66,7 @@ import timber.log.Timber
 
 /** 通话活动日志标签 */
 private val loggerTag = LoggerTag("ElementCallActivity")
+private val cameraLoggerTag = LoggerTag("ElementCallCamera")
 
 /**
  * Element Call 主界面 Activity
@@ -91,6 +96,7 @@ class ElementCallActivity :
     @Inject lateinit var enterpriseService: EnterpriseService
     @Inject lateinit var pictureInPicturePresenter: PictureInPicturePresenter
     @Inject lateinit var activeCallManager: ActiveCallManager
+    @Inject lateinit var elementCallEntryPoint: ElementCallEntryPoint
     @Inject lateinit var buildMeta: BuildMeta
     @Inject lateinit var audioFocus: AudioFocus
     @Inject lateinit var consoleMessageLogger: ConsoleMessageLogger
@@ -127,7 +133,11 @@ class ElementCallActivity :
 
         pictureInPicturePresenter.setPipView(this)
 
-        Timber.d("Created ElementCallActivity with call type: ${webViewTarget.value}")
+        Timber.tag(loggerTag.value).d(
+            "Created ElementCallActivity with callType=%s context=%s",
+            webViewTarget.value,
+            pipDebugContext(),
+        )
 
         setContent {
             val pipState = pictureInPicturePresenter.present()
@@ -142,24 +152,70 @@ class ElementCallActivity :
                 buildMeta = buildMeta,
             ) {
                 val state = presenter.present()
+                val ringingCalls by activeCallManager.ringingCalls.collectAsState()
+                val incomingCallOverlayState = remember(ringingCalls) {
+                    ringingCalls.toIncomingCallOverlayState(
+                        onAnswerClick = { notificationData ->
+                            elementCallEntryPoint.startCall(
+                                CallType.RoomCall(
+                                    sessionId = notificationData.sessionId,
+                                    roomId = notificationData.roomId,
+                                )
+                            )
+                        },
+                        onDeclineClick = { notificationData ->
+                            lifecycleScope.launch {
+                                activeCallManager.hangUpCall(
+                                    callType = CallType.RoomCall(
+                                        sessionId = notificationData.sessionId,
+                                        roomId = notificationData.roomId,
+                                    ),
+                                    notificationData = notificationData,
+                                )
+                            }
+                        },
+                    )
+                }
                 eventSink = state.eventSink
+                LaunchedEffect(incomingCallOverlayState.calls) {
+                    Timber.tag("IncomingCallTrace").i(
+                        "ElementCallActivity overlay mapped callCount=%s items=%s",
+                        incomingCallOverlayState.calls.size,
+                        incomingCallOverlayState.calls.joinToString { call ->
+                            "id=${call.id},title=${call.title},subtitle=${call.subtitle}"
+                        },
+                    )
+                }
                 LaunchedEffect(state.isCallActive, state.isInWidgetMode) {
                     // Note when not in WidgetMode, isCallActive will never be true, so consider the call is active
                     if (state.isCallActive || !state.isInWidgetMode) {
                         setCallIsActive()
                     }
                 }
-                CallScreenView(
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CallScreenView(
                     state = state,
                     pipState = pipState,
                     onConsoleMessage = {
                         consoleMessageLogger.log("ElementCall", it)
                     },
                     requestPermissions = { permissions, callback ->
+                        /*
+                         * 记录 Android 权限请求入口，方便和 WebKit 权限请求、系统授权结果按时间线对齐。
+                         */
+                        Timber.tag(cameraLoggerTag.value).d(
+                            "Requesting Android permissions for WebView media: permissions=%s",
+                            permissions.toDebugString(),
+                        )
                         requestPermissionCallback = callback
                         requestPermissionsLauncher.launch(permissions)
                     }
-                )
+                    )
+                    IncomingCallOverlayHost(
+                        state = incomingCallOverlayState,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
             }
         }
     }
@@ -179,20 +235,12 @@ class ElementCallActivity :
     private fun ListenToAndroidEvents(pipState: PictureInPictureState) {
         val pipEventSink by rememberUpdatedState(pipState.eventSink)
         DisposableEffect(Unit) {
-            val listener = Runnable {
-                if (requestPermissionCallback != null) {
-                    Timber.tag(loggerTag.value).w("Ignoring onUserLeaveHint event because user is asked to grant permissions")
-                } else {
-                    pipEventSink(PictureInPictureEvents.EnterPictureInPicture)
-                }
-            }
-            addOnUserLeaveHintListener(listener)
-            onDispose {
-                removeOnUserLeaveHintListener(listener)
-            }
-        }
-        DisposableEffect(Unit) {
             val onPictureInPictureModeChangedListener = Consumer { _: PictureInPictureModeChangedInfo ->
+                Timber.tag(loggerTag.value).d(
+                    "onPictureInPictureModeChanged listener fired: isInPictureInPictureMode=%s context=%s",
+                    isInPictureInPictureMode,
+                    pipDebugContext(),
+                )
                 pipEventSink(PictureInPictureEvents.OnPictureInPictureModeChanged(isInPictureInPictureMode))
                 if (!isInPictureInPictureMode && !lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                     Timber.tag(loggerTag.value).d("Exiting PiP mode: Hangup the call")
@@ -208,6 +256,7 @@ class ElementCallActivity :
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        Timber.tag(loggerTag.value).d("onNewIntent: action=%s data=%s context=%s", intent.action, intent.dataString, pipDebugContext())
         lifecycleScope.launch {
             activeCallManager.clearIncomingCallNotification()
         }
@@ -216,13 +265,25 @@ class ElementCallActivity :
 
     override fun onStart() {
         super.onStart()
+        Timber.tag(loggerTag.value).d("onStart: context=%s", pipDebugContext())
         lifecycleScope.launch {
             activeCallManager.setIncomingCallUiVisible(true)
         }
         CallForegroundService.stop(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        Timber.tag(loggerTag.value).d("onResume: context=%s", pipDebugContext())
+    }
+
+    override fun onPause() {
+        Timber.tag(loggerTag.value).d("onPause: context=%s", pipDebugContext())
+        super.onPause()
+    }
+
     override fun onStop() {
+        Timber.tag(loggerTag.value).d("onStop: context=%s", pipDebugContext())
         lifecycleScope.launch {
             activeCallManager.setIncomingCallUiVisible(false)
         }
@@ -233,13 +294,25 @@ class ElementCallActivity :
     }
 
     override fun onDestroy() {
+        Timber.tag(loggerTag.value).d("onDestroy: context=%s", pipDebugContext())
         super.onDestroy()
         audioFocus.releaseAudioFocus()
         CallForegroundService.stop(this)
         pictureInPicturePresenter.setPipView(null)
     }
 
+    override fun onUserLeaveHint() {
+        /*
+         * 这里保留日志，但不再把 onUserLeaveHint 当成进入画中画的信号。
+         * 实际排查发现系统会在并非用户点击 Home/返回的场景下回调它，
+         * 如果继续在这里直接触发 PiP，会导致通话页误进入画中画。
+         */
+        Timber.tag(loggerTag.value).d("onUserLeaveHint callback ignored for PiP entry: context=%s", pipDebugContext())
+        super.onUserLeaveHint()
+    }
+
     override fun finish() {
+        Timber.tag(loggerTag.value).d("finish requested: context=%s", pipDebugContext())
         // Also remove the task from recents
         finishAndRemoveTask()
     }
@@ -249,11 +322,26 @@ class ElementCallActivity :
     }
 
     private fun setCallType(intent: Intent?) {
-        val callType = intent?.let {
+        val extraCallType = intent?.let {
             IntentCompat.getParcelableExtra(intent, DefaultElementCallEntryPoint.EXTRA_CALL_TYPE, CallType::class.java)
-                ?: intent.dataString?.let(::parseUrl)?.let(::ExternalUrl)
         }
+        val parsedExternalUrl = intent?.dataString?.let(::parseUrl)
+        val callType = extraCallType ?: parsedExternalUrl?.let(::ExternalUrl)
         val currentCallType = webViewTarget.value
+        /*
+         * 这条日志用于区分两类入口：
+         * 1. App 内部房间通话，通常携带 RoomCall extra；
+         * 2. 外部 Element Call deeplink，通常会被解析成 ExternalUrl。
+         * 出现游客页时先看这里，就能知道问题是不是入口分支走偏了。
+         */
+        Timber.tag(loggerTag.value).i(
+            "Resolved incoming call intent: hasExtra=%s extraType=%s dataPresent=%s parsedExternalUrl=%s currentCallType=%s",
+            extraCallType != null,
+            extraCallType,
+            intent?.dataString != null,
+            parsedExternalUrl != null,
+            currentCallType,
+        )
         if (currentCallType == null) {
             if (callType == null) {
                 Timber.tag(loggerTag.value).d("Re-opened the activity but we have no url to load or a cached one, finish the activity")
@@ -283,7 +371,12 @@ class ElementCallActivity :
         return registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
-            val callback = requestPermissionCallback ?: return@registerForActivityResult
+            Timber.tag(cameraLoggerTag.value).d("Android permission result for WebView media: result=%s", permissions.toDebugString())
+            val callback = requestPermissionCallback
+            if (callback == null) {
+                Timber.tag(cameraLoggerTag.value).w("Ignoring Android permission result because no WebView permission callback is pending")
+                return@registerForActivityResult
+            }
             val permissionsToGrant = mutableListOf<String>()
             permissions.forEach { (permission, granted) ->
                 if (granted) {
@@ -295,6 +388,7 @@ class ElementCallActivity :
                     permissionsToGrant.add(webKitPermission)
                 }
             }
+            Timber.tag(cameraLoggerTag.value).d("Forwarding WebKit media grants to WebView: grants=%s", permissionsToGrant.toTypedArray().toDebugString())
             callback(permissionsToGrant.toTypedArray())
             requestPermissionCallback = null
         }
@@ -302,14 +396,30 @@ class ElementCallActivity :
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun setPipParams() {
-        setPictureInPictureParams(getPictureInPictureParams())
+        val params = getPictureInPictureParams()
+        Timber.tag(loggerTag.value).d(
+            "Applying PiP params: autoEnterEnabled=%s aspectRatio=%s context=%s",
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S,
+            "3:5",
+            pipDebugContext(),
+        )
+        setPictureInPictureParams(params)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun enterPipMode(): Boolean {
-        return if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
-            enterPictureInPictureMode(getPictureInPictureParams())
+        val canEnterFromLifecycle = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+        Timber.tag(loggerTag.value).d(
+            "enterPipMode requested: canEnterFromLifecycle=%s context=%s",
+            canEnterFromLifecycle,
+            pipDebugContext(),
+        )
+        return if (canEnterFromLifecycle) {
+            val result = enterPictureInPictureMode(getPictureInPictureParams())
+            Timber.tag(loggerTag.value).d("enterPictureInPictureMode result=%s context=%s", result, pipDebugContext())
+            result
         } else {
+            Timber.tag(loggerTag.value).w("Ignoring enterPipMode because lifecycle is not RESUMED: context=%s", pipDebugContext())
             false
         }
     }
@@ -330,6 +440,22 @@ class ElementCallActivity :
     override fun hangUp() {
         eventSink?.invoke(CallScreenEvents.Hangup)
     }
+
+    /**
+     * 统一整理 PiP 排查上下文，便于把生命周期、窗口焦点和系统 PiP 状态串成一条时间线。
+     */
+    private fun pipDebugContext(): String {
+        return buildString {
+            append("lifecycle=").append(lifecycle.currentState)
+            append(", hasWindowFocus=").append(hasWindowFocus())
+            append(", isInPip=").append(isInPictureInPictureMode)
+            append(", isFinishing=").append(isFinishing)
+            append(", isDestroyed=").append(isDestroyed)
+            append(", isChangingConfigurations=").append(isChangingConfigurations)
+            append(", requestPermissionPending=").append(requestPermissionCallback != null)
+            append(", webViewTarget=").append(webViewTarget.value)
+        }
+    }
 }
 
 internal fun mapWebkitPermissions(permissions: Array<String>): List<String> {
@@ -339,5 +465,13 @@ internal fun mapWebkitPermissions(permissions: Array<String>): List<String> {
             PermissionRequest.RESOURCE_VIDEO_CAPTURE -> Manifest.permission.CAMERA
             else -> null
         }
+    }
+}
+
+private fun Array<String>.toDebugString(): String = joinToString(prefix = "[", postfix = "]")
+
+private fun Map<String, Boolean>.toDebugString(): String {
+    return entries.joinToString(prefix = "[", postfix = "]") { (permission, granted) ->
+        "$permission=$granted"
     }
 }

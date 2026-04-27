@@ -31,6 +31,11 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 用户资料页主操作区。
+ *
+ * 根据是否是当前用户以及是否可通话，展示消息、通话和分享等主操作按钮。
+ */
 @Composable
 fun UserProfileMainActionsSection(
     isCurrentUser: Boolean,

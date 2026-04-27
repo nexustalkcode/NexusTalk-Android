@@ -49,11 +49,19 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 @Inject
+/**
+ * 房间成员管理 Presenter。
+ *
+ * 负责计算当前成员可执行的管理动作，并驱动 kick/ban/unban 的异步状态。
+ */
 class RoomMemberModerationPresenter(
     private val room: JoinedRoom,
     private val dispatchers: CoroutineDispatchers,
     private val analyticsService: AnalyticsService,
 ) : Presenter<RoomMemberModerationState> {
+    /**
+     * 生成房间成员管理状态并处理事件。
+     */
     @Composable
     override fun present(): RoomMemberModerationState {
         val coroutineScope = rememberCoroutineScope()
@@ -149,6 +157,9 @@ class RoomMemberModerationPresenter(
         )
     }
 
+    /**
+     * 计算针对当前成员可展示的管理动作。
+     */
     private fun computeModerationActions(
         member: RoomMember?,
         permissions: RoomMemberModerationPermissions,
@@ -186,6 +197,9 @@ class RoomMemberModerationPresenter(
         }.toImmutableList()
     }
 
+    /**
+     * 执行 kick 操作并等待成员状态变更。
+     */
     private fun CoroutineScope.kickUser(
         userId: UserId,
         reason: String,
@@ -198,6 +212,9 @@ class RoomMemberModerationPresenter(
         )
     }
 
+    /**
+     * 执行 ban 操作并等待成员状态变更。
+     */
     private fun CoroutineScope.banUser(
         userId: UserId,
         reason: String,
@@ -210,6 +227,9 @@ class RoomMemberModerationPresenter(
         )
     }
 
+    /**
+     * 执行 unban 操作并等待成员状态变更。
+     */
     private fun CoroutineScope.unbanUser(
         userId: UserId,
         reason: String,
@@ -222,6 +242,9 @@ class RoomMemberModerationPresenter(
         )
     }
 
+    /**
+     * 运行异步管理动作，并在成功后等待成员列表刷新。
+     */
     private fun <T> CoroutineScope.runActionAndWaitForMembershipChange(
         action: MutableState<AsyncAction<T>>,
         block: suspend () -> Result<T>

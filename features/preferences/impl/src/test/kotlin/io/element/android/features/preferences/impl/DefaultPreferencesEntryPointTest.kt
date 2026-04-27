@@ -19,8 +19,6 @@ import io.element.android.features.logout.test.FakeLogoutEntryPoint
 import io.element.android.features.preferences.api.PreferencesEntryPoint
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.RoomId
-import io.element.android.libraries.troubleshoot.test.FakeNotificationTroubleShootEntryPoint
-import io.element.android.libraries.troubleshoot.test.FakePushHistoryEntryPoint
 import io.element.android.tests.testutils.lambda.lambdaError
 import io.element.android.tests.testutils.node.TestParentNode
 import org.junit.Rule

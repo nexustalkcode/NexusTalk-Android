@@ -30,6 +30,11 @@ import kotlin.time.Duration.Companion.seconds
 import com.freeletics.flowredux.dsl.State as MachineState
 
 @OptIn(FlowPreview::class)
+/**
+ * 发起验证流程状态机。
+ *
+ * 负责管理“请求验证、等待接受、开始 SAS、比对 challenge、完成或取消”这一整条状态迁移链路。
+ */
 class OutgoingVerificationStateMachine(
     private val sessionVerificationService: SessionVerificationService,
     private val encryptionService: EncryptionService,
@@ -130,74 +135,86 @@ class OutgoingVerificationStateMachine(
         }
     }
 
+    /**
+     * 发起验证流程的状态集合。
+     */
     sealed interface State {
-        /** Let the user know that they need to get ready on their other session. */
+        /** 初始状态，提示用户在另一端做好准备。 */
         data object Initial : State
 
-        /** Waiting for verification acceptance. */
+        /** 已发出验证请求，等待对方接受。 */
         data class RequestingVerification(val verificationRequest: VerificationRequest.Outgoing) : State
 
-        /** Verification request accepted. Waiting for start. */
+        /** 对方已接受验证请求，等待开始 SAS。 */
         data object VerificationRequestAccepted : State
 
-        /** Waiting for SaS verification start. */
+        /** 正在启动 SAS 验证。 */
         data object StartingSasVerification : State
 
-        /** A SaS verification flow has been started. */
+        /** SAS 验证已启动。 */
         data object SasVerificationStarted : State
 
+        /**
+         * 正处于 challenge 比对阶段的子状态。
+         *
+         * @property data 当前 challenge 对应的会话验证数据。
+         */
         sealed class Verifying(open val data: SessionVerificationData) : State {
-            /** Verification accepted and emojis received. */
+            /** 已收到 challenge，等待用户比对。 */
             data class ChallengeReceived(override val data: SessionVerificationData) : Verifying(data)
 
-            /** Replying to a verification challenge. */
+            /** 正在向远端回复 challenge 结果。 */
             data class Replying(override val data: SessionVerificationData, val accept: Boolean) : Verifying(data)
         }
 
-        /** The verification has been canceled, remotely or locally. */
+        /** 验证已被本地或远端取消。 */
         data object Canceled : State
 
-        /** Verification successful. */
+        /** 验证成功完成。 */
         data object Completed : State
 
+        /** 流程应立即退出。 */
         data object Exit : State
     }
 
+    /**
+     * 发起验证流程中会收到的事件集合。
+     */
     sealed interface Event {
-        /** Request verification. */
+        /** 请求开始验证。 */
         data class RequestVerification(val verificationRequest: VerificationRequest.Outgoing) : Event
 
-        /** The current verification request has been accepted. */
+        /** 当前验证请求已被接受。 */
         data object DidAcceptVerificationRequest : Event
 
-        /** Start a SaS verification flow. */
+        /** 请求开始 SAS 验证。 */
         data object StartSasVerification : Event
 
-        /** Started a SaS verification flow. */
+        /** SAS 验证已成功启动。 */
         data object DidStartSasVerification : Event
 
-        /** Has received data. */
+        /** 已收到比对所需的 challenge 数据。 */
         data class DidReceiveChallenge(val data: SessionVerificationData) : Event
 
-        /** Emojis match. */
+        /** 用户确认表情一致。 */
         data object AcceptChallenge : Event
 
-        /** Emojis do not match. */
+        /** 用户确认表情不一致。 */
         data object DeclineChallenge : Event
 
-        /** Remote accepted challenge. */
+        /** 远端已确认当前 challenge。 */
         data object DidAcceptChallenge : Event
 
-        /** Request cancellation. */
+        /** 请求取消当前验证流程。 */
         data object Cancel : Event
 
-        /** Verification cancelled. */
+        /** 当前验证已被取消。 */
         data object DidCancel : Event
 
-        /** Request failed. */
+        /** 当前验证流程失败。 */
         data object DidFail : Event
 
-        /** Reset the verification flow to the initial state. */
+        /** 把流程重置回初始状态。 */
         data object Reset : Event
     }
 }

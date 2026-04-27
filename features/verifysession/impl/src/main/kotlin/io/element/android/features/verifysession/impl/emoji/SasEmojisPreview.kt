@@ -29,6 +29,9 @@ import io.element.android.libraries.designsystem.theme.components.Text
 
 @Composable
 @PreviewsDayNight
+/**
+ * 预览全部 SAS emoji 资源映射。
+ */
 internal fun SasEmojisPreview() = ElementPreview {
     Column(
         modifier = Modifier.padding(8.dp),

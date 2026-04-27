@@ -8,18 +8,24 @@
 
 package io.element.android.libraries.audio.api
 
+/**
+ * 请求音频焦点的业务场景。
+ */
 enum class AudioFocusRequester {
     ElementCall,
     VoiceMessage,
     MediaViewer,
 }
 
+/**
+ * 音频焦点管理接口。
+ */
 interface AudioFocus {
     /**
-     * Request audio focus for the given requester.
-     * @param requester The mode for which to request audio focus.
-     * @param onFocusLost Callback to be invoked when the audio focus is lost.
-     * @return true if the audio focus was successfully requested, false otherwise.
+     * 为指定业务场景请求音频焦点。
+     *
+     * @param requester 请求音频焦点的业务场景。
+     * @param onFocusLost 当音频焦点丢失时触发的回调。
      */
     fun requestAudioFocus(
         requester: AudioFocusRequester,
@@ -27,7 +33,7 @@ interface AudioFocus {
     )
 
     /**
-     * Release the audio focus.
+     * 释放当前持有的音频焦点。
      */
     fun releaseAudioFocus()
 }

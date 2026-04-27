@@ -15,8 +15,11 @@ import com.google.common.truth.Truth.assertThat
 import io.element.android.features.announcement.api.Announcement
 import io.element.android.features.announcement.api.AnnouncementService
 import io.element.android.features.home.impl.roomlist.aRoomListState
+import io.element.android.features.home.impl.roomlist.aRoomsContentState
 import io.element.android.features.home.impl.grouplist.GroupListState
 import io.element.android.features.home.impl.grouplist.aGroupListState
+import io.element.android.features.home.impl.model.RoomSummaryDisplayType
+import io.element.android.features.home.impl.model.aRoomListRoomSummary
 import io.element.android.features.home.impl.spaces.HomeSpacesState
 import io.element.android.features.home.impl.spaces.aHomeSpacesState
 import io.element.android.features.logout.api.direct.aDirectLogoutState
@@ -178,6 +181,38 @@ class HomePresenterTest {
     }
 
     @Test
+    fun `present - chats unread count includes unseen invite`() = runTest {
+        val roomListPresenter = MutablePresenter(
+            aRoomListState(
+                contentState = aRoomsContentState(
+                    summaries = persistentListOf(
+                        aRoomListRoomSummary(
+                            id = "!invite:example.org",
+                            displayType = RoomSummaryDisplayType.INVITE,
+                        ),
+                        aRoomListRoomSummary(
+                            id = "!room:example.org",
+                            numberOfUnreadMessages = 2,
+                        ),
+                    ),
+                    seenRoomInvites = emptySet(),
+                ),
+            )
+        )
+        val presenter = createHomePresenter(
+            roomListPresenter = roomListPresenter,
+            sessionStore = InMemorySessionStore(
+                updateUserProfileResult = { _, _, _ -> },
+            ),
+        )
+
+        presenter.test {
+            val initialState = awaitItem()
+            assertThat(initialState.chatsUnreadCount).isEqualTo(3)
+        }
+    }
+
+    @Test
     fun `present - NavigationBar is hidden when the last space is left when the user can't create new spaces`() = runTest {
         val homeSpacesPresenter = MutablePresenter(aHomeSpacesState())
         val presenter = createHomePresenter(
@@ -216,6 +251,7 @@ internal fun createHomePresenter(
     indicatorService: IndicatorService = FakeIndicatorService(),
     sessionVerificationService: FakeSessionVerificationService = FakeSessionVerificationService(),
     featureFlagService: FeatureFlagService = FakeFeatureFlagService(),
+    roomListPresenter: Presenter<io.element.android.features.home.impl.roomlist.RoomListState> = Presenter { aRoomListState() },
     groupListPresenter: Presenter<GroupListState> = Presenter { aGroupListState() },
     homeSpacesPresenter: Presenter<HomeSpacesState> = Presenter { aHomeSpacesState() },
     sessionStore: SessionStore = InMemorySessionStore(),
@@ -227,7 +263,7 @@ internal fun createHomePresenter(
     indicatorService = indicatorService,
     sessionVerificationService = sessionVerificationService,
     featureFlagService = featureFlagService,
-    roomListPresenter = { aRoomListState() },
+    roomListPresenter = roomListPresenter,
     groupListPresenter = groupListPresenter,
     homeSpacesPresenter = homeSpacesPresenter,
     logoutPresenter = { aDirectLogoutState() },

@@ -18,7 +18,11 @@ import io.element.android.libraries.di.SessionScope
 
 @BindingContainer
 @ContributesTo(SessionScope::class)
+/**
+ * Spaces 首页相关依赖绑定模块。
+ */
 interface HomeSpacesModule {
     @Binds
+    /** 绑定 Spaces 首页 Presenter。 */
     fun bindHomeSpacesPresenter(presenter: HomeSpacesPresenter): Presenter<HomeSpacesState>
 }

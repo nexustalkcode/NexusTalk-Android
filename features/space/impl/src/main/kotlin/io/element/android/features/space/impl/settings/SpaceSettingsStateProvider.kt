@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.matrix.api.core.RoomAlias
 import io.element.android.libraries.matrix.api.core.RoomId
 
+/**
+ * 为 Space 设置页预览提供样例状态。
+ */
 open class SpaceSettingsStateProvider : PreviewParameterProvider<SpaceSettingsState> {
     override val values: Sequence<SpaceSettingsState>
         get() = sequenceOf(
@@ -22,6 +25,9 @@ open class SpaceSettingsStateProvider : PreviewParameterProvider<SpaceSettingsSt
         )
 }
 
+/**
+ * 构造一份 Space 设置页样例状态。
+ */
 fun aSpaceSettingsState(
     roomId: RoomId = RoomId("!aRoomId:element.io"),
     name: String = "Space name",

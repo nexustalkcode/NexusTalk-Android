@@ -18,7 +18,15 @@ import io.element.android.features.messages.impl.timeline.model.TimelineItem
 import io.element.android.libraries.architecture.Presenter
 
 @Inject
+/**
+ * 已读回执底部弹窗 Presenter。
+ *
+ * 负责维护当前选中的时间线事件。
+ */
 class ReadReceiptBottomSheetPresenter : Presenter<ReadReceiptBottomSheetState> {
+    /**
+     * 生成底部弹窗状态并处理事件。
+     */
     @Composable
     override fun present(): ReadReceiptBottomSheetState {
         var selectedEvent: TimelineItem.Event? by remember { mutableStateOf(null) }

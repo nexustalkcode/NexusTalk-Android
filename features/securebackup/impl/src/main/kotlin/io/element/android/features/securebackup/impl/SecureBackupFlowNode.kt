@@ -33,6 +33,9 @@ import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.di.SessionScope
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
+
+private const val resetIdentityTraceTag = "ResetIdentityTrace"
 
 /**
  * 安全备份流程节点
@@ -150,6 +153,8 @@ class SecureBackupFlowNode(
             is NavTarget.ResetIdentity -> {
                 val callback = object : ResetIdentityFlowNode.Callback {
                     override fun onDone() {
+                        // 这里记录重置身份子流程已经结束，并确认是否把完成事件继续上抛给 FTUE/父节点。
+                        Timber.tag(resetIdentityTraceTag).i("SecureBackupFlowNode.ResetIdentity.onDone -> callback.onDone")
                         callback.onDone()
                     }
                 }

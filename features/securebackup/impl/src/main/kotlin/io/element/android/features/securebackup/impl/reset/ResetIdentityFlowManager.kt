@@ -21,7 +21,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
+
+private const val resetIdentityTraceTag = "ResetIdentityTrace"
 
 /**
  * 重置身份流程管理器
@@ -56,8 +60,22 @@ class ResetIdentityFlowManager(
      * @param block 回调代码块
      */
     fun whenResetIsDone(block: () -> Unit) {
+        // 这里记录“开始等待 Verified”的时机，方便判断首次回到 App 后是否根本没收到状态更新。
+        Timber.tag(resetIdentityTraceTag).i(
+            "ResetIdentityFlowManager.whenResetIsDone register currentVerification=%s currentHandle=%s waitingJobActive=%s",
+            sessionVerificationService.sessionVerifiedStatus.value,
+            currentHandleFlow.value.debugDescription(),
+            whenResetIsDoneWaitingJob?.isActive == true,
+        )
+        whenResetIsDoneWaitingJob?.cancel()
         whenResetIsDoneWaitingJob = sessionCoroutineScope.launch {
-            sessionVerificationService.sessionVerifiedStatus.filterIsInstance<SessionVerifiedStatus.Verified>().first()
+            sessionVerificationService.sessionVerifiedStatus
+                .onEach { status ->
+                    Timber.tag(resetIdentityTraceTag).i("ResetIdentityFlowManager.whenResetIsDone observed verification=%s", status)
+                }
+                .filterIsInstance<SessionVerifiedStatus.Verified>()
+                .first()
+            Timber.tag(resetIdentityTraceTag).i("ResetIdentityFlowManager.whenResetIsDone observed Verified, executing callback")
             block()
         }
     }
@@ -71,17 +89,25 @@ class ResetIdentityFlowManager(
      * @return 包含重置句柄的异步数据流
      */
     fun getResetHandle(): StateFlow<AsyncData<IdentityResetHandle?>> {
+        Timber.tag(resetIdentityTraceTag).i("ResetIdentityFlowManager.getResetHandle currentState=%s", resetHandleFlow.value.debugDescription())
         return if (resetHandleFlow.value.isLoading() || resetHandleFlow.value.isSuccess()) {
+            Timber.tag(resetIdentityTraceTag).i("ResetIdentityFlowManager.getResetHandle reuse existing state")
             resetHandleFlow
         } else {
             resetHandleFlow.value = AsyncData.Loading()
+            Timber.tag(resetIdentityTraceTag).i("ResetIdentityFlowManager.getResetHandle -> Loading")
 
             sessionCoroutineScope.launch {
                 encryptionService.startIdentityReset()
                     .onSuccess { handle ->
+                        Timber.tag(resetIdentityTraceTag).i(
+                            "ResetIdentityFlowManager.getResetHandle success handle=%s",
+                            handle?.let { it::class.simpleName } ?: "null",
+                        )
                         resetHandleFlow.value = AsyncData.Success(handle)
                     }
                     .onFailure {
+                        Timber.tag(resetIdentityTraceTag).e(it, "ResetIdentityFlowManager.getResetHandle failed")
                         resetHandleFlow.value = AsyncData.Failure(it)
                     }
             }
@@ -94,10 +120,24 @@ class ResetIdentityFlowManager(
      * 取消重置流程
      */
     suspend fun cancel() {
+        Timber.tag(resetIdentityTraceTag).i(
+            "ResetIdentityFlowManager.cancel currentState=%s currentVerification=%s waitingJobActive=%s",
+            currentHandleFlow.value.debugDescription(),
+            sessionVerificationService.sessionVerifiedStatus.value,
+            whenResetIsDoneWaitingJob?.isActive == true,
+        )
         currentHandleFlow.value.dataOrNull()?.cancel()
         resetHandleFlow.value = AsyncData.Uninitialized
 
         whenResetIsDoneWaitingJob?.cancel()
         whenResetIsDoneWaitingJob = null
+        Timber.tag(resetIdentityTraceTag).i("ResetIdentityFlowManager.cancel finished")
     }
+}
+
+private fun AsyncData<IdentityResetHandle?>.debugDescription(): String = when (this) {
+    is AsyncData.Uninitialized -> "Uninitialized"
+    is AsyncData.Loading -> "Loading"
+    is AsyncData.Success -> "Success(data=${data?.let { it::class.simpleName } ?: "null"})"
+    is AsyncData.Failure -> "Failure(error=${error::class.simpleName})"
 }

@@ -12,7 +12,6 @@ import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import io.element.android.features.invite.api.InviteData
 import io.element.android.features.invite.api.declineandblock.DeclineInviteAndBlockEntryPoint
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeDeclineInviteAndBlockEntryPoint : DeclineInviteAndBlockEntryPoint {
     override fun createNode(
@@ -20,6 +19,6 @@ class FakeDeclineInviteAndBlockEntryPoint : DeclineInviteAndBlockEntryPoint {
         buildContext: BuildContext,
         inviteData: InviteData,
     ): Node {
-        lambdaError()
+        error("FakeDeclineInviteAndBlockEntryPoint.createNode must be provided in tests")
     }
 }

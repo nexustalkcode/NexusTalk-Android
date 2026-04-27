@@ -11,6 +11,9 @@ package io.element.android.features.messages.impl.timeline.model.event
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.features.location.api.Location
 
+/**
+ * 为位置消息内容预览提供样例数据。
+ */
 open class TimelineItemLocationContentProvider : PreviewParameterProvider<TimelineItemLocationContent> {
     override val values: Sequence<TimelineItemLocationContent>
         get() = sequenceOf(
@@ -19,6 +22,9 @@ open class TimelineItemLocationContentProvider : PreviewParameterProvider<Timeli
         )
 }
 
+/**
+ * 构造一份位置消息内容样例。
+ */
 fun aTimelineItemLocationContent(description: String? = null) = TimelineItemLocationContent(
     body = "User location geo:52.2445,0.7186;u=5000",
     location = Location(

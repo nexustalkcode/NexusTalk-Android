@@ -36,6 +36,12 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
+/**
+ * 渲染已登出页面。
+ *
+ * @param state 页面展示状态。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 fun SignedOutView(
     state: SignedOutState,
     modifier: Modifier = Modifier,
@@ -56,6 +62,9 @@ fun SignedOutView(
     )
 }
 
+/**
+ * 渲染已登出页面头部。
+ */
 @Composable
 private fun SignedOutHeader(state: SignedOutState) {
     IconTitleSubtitleMolecule(
@@ -66,6 +75,9 @@ private fun SignedOutHeader(state: SignedOutState) {
     )
 }
 
+/**
+ * 渲染已登出页面原因说明区。
+ */
 @Composable
 private fun SignedOutContent() {
     Box(
@@ -96,6 +108,9 @@ private fun SignedOutContent() {
     }
 }
 
+/**
+ * 渲染已登出页面底部按钮区。
+ */
 @Composable
 private fun SignedOutFooter(
     onSignInAgain: () -> Unit,

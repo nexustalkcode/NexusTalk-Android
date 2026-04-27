@@ -16,6 +16,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览“修改恢复密钥”用户故事下的设置页。
+ */
 internal fun SecureBackupSetupViewChangePreview(
     @PreviewParameter(SecureBackupSetupStateProvider::class) state: SecureBackupSetupState
 ) = ElementPreview {

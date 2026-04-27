@@ -22,17 +22,30 @@ import io.element.android.libraries.matrix.api.roomlist.RoomSummary
 
 private const val BUBBLE_ICON = "\uD83D\uDCAC"
 
+/**
+ * 格式化最新事件文案中的 mention / permalink。
+ */
 interface LatestEventMentionFormatter {
+    /**
+     * 把最新事件文本中的用户、房间 permalink 转换为更适合首页展示的短文案。
+     *
+     * @param text 原始事件文本。
+     * @param roomSummary 当前房间摘要，用于辅助解析显示名。
+     */
     fun format(text: CharSequence, roomSummary: RoomSummary): CharSequence
 }
 
 @SingleIn(SessionScope::class)
 @ContributesBinding(SessionScope::class)
 @Inject
+/**
+ * [LatestEventMentionFormatter] 的默认实现。
+ */
 class DefaultLatestEventMentionFormatter(
     private val permalinkParser: PermalinkParser,
     private val matrixClient: MatrixClient,
 ) : LatestEventMentionFormatter {
+    /** 处理最新事件文本中的 URL，并将可识别的 permalink 转成更短的 mention 形式。 */
     override fun format(text: CharSequence, roomSummary: RoomSummary): CharSequence {
         val rawText = text.toString()
         val matches = Patterns.WEB_URL.toRegex().findAll(rawText).toList()
@@ -54,6 +67,7 @@ class DefaultLatestEventMentionFormatter(
         return builder.toString()
     }
 
+    /** 解析单个 permalink 并生成替换文案。 */
     private fun formatPermalink(url: String, roomSummary: RoomSummary): String? {
         return when (val permalink = permalinkParser.parse(url)) {
             is PermalinkData.UserLink -> formatUserMention(permalink.userId.value, roomSummary)
@@ -70,6 +84,7 @@ class DefaultLatestEventMentionFormatter(
         }
     }
 
+    /** 将用户 permalink 格式化为展示名 mention。 */
     private fun formatUserMention(userId: String, roomSummary: RoomSummary): String {
         val displayName = roomSummary.info.heroes
             .firstNotNullOfOrNull { hero -> hero.displayName.takeIf { hero.userId.value == userId } }
@@ -77,6 +92,7 @@ class DefaultLatestEventMentionFormatter(
         return if (displayName != null) "@$displayName" else userId
     }
 
+    /** 将房间 permalink 格式化为房间名 mention。 */
     private fun formatRoomMention(roomIdOrAlias: RoomIdOrAlias, roomSummary: RoomSummary): String {
         val roomName = allKnownRooms(roomSummary).firstNotNullOfOrNull { summary ->
             when {
@@ -92,6 +108,7 @@ class DefaultLatestEventMentionFormatter(
         }
     }
 
+    /** 汇总当前房间和已知房间列表，用于解析房间别名显示名。 */
     private fun allKnownRooms(roomSummary: RoomSummary): List<RoomSummary> {
         return buildList {
             add(roomSummary)

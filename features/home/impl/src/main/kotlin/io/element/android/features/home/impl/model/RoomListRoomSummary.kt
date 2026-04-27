@@ -128,6 +128,26 @@ data class RoomListRoomSummary(
     val hasUnreadIndicator: Boolean = totalUnreadCount > 0
 
     /**
+     * 计算列表项真正需要展示的未读数。
+     *
+     * 邀请房间通常没有常规消息未读统计，但“新邀请”本身就需要让用户感知到，
+     * 所以在邀请尚未被看过时，强制把角标展示为 1。
+     */
+    fun displayedUnreadCount(isInviteSeen: Boolean): Long {
+        return when {
+            displayType == RoomSummaryDisplayType.INVITE && !isInviteSeen -> 1L
+            else -> totalUnreadCount
+        }
+    }
+
+    /**
+     * 统一判断当前列表项是否需要显示未读角标。
+     *
+     * 这样邀请房间与普通房间都走同一套展示口径，避免 UI 层各自复制判断逻辑。
+     */
+    fun shouldShowUnreadIndicator(isInviteSeen: Boolean): Boolean = displayedUnreadCount(isInviteSeen) > 0
+
+    /**
      * 转换为邀请数据
      *
      * @return 邀请数据

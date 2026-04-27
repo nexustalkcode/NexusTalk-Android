@@ -14,7 +14,13 @@ import io.element.android.libraries.architecture.FeatureEntryPoint
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.room.JoinedRoom
 
+/**
+ * 修改房间成员角色页面入口接口。
+ */
 fun interface ChangeRoomMemberRolesEntryPoint : FeatureEntryPoint {
+    /**
+     * 创建修改成员角色节点。
+     */
     fun createNode(
         parentNode: Node,
         buildContext: BuildContext,
@@ -22,12 +28,18 @@ fun interface ChangeRoomMemberRolesEntryPoint : FeatureEntryPoint {
         listType: ChangeRoomMemberRolesListType,
     ): Node
 
+    /**
+     * 供外层流程等待角色修改完成的节点代理。
+     */
     interface NodeProxy {
         val roomId: RoomId
         suspend fun waitForCompletion(): Boolean
     }
 }
 
+/**
+ * 修改成员角色页面的列表类型。
+ */
 enum class ChangeRoomMemberRolesListType {
     SelectNewOwnersWhenLeaving,
     Admins,

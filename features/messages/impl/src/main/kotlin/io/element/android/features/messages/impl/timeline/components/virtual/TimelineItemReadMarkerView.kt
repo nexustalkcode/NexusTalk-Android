@@ -25,6 +25,9 @@ import io.element.android.libraries.designsystem.theme.components.HorizontalDivi
 import io.element.android.libraries.designsystem.theme.components.Text
 
 @Composable
+/**
+ * 渲染“未读消息起点”标记。
+ */
 internal fun TimelineItemReadMarkerView(
     modifier: Modifier = Modifier
 ) {

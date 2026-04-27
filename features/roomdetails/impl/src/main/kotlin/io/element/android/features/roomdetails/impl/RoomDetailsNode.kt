@@ -23,11 +23,13 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedInject
 import im.vector.app.features.analytics.plan.MobileScreen
 import io.element.android.annotations.ContributesNode
+import io.element.android.appconfig.MatrixConfiguration
 import io.element.android.features.leaveroom.api.LeaveRoomRenderer
 import io.element.android.libraries.androidutils.system.startSharePlainTextIntent
 import io.element.android.libraries.architecture.appyx.launchMolecule
 import io.element.android.libraries.architecture.callback
 import io.element.android.libraries.di.RoomScope
+import io.element.android.libraries.matrix.api.permalink.normalizeMatrixPermalinkBaseUrl
 import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.matrix.api.room.BaseRoom
 import io.element.android.services.analytics.api.AnalyticsService
@@ -178,10 +180,14 @@ class RoomDetailsNode(
     private fun CoroutineScope.onShareRoom(context: Context) = launch {
         room.getPermalink()
             .onSuccess { permalink ->
+                /* 分享房间时只替换 permalink 的基础域名，房间 ID 和 via 参数保持不变。 */
+                val normalizedPermalink = permalink.normalizeMatrixPermalinkBaseUrl(
+                    targetBaseUrl = MatrixConfiguration.MATRIX_TO_PERMALINK_BASE_URL,
+                )
                 context.startSharePlainTextIntent(
                     activityResultLauncher = null,
                     chooserTitle = context.getString(R.string.screen_room_details_share_room_title),
-                    text = permalink,
+                    text = normalizedPermalink,
                     noActivityFoundMessage = context.getString(AndroidUtilsR.string.error_no_compatible_app_found)
                 )
             }

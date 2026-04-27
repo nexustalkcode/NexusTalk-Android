@@ -38,6 +38,9 @@ import io.element.android.libraries.designsystem.theme.components.TextFieldValid
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染重置身份密码页面。
+ */
 fun ResetIdentityPasswordView(
     state: ResetIdentityPasswordState,
     onBack: () -> Unit,
@@ -80,6 +83,9 @@ fun ResetIdentityPasswordView(
 }
 
 @Composable
+/**
+ * 渲染密码输入内容区。
+ */
 private fun Content(text: String, onTextChange: (String) -> Unit, hasError: Boolean) {
     var showPassword by remember { mutableStateOf(false) }
     TextField(

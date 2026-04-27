@@ -7,9 +7,13 @@
 
 package io.element.android.features.linknewdevice.impl.screens.scan
 
+/**
+ * 扫描二维码页面可能触发的用户事件。
+ */
 sealed interface ScanQrCodeEvent {
-    // 成功扫描到二维码内容
+    /** 成功扫描到二维码内容。 */
     data class QrCodeScanned(val data: ByteArray) : ScanQrCodeEvent
-    // 用户点击重试
+
+    /** 用户点击重试。 */
     data object TryAgain : ScanQrCodeEvent
 }

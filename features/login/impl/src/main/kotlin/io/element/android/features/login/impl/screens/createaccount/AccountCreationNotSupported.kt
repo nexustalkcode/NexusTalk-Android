@@ -8,4 +8,7 @@
 
 package io.element.android.features.login.impl.screens.createaccount
 
+/**
+ * 表示当前服务器或流程不支持应用内创建账号。
+ */
 class AccountCreationNotSupported : Exception()

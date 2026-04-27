@@ -12,6 +12,9 @@ import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import com.bumble.appyx.core.plugin.Plugin
 
+/**
+ * 创建需要 runtime 参数的 Appyx 节点工厂接口。
+ */
 fun interface AssistedNodeFactory<NODE : Node> {
     fun create(buildContext: BuildContext, plugins: List<Plugin>): NODE
 }

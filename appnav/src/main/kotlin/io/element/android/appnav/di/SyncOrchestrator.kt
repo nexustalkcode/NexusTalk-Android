@@ -35,6 +35,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
+/**
+ * 同步服务编排器。
+ *
+ * 根据应用前后台、通话、通知同步和网络状态决定是否启动/停止 SyncService。
+ */
 @AssistedInject
 class SyncOrchestrator(
     @Assisted private val syncService: SyncService,
@@ -44,6 +49,9 @@ class SyncOrchestrator(
     dispatchers: CoroutineDispatchers,
     private val analyticsService: AnalyticsService,
 ) {
+    /**
+     * 创建 SyncOrchestrator 的 Assisted 工厂。
+     */
     @AssistedFactory
     interface Factory {
         fun create(
@@ -59,9 +67,9 @@ class SyncOrchestrator(
     private val started = AtomicBoolean(false)
 
     /**
-     * Starting observing the app state and network state to start/stop the sync service.
+     * 开始观察应用状态和网络状态，以控制同步服务启停。
      *
-     * Before observing the state, a first attempt at starting the sync service will happen if it's not already running.
+     * 在开始观察前，会先尝试启动一次同步服务，以便尽早暴露服务器可达性状态。
      */
     fun start() {
         if (!started.compareAndSet(false, true)) {
@@ -87,6 +95,9 @@ class SyncOrchestrator(
 
     @OptIn(FlowPreview::class)
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    /**
+     * 观察应用活跃状态、网络状态和同步状态，并执行启停动作。
+     */
     internal fun observeStates() = coroutineScope.launch {
         Timber.tag(tag).d("start observing the app and network state")
 
@@ -138,6 +149,9 @@ class SyncOrchestrator(
     }
 }
 
+/**
+ * 对同步服务执行的动作。
+ */
 private enum class SyncStateAction {
     StartSync,
     StopSync,

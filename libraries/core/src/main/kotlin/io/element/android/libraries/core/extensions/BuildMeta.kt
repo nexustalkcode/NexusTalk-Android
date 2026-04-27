@@ -11,6 +11,9 @@ package io.element.android.libraries.core.extensions
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.core.meta.BuildType
 
+/**
+ * 判断当前构建是否属于 Element 官方应用 ID。
+ */
 fun BuildMeta.isElement(): Boolean {
     return when (buildType) {
         BuildType.RELEASE -> applicationId == "io.element.android.x"

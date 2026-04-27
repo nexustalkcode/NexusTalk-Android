@@ -36,6 +36,9 @@ import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.verification.VerificationRequest
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
+
+private const val resetIdentityTraceTag = "ResetIdentityTrace"
 
 /**
  * FTUE 会话验证流程节点
@@ -134,6 +137,9 @@ class FtueSessionVerificationFlowNode(
     private val secureBackupEntryPointCallback = object : SecureBackupEntryPoint.Callback {
         override fun onDone() {
             lifecycleScope.launch {
+                Timber.tag(resetIdentityTraceTag).i(
+                    "FtueSessionVerificationFlowNode.secureBackupEntryPointCallback.onDone -> newRoot(UseAnotherDevice)"
+                )
                 // Move to the completed state view in the verification flow
                 backstack.newRoot(NavTarget.UseAnotherDevice)
             }
@@ -176,10 +182,12 @@ class FtueSessionVerificationFlowNode(
                     ),
                     callback = object : OutgoingVerificationEntryPoint.Callback {
                         override fun onDone() {
+                            Timber.tag(resetIdentityTraceTag).i("FtueSessionVerificationFlowNode.UseAnotherDevice.onDone -> callback.onDone")
                             callback.onDone()
                         }
 
                         override fun onBack() {
+                            Timber.tag(resetIdentityTraceTag).i("FtueSessionVerificationFlowNode.UseAnotherDevice.onBack -> pop")
                             backstack.pop()
                         }
 
@@ -205,6 +213,7 @@ class FtueSessionVerificationFlowNode(
                     params = SecureBackupEntryPoint.Params(SecureBackupEntryPoint.InitialTarget.ResetIdentity),
                     callback = object : SecureBackupEntryPoint.Callback {
                         override fun onDone() {
+                            Timber.tag(resetIdentityTraceTag).i("FtueSessionVerificationFlowNode.ResetIdentity.onDone -> callback.onDone")
                             callback.onDone()
                         }
                     },

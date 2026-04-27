@@ -30,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Unspecified
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -37,6 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import io.element.android.compound.R as CompoundR
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.home.impl.R
@@ -68,6 +71,11 @@ import timber.log.Timber
 
 internal val minHeight = 84.dp
 
+/**
+ * 渲染首页中的单条房间摘要行。
+ *
+ * 会根据房间显示类型在普通房间、邀请和敲门态之间切换不同布局。
+ */
 @Composable
 internal fun RoomSummaryRow(
     room: RoomListRoomSummary,
@@ -91,7 +99,11 @@ internal fun RoomSummaryRow(
                         Timber.d("Long click on invite room")
                     },
                 ) {
-                    InviteNameAndIndicatorRow(name = room.name, isInviteSeen = isInviteSeen)
+                    InviteNameAndIndicatorRow(
+                        name = room.name,
+                        unreadCount = room.displayedUnreadCount(isInviteSeen),
+                        showUnreadIndicator = room.shouldShowUnreadIndicator(isInviteSeen),
+                    )
                     InviteSubtitle(isDm = room.isDm, inviteSender = room.inviteSender)
                     if (!room.isDm && room.inviteSender != null) {
                         Spacer(modifier = Modifier.height(4.dp))
@@ -123,7 +135,8 @@ internal fun RoomSummaryRow(
                     NameAndTimestampRow(
                         name = room.name,
                         timestamp = room.timestamp,
-                        isHighlighted = room.isHighlighted
+                        isHighlighted = room.isHighlighted,
+                        showRoomIcon = !room.isDm && !room.isSpace,
                     )
                     MessagePreviewAndIndicatorRow(room = room)
                 }
@@ -164,6 +177,9 @@ internal fun RoomSummaryRow(
     }
 }
 
+/**
+ * 渲染房间摘要行的通用外壳。
+ */
 @Composable
 private fun RoomSummaryScaffoldRow(
     room: RoomListRoomSummary,
@@ -210,11 +226,15 @@ private fun RoomSummaryScaffoldRow(
     }
 }
 
+/**
+ * 渲染名称和时间戳行。
+ */
 @Composable
 private fun NameAndTimestampRow(
     name: String?,
     timestamp: String?,
     isHighlighted: Boolean,
+    showRoomIcon: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -225,6 +245,10 @@ private fun NameAndTimestampRow(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            if (showRoomIcon) {
+                RoomNameIcon()
+                Spacer(modifier = Modifier.width(3.dp))
+            }
             // Name
             Text(
                 style = ElementTheme.typography.fontBodyLgMedium,
@@ -248,6 +272,24 @@ private fun NameAndTimestampRow(
     }
 }
 
+/**
+ * 渲染房间名称前的小图标。
+ */
+@Composable
+private fun RoomNameIcon(
+    modifier: Modifier = Modifier,
+) {
+    Icon(
+        modifier = modifier.size(15.dp),
+        painter = painterResource(id = CompoundR.drawable.ic_compound_room_list_group),
+        contentDescription = null,
+        tint = Unspecified,
+    )
+}
+
+/**
+ * 渲染邀请态副标题。
+ */
 @Composable
 private fun InviteSubtitle(
     isDm: Boolean,
@@ -271,6 +313,9 @@ private fun InviteSubtitle(
     }
 }
 
+/**
+ * 渲染最新消息预览与未读指示区域。
+ */
 @Composable
 private fun MessagePreviewAndIndicatorRow(
     room: RoomListRoomSummary,
@@ -379,10 +424,14 @@ private fun MessagePreviewAndIndicatorRow(
     }
 }
 
+/**
+ * 渲染邀请态标题和未读指示。
+ */
 @Composable
 private fun InviteNameAndIndicatorRow(
     name: String?,
-    isInviteSeen: Boolean,
+    unreadCount: Long,
+    showUnreadIndicator: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -399,14 +448,19 @@ private fun InviteNameAndIndicatorRow(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        if (!isInviteSeen) {
+        if (showUnreadIndicator) {
             UnreadIndicatorAtom(
-                color = ElementTheme.colors.unreadIndicator
+                color = ElementTheme.colors.unreadIndicator,
+                contentDescription = stringResource(CommonStrings.a11y_notifications_new_messages),
+                count = unreadCount.toInt(),
             )
         }
     }
 }
 
+/**
+ * 渲染“正在通话中”图标。
+ */
 @Composable
 private fun OnGoingCallIcon(
     color: Color,
@@ -419,6 +473,9 @@ private fun OnGoingCallIcon(
     )
 }
 
+/**
+ * 渲染通知已静音图标。
+ */
 @Composable
 private fun NotificationOffIndicatorAtom() {
     Icon(
@@ -429,6 +486,9 @@ private fun NotificationOffIndicatorAtom() {
     )
 }
 
+/**
+ * 渲染 mention 提示图标。
+ */
 @Composable
 private fun MentionIndicatorAtom() {
     Icon(
@@ -439,6 +499,9 @@ private fun MentionIndicatorAtom() {
     )
 }
 
+/**
+ * 渲染已置顶图标。
+ */
 @Composable
 private fun PinnedIndicatorAtom() {
     Icon(

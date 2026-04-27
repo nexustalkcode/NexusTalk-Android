@@ -25,9 +25,15 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @Inject
+/**
+ * reaction summary 底部弹层 Presenter。
+ *
+ * 负责接收 reaction 汇总目标，并为发送者补齐头像和显示名信息。
+ */
 class ReactionSummaryPresenter(
     private val room: BaseRoom,
 ) : Presenter<ReactionSummaryState> {
+    /** 生成 reaction summary 状态并处理事件。 */
     @Composable
     override fun present(): ReactionSummaryState {
         val membersState by room.membersStateFlow.collectAsState()
@@ -53,6 +59,7 @@ class ReactionSummaryPresenter(
         )
     }
 
+    /** 根据房间成员数据为 reaction 发送者补齐用户信息。 */
     @Composable
     private fun populateSenderAvatars(members: ImmutableList<RoomMember>, summary: ReactionSummaryState.Summary?) = remember(summary) {
         derivedStateOf {

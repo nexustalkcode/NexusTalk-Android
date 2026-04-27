@@ -14,6 +14,9 @@ import io.element.android.libraries.matrix.api.media.MediaSource
 import io.element.android.libraries.matrix.ui.components.A_BLUR_HASH
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * 为视频消息内容预览提供样例数据。
+ */
 open class TimelineItemVideoContentProvider : PreviewParameterProvider<TimelineItemVideoContent> {
     override val values: Sequence<TimelineItemVideoContent>
         get() = sequenceOf(
@@ -24,6 +27,9 @@ open class TimelineItemVideoContentProvider : PreviewParameterProvider<TimelineI
         )
 }
 
+/**
+ * 构造一份视频消息内容样例。
+ */
 fun aTimelineItemVideoContent(
     aspectRatio: Float = 0.5f,
     blurhash: String? = A_BLUR_HASH,

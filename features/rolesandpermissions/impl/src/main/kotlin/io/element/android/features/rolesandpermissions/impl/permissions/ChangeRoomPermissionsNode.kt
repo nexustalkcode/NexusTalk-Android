@@ -21,17 +21,26 @@ import io.element.android.libraries.di.RoomScope
 
 @ContributesNode(RoomScope::class)
 @AssistedInject
+/**
+ * 修改房间权限页面节点。
+ */
 class ChangeRoomPermissionsNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: ChangeRoomPermissionsPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 页面向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun onComplete(changesSaved: Boolean)
     }
 
     private val callback: Callback = callback()
 
+    /**
+     * 渲染修改房间权限页面。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

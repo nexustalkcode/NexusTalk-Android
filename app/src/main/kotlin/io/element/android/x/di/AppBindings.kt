@@ -10,7 +10,9 @@ package io.element.android.x.di
 
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesTo
+import io.element.android.features.call.api.ElementCallEntryPoint
 import io.element.android.features.call.impl.ForegroundIncomingCallObserver
+import io.element.android.features.call.impl.utils.ActiveCallManager
 import io.element.android.features.api.MigrationEntryPoint
 import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.features.lockscreen.api.LockScreenEntryPoint
@@ -141,6 +143,10 @@ interface AppBindings {
     fun appForegroundStateService(): AppForegroundStateService
 
     fun foregroundIncomingCallObserver(): ForegroundIncomingCallObserver
+
+    fun activeCallManager(): ActiveCallManager
+
+    fun elementCallEntryPoint(): ElementCallEntryPoint
 
     /**
      * 提供 BuildMeta 实例。

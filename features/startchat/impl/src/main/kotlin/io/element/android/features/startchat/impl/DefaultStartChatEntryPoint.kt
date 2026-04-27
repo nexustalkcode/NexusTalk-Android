@@ -16,7 +16,19 @@ import io.element.android.features.startchat.api.StartChatEntryPoint
 import io.element.android.libraries.architecture.createNode
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的开始聊天入口实现。
+ *
+ * 负责把外部导航请求转换为 [StartChatFlowNode]。
+ */
 class DefaultStartChatEntryPoint : StartChatEntryPoint {
+    /**
+     * 创建开始聊天流程节点。
+     *
+     * @param parentNode 父节点。
+     * @param buildContext 当前节点构建上下文。
+     * @param callback 流程回调。
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

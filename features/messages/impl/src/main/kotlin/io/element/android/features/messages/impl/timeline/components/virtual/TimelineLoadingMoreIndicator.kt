@@ -25,6 +25,9 @@ import io.element.android.libraries.designsystem.theme.components.LinearProgress
 import io.element.android.libraries.matrix.api.timeline.Timeline
 
 @Composable
+/**
+ * 渲染时间线分页加载指示器。
+ */
 internal fun TimelineLoadingMoreIndicator(
     direction: Timeline.PaginationDirection,
     modifier: Modifier = Modifier

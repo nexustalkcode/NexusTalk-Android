@@ -37,6 +37,13 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 渲染关联设备流程的错误页面。
+ *
+ * @param errorScreenType 当前需要展示的错误类型。
+ * @param onRetry 点击“重新开始”后的回调。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 @Composable
 fun ErrorView(
     errorScreenType: ErrorScreenType,
@@ -55,6 +62,7 @@ fun ErrorView(
     )
 }
 
+/** 根据错误类型生成标题文案。 */
 @Composable
 private fun titleText(errorScreenType: ErrorScreenType, appName: String) = when (errorScreenType) {
     ErrorScreenType.Cancelled -> stringResource(R.string.screen_qr_code_login_error_cancelled_title)
@@ -67,6 +75,7 @@ private fun titleText(errorScreenType: ErrorScreenType, appName: String) = when 
     is ErrorScreenType.UnknownError -> stringResource(CommonStrings.common_something_went_wrong)
 }
 
+/** 根据错误类型生成副标题文案。 */
 @Composable
 private fun subtitleText(errorScreenType: ErrorScreenType, appName: String) = when (errorScreenType) {
     ErrorScreenType.Cancelled -> stringResource(R.string.screen_qr_code_login_error_cancelled_subtitle)
@@ -79,6 +88,7 @@ private fun subtitleText(errorScreenType: ErrorScreenType, appName: String) = wh
     is ErrorScreenType.UnknownError -> stringResource(R.string.screen_qr_code_login_unknown_error_description)
 }
 
+/** 渲染“检测到不安全信道”错误的补充说明。 */
 @Composable
 private fun ColumnScope.InsecureChannelDetectedError() {
     Text(
@@ -99,6 +109,7 @@ private fun ColumnScope.InsecureChannelDetectedError() {
     )
 }
 
+/** 渲染错误页的补充内容区域。 */
 @Composable
 private fun Content(errorScreenType: ErrorScreenType) {
     when (errorScreenType) {
@@ -117,6 +128,7 @@ private fun Content(errorScreenType: ErrorScreenType) {
     }
 }
 
+/** 渲染错误页底部按钮区。 */
 @Composable
 private fun Buttons(onRetry: () -> Unit) {
     Button(

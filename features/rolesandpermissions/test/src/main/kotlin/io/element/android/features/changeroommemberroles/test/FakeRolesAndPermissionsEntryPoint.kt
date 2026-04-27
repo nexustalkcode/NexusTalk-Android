@@ -11,10 +11,9 @@ package io.element.android.features.changeroommemberroles.test
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import io.element.android.features.rolesandpermissions.api.RolesAndPermissionsEntryPoint
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeRolesAndPermissionsEntryPoint : RolesAndPermissionsEntryPoint {
     override fun createNode(parentNode: Node, buildContext: BuildContext, callback: RolesAndPermissionsEntryPoint.Callback): Node {
-        lambdaError()
+        error("FakeRolesAndPermissionsEntryPoint.createNode must be provided in tests")
     }
 }

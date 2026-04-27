@@ -25,7 +25,6 @@ import io.element.android.features.location.impl.common.actions.LocationActions
 import io.element.android.features.location.impl.common.permissions.PermissionsEvents
 import io.element.android.features.location.impl.common.permissions.PermissionsPresenter
 import io.element.android.features.location.impl.common.permissions.PermissionsState
-import io.element.android.features.messages.api.MessageComposerContext
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.core.extensions.flatMap
 import io.element.android.libraries.core.meta.BuildMeta
@@ -33,6 +32,7 @@ import io.element.android.libraries.matrix.api.room.CreateTimelineParams
 import io.element.android.libraries.matrix.api.room.JoinedRoom
 import io.element.android.libraries.matrix.api.room.location.AssetType
 import io.element.android.libraries.matrix.api.timeline.Timeline
+import io.element.android.libraries.textcomposer.model.MessageComposerContext
 import io.element.android.libraries.textcomposer.model.MessageComposerMode
 import io.element.android.services.analytics.api.AnalyticsService
 import kotlinx.coroutines.launch

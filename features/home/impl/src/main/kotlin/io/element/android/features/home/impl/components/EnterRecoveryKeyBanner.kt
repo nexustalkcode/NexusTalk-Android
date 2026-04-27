@@ -17,6 +17,9 @@ import io.element.android.libraries.designsystem.components.AnnouncementType
 import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 
+/**
+ * 渲染“输入恢复密钥”提示横幅。
+ */
 @Composable
 internal fun EnterRecoveryKeyBanner(
     onContinueClick: () -> Unit,

@@ -12,6 +12,9 @@ import io.element.android.features.messages.api.pinned.PinnedEventsTimelineProvi
 import io.element.android.libraries.matrix.api.timeline.TimelineProvider
 import io.element.android.services.analytics.api.watchers.AnalyticsSendMessageWatcher
 
+/**
+ * Room 图中暴露给时间线相关功能的绑定集合。
+ */
 interface TimelineBindings {
     val timelineProvider: TimelineProvider
     val pinnedEventsTimelineProvider: PinnedEventsTimelineProvider

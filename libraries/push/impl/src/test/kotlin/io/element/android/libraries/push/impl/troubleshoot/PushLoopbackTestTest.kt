@@ -18,8 +18,6 @@ import io.element.android.libraries.push.api.gateway.PushGatewayFailure
 import io.element.android.libraries.push.test.FakePushService
 import io.element.android.libraries.pushproviders.test.FakePushProvider
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
-import io.element.android.libraries.troubleshoot.test.FakeNotificationTroubleshootNavigator
-import io.element.android.libraries.troubleshoot.test.runAndTestState
 import io.element.android.services.toolbox.api.strings.StringProvider
 import io.element.android.services.toolbox.api.systemclock.SystemClock
 import io.element.android.services.toolbox.test.strings.FakeStringProvider

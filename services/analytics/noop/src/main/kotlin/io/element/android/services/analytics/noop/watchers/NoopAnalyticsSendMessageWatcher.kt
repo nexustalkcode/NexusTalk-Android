@@ -7,12 +7,10 @@
 
 package io.element.android.services.analytics.noop.watchers
 
-import dev.zacsweers.metro.ContributesBinding
-import io.element.android.libraries.di.RoomScope
+import dev.zacsweers.metro.Inject
 import io.element.android.services.analytics.api.watchers.AnalyticsSendMessageWatcher
 
-@ContributesBinding(RoomScope::class)
-class NoopAnalyticsSendMessageWatcher : AnalyticsSendMessageWatcher {
+class NoopAnalyticsSendMessageWatcher @Inject constructor() : AnalyticsSendMessageWatcher {
     override fun start() = Unit
     override fun stop() = Unit
 }

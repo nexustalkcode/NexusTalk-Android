@@ -16,11 +16,9 @@ android {
 
 dependencies {
     api(projects.libraries.core)
-    api(projects.libraries.matrix.api)
+    api(project(":libraries:matrix"))
     api(libs.coroutines.core)
     implementation(libs.coroutines.test)
-    implementation(projects.libraries.matrix.impl)
-    implementation(projects.services.analytics.api)
-    
+    implementation(project(":services:analytics"))
     implementation(libs.kotlinx.collections.immutable)
 }

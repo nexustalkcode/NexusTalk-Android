@@ -10,6 +10,11 @@ package io.element.android.features.roommembermoderation.impl
 
 import io.element.android.features.roommembermoderation.api.RoomMemberModerationEvents
 
+/**
+ * 房间成员管理内部事件。
+ *
+ * 在公开事件基础上补充真正提交 kick/ban/unban 的动作。
+ */
 sealed interface InternalRoomMemberModerationEvents : RoomMemberModerationEvents {
     data class DoKickUser(val reason: String) : InternalRoomMemberModerationEvents
     data class DoBanUser(val reason: String) : InternalRoomMemberModerationEvents

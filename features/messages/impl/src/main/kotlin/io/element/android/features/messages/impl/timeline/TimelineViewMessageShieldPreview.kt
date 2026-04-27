@@ -22,6 +22,9 @@ import kotlinx.collections.immutable.toImmutableList
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览带消息盾牌提示的时间线视图。
+ */
 internal fun TimelineViewMessageShieldPreview() = ElementPreview {
     val timelineItems = aTimelineItemList(aTimelineItemTextContent())
     // For consistency, ensure that there is a message in the timeline (the last one) with an error.

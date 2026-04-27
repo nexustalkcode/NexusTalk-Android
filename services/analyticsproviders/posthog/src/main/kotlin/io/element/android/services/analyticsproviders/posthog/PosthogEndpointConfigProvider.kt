@@ -9,7 +9,6 @@
 package io.element.android.services.analyticsproviders.posthog
 
 import dev.zacsweers.metro.Inject
-import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.libraries.core.extensions.isElement
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.core.meta.BuildType
@@ -17,10 +16,10 @@ import io.element.android.libraries.core.meta.BuildType
 @Inject
 class PosthogEndpointConfigProvider(
     private val buildMeta: BuildMeta,
-    private val enterpriseService: EnterpriseService,
 ) {
     fun provide(): PosthogEndpointConfig? {
-        return if (enterpriseService.isEnterpriseBuild) {
+        // 这里直接读取 BuildMeta 中的企业版标记，避免 analyticsproviders 反向依赖 enterprise feature 形成编译环。
+        return if (buildMeta.isEnterpriseBuild) {
             PosthogEndpointConfig(
                 host = BuildConfig.POSTHOG_HOST,
                 apiKey = BuildConfig.POSTHOG_APIKEY,

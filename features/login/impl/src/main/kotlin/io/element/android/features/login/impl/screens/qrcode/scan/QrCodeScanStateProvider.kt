@@ -14,6 +14,9 @@ import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.auth.qrlogin.MatrixQrCodeLoginData
 import io.element.android.libraries.matrix.api.auth.qrlogin.QrLoginException
 
+/**
+ * 为二维码扫码页预览提供样例状态。
+ */
 open class QrCodeScanStateProvider : PreviewParameterProvider<QrCodeScanState> {
     override val values: Sequence<QrCodeScanState>
         get() = sequenceOf(
@@ -43,6 +46,9 @@ open class QrCodeScanStateProvider : PreviewParameterProvider<QrCodeScanState> {
         )
 }
 
+/**
+ * 构造一份二维码扫码页样例状态。
+ */
 fun aQrCodeScanState(
     isScanning: Boolean = true,
     authenticationAction: AsyncAction<MatrixQrCodeLoginData> = AsyncAction.Uninitialized,

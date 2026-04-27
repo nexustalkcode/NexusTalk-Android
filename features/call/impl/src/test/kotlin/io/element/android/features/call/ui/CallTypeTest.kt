@@ -11,6 +11,7 @@ package io.element.android.features.call.ui
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.call.api.CallType
 import io.element.android.features.call.impl.ui.getSessionId
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.matrix.test.A_ROOM_ID
 import io.element.android.libraries.matrix.test.A_SESSION_ID
 import org.junit.Test
@@ -29,6 +30,18 @@ class CallTypeTest {
                 roomId = A_ROOM_ID,
             ).getSessionId()
         ).isEqualTo(A_SESSION_ID)
+    }
+
+    @Test
+    fun `RoomCall defaults to video mode`() {
+        assertThat(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID).mode)
+            .isEqualTo(CallWidgetMode.Video)
+    }
+
+    @Test
+    fun `RoomCall stores explicit audio mode`() {
+        assertThat(CallType.RoomCall(A_SESSION_ID, A_ROOM_ID, mode = CallWidgetMode.Audio).mode)
+            .isEqualTo(CallWidgetMode.Audio)
     }
 
     @Test

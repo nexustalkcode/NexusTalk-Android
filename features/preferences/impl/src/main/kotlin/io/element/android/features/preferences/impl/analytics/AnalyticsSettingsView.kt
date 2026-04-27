@@ -19,6 +19,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染分析设置页面。
+ */
 fun AnalyticsSettingsView(
     state: AnalyticsSettingsState,
     onBackClick: () -> Unit,
@@ -27,6 +30,7 @@ fun AnalyticsSettingsView(
     PreferencePage(
         modifier = modifier,
         onBackClick = onBackClick,
+        handleSystemBack = true,
         title = stringResource(id = CommonStrings.common_analytics)
     ) {
         AnalyticsPreferencesView(

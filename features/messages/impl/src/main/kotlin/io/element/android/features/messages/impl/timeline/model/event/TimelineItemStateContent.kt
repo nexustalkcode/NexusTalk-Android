@@ -11,6 +11,9 @@ package io.element.android.features.messages.impl.timeline.model.event
 import androidx.compose.runtime.Immutable
 
 @Immutable
+/**
+ * 所有状态类事件内容模型的共同接口。
+ */
 sealed interface TimelineItemStateContent : TimelineItemEventContent {
     val body: String
 }

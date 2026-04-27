@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.features.api.MigrationState
 import io.element.android.libraries.architecture.AsyncData
 
+/**
+ * 为迁移页面预览提供样例状态。
+ */
 internal class MigrationStateProvider : PreviewParameterProvider<MigrationState> {
     override val values: Sequence<MigrationState>
         get() = sequenceOf(
@@ -20,6 +23,9 @@ internal class MigrationStateProvider : PreviewParameterProvider<MigrationState>
         )
 }
 
+/**
+ * 构造一份迁移页面样例状态。
+ */
 internal fun aMigrationState(
     migrationAction: AsyncData<Unit> = AsyncData.Uninitialized,
 ) = MigrationState(

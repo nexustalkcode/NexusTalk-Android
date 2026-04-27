@@ -16,7 +16,13 @@ import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.di.RoomScope
 
 @ContributesBinding(RoomScope::class)
+/**
+ * 默认的角色与权限入口实现。
+ */
 class DefaultRolesAndPermissionsEntryPoint : RolesAndPermissionsEntryPoint {
+    /**
+     * 创建角色与权限流程节点。
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

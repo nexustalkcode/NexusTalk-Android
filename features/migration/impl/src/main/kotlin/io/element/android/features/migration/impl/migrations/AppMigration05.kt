@@ -15,12 +15,18 @@ import io.element.android.libraries.sessionstorage.api.SessionStore
 import java.io.File
 
 @ContributesIntoSet(AppScope::class)
+/**
+ * 迁移到会话目录持久化路径结构的步骤。
+ */
 class AppMigration05(
     private val sessionStore: SessionStore,
     @BaseDirectory private val baseDirectory: File,
 ) : AppMigration {
     override val order: Int = 5
 
+    /**
+     * 为缺失会话目录路径的历史会话补齐默认路径。
+     */
     override suspend fun migrate(isFreshInstall: Boolean) {
         val allSessions = sessionStore.getAllSessions()
         for (session in allSessions) {

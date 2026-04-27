@@ -13,6 +13,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.permissions.api.PermissionsState
 import io.element.android.libraries.permissions.api.aPermissionsState
 
+/**
+ * 为二维码登录引导页预览提供样例状态。
+ */
 open class QrCodeIntroStateProvider : PreviewParameterProvider<QrCodeIntroState> {
     override val values: Sequence<QrCodeIntroState>
         get() = sequenceOf(
@@ -22,6 +25,9 @@ open class QrCodeIntroStateProvider : PreviewParameterProvider<QrCodeIntroState>
         )
 }
 
+/**
+ * 构造一份二维码登录引导页样例状态。
+ */
 fun aQrCodeIntroState(
     appName: String = "AppName",
     desktopAppName: String = "Element",

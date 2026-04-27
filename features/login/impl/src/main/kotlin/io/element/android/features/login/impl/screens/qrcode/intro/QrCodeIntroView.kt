@@ -33,6 +33,14 @@ import io.element.android.libraries.designsystem.utils.annotatedTextWithBold
 import io.element.android.libraries.permissions.api.PermissionsView
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 渲染二维码登录引导页。
+ *
+ * @param state 页面展示状态。
+ * @param onBackClick 返回动作。
+ * @param onContinue 继续到扫码步骤的回调。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 @Composable
 fun QrCodeIntroView(
     state: QrCodeIntroState,
@@ -64,6 +72,9 @@ fun QrCodeIntroView(
     )
 }
 
+/**
+ * 渲染引导页主体说明内容。
+ */
 @Composable
 private fun Content(state: QrCodeIntroState) {
     NumberedListOrganism(
@@ -83,6 +94,9 @@ private fun Content(state: QrCodeIntroState) {
     )
 }
 
+/**
+ * 渲染引导页底部按钮区。
+ */
 @Composable
 private fun ColumnScope.Buttons(
     state: QrCodeIntroState,

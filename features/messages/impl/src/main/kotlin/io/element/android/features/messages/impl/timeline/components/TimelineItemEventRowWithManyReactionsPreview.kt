@@ -18,6 +18,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览带大量 reaction 的事件行。
+ */
 internal fun TimelineItemEventRowWithManyReactionsPreview() = ElementPreview {
     Column {
         listOf(false, true).forEach { isMine ->

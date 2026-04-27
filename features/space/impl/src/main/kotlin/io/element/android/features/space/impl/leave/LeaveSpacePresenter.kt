@@ -35,19 +35,36 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @AssistedInject
+/**
+ * 离开 Space 页面 Presenter。
+ *
+ * 负责加载当前 Space 及其子房间、维护勾选状态，并在确认后执行批量离开操作。
+ */
 class LeaveSpacePresenter(
     @Assisted private val leaveSpaceHandle: LeaveSpaceHandle,
 ) : Presenter<LeaveSpaceState> {
+    /**
+     * 创建 Presenter 的 Assisted 工厂。
+     */
     @AssistedFactory
     fun interface Factory {
         fun create(leaveSpaceHandle: LeaveSpaceHandle): LeaveSpacePresenter
     }
 
+    /**
+     * 离开 Space 页面所需的房间分组结果。
+     *
+     * @property current 当前正在离开的 Space 本身。
+     * @property others 一并可选择离开的其他子房间。
+     */
     data class LeaveSpaceRooms(
         val current: LeaveSpaceRoom?,
         val others: List<LeaveSpaceRoom>,
     )
 
+    /**
+     * 生成离开 Space 页面状态并处理页面事件。
+     */
     @Composable
     override fun present(): LeaveSpaceState {
         val coroutineScope = rememberCoroutineScope()
@@ -139,6 +156,12 @@ class LeaveSpacePresenter(
         )
     }
 
+    /**
+     * 执行离开 Space 操作，并把结果写回页面异步状态。
+     *
+     * @param leaveSpaceAction 需要更新的离开动作状态。
+     * @param selectedRoomIds 一并离开的子房间 ID 集合。
+     */
     private fun CoroutineScope.leaveSpace(
         leaveSpaceAction: MutableState<AsyncAction<Unit>>,
         selectedRoomIds: Collection<RoomId>,

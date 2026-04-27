@@ -31,6 +31,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
+
+private const val startupTraceTag = "StartupTrace"
 
 /**
  * FTUE 服务默认实现类
@@ -96,15 +99,29 @@ class DefaultFtueService(
         }
 
     init {
+        // 这里直接输出 FTUE 内部状态，避免外层只看到 Incomplete 却不知道下一步是什么。
+        ftueStepStateFlow
+            .onEach { internalState ->
+                Timber.tag(startupTraceTag).i("DefaultFtueService.internalState=%s", internalState)
+            }
+            .launchIn(sessionCoroutineScope)
+
         combine(
             sessionVerificationService.sessionVerifiedStatus.onEach { sessionVerifiedStatus ->
+                Timber.tag(startupTraceTag).i("DefaultFtueService.sessionVerifiedStatus=%s", sessionVerifiedStatus)
                 if (sessionVerifiedStatus == SessionVerifiedStatus.NotVerified) {
                     // Ensure we wait for the user to confirm the session verified screen before going further
                     userNeedsToConfirmSessionVerificationSuccess.value = true
+                    Timber.tag(startupTraceTag).i("DefaultFtueService.requireSessionVerificationConfirmation=true")
                 }
             },
             userNeedsToConfirmSessionVerificationSuccess,
-        ) {
+        ) { sessionVerifiedStatus, userNeedsConfirmation ->
+            Timber.tag(startupTraceTag).i(
+                "DefaultFtueService.combine tick sessionVerifiedStatus=%s userNeedsConfirmation=%s",
+                sessionVerifiedStatus,
+                userNeedsConfirmation,
+            )
             updateFtueStep()
         }
             .launchIn(sessionCoroutineScope)
@@ -119,6 +136,7 @@ class DefaultFtueService(
      * @param completedStep 用户刚完成的 FTUE 步骤
      */
     fun updateFtueStep(completedStep: FtueStep) = sessionCoroutineScope.launch {
+        Timber.tag(startupTraceTag).i("DefaultFtueService.updateFtueStep completedStep=%s", completedStep)
         val step = getNextStep(completedStep)
         if (step == null) {
             // 跳过分析页时视为已询问过用户（不展示即不收集）
@@ -140,9 +158,11 @@ class DefaultFtueService(
     fun updateFtueStep() = sessionCoroutineScope.launch {
         // 如果已经是完成状态，不再更新
         if (ftueStepStateFlow.value is InternalFtueState.Complete) {
+            Timber.tag(startupTraceTag).i("DefaultFtueService.updateFtueStep skipped because already complete")
             return@launch
         }
         val step = getNextStep(null)
+        Timber.tag(startupTraceTag).i("DefaultFtueService.updateFtueStep nextStep=%s", step)
         ftueStepStateFlow.value = when (step) {
             null -> InternalFtueState.Complete
             else -> InternalFtueState.Incomplete(step)
@@ -163,36 +183,89 @@ class DefaultFtueService(
      */
     private suspend fun getNextStep(completedStep: FtueStep? = null): FtueStep? =
         when (completedStep) {
-            null -> if (!isSessionVerificationStateReady()) {
-                FtueStep.WaitingForInitialState
-            } else {
-                getNextStep(FtueStep.WaitingForInitialState)
+            null -> {
+                // 已完成 FTUE 的账号在冷启动恢复时不需要再等待会话验证状态初始化，
+                // 否则会先进入 WaitingForInitialState 对应的空白占位页，造成可感知白屏。
+                val isFtueCompleted = sessionPreferencesStore.isFtueCompleted().first()
+                val isSessionVerificationStateReady = isSessionVerificationStateReady()
+                Timber.tag(startupTraceTag).i(
+                    "DefaultFtueService.getNextStep completedStep=null isFtueCompleted=%s sessionVerificationReady=%s sessionVerifiedStatus=%s",
+                    isFtueCompleted,
+                    isSessionVerificationStateReady,
+                    sessionVerificationService.sessionVerifiedStatus.value,
+                )
+                if (isFtueCompleted) {
+                    null
+                } else if (!isSessionVerificationStateReady) {
+                    FtueStep.WaitingForInitialState
+                } else {
+                    getNextStep(FtueStep.WaitingForInitialState)
+                }
             }
-            FtueStep.WaitingForInitialState -> if (sessionPreferencesStore.isFtueCompleted().first()) {
-                null
-            } else {
-                FtueStep.Welcome
+            FtueStep.WaitingForInitialState -> {
+                val isFtueCompleted = sessionPreferencesStore.isFtueCompleted().first()
+                Timber.tag(startupTraceTag).i(
+                    "DefaultFtueService.getNextStep completedStep=%s isFtueCompleted=%s",
+                    completedStep,
+                    isFtueCompleted,
+                )
+                if (isFtueCompleted) {
+                    null
+                } else {
+                    FtueStep.Welcome
+                }
             }
             // Even when FTUE has already been completed for this account, we still want to
             // prompt session verification after a fresh login if the session is not verified.
-            FtueStep.SessionVerification -> if (sessionPreferencesStore.isFtueCompleted().first()) {
-                null
-            } else {
-                FtueStep.Welcome
+            FtueStep.SessionVerification -> {
+                val isFtueCompleted = sessionPreferencesStore.isFtueCompleted().first()
+                Timber.tag(startupTraceTag).i(
+                    "DefaultFtueService.getNextStep completedStep=%s isFtueCompleted=%s userNeedsConfirmation=%s",
+                    completedStep,
+                    isFtueCompleted,
+                    userNeedsToConfirmSessionVerificationSuccess.value,
+                )
+                if (isFtueCompleted) {
+                    null
+                } else {
+                    FtueStep.Welcome
+                }
             }
-            FtueStep.Welcome -> if (shouldAskNotificationPermissions()) {
-                FtueStep.NotificationsOptIn
-            } else {
-                getNextStep(FtueStep.NotificationsOptIn)
+            FtueStep.Welcome -> {
+                val shouldAskNotificationPermissions = shouldAskNotificationPermissions()
+                Timber.tag(startupTraceTag).i(
+                    "DefaultFtueService.getNextStep completedStep=%s shouldAskNotificationPermissions=%s",
+                    completedStep,
+                    shouldAskNotificationPermissions,
+                )
+                if (shouldAskNotificationPermissions) {
+                    FtueStep.NotificationsOptIn
+                } else {
+                    getNextStep(FtueStep.NotificationsOptIn)
+                }
             }
-            FtueStep.NotificationsOptIn -> if (shouldDisplayLockscreenSetup()) {
-                FtueStep.LockscreenSetup
-            } else {
-                getNextStep(FtueStep.LockscreenSetup)
+            FtueStep.NotificationsOptIn -> {
+                val shouldDisplayLockscreenSetup = shouldDisplayLockscreenSetup()
+                Timber.tag(startupTraceTag).i(
+                    "DefaultFtueService.getNextStep completedStep=%s shouldDisplayLockscreenSetup=%s",
+                    completedStep,
+                    shouldDisplayLockscreenSetup,
+                )
+                if (shouldDisplayLockscreenSetup) {
+                    FtueStep.LockscreenSetup
+                } else {
+                    getNextStep(FtueStep.LockscreenSetup)
+                }
             }
             // 引导中不再展示分析页，锁屏设置完成后直接结束 FTUE
-            FtueStep.LockscreenSetup -> null
-            FtueStep.AnalyticsOptIn -> null
+            FtueStep.LockscreenSetup -> {
+                Timber.tag(startupTraceTag).i("DefaultFtueService.getNextStep completedStep=%s -> complete", completedStep)
+                null
+            }
+            FtueStep.AnalyticsOptIn -> {
+                Timber.tag(startupTraceTag).i("DefaultFtueService.getNextStep completedStep=%s -> complete", completedStep)
+                null
+            }
         }
 
     /**
@@ -259,7 +332,20 @@ class DefaultFtueService(
      * 允许 FTUE 流程继续进行。
      */
     fun onUserCompletedSessionVerification() {
+        // 这里补充关闭 FTUE 前后的关键状态，方便判断 onDone 触发后是否真的推进了 FTUE。
+        Timber.tag(startupTraceTag).i(
+            "DefaultFtueService.onUserCompletedSessionVerification before userNeedsConfirmation=%s sessionVerifiedStatus=%s ftueState=%s",
+            userNeedsToConfirmSessionVerificationSuccess.value,
+            sessionVerificationService.sessionVerifiedStatus.value,
+            ftueStepStateFlow.value,
+        )
         userNeedsToConfirmSessionVerificationSuccess.value = false
+        Timber.tag(startupTraceTag).i(
+            "DefaultFtueService.onUserCompletedSessionVerification after userNeedsConfirmation=%s sessionVerifiedStatus=%s ftueState=%s",
+            userNeedsToConfirmSessionVerificationSuccess.value,
+            sessionVerificationService.sessionVerifiedStatus.value,
+            ftueStepStateFlow.value,
+        )
     }
 }
 

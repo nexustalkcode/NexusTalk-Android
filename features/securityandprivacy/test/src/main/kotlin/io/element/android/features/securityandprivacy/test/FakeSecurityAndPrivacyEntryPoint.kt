@@ -10,7 +10,6 @@ package io.element.android.features.securityandprivacy.test
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import io.element.android.features.securityandprivacy.api.SecurityAndPrivacyEntryPoint
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeSecurityAndPrivacyEntryPoint : SecurityAndPrivacyEntryPoint {
     override fun createNode(
@@ -18,6 +17,6 @@ class FakeSecurityAndPrivacyEntryPoint : SecurityAndPrivacyEntryPoint {
         buildContext: BuildContext,
         callback: SecurityAndPrivacyEntryPoint.Callback,
     ): Node {
-        lambdaError()
+        error("FakeSecurityAndPrivacyEntryPoint.createNode must be provided in tests")
     }
 }

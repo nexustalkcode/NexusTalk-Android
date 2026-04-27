@@ -39,6 +39,12 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 @AssistedInject
+/**
+ * 时间线事件项工厂。
+ *
+ * 负责把底层 `MatrixTimelineItem.Event` 转换为完整的 UI 事件模型，
+ * 包括分组位置、reaction、已读回执、线程信息和发送状态。
+ */
 class TimelineItemEventFactory(
     @Assisted private val config: TimelineItemsFactoryConfig,
     private val contentFactory: TimelineItemContentFactory,
@@ -47,11 +53,17 @@ class TimelineItemEventFactory(
     private val permalinkParser: PermalinkParser,
     private val summaryFormatter: MessageSummaryFormatter,
 ) {
+    /**
+     * 创建 [TimelineItemEventFactory] 的 Assisted 工厂。
+     */
     @AssistedFactory
     interface Creator {
         fun create(config: TimelineItemsFactoryConfig): TimelineItemEventFactory
     }
 
+    /**
+     * 根据底层时间线事件创建 UI 事件模型。
+     */
     suspend fun create(
         currentTimelineItem: MatrixTimelineItem.Event,
         index: Int,
@@ -123,6 +135,9 @@ class TimelineItemEventFactory(
         )
     }
 
+    /**
+     * 用新的底层数据更新已存在的 UI 事件模型。
+     */
     fun update(
         timelineItem: TimelineItem.Event,
         receivedMatrixTimelineItem: MatrixTimelineItem.Event,
@@ -133,6 +148,9 @@ class TimelineItemEventFactory(
         )
     }
 
+    /**
+     * 计算事件的聚合 reaction 状态。
+     */
     private fun MatrixTimelineItem.Event.computeReactionsState(): TimelineItemReactions {
         if (!config.computeReactions) {
             return TimelineItemReactions(reactions = persistentListOf())
@@ -172,6 +190,9 @@ class TimelineItemEventFactory(
         )
     }
 
+    /**
+     * 计算事件的已读回执状态。
+     */
     private fun MatrixTimelineItem.Event.computeReadReceiptState(
         roomMembers: List<RoomMember>,
     ): TimelineItemReadReceipts {
@@ -199,6 +220,9 @@ class TimelineItemEventFactory(
         )
     }
 
+    /**
+     * 计算当前事件在连续同发送者消息块中的分组位置。
+     */
     private fun computeGroupPosition(
         currentTimelineItem: MatrixTimelineItem.Event,
         timelineItems: List<MatrixTimelineItem>,

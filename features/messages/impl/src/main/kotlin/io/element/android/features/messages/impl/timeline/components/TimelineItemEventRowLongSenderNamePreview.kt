@@ -16,6 +16,9 @@ import io.element.android.libraries.designsystem.preview.ElementPreviewLight
 // Note: no need for light/dark variant for this preview
 @Preview
 @Composable
+/**
+ * 预览超长发送者名称的事件行。
+ */
 internal fun TimelineItemEventRowLongSenderNamePreview() = ElementPreviewLight {
     ATimelineItemEventRow(
         event = aTimelineItemEvent(

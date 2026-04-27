@@ -16,12 +16,23 @@ import io.element.android.features.api.MigrationEntryPoint
 import io.element.android.features.api.MigrationState
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的迁移入口实现。
+ *
+ * 负责暴露迁移 Presenter 和迁移视图渲染方法。
+ */
 class DefaultMigrationEntryPoint(
     private val migrationPresenter: MigrationPresenter,
 ) : MigrationEntryPoint {
+    /**
+     * 生成当前迁移状态。
+     */
     @Composable
     override fun present(): MigrationState = migrationPresenter.present()
 
+    /**
+     * 渲染迁移页面。
+     */
     @Composable
     override fun Render(
         state: MigrationState,

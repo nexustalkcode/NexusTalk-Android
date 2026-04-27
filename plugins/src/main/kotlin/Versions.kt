@@ -38,13 +38,13 @@ private const val versionYear = 26
  * 版本月份，2 位数字。取值须在 [1,12]。
  * 请勿手动修改；由发布脚本更新。
  */
-private const val versionMonth = 3
+private const val versionMonth = 4
 
 /**
  * 当月发版序号。取值须在 [0,99]。
  * 请勿手动修改；由发布脚本更新。
  */
-private const val versionReleaseNumber = 31
+private const val versionReleaseNumber = 25
 
 object Versions {
     /**

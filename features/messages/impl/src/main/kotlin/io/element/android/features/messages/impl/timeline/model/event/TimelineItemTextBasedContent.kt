@@ -12,26 +12,25 @@ import androidx.compose.runtime.Immutable
 import org.jsoup.nodes.Document
 
 /**
- * Represents a text based content of a timeline item event (a message, a notice, an emote event...).
+ * 所有文本类时间线事件内容模型的共同接口。
  */
 @Immutable
 sealed interface TimelineItemTextBasedContent :
     TimelineItemEventContent,
     TimelineItemEventMutableContent {
-    /** The raw body of the event, in Markdown format. */
+    /** Markdown 语义上的原始正文。 */
     val body: String
 
-    /** The parsed HTML DOM of the formatted event body. */
+    /** 已解析的富文本 HTML DOM。 */
     val htmlDocument: Document?
 
-    /** The formatted body of the event, already parsed and with the DOM translated to Android spans.
-     * This can also includes mention spans from permalink parsing */
+    /** 已转换为 Android spans 的富文本正文。 */
     val formattedBody: CharSequence
 
-    /** The plain text version of the event body. This is the Markdown version without actual Markdown formatting. */
+    /** 去除格式后的纯文本正文。 */
     val plainText: String
 
-    /** The raw HTML body of the event. */
+    /** 原始 HTML 正文。 */
     val htmlBody: String?
         get() = htmlDocument?.body()?.html()
 }

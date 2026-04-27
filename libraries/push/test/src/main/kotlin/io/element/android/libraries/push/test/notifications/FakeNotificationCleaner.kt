@@ -13,15 +13,26 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.core.ThreadId
 import io.element.android.libraries.push.api.notifications.NotificationCleaner
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeNotificationCleaner(
-    private val clearAllMessagesEventsLambda: (SessionId) -> Unit = { lambdaError() },
-    private val clearMessagesForRoomLambda: (SessionId, RoomId) -> Unit = { _, _ -> lambdaError() },
-    private val clearMessagesForThreadLambda: (SessionId, RoomId, ThreadId) -> Unit = { _, _, _ -> lambdaError() },
-    private val clearEventLambda: (SessionId, EventId) -> Unit = { _, _ -> lambdaError() },
-    private val clearMembershipNotificationForSessionLambda: (SessionId) -> Unit = { lambdaError() },
-    private val clearMembershipNotificationForRoomLambda: (SessionId, RoomId) -> Unit = { _, _ -> lambdaError() }
+    private val clearAllMessagesEventsLambda: (SessionId) -> Unit = {
+        error("clearAllMessagesEventsLambda should be provided in tests")
+    },
+    private val clearMessagesForRoomLambda: (SessionId, RoomId) -> Unit = { _, _ ->
+        error("clearMessagesForRoomLambda should be provided in tests")
+    },
+    private val clearMessagesForThreadLambda: (SessionId, RoomId, ThreadId) -> Unit = { _, _, _ ->
+        error("clearMessagesForThreadLambda should be provided in tests")
+    },
+    private val clearEventLambda: (SessionId, EventId) -> Unit = { _, _ ->
+        error("clearEventLambda should be provided in tests")
+    },
+    private val clearMembershipNotificationForSessionLambda: (SessionId) -> Unit = {
+        error("clearMembershipNotificationForSessionLambda should be provided in tests")
+    },
+    private val clearMembershipNotificationForRoomLambda: (SessionId, RoomId) -> Unit = { _, _ ->
+        error("clearMembershipNotificationForRoomLambda should be provided in tests")
+    }
 ) : NotificationCleaner {
     override fun clearAllMessagesEvents(sessionId: SessionId) {
         clearAllMessagesEventsLambda(sessionId)

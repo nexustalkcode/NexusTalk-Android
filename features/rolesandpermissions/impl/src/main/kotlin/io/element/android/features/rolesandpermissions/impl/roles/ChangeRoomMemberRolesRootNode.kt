@@ -20,10 +20,10 @@ import com.bumble.appyx.core.plugin.Plugin
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedInject
 import io.element.android.annotations.ContributesNode
-import io.element.android.appnav.di.RoomGraphFactory
 import io.element.android.features.rolesandpermissions.api.ChangeRoomMemberRolesEntryPoint
 import io.element.android.features.rolesandpermissions.api.ChangeRoomMemberRolesListType
 import io.element.android.libraries.architecture.NodeInputs
+import io.element.android.libraries.architecture.RoomGraphFactory
 import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.architecture.inputs
 import io.element.android.libraries.di.DependencyInjectionGraphOwner
@@ -34,6 +34,9 @@ import kotlinx.parcelize.Parcelize
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 修改房间成员角色流程根节点。
+ */
 class ChangeRoomMemberRolesRootNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -48,6 +51,9 @@ class ChangeRoomMemberRolesRootNode(
 ), DependencyInjectionGraphOwner, ChangeRoomMemberRolesEntryPoint.NodeProxy {
     @Parcelize object NavTarget : Parcelable
 
+    /**
+     * 根节点输入。
+     */
     data class Inputs(
         val joinedRoom: JoinedRoom,
         val listType: ChangeRoomMemberRolesListType,
@@ -57,6 +63,9 @@ class ChangeRoomMemberRolesRootNode(
 
     override val graph = roomGraphFactory.create(inputs.joinedRoom)
 
+    /**
+     * 解析并创建唯一的 ChangeRoles 子节点。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return createNode<ChangeRolesNode>(
             buildContext = buildContext,
@@ -64,6 +73,9 @@ class ChangeRoomMemberRolesRootNode(
         )
     }
 
+    /**
+     * 渲染唯一子节点。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         Children(modifier = modifier, navModel = navModel)
@@ -71,6 +83,9 @@ class ChangeRoomMemberRolesRootNode(
 
     override val roomId: RoomId = inputs.joinedRoom.roomId
 
+    /**
+     * 等待子节点保存流程结束。
+     */
     override suspend fun waitForCompletion(): Boolean {
         return waitForChildAttached<ChangeRolesNode>().waitForCompletion()
     }

@@ -17,9 +17,15 @@ import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.matrix.api.timeline.item.event.EventContent
 
 @Inject
+/**
+ * 状态事件内容工厂。
+ */
 class TimelineItemContentStateFactory(
     private val timelineEventFormatter: TimelineEventFormatter,
 ) {
+    /**
+     * 将状态事件格式化为 UI 文本内容。
+     */
     fun create(eventContent: EventContent, isOutgoing: Boolean, sender: UserId, senderDisambiguatedDisplayName: String): TimelineItemEventContent {
         val text = timelineEventFormatter.format(eventContent, isOutgoing, sender, senderDisambiguatedDisplayName)
         return TimelineItemStateEventContent(text.orEmpty().toString())

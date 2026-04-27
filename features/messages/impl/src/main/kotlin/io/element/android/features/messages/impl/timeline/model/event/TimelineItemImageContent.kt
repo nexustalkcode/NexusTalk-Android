@@ -14,6 +14,9 @@ import io.element.android.libraries.matrix.ui.media.MAX_THUMBNAIL_HEIGHT
 import io.element.android.libraries.matrix.ui.media.MAX_THUMBNAIL_WIDTH
 import io.element.android.libraries.matrix.ui.media.MediaRequestData
 
+/**
+ * 图片消息的 UI 内容模型。
+ */
 data class TimelineItemImageContent(
     override val filename: String,
     override val fileSize: Long?,
@@ -34,8 +37,14 @@ data class TimelineItemImageContent(
 ) : TimelineItemEventContentWithAttachment {
     override val type: String = "TimelineItemImageContent"
 
+    /**
+     * 当前图片是否附带说明文案。
+     */
     val showCaption = caption != null
 
+    /**
+     * 供图片视图加载缩略图/原图使用的请求数据。
+     */
     val thumbnailMediaRequestData: MediaRequestData by lazy {
         if (mimeType.isMimeTypeAnimatedImage()) {
             MediaRequestData(

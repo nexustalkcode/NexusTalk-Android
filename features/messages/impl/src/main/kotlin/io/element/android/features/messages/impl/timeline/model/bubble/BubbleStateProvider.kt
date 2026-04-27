@@ -13,6 +13,9 @@ import io.element.android.features.messages.impl.timeline.TimelineRoomInfo
 import io.element.android.features.messages.impl.timeline.aTimelineRoomInfo
 import io.element.android.features.messages.impl.timeline.model.TimelineItemGroupPosition
 
+/**
+ * 为消息气泡状态预览提供样例数据。
+ */
 open class BubbleStateProvider : PreviewParameterProvider<BubbleState> {
     override val values: Sequence<BubbleState>
         get() = sequenceOf(
@@ -31,6 +34,9 @@ open class BubbleStateProvider : PreviewParameterProvider<BubbleState> {
             .flatten()
 }
 
+/**
+ * 构造一份消息气泡样例状态。
+ */
 internal fun aBubbleState(
     groupPosition: TimelineItemGroupPosition = TimelineItemGroupPosition.First,
     isMine: Boolean = false,

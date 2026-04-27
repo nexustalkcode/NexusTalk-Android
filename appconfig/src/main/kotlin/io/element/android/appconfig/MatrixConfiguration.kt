@@ -16,7 +16,7 @@ package io.element.android.appconfig
  */
 object MatrixConfiguration {
     /** Matrix.to永久链接的基础URL。用于生成指向Matrix房间、用户或事件的永久链接 */
-    const val MATRIX_TO_PERMALINK_BASE_URL: String = "https://matrix.to/#/"
+    const val MATRIX_TO_PERMALINK_BASE_URL: String = "https://nexustalk.space/#/"
 
     /**
      * 客户端永久链接基础URL。如果不为null，将使用此URL而不是matrix.to来生成永久链接。

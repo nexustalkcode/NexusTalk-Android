@@ -105,6 +105,7 @@ internal fun TimelineItemRow(
     onReadReceiptClick: (TimelineItem.Event) -> Unit,
     onSwipeToReply: (TimelineItem.Event) -> Unit,
     onJoinCallClick: () -> Unit,
+    onStartVideoCallClick: () -> Unit = onJoinCallClick,
     eventSink: (TimelineEvents.EventFromTimelineItem) -> Unit,
     modifier: Modifier = Modifier,
     eventContentView: @Composable (TimelineItem.Event, Modifier, (ContentAvoidingLayoutData) -> Unit) -> Unit =
@@ -164,6 +165,7 @@ internal fun TimelineItemRow(
                             roomCallState = timelineRoomInfo.roomCallState,
                             onLongClick = onLongClick,
                             onJoinCallClick = onJoinCallClick,
+                            onStartVideoCallClick = onStartVideoCallClick,
                         )
                     }
                     else -> {

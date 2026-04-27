@@ -32,9 +32,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.element.android.features.location.api.Location
+import io.element.android.features.location.api.R
 import io.element.android.features.location.api.internal.centerBottomEdge
 import io.element.android.features.location.api.internal.rememberTileStyleUrl
-import io.element.android.features.location.impl.R
 import io.element.android.features.location.impl.common.MapDefaults
 import io.element.android.features.location.impl.common.PermissionDeniedDialog
 import io.element.android.features.location.impl.common.PermissionRationaleDialog

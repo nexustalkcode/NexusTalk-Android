@@ -16,7 +16,18 @@ import io.element.android.features.knockrequests.api.list.KnockRequestsListEntry
 import io.element.android.libraries.architecture.createNode
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的敲门请求列表入口实现。
+ *
+ * 负责把导航入口解析为 [KnockRequestsListNode]。
+ */
 class DefaultKnockRequestsListEntryPoint : KnockRequestsListEntryPoint {
+    /**
+     * 创建敲门请求列表节点。
+     *
+     * @param parentNode 父节点。
+     * @param buildContext 当前节点的构建上下文。
+     */
     override fun createNode(parentNode: Node, buildContext: BuildContext): Node {
         return parentNode.createNode<KnockRequestsListNode>(buildContext)
     }

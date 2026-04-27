@@ -11,13 +11,12 @@ package io.element.android.features.deactivation.test
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import io.element.android.features.deactivation.api.AccountDeactivationEntryPoint
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeAccountDeactivationEntryPoint : AccountDeactivationEntryPoint {
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,
     ): Node {
-        lambdaError()
+        error("FakeAccountDeactivationEntryPoint.createNode must be provided in tests")
     }
 }

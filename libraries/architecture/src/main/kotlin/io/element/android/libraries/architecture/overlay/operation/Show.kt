@@ -18,6 +18,9 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
 @Parcelize
+/**
+ * 显示指定 overlay 元素的操作。
+ */
 data class Show<T : Any>(
     private val element: @RawValue T
 ) : OverlayOperation<T> {
@@ -34,6 +37,9 @@ data class Show<T : Any>(
     )
 }
 
+/**
+ * 扩展函数：显示指定 overlay 元素。
+ */
 fun <T : Any> Overlay<T>.show(element: T) {
     accept(Show(element))
 }

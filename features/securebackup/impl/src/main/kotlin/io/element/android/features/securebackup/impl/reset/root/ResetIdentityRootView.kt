@@ -35,6 +35,9 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
+/**
+ * 渲染重置身份根页面。
+ */
 fun ResetIdentityRootView(
     state: ResetIdentityRootState,
     onContinue: () -> Unit,
@@ -74,6 +77,9 @@ fun ResetIdentityRootView(
 }
 
 @Composable
+/**
+ * 渲染重置身份说明内容区。
+ */
 private fun Content() {
     Column(
         modifier = Modifier.padding(top = 8.dp, bottom = 40.dp),

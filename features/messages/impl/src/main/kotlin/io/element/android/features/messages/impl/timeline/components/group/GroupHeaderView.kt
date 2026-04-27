@@ -41,6 +41,9 @@ import io.element.android.libraries.designsystem.theme.components.Text
 private val CORNER_RADIUS = 8.dp
 
 @Composable
+/**
+ * 渲染分组事件头部。
+ */
 fun GroupHeaderView(
     text: String,
     isExpanded: Boolean,

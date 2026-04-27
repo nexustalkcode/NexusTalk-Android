@@ -45,6 +45,14 @@ import io.element.android.libraries.designsystem.theme.progressIndicatorTrackCol
 import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染创建账号页面。
+ *
+ * @param state 页面展示状态。
+ * @param onBackClick 返回动作。
+ * @param onOpenExternalUrl 需要跳转外部浏览器时的回调。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 @Composable
 fun CreateAccountView(
     state: CreateAccountState,
@@ -109,6 +117,13 @@ fun CreateAccountView(
     )
 }
 
+/**
+ * 承载注册页面 WebView。
+ *
+ * @param state 页面展示状态。
+ * @param onWebViewCreate WebView 创建后的初始化回调。
+ * @param modifier 应用于 WebView 容器的修饰符。
+ */
 @Composable
 private fun CreateAccountWebView(
     state: CreateAccountState,
@@ -141,6 +156,9 @@ private fun CreateAccountWebView(
 }
 
 @SuppressLint("SetJavaScriptEnabled")
+/**
+ * 配置注册页使用的 WebView。
+ */
 private fun WebView.setup(state: CreateAccountState) {
     layoutParams = ViewGroup.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,

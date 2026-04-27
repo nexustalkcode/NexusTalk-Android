@@ -53,6 +53,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染发起验证页面。
+ */
 fun OutgoingVerificationView(
     state: OutgoingVerificationState,
     onLearnMoreClick: () -> Unit,
@@ -121,6 +124,9 @@ fun OutgoingVerificationView(
 }
 
 @Composable
+/**
+ * 渲染发起验证页面头部。
+ */
 private fun OutgoingVerificationHeader(step: Step, request: VerificationRequest.Outgoing) {
     val iconStyle = when (step) {
         Step.Loading -> error("Should not happen")
@@ -201,6 +207,9 @@ private fun OutgoingVerificationHeader(step: Step, request: VerificationRequest.
 }
 
 @Composable
+/**
+ * 渲染发起验证页面主体内容。
+ */
 private fun OutgoingVerificationContent(
     step: Step,
     request: VerificationRequest.Outgoing,
@@ -217,6 +226,9 @@ private fun OutgoingVerificationContent(
 }
 
 @Composable
+/**
+ * 渲染初始状态下的补充说明内容。
+ */
 private fun ContentInitial(
     onLearnMoreClick: () -> Unit,
 ) {
@@ -235,6 +247,9 @@ private fun ContentInitial(
 }
 
 @Composable
+/**
+ * 渲染发起验证页面底部按钮区。
+ */
 private fun OutgoingVerificationBottomMenu(
     state: OutgoingVerificationState,
     onCancelClick: () -> Unit,

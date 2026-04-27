@@ -15,6 +15,9 @@ import io.element.android.features.home.impl.roomlist.aRoomListRoomSummaryList
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 为首页房间搜索预览提供样例状态。
+ */
 class RoomListSearchStateProvider : PreviewParameterProvider<RoomListSearchState> {
     override val values: Sequence<RoomListSearchState>
         get() = sequenceOf(
@@ -27,6 +30,7 @@ class RoomListSearchStateProvider : PreviewParameterProvider<RoomListSearchState
         )
 }
 
+/** 构造一份首页房间搜索样例状态。 */
 fun aRoomListSearchState(
     isSearchActive: Boolean = false,
     query: String = "",

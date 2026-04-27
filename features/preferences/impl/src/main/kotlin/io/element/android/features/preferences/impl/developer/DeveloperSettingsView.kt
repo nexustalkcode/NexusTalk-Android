@@ -47,6 +47,9 @@ import kotlinx.collections.immutable.toImmutableList
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
+/**
+ * 渲染开发者设置页面。
+ */
 fun DeveloperSettingsView(
     state: DeveloperSettingsState,
     onOpenShowkase: () -> Unit,
@@ -70,19 +73,18 @@ fun DeveloperSettingsView(
         },
         title = stringResource(id = CommonStrings.common_developer_options)
     ) {
-        // Note: this is OK to hardcode strings in this debug screen.
         PreferenceCategory(
-            title = "Feature flags",
+            title = stringResource(R.string.screen_developer_settings_feature_flags_section_title),
         ) {
             FeatureListContent(state)
         }
         NotificationCategory(onPushHistoryClick)
         ElementCallCategory(state = state)
 
-        PreferenceCategory(title = "Rust SDK") {
+        PreferenceCategory(title = stringResource(R.string.screen_developer_settings_rust_sdk_section_title)) {
             PreferenceDropdown(
-                title = "Tracing log level",
-                supportingText = "Requires app reboot",
+                title = stringResource(R.string.screen_developer_settings_tracing_log_level),
+                supportingText = stringResource(R.string.screen_developer_settings_requires_app_reboot),
                 selectedOption = state.tracingLogLevel.dataOrNull(),
                 options = LogLevelItem.entries.toImmutableList(),
                 onSelectOption = { logLevel ->
@@ -90,26 +92,26 @@ fun DeveloperSettingsView(
                 }
             )
         }
-        PreferenceCategory(title = "Enable trace logs per SDK feature") {
+        PreferenceCategory(title = stringResource(R.string.screen_developer_settings_trace_log_packs_section_title)) {
             Text(
-                text = "Requires app reboot",
+                text = stringResource(R.string.screen_developer_settings_requires_app_reboot),
                 style = ElementTheme.typography.fontBodyMdRegular,
                 color = ElementTheme.colors.textSecondary,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
             )
             for (logPack in TraceLogPack.entries) {
                 PreferenceSwitch(
-                    title = logPack.title,
+                    title = traceLogPackTitle(logPack),
                     isChecked = state.tracingLogPacks.contains(logPack),
                     onCheckedChange = { isChecked -> state.eventSink(DeveloperSettingsEvents.ToggleTracingLogPack(logPack, isChecked)) }
                 )
             }
         }
 
-        PreferenceCategory(title = "Showkase") {
+        PreferenceCategory(title = stringResource(R.string.screen_developer_settings_showkase_section_title)) {
             ListItem(
                 headlineContent = {
-                    Text("Open Showkase browser")
+                    Text(stringResource(R.string.screen_developer_settings_open_showkase_browser))
                 },
                 onClick = onOpenShowkase
             )
@@ -118,10 +120,10 @@ fun DeveloperSettingsView(
             state = state.rageshakeState,
         )
         if (state.isEnterpriseBuild) {
-            PreferenceCategory(title = "Theme") {
+            PreferenceCategory(title = stringResource(R.string.screen_developer_settings_theme_section_title)) {
                 ListItem(
                     headlineContent = {
-                        Text("Change brand color")
+                        Text(stringResource(R.string.screen_developer_settings_change_brand_color))
                     },
                     onClick = {
                         state.eventSink(DeveloperSettingsEvents.SetShowColorPicker(true))
@@ -129,7 +131,7 @@ fun DeveloperSettingsView(
                 )
                 ListItem(
                     headlineContent = {
-                        Text("Reset brand color")
+                        Text(stringResource(R.string.screen_developer_settings_reset_brand_color))
                     },
                     onClick = {
                         state.eventSink(DeveloperSettingsEvents.ChangeBrandColor(null))
@@ -137,21 +139,22 @@ fun DeveloperSettingsView(
                 )
             }
         }
-        PreferenceCategory(title = "Crash") {
+        val crashTestError = stringResource(R.string.screen_developer_settings_crash_test_error)
+        PreferenceCategory(title = stringResource(R.string.screen_developer_settings_crash_section_title)) {
             ListItem(
                 headlineContent = {
-                    Text("Crash the app 💥")
+                    Text(stringResource(R.string.screen_developer_settings_crash_app))
                 },
-                onClick = { error("This crash is a test.") }
+                onClick = { error(crashTestError) }
             )
         }
         val cache = state.cacheSize
-        PreferenceCategory(title = "Cache") {
+        PreferenceCategory(title = stringResource(R.string.screen_developer_settings_cache_section_title)) {
             ListItem(
-                headlineContent = { Text("Database sizes") },
+                headlineContent = { Text(stringResource(R.string.screen_developer_settings_database_sizes)) },
                 supportingContent = {
                     if (state.databaseSizes.isLoading()) {
-                        Text("Computing...")
+                        Text(stringResource(R.string.screen_developer_settings_computing))
                     } else {
                         val dbSizes = state.databaseSizes.dataOrNull()
                         if (dbSizes != null && dbSizes.isNotEmpty()) {
@@ -161,14 +164,14 @@ fun DeveloperSettingsView(
                                 }
                             }
                         } else {
-                            Text("Unknown")
+                            Text(stringResource(R.string.screen_developer_settings_unknown))
                         }
                     }
                 }
             )
             ListItem(
                 headlineContent = {
-                    Text("Vacuum stores")
+                    Text(stringResource(R.string.screen_developer_settings_vacuum_stores))
                 },
                 onClick = {
                     state.eventSink(DeveloperSettingsEvents.VacuumStores)
@@ -176,7 +179,7 @@ fun DeveloperSettingsView(
             )
             ListItem(
                 headlineContent = {
-                    Text("Clear cache")
+                    Text(stringResource(R.string.screen_developer_settings_clear_cache))
                 },
                 trailingContent = if (state.cacheSize.isLoading() || state.clearCacheAction.isLoading()) {
                     ListItemContent.Custom {
@@ -213,10 +216,13 @@ fun DeveloperSettingsView(
 }
 
 @Composable
+/**
+ * 渲染 Element Call 相关开发者设置分区。
+ */
 private fun ElementCallCategory(
     state: DeveloperSettingsState,
 ) {
-    PreferenceCategory(title = "Element Call") {
+    PreferenceCategory(title = stringResource(R.string.screen_developer_settings_element_call_section_title)) {
         val callUrlState = state.customElementCallBaseUrlState
 
         val supportingText = if (callUrlState.baseUrl.isNullOrEmpty()) {
@@ -239,6 +245,24 @@ private fun ElementCallCategory(
 }
 
 @Composable
+/**
+ * 返回 trace log pack 的显示标题。
+ */
+private fun traceLogPackTitle(logPack: TraceLogPack): String {
+    return when (logPack) {
+        TraceLogPack.EVENT_CACHE -> stringResource(R.string.screen_developer_settings_trace_log_pack_event_cache)
+        TraceLogPack.SEND_QUEUE -> stringResource(R.string.screen_developer_settings_trace_log_pack_send_queue)
+        TraceLogPack.TIMELINE -> stringResource(R.string.screen_developer_settings_trace_log_pack_timeline)
+        TraceLogPack.NOTIFICATION_CLIENT -> stringResource(R.string.screen_developer_settings_trace_log_pack_notification_client)
+        TraceLogPack.SYNC_PROFILING -> stringResource(R.string.screen_developer_settings_trace_log_pack_sync_profiling)
+        TraceLogPack.LATEST_EVENTS -> stringResource(R.string.screen_developer_settings_trace_log_pack_latest_events)
+    }
+}
+
+@Composable
+/**
+ * 渲染通知相关开发者分区。
+ */
 private fun NotificationCategory(onPushHistoryClick: () -> Unit) {
     PreferenceCategory(title = stringResource(id = R.string.screen_notification_settings_title)) {
         ListItem(
@@ -251,6 +275,9 @@ private fun NotificationCategory(onPushHistoryClick: () -> Unit) {
 }
 
 @Composable
+/**
+ * 渲染功能开关列表。
+ */
 private fun FeatureListContent(
     state: DeveloperSettingsState,
 ) {

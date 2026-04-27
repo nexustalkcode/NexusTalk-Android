@@ -18,7 +18,13 @@ import io.element.android.libraries.di.SessionScope
 import io.element.android.libraries.matrix.api.room.JoinedRoom
 
 @ContributesBinding(SessionScope::class)
+/**
+ * 默认的修改成员角色入口实现。
+ */
 class DefaultChangeRoomMemberRolesEntyPoint : ChangeRoomMemberRolesEntryPoint {
+    /**
+     * 创建修改成员角色流程根节点。
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

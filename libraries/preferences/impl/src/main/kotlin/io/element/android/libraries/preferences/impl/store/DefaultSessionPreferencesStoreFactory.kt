@@ -13,7 +13,6 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
 import io.element.android.libraries.di.annotations.ApplicationContext
-import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.preferences.api.store.SessionPreferencesStore
 import io.element.android.libraries.preferences.api.store.SessionPreferencesStoreFactory
 import io.element.android.libraries.sessionstorage.api.observer.SessionListener
@@ -27,22 +26,22 @@ class DefaultSessionPreferencesStoreFactory(
     @ApplicationContext private val context: Context,
     sessionObserver: SessionObserver,
 ) : SessionPreferencesStoreFactory {
-    private val cache = ConcurrentHashMap<SessionId, DefaultSessionPreferencesStore>()
+    private val cache = ConcurrentHashMap<String, DefaultSessionPreferencesStore>()
 
     init {
         sessionObserver.addListener(object : SessionListener {
             override suspend fun onSessionDeleted(userId: String, wasLastSession: Boolean) {
-                val sessionPreferences = cache.remove(SessionId(userId))
+                val sessionPreferences = cache.remove(userId)
                 sessionPreferences?.clearButPreserveFtueCompletion()
             }
         })
     }
 
-    override fun get(sessionId: SessionId, sessionCoroutineScope: CoroutineScope): SessionPreferencesStore = cache.getOrPut(sessionId) {
+    override fun get(sessionId: String, sessionCoroutineScope: CoroutineScope): SessionPreferencesStore = cache.getOrPut(sessionId) {
         DefaultSessionPreferencesStore(context, sessionId, sessionCoroutineScope)
     }
 
-    override fun remove(sessionId: SessionId) {
+    override fun remove(sessionId: String) {
         cache.remove(sessionId)
     }
 }

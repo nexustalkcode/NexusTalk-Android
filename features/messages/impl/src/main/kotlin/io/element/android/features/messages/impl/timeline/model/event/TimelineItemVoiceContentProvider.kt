@@ -17,6 +17,9 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
+/**
+ * 为语音消息内容预览提供样例数据。
+ */
 open class TimelineItemVoiceContentProvider : PreviewParameterProvider<TimelineItemVoiceContent> {
     override val values: Sequence<TimelineItemVoiceContent>
         get() = sequenceOf(
@@ -35,6 +38,9 @@ open class TimelineItemVoiceContentProvider : PreviewParameterProvider<TimelineI
         )
 }
 
+/**
+ * 构造一份语音消息内容样例。
+ */
 fun aTimelineItemVoiceContent(
     eventId: EventId? = EventId("\$anEventId"),
     filename: String = "filename doesn't really matter for a voice message",

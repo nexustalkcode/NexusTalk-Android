@@ -33,6 +33,7 @@ import android.os.Parcelable
 // ==================== Compose UI 框架导入 ====================
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -190,6 +191,8 @@ import kotlin.time.toKotlinDuration
 
 // 分析事件别名
 import im.vector.app.features.analytics.plan.JoinedRoom as JoinedRoomAnalyticsEvent
+
+private const val startupTraceTag = "StartupTrace"
 
 /**
  * LoggedInFlowNode - 登录后流程主导航节点
@@ -351,6 +354,8 @@ class LoggedInFlowNode(
      */
     override fun onBuilt() {
         super.onBuilt()
+        // 这是 RootFlowNode 之后的第二个启动关口，若此后迟迟不进 Home，通常说明卡在已登录流内部。
+        Timber.tag(startupTraceTag).i("LoggedInFlowNode.onBuilt sessionId=%s", matrixClient.sessionId)
 
         // 异步初始化企业服务（不影响其他初始化流程）
         lifecycleScope.launch {
@@ -404,6 +409,7 @@ class LoggedInFlowNode(
                 // 观察FTUE状态，根据状态导航到引导页或首页
                 ftueService.state
                     .onEach { ftueState ->
+                        Timber.tag(startupTraceTag).i("LoggedInFlowNode.ftueState=%s", ftueState)
                         when (ftueState) {
                             is FtueState.Unknown -> Unit // 未知状态，不做处理
                             is FtueState.Incomplete -> backstack.safeRoot(NavTarget.Ftue)  // FTUE未完成，导航到引导页
@@ -656,10 +662,13 @@ class LoggedInFlowNode(
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             // 占位符 - 返回空节点
-            NavTarget.Placeholder -> emptyNode(buildContext)
+            NavTarget.Placeholder -> emptyNode(buildContext).also {
+                Timber.tag(startupTraceTag).i("LoggedInFlowNode.resolve Placeholder")
+            }
 
             // 永久组件 - 创建LoggedInNode（包含底部导航栏等）
             NavTarget.LoggedInPermanent -> {
+                Timber.tag(startupTraceTag).i("LoggedInFlowNode.resolve LoggedInPermanent")
                 val callback = object : LoggedInNode.Callback {
                     override fun navigateToNotificationTroubleshoot() {
                         backstack.push(NavTarget.Settings(PreferencesEntryPoint.InitialTarget.NotificationTroubleshoot))
@@ -670,6 +679,7 @@ class LoggedInFlowNode(
 
             // 首页 - 创建房间列表页面
             NavTarget.Home -> {
+                Timber.tag(startupTraceTag).i("LoggedInFlowNode.resolve Home")
                 // 创建Home页面的回调，处理各种导航请求
                 val callback = object : HomeEntryPoint.Callback {
                     override fun navigateToRoom(roomId: RoomId, joinedRoom: JoinedRoom?) {
@@ -1141,6 +1151,10 @@ class LoggedInFlowNode(
                 Box(modifier = contentModifier) {
                     // 获取FTUE状态
                     val ftueState by ftueService.state.collectAsState()
+                    // 这里从 UI 渲染侧再次记录 FTUE 状态，便于确认永久层何时具备渲染条件。
+                    LaunchedEffect(ftueState) {
+                        Timber.tag(startupTraceTag).i("LoggedInFlowNode.View ftueState=%s", ftueState)
+                    }
 
                     // 渲染当前页面（BackStack顶部节点）
                     BackstackView()

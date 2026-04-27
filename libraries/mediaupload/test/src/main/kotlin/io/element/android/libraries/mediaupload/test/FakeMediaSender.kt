@@ -12,14 +12,23 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.mediaupload.api.MediaOptimizationConfig
 import io.element.android.libraries.mediaupload.api.MediaSender
 import io.element.android.libraries.mediaupload.api.MediaUploadInfo
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeMediaSender(
-    private val preProcessMediaResult: () -> Result<MediaUploadInfo> = { lambdaError() },
-    private val sendPreProcessedMediaResult: () -> Result<Unit> = { lambdaError() },
-    private val sendMediaResult: () -> Result<Unit> = { lambdaError() },
-    private val sendVoiceMessageResult: () -> Result<Unit> = { lambdaError() },
-    private val cleanUpResult: () -> Unit = { lambdaError() },
+    private val preProcessMediaResult: () -> Result<MediaUploadInfo> = {
+        error("preProcessMediaResult should be provided in tests")
+    },
+    private val sendPreProcessedMediaResult: () -> Result<Unit> = {
+        error("sendPreProcessedMediaResult should be provided in tests")
+    },
+    private val sendMediaResult: () -> Result<Unit> = {
+        error("sendMediaResult should be provided in tests")
+    },
+    private val sendVoiceMessageResult: () -> Result<Unit> = {
+        error("sendVoiceMessageResult should be provided in tests")
+    },
+    private val cleanUpResult: () -> Unit = {
+        error("cleanUpResult should be provided in tests")
+    },
 ) : MediaSender {
     override suspend fun preProcessMedia(
         uri: Uri,

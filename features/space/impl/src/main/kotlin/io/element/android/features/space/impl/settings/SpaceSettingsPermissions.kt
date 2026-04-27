@@ -15,11 +15,17 @@ import io.element.android.libraries.matrix.api.room.join.JoinRule
 import io.element.android.libraries.matrix.api.room.powerlevels.RoomPermissions
 import io.element.android.libraries.matrix.api.room.powerlevels.canEditRolesAndPermissions
 
+/**
+ * Space 设置页可见权限集合。
+ */
 data class SpaceSettingsPermissions(
     val editDetailsPermissions: RoomDetailsEditPermissions,
     val canEditRolesAndPermissions: Boolean,
     val securityAndPrivacyPermissions: SecurityAndPrivacyPermissions,
 ) {
+    /**
+     * 判断当前至少有一个设置入口可见。
+     */
     fun hasAny(joinRule: JoinRule?): Boolean {
         return editDetailsPermissions.hasAny ||
             canEditRolesAndPermissions ||
@@ -35,6 +41,9 @@ data class SpaceSettingsPermissions(
     }
 }
 
+/**
+ * 将通用房间权限转换为空间设置页使用的权限模型。
+ */
 fun RoomPermissions.spaceSettingsPermissions(): SpaceSettingsPermissions {
     return SpaceSettingsPermissions(
         editDetailsPermissions = roomDetailsEditPermissions(),

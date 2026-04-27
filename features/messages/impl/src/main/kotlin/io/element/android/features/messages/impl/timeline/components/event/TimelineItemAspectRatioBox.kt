@@ -21,6 +21,11 @@ const val MIN_HEIGHT_IN_DP = 100
 const val MAX_HEIGHT_IN_DP = 360
 const val DEFAULT_ASPECT_RATIO = 1.33f
 
+/**
+ * 按给定宽高比约束内容尺寸的容器。
+ *
+ * 用于图片、视频等媒体气泡，保证在时间线里有统一且可控的展示比例。
+ */
 @Composable
 fun TimelineItemAspectRatioBox(
     aspectRatio: Float?,

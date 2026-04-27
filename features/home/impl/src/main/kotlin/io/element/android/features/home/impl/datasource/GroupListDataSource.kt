@@ -30,6 +30,11 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 @Inject
+/**
+ * 社区房间列表数据源。
+ *
+ * 负责监听 Group 分类房间列表、执行排序，并借助 diff cache 减少首页重建列表项的开销。
+ */
 class GroupListDataSource(
     private val roomListService: RoomListService,
     private val roomListRoomSummaryFactory: RoomListRoomSummaryFactory,
@@ -56,6 +61,7 @@ class GroupListDataSource(
 
     val loadingState = groupRoomList.loadingState
 
+    /** 在给定协程作用域内启动社区列表监听。 */
     fun launchIn(coroutineScope: CoroutineScope) {
         groupRoomList
             .filteredSummaries
@@ -65,6 +71,7 @@ class GroupListDataSource(
             .launchIn(coroutineScope)
     }
 
+    /** 用最新的房间摘要列表替换当前缓存并重新发射结果。 */
     private suspend fun replaceWith(roomSummaries: List<RoomSummary>) = withContext(coroutineDispatchers.computation) {
         lock.withLock {
             val sortedRoomSummaries = roomSummaries.sortedWith(
@@ -76,6 +83,12 @@ class GroupListDataSource(
         }
     }
 
+    /**
+     * 依据当前 diff cache 构建并发射社区列表项。
+     *
+     * @param roomSummaries 当前最新的房间摘要列表。
+     * @param useCache 是否优先复用缓存的列表项。
+     */
     private suspend fun buildAndEmitGroupRooms(roomSummaries: List<RoomSummary>, useCache: Boolean = true) {
         val roomListRoomSummaries = diffCache.indices().mapNotNull { index ->
             if (useCache) {
@@ -91,6 +104,7 @@ class GroupListDataSource(
         _groupRooms.emit(roomListRoomSummaries.toImmutableList())
     }
 
+    /** 创建指定索引处的社区列表项并写回缓存。 */
     private fun buildAndCacheItem(roomSummaries: List<RoomSummary>, index: Int): RoomListRoomSummary? {
         val roomListSummary = roomSummaries.getOrNull(index)?.let { roomListRoomSummaryFactory.create(it) }
         diffCache[index] = roomListSummary

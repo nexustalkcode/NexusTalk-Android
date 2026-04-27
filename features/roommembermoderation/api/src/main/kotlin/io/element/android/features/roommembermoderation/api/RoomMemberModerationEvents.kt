@@ -10,7 +10,12 @@ package io.element.android.features.roommembermoderation.api
 
 import io.element.android.libraries.matrix.api.user.MatrixUser
 
+/**
+ * 房间成员管理可能触发的用户事件。
+ */
 interface RoomMemberModerationEvents {
+    /** 显示指定成员可执行的操作列表。 */
     data class ShowActionsForUser(val user: MatrixUser) : RoomMemberModerationEvents
+    /** 对指定成员执行某个管理动作。 */
     data class ProcessAction(val action: ModerationAction, val targetUser: MatrixUser) : RoomMemberModerationEvents
 }

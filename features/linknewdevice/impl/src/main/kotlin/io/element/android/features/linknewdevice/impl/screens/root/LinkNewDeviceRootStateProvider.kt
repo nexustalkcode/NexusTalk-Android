@@ -11,23 +11,20 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.matrix.api.linknewdevice.ErrorType
 
+/**
+ * 为新设备关联根页面预览提供样例状态。
+ */
 open class LinkNewDeviceRootStateProvider : PreviewParameterProvider<LinkNewDeviceRootState> {
     override val values: Sequence<LinkNewDeviceRootState>
         get() = sequenceOf(
-            // 默认状态
             aLinkNewDeviceRootState(),
-            // 支持链接新设备
             aLinkNewDeviceRootState(isSupported = AsyncData.Success(true)),
-            // 不支持链接新设备
             aLinkNewDeviceRootState(isSupported = AsyncData.Success(false)),
-            // 获取支持能力失败
             aLinkNewDeviceRootState(isSupported = AsyncData.Failure(Exception("Should not happen"))),
-            // 二维码加载中
             aLinkNewDeviceRootState(
                 isSupported = AsyncData.Success(true),
                 qrCodeData = AsyncData.Loading(),
             ),
-            // 二维码加载失败
             aLinkNewDeviceRootState(
                 isSupported = AsyncData.Success(true),
                 qrCodeData = AsyncData.Failure(ErrorType.NotFound("The rendezvous session was not found and might have expired")),
@@ -35,7 +32,9 @@ open class LinkNewDeviceRootStateProvider : PreviewParameterProvider<LinkNewDevi
         )
 }
 
-// 便捷创建预览状态
+/**
+ * 构造一份新设备关联根页面样例状态。
+ */
 fun aLinkNewDeviceRootState(
     isSupported: AsyncData<Boolean> = AsyncData.Uninitialized,
     qrCodeData: AsyncData<Unit> = AsyncData.Uninitialized,

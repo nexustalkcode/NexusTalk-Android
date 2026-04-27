@@ -24,6 +24,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
 
+/**
+ * 渲染旧版通话邀请提示视图。
+ */
 @Composable
 fun TimelineItemLegacyCallInviteView(
     modifier: Modifier = Modifier,

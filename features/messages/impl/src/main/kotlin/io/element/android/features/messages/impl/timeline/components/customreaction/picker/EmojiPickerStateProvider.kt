@@ -22,6 +22,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为 emoji picker 预览提供样例状态。
+ */
 class EmojiPickerStateProvider : PreviewParameterProvider<EmojiPickerState> {
     override val values: Sequence<EmojiPickerState>
         get() = sequenceOf(
@@ -36,12 +39,18 @@ class EmojiPickerStateProvider : PreviewParameterProvider<EmojiPickerState> {
         )
 }
 
+/**
+ * 构造最近使用分类样例。
+ */
 private fun recentEmojisCategory() = EmojiCategory(
     titleId = R.string.emoji_picker_category_recent,
     icon = IconSource.Resource(CompoundDrawables.ic_compound_history),
     emojis = emojiList(),
 )
 
+/**
+ * 构造一组 emoji 样例数据。
+ */
 private fun emojiList(): ImmutableList<Emoji> = persistentListOf(
     Emoji(
         "0x00",
@@ -61,6 +70,9 @@ private fun emojiList(): ImmutableList<Emoji> = persistentListOf(
     )
 )
 
+/**
+ * 构造一份 emoji picker 样例状态。
+ */
 internal fun anEmojiPickerState(
     categories: ImmutableList<EmojiCategory> = (listOf(recentEmojisCategory()) + EmojibaseCategory.entries.map {
         EmojiCategory(

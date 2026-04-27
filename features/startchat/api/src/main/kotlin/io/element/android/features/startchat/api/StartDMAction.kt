@@ -13,13 +13,16 @@ import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.user.MatrixUser
 
+/**
+ * 发起私聊的业务动作接口。
+ */
 interface StartDMAction {
     /**
-     * Try to find an existing DM with the given user, or create one if none exists.
-     * @param matrixUser The user to start a DM with.
-     * @param createIfDmDoesNotExist If true, create a DM if one does not exist. If false and the DM
-     * does not exist, the action will fail with the value [ConfirmingStartDmWithMatrixUser].
-     * @param actionState The state to update with the result of the action.
+     * 尝试查找指定用户的现有私聊房间，必要时创建新的私聊房间。
+     *
+     * @param matrixUser 需要发起私聊的目标用户。
+     * @param createIfDmDoesNotExist 若为 `true`，在不存在私聊时直接创建；否则返回 [ConfirmingStartDmWithMatrixUser] 确认态。
+     * @param actionState 需要被回写的异步动作状态。
      */
     suspend fun execute(
         matrixUser: MatrixUser,

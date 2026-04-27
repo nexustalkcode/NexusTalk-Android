@@ -9,6 +9,8 @@
 package io.element.android.features.preferences.impl.developer.tracing
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import io.element.android.features.preferences.impl.R
 import io.element.android.libraries.designsystem.components.preferences.DropdownOption
 
 /**
@@ -20,26 +22,26 @@ enum class LogLevelItem : DropdownOption {
     /** 错误级别 - 仅记录错误信息 */
     ERROR {
         @Composable
-        override fun getText(): String = "Error"
+        override fun getText(): String = stringResource(R.string.screen_developer_settings_tracing_log_level_error)
     },
     /** 警告级别 - 记录警告和错误信息 */
     WARN {
         @Composable
-        override fun getText(): String = "Warn"
+        override fun getText(): String = stringResource(R.string.screen_developer_settings_tracing_log_level_warn)
     },
     /** 信息级别 - 记录一般信息、警告和错误 */
     INFO {
         @Composable
-        override fun getText(): String = "Info"
+        override fun getText(): String = stringResource(R.string.screen_developer_settings_tracing_log_level_info)
     },
     /** 调试级别 - 记录调试信息及以上所有级别 */
     DEBUG {
         @Composable
-        override fun getText(): String = "Debug"
+        override fun getText(): String = stringResource(R.string.screen_developer_settings_tracing_log_level_debug)
     },
     /** 追踪级别 - 记录最详细的追踪信息 */
     TRACE {
         @Composable
-        override fun getText(): String = "Trace"
+        override fun getText(): String = stringResource(R.string.screen_developer_settings_tracing_log_level_trace)
     }
 }

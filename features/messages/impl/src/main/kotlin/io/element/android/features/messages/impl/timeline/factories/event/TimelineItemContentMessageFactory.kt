@@ -51,6 +51,11 @@ import org.jsoup.nodes.Document
 import kotlin.time.Duration
 
 @Inject
+/**
+ * 消息型事件内容工厂。
+ *
+ * 负责把文本、媒体、位置、语音、通知等消息型内容转换成 UI 层内容模型。
+ */
 class TimelineItemContentMessageFactory(
     private val fileSizeFormatter: FileSizeFormatter,
     private val fileExtensionExtractor: FileExtensionExtractor,
@@ -58,6 +63,9 @@ class TimelineItemContentMessageFactory(
     private val permalinkParser: PermalinkParser,
     private val textPillificationHelper: TextPillificationHelper,
 ) {
+    /**
+     * 根据底层消息内容创建 UI 内容模型。
+     */
     fun create(
         content: MessageContent,
         senderDisambiguatedDisplayName: String,
@@ -260,6 +268,9 @@ class TimelineItemContentMessageFactory(
         }
     }
 
+    /**
+     * 计算媒体宽高比。
+     */
     private fun aspectRatioOf(width: Long?, height: Long?): Float? {
         val result = if (height != null && width != null) {
             width.toFloat() / height.toFloat()
@@ -270,6 +281,9 @@ class TimelineItemContentMessageFactory(
         return result?.takeIf { it.isFinite() }
     }
 
+    /**
+     * 将 HTML 文档转换为可渲染文本。
+     */
     private fun parseHtml(document: Document): CharSequence? {
         return htmlConverterProvider.provide()
             .fromDocumentToSpans(document)
@@ -279,6 +293,9 @@ class TimelineItemContentMessageFactory(
 }
 
 @Suppress("USELESS_ELVIS")
+/**
+ * 仅在存在链接时保留 spannable，否则返回 `null`。
+ */
 private fun String.withLinks(): CharSequence? {
     // Note: toSpannable() can return null when running unit tests
     val spannable = safeLinkify().toSpannable() ?: return null

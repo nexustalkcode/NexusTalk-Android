@@ -18,6 +18,9 @@ import io.element.android.libraries.matrix.api.core.UserId
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 为敲门请求列表页预览提供样例状态。
+ */
 open class KnockRequestsListStateProvider : PreviewParameterProvider<KnockRequestsListState> {
     override val values: Sequence<KnockRequestsListState>
         get() = sequenceOf(
@@ -131,6 +134,9 @@ open class KnockRequestsListStateProvider : PreviewParameterProvider<KnockReques
         )
 }
 
+/**
+ * 构造一份敲门请求列表页样例状态。
+ */
 fun aKnockRequestsListState(
     knockRequests: AsyncData<ImmutableList<KnockRequestPresentable>> = AsyncData.Success(persistentListOf()),
     currentAction: KnockRequestsAction = KnockRequestsAction.None,

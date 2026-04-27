@@ -45,6 +45,9 @@ import android.graphics.Bitmap
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染用户二维码页面。
+ */
 fun UserQrCodeView(
     state: UserQrCodeState,
     onBackClick: () -> Unit,

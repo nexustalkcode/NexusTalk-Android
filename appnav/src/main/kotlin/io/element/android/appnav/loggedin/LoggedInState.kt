@@ -10,6 +10,9 @@ package io.element.android.appnav.loggedin
 
 import io.element.android.libraries.architecture.AsyncData
 
+/**
+ * 已登录根页面展示状态。
+ */
 data class LoggedInState(
     val showSyncSpinner: Boolean,
     val pusherRegistrationState: AsyncData<Unit>,

@@ -26,11 +26,15 @@ import io.element.android.libraries.matrix.ui.model.toInviteSender
 import kotlinx.collections.immutable.toImmutableList
 
 @Inject
+/**
+ * 把底层 [RoomSummary] 转换为首页可直接渲染的 [RoomListRoomSummary]。
+ */
 class RoomListRoomSummaryFactory(
     private val dateFormatter: DateFormatter,
     private val roomLatestEventFormatter: RoomLatestEventFormatter,
     private val latestEventMentionFormatter: LatestEventMentionFormatter,
 ) {
+    /** 构造首页房间列表项。 */
     fun create(roomSummary: RoomSummary): RoomListRoomSummary {
         val roomInfo = roomSummary.info
         val avatarData = roomInfo.getAvatarData(size = AvatarSize.RoomListItem)
@@ -75,6 +79,7 @@ class RoomListRoomSummaryFactory(
         )
     }
 
+    /** 计算首页中展示的最新事件文案模型。 */
     private fun computeLatestEvent(latestEvent: LatestEventValue, dm: Boolean, roomSummary: RoomSummary): LatestEvent {
         return when (latestEvent) {
             is LatestEventValue.None -> {

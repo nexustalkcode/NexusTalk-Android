@@ -15,7 +15,7 @@ android {
 
 dependencies {
     implementation(projects.libraries.architecture)
-    implementation(projects.libraries.matrix.api)
+    implementation(project(":libraries:matrix:api"))
     implementation(libs.androidx.corektx)
     implementation(libs.coroutines.core)
 }

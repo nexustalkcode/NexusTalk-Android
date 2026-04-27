@@ -89,6 +89,11 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 首页顶部栏。
+ *
+ * 负责渲染账号入口、页面标题、搜索入口、快捷创建按钮和房间筛选入口。
+ */
 @Composable
 fun HomeTopBar(
     selectedNavigationItem: HomeNavigationBarItem,
@@ -220,6 +225,9 @@ fun HomeTopBar(
     }
 }
 
+/**
+ * 渲染聊天列表页顶部菜单项。
+ */
 @Composable
 private fun RoomListMenuItems(
     onToggleSearch: () -> Unit,
@@ -284,6 +292,9 @@ private fun RoomListMenuItems(
     }
 }
 
+/**
+ * 渲染 Spaces 页顶部菜单项。
+ */
 @Composable
 private fun SpacesMenuItems(
     canCreateSpaces: Boolean,
@@ -299,6 +310,9 @@ private fun SpacesMenuItems(
     }
 }
 
+/**
+ * 渲染顶部栏左侧账号入口。
+ */
 @Composable
 private fun NavigationIcon(
     currentUserAndNeighbors: ImmutableList<MatrixUser>,
@@ -341,6 +355,9 @@ private fun NavigationIcon(
     }
 }
 
+/**
+ * 渲染单个账号头像按钮。
+ */
 @Composable
 private fun AccountIcon(
     matrixUser: MatrixUser,

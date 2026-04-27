@@ -12,6 +12,9 @@ import com.bumble.appyx.core.node.Node
 import dev.zacsweers.metro.MapKey
 import kotlin.reflect.KClass
 
+/**
+ * 用于把节点类型映射到 AssistedNodeFactory 的注解键。
+ */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @MapKey

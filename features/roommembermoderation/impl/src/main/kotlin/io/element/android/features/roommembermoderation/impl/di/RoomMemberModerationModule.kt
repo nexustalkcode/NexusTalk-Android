@@ -18,7 +18,13 @@ import io.element.android.libraries.di.RoomScope
 
 @ContributesTo(RoomScope::class)
 @BindingContainer
+/**
+ * 房间成员管理依赖绑定模块。
+ */
 interface RoomMemberModerationModule {
     @Binds
+    /**
+     * 绑定房间成员管理 Presenter。
+     */
     fun bindRoomMemberModerationPresenter(presenter: RoomMemberModerationPresenter): Presenter<RoomMemberModerationState>
 }

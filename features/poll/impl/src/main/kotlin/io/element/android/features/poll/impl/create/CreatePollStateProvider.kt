@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.matrix.api.poll.PollKind
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为创建投票页面预览提供样例状态。
+ */
 class CreatePollStateProvider : PreviewParameterProvider<CreatePollState> {
     override val values: Sequence<CreatePollState>
         get() = sequenceOf(
@@ -153,6 +156,9 @@ class CreatePollStateProvider : PreviewParameterProvider<CreatePollState> {
         )
 }
 
+/**
+ * 构造一份创建/编辑投票页面样例状态。
+ */
 private fun aCreatePollState(
     mode: CreatePollState.Mode,
     canCreate: Boolean,

@@ -11,6 +11,9 @@ package io.element.android.libraries.core.coroutine
 import kotlinx.coroutines.delay
 import kotlin.system.measureTimeMillis
 
+/**
+ * 包装一个挂起任务，保证其整体执行至少持续指定时长。
+ */
 fun suspendWithMinimumDuration(
     minimumDurationMillis: Long = 500,
     block: suspend () -> Unit

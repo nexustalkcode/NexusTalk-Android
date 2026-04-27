@@ -25,6 +25,9 @@ import io.element.android.libraries.matrix.ui.messages.reply.InReplyToDetailsPro
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览带普通回复内容的事件行。
+ */
 internal fun TimelineItemEventRowWithReplyPreview(
     @PreviewParameter(InReplyToDetailsProvider::class) inReplyToDetails: InReplyToDetails,
 ) = ElementPreview {
@@ -32,6 +35,9 @@ internal fun TimelineItemEventRowWithReplyPreview(
 }
 
 @Composable
+/**
+ * 供多个回复预览复用的内容构造函数。
+ */
 internal fun TimelineItemEventRowWithReplyContentToPreview(
     inReplyToDetails: InReplyToDetails,
     displayNameAmbiguous: Boolean = false,

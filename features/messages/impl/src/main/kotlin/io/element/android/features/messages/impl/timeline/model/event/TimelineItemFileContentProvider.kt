@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.core.mimetype.MimeTypes
 import io.element.android.libraries.matrix.api.media.MediaSource
 
+/**
+ * 为文件消息内容预览提供样例数据。
+ */
 open class TimelineItemFileContentProvider : PreviewParameterProvider<TimelineItemFileContent> {
     override val values: Sequence<TimelineItemFileContent>
         get() = sequenceOf(
@@ -23,6 +26,9 @@ open class TimelineItemFileContentProvider : PreviewParameterProvider<TimelineIt
         )
 }
 
+/**
+ * 构造一份文件消息内容样例。
+ */
 fun aTimelineItemFileContent(
     fileName: String = "A file.pdf",
     caption: String? = null,

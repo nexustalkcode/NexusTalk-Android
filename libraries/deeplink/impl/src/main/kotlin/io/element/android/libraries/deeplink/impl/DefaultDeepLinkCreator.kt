@@ -18,7 +18,13 @@ import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.core.ThreadId
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的应用内部 deeplink 创建器。
+ */
 class DefaultDeepLinkCreator : DeepLinkCreator {
+    /**
+     * 创建内部 deeplink 字符串。
+     */
     override fun create(sessionId: SessionId, roomId: RoomId?, threadId: ThreadId?, eventId: EventId?): String {
         return buildString {
             append("$SCHEME://$HOST/")

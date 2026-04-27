@@ -33,6 +33,12 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 @AssistedInject
+/**
+ * 时间线 UI 项工厂。
+ *
+ * 负责把底层 [MatrixTimelineItem] 列表转换为可直接渲染的 [TimelineItem]，
+ * 同时结合 diff cache、分组器和成员数据做增量更新。
+ */
 class TimelineItemsFactory(
     @Assisted config: TimelineItemsFactoryConfig,
     eventItemFactoryCreator: TimelineItemEventFactory.Creator,
@@ -40,6 +46,9 @@ class TimelineItemsFactory(
     private val virtualItemFactory: TimelineItemVirtualFactory,
     private val timelineItemGrouper: TimelineItemGrouper,
 ) {
+    /**
+     * 创建 [TimelineItemsFactory] 的 Assisted 工厂。
+     */
     @AssistedFactory
     interface Creator {
         fun create(config: TimelineItemsFactoryConfig): TimelineItemsFactory
@@ -63,6 +72,9 @@ class TimelineItemsFactory(
 
     val timelineItems: Flow<ImmutableList<TimelineItem>> = _timelineItems.distinctUntilChanged()
 
+    /**
+     * 用最新的底层时间线项替换当前 UI 时间线项。
+     */
     suspend fun replaceWith(
         timelineItems: List<MatrixTimelineItem>,
         roomMembers: List<RoomMember>,
@@ -74,6 +86,9 @@ class TimelineItemsFactory(
         }
     }
 
+    /**
+     * 构建并发射新的 UI 时间线项列表。
+     */
     private suspend fun buildAndEmitTimelineItemStates(
         timelineItems: List<MatrixTimelineItem>,
         roomMembers: List<RoomMember>,
@@ -102,6 +117,9 @@ class TimelineItemsFactory(
         this._timelineItems.emit(result)
     }
 
+    /**
+     * 构建指定索引处的 UI 时间线项并写入缓存。
+     */
     private suspend fun buildAndCacheItem(
         timelineItems: List<MatrixTimelineItem>,
         index: Int,
@@ -118,6 +136,9 @@ class TimelineItemsFactory(
     }
 }
 
+/**
+ * 过滤时间线中不应直接渲染的底层项。
+ */
 private fun List<MatrixTimelineItem>.filterVisibleTimelineItems(): List<MatrixTimelineItem> {
     return filterNot { timelineItem ->
         timelineItem is MatrixTimelineItem.Event && timelineItem.event.content is ProfileChangeContent
@@ -125,6 +146,9 @@ private fun List<MatrixTimelineItem>.filterVisibleTimelineItems(): List<MatrixTi
         .removeEmptyDayDividers()
 }
 
+/**
+ * 移除没有实际事件跟随的空日期分隔符。
+ */
 private fun List<MatrixTimelineItem>.removeEmptyDayDividers(): List<MatrixTimelineItem> {
     val result = mutableListOf<MatrixTimelineItem>()
     var pendingDayDivider: MatrixTimelineItem.Virtual? = null
@@ -160,6 +184,9 @@ private fun List<MatrixTimelineItem>.removeEmptyDayDividers(): List<MatrixTimeli
     return result
 }
 
+/**
+ * 判断当前底层时间线项是否为日期分隔符。
+ */
 private fun MatrixTimelineItem.isDayDivider(): Boolean {
     return this is MatrixTimelineItem.Virtual && virtual is VirtualTimelineItem.DayDivider
 }

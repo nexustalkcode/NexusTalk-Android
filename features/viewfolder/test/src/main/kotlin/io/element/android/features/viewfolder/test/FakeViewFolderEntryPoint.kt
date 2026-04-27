@@ -11,7 +11,6 @@ package io.element.android.features.viewfolder.test
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import io.element.android.features.viewfolder.api.ViewFolderEntryPoint
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeViewFolderEntryPoint : ViewFolderEntryPoint {
     override fun createNode(
@@ -19,5 +18,5 @@ class FakeViewFolderEntryPoint : ViewFolderEntryPoint {
         buildContext: BuildContext,
         params: ViewFolderEntryPoint.Params,
         callback: ViewFolderEntryPoint.Callback,
-    ): Node = lambdaError()
+    ): Node = error("FakeViewFolderEntryPoint.createNode must be provided in tests")
 }

@@ -18,6 +18,9 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Text
 
+/**
+ * 渲染状态事件条目视图。
+ */
 @Composable
 fun TimelineItemStateView(
     content: TimelineItemStateContent,

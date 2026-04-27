@@ -17,6 +17,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为“向 Space 添加房间”页面预览提供样例状态。
+ */
 internal class AddRoomToSpaceStateProvider : PreviewParameterProvider<AddRoomToSpaceState> {
     override val values: Sequence<AddRoomToSpaceState>
         get() = sequenceOf(
@@ -60,6 +63,9 @@ internal class AddRoomToSpaceStateProvider : PreviewParameterProvider<AddRoomToS
         )
 }
 
+/**
+ * 构造一份“向 Space 添加房间”页面样例状态。
+ */
 internal fun anAddRoomToSpaceState(
     searchQuery: String = "",
     searchResults: SearchBarResultState<ImmutableList<SelectRoomInfo>> = SearchBarResultState.Initial(),
@@ -80,6 +86,9 @@ internal fun anAddRoomToSpaceState(
     )
 }
 
+/**
+ * 构造一组可选房间样例数据。
+ */
 internal fun aSelectRoomInfoList(): ImmutableList<SelectRoomInfo> = listOf(
     SelectRoomInfo(
         roomId = RoomId("!room1:server.org"),

@@ -20,11 +20,21 @@ import io.element.android.libraries.di.RoomScope
 
 @ContributesNode(RoomScope::class)
 @AssistedInject
+/**
+ * 敲门请求列表页节点。
+ *
+ * 用于把 Presenter 生成的状态连接到列表页面，并承接返回导航。
+ */
 class KnockRequestsListNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: KnockRequestsListPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 渲染敲门请求列表页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

@@ -21,9 +21,15 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 @Inject
+/**
+ * 账号选择页 Presenter。
+ */
 class AccountSelectPresenter(
     private val sessionStore: SessionStore,
 ) : Presenter<AccountSelectState> {
+    /**
+     * 生成账号选择页状态。
+     */
     @Composable
     override fun present(): AccountSelectState {
         val accounts by produceState<ImmutableList<MatrixUser>>(persistentListOf()) {

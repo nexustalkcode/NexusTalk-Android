@@ -27,6 +27,6 @@ object SessionPreferencesModule {
         @SessionCoroutineScope sessionCoroutineScope: CoroutineScope,
     ): SessionPreferencesStore {
         return defaultSessionPreferencesStoreFactory
-            .get(sessionId, sessionCoroutineScope)
+            .get(sessionId.value, sessionCoroutineScope)
     }
 }

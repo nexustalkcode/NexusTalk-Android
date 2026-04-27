@@ -48,6 +48,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @AssistedInject
+/**
+ * 用户资料页 Presenter。
+ *
+ * 负责拉取指定用户的资料、DM 房间、可通话状态和拉黑状态，
+ * 并把页面事件转换成对应的业务动作。
+ */
 class UserProfilePresenter(
     @Assisted private val userId: UserId,
     private val client: MatrixClient,
@@ -55,11 +61,17 @@ class UserProfilePresenter(
     private val sessionEnterpriseService: SessionEnterpriseService,
     private val featureFlagService: FeatureFlagService,
 ) : Presenter<UserProfileState> {
+    /**
+     * 创建 [UserProfilePresenter] 的 Assisted 工厂。
+     */
     @AssistedFactory
     interface Factory {
         fun create(userId: UserId): UserProfilePresenter
     }
 
+    /**
+     * 获取与当前用户对应的私聊房间 ID。
+     */
     @Composable
     private fun getDmRoomId(): State<RoomId?> {
         return produceState(initialValue = null) {
@@ -67,6 +79,11 @@ class UserProfilePresenter(
         }
     }
 
+    /**
+     * 计算当前资料页是否允许直接发起通话。
+     *
+     * @param roomId 当前私聊房间 ID；如果还没有私聊房间则不可直接通话。
+     */
     @Composable
     private fun getCanCall(roomId: RoomId?): State<Boolean> {
         val isVideoCallEnabled by remember {
@@ -91,6 +108,9 @@ class UserProfilePresenter(
         }
     }
 
+    /**
+     * 生成用户资料页状态并处理页面事件。
+     */
     @Composable
     override fun present(): UserProfileState {
         val coroutineScope = rememberCoroutineScope()
@@ -165,6 +185,11 @@ class UserProfilePresenter(
         )
     }
 
+    /**
+     * 拉黑当前资料页对应的用户。
+     *
+     * @param isBlockedState 用于回写 UI 拉黑状态的状态容器。
+     */
     private fun CoroutineScope.blockUser(
         isBlockedState: MutableState<AsyncData<Boolean>>,
     ) = launch {
@@ -176,6 +201,11 @@ class UserProfilePresenter(
         // Note: on success, ignoredUsersFlow will emit new item.
     }
 
+    /**
+     * 取消拉黑当前资料页对应的用户。
+     *
+     * @param isBlockedState 用于回写 UI 拉黑状态的状态容器。
+     */
     private fun CoroutineScope.unblockUser(
         isBlockedState: MutableState<AsyncData<Boolean>>,
     ) = launch {

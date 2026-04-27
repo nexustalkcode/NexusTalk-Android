@@ -9,6 +9,7 @@
 package io.element.android.features.call.impl.ui
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.view.ViewGroup
 import android.webkit.ConsoleMessage
 import android.webkit.JavascriptInterface
@@ -50,6 +51,8 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 import timber.log.Timber
 
+private const val CALL_WEB_VIEW_LOGGER_TAG = "ElementCallWebView"
+
 /** 权限请求回调类型别名 */
 typealias RequestPermissionCallback = (Array<String>) -> Unit
 
@@ -74,6 +77,11 @@ internal fun CallScreenView(
     modifier: Modifier = Modifier,
 ) {
     fun handleBack() {
+        Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d(
+            "Back pressed from call screen, supportPip=%s isInPictureInPicture=%s",
+            pipState.supportPip,
+            pipState.isInPictureInPicture,
+        )
         if (pipState.supportPip) {
             pipState.eventSink.invoke(PictureInPictureEvents.EnterPictureInPicture)
         } else {
@@ -115,18 +123,34 @@ internal fun CallScreenView(
                 userAgent = state.userAgent,
                 onPermissionsRequest = { request ->
                     val androidPermissions = mapWebkitPermissions(request.resources)
-                    val callback: RequestPermissionCallback = { request.grant(it) }
+                    Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d(
+                        "WebView permission request received: webkitResources=%s mappedAndroidPermissions=%s origin=%s",
+                        request.resources.toDebugString(),
+                        androidPermissions,
+                        request.origin?.toRedactedLogString(),
+                    )
+                    val callback: RequestPermissionCallback = { grantedWebkitPermissions ->
+                        Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d(
+                            "Granting WebView permission request: requestedWebkitResources=%s grantedWebkitResources=%s origin=%s",
+                            request.resources.toDebugString(),
+                            grantedWebkitPermissions.toDebugString(),
+                            request.origin?.toRedactedLogString(),
+                        )
+                        request.grant(grantedWebkitPermissions)
+                    }
                     requestPermissions(androidPermissions.toTypedArray(), callback)
                 },
                 onConsoleMessage = onConsoleMessage,
                 onCreateWebView = { webView ->
+                    Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d("Created Element Call WebView instance=%s", webView.hashCode())
                     webView.addBackHandler(onBackPressed = ::handleBack)
                     val interceptor = WebViewWidgetMessageInterceptor(
                         webView = webView,
                         onUrlLoaded = { url ->
+                            Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d("Element Call WebView page finished: url=%s", url.toRedactedLogString())
                             webView.evaluateJavascript("controls.onBackButtonPressed = () => { backHandler.onBackPressed() }", null)
                             if (webViewAudioManager?.isInCallMode?.get() == false) {
-                                Timber.d("URL $url is loaded, starting in-call audio mode")
+                                Timber.d("URL ${url.toRedactedLogString()} is loaded, starting in-call audio mode")
                                 webViewAudioManager?.onCallStarted()
                             } else {
                                 Timber.d("Can't start in-call audio mode since the app is already in it.")
@@ -144,6 +168,7 @@ internal fun CallScreenView(
                     pipState.eventSink(PictureInPictureEvents.SetPipController(pipController))
                 },
                 onDestroyWebView = {
+                    Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d("Destroying Element Call WebView instance=%s url=%s", it.hashCode(), it.url?.toRedactedLogString())
                     // Reset audio mode
                     webViewAudioManager?.onCallStopped()
                 }
@@ -209,6 +234,11 @@ private fun CallWebView(
             },
             update = { webView ->
                 if (url is AsyncData.Success && webView.url != url.data) {
+                    Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d(
+                        "Loading Element Call URL in WebView: currentUrl=%s targetUrl=%s",
+                        webView.url?.toRedactedLogString(),
+                        url.data.toRedactedLogString(),
+                    )
                     webView.loadUrl(url.data)
                 }
             },
@@ -242,10 +272,30 @@ private fun WebView.setup(
         loadsImagesAutomatically = true
         userAgentString = userAgent
     }
+    Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d(
+        "Configured Element Call WebView settings: mediaPlaybackRequiresUserGesture=%s domStorageEnabled=%s allowFileAccess=%s userAgentLength=%s",
+        settings.mediaPlaybackRequiresUserGesture,
+        settings.domStorageEnabled,
+        settings.allowFileAccess,
+        settings.userAgentString.length,
+    )
 
     webChromeClient = object : WebChromeClient() {
         override fun onPermissionRequest(request: PermissionRequest) {
+            Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d(
+                "WebChromeClient.onPermissionRequest: resources=%s origin=%s",
+                request.resources.toDebugString(),
+                request.origin?.toRedactedLogString(),
+            )
             onPermissionsRequested(request)
+        }
+
+        override fun onPermissionRequestCanceled(request: PermissionRequest) {
+            Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).w(
+                "WebChromeClient.onPermissionRequestCanceled: resources=%s origin=%s",
+                request.resources.toDebugString(),
+                request.origin?.toRedactedLogString(),
+            )
         }
 
         override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
@@ -265,6 +315,28 @@ private fun WebView.addBackHandler(onBackPressed: () -> Unit) {
         "backHandler"
     )
 }
+
+private fun Array<String>.toDebugString(): String = joinToString(prefix = "[", postfix = "]")
+
+private fun Uri.toRedactedLogString(): String {
+    return buildString {
+        scheme?.let { append(it).append("://") }
+        host?.let { append(it) }
+        if (path.isNullOrBlank()) {
+            append("/")
+        } else {
+            append(path)
+        }
+        if (!query.isNullOrBlank()) {
+            append("?<redacted>")
+        }
+        if (!fragment.isNullOrBlank()) {
+            append("#<redacted>")
+        }
+    }
+}
+
+private fun String.toRedactedLogString(): String = Uri.parse(this).toRedactedLogString()
 
 @PreviewsDayNight
 @Composable

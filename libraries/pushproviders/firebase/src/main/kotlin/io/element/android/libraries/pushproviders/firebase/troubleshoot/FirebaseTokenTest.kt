@@ -10,10 +10,10 @@ package io.element.android.libraries.pushproviders.firebase.troubleshoot
 
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
+import io.element.android.libraries.pushproviders.R
 import io.element.android.libraries.pushproviders.firebase.FirebaseConfig
 import io.element.android.libraries.pushproviders.firebase.FirebaseStore
 import io.element.android.libraries.pushproviders.firebase.FirebaseTroubleshooter
-import io.element.android.libraries.pushproviders.firebase.R
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootNavigator
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTest
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestDelegate
@@ -33,6 +33,8 @@ class FirebaseTokenTest(
     private val stringProvider: StringProvider,
 ) : NotificationTroubleshootTest {
     override val order = 310
+
+    // 这里必须走合并后模块的根 R，确保生成到 pushproviders AAR 里的资源类和运行时引用保持一致。
     private val delegate = NotificationTroubleshootTestDelegate(
         defaultName = stringProvider.getString(R.string.troubleshoot_notifications_test_firebase_token_title),
         defaultDescription = stringProvider.getString(R.string.troubleshoot_notifications_test_firebase_token_description),

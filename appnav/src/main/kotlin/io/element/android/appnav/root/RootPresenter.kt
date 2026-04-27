@@ -22,6 +22,11 @@ import io.element.android.services.analytics.api.AnalyticsService
 import io.element.android.services.apperror.api.AppErrorStateService
 
 @Inject
+/**
+ * 应用根页面 Presenter。
+ *
+ * 负责聚合崩溃检测、摇一摇检测和应用级错误状态。
+ */
 class RootPresenter(
     private val crashDetectionPresenter: Presenter<CrashDetectionState>,
     private val rageshakeDetectionPresenter: Presenter<RageshakeDetectionState>,
@@ -30,6 +35,9 @@ class RootPresenter(
     private val sdkMetadata: SdkMetadata,
 ) : Presenter<RootState> {
     @Composable
+    /**
+     * 生成根页面状态并上报应用级分析属性。
+     */
     override fun present(): RootState {
         val rageshakeDetectionState = rageshakeDetectionPresenter.present()
         val crashDetectionState = crashDetectionPresenter.present()

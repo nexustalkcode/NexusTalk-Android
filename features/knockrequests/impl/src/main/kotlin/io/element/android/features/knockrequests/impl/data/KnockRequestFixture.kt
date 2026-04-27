@@ -11,6 +11,9 @@ package io.element.android.features.knockrequests.impl.data
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.UserId
 
+/**
+ * 构造一条敲门请求展示模型样例。
+ */
 fun aKnockRequestPresentable(
     eventId: EventId = EventId("\$eventId"),
     userId: UserId = UserId("@jacob_ross:example.com"),

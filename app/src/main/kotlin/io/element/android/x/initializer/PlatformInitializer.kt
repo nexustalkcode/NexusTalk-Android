@@ -9,10 +9,12 @@
 package io.element.android.x.initializer
 
 import android.content.Context
+import android.os.Build
 import android.system.Os
 import androidx.startup.Initializer
 import io.element.android.features.rageshake.api.logs.createWriteToFilesConfiguration
 import io.element.android.libraries.architecture.bindings
+import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.featureflag.api.FeatureFlags
 import io.element.android.libraries.matrix.api.tracing.TracingConfiguration
 import io.element.android.x.di.AppBindings
@@ -25,14 +27,11 @@ private const val ELEMENT_X_TARGET = "elementx"
 /**
  * 平台初始化器。
  *
- * 实现 androidx.startup.Initializer 接口，
- * 在应用启动时完成以下初始化工作：
- * - 配置并初始化 Timber 日志系统
- * - 设置应用追踪配置（Logging、Sentry 等）
- * - 初始化平台特定服务
- * - 配置 Rust 堆栈回溯环境变量
- *
- * 依赖 AppBindings 获取追踪服务、平台服务、错误报告器等组件。
+ * 在应用启动时负责完成以下工作：
+ * - 初始化 Timber 日志链路
+ * - 初始化 SDK tracing 配置
+ * - 配置 bug report 使用的文件日志
+ * - 设置 Rust backtrace 环境变量
  */
 class PlatformInitializer : Initializer<Unit> {
     override fun create(context: Context) {
@@ -40,12 +39,20 @@ class PlatformInitializer : Initializer<Unit> {
         val tracingService = appBindings.tracingService()
         val platformService = appBindings.platformService()
         val bugReporter = appBindings.bugReporter()
-        Timber.plant(tracingService.createTimberTree(ELEMENT_X_TARGET))
         val preferencesStore = appBindings.preferencesStore()
         val featureFlagService = appBindings.featureFlagService()
+        val buildMeta = appBindings.buildMeta()
         val logLevel = runBlocking { preferencesStore.getTracingLogLevelFlow().first() }
+        val writesToLogcat = runBlocking { featureFlagService.isFeatureEnabled(FeatureFlags.PrintLogsToLogcat) }
+
+        Timber.plant(tracingService.createTimberTree(ELEMENT_X_TARGET))
+        if (shouldPlantAndroidLogcatFallback(buildMeta = buildMeta, writesToLogcat = writesToLogcat)) {
+            // 仅在已复现的华为 Android 10 调试环境种额外 Tree，尽量避免在正常设备上重复写日志。
+            Timber.plant(AndroidLogcatTimberTree())
+        }
+
         val tracingConfiguration = TracingConfiguration(
-            writesToLogcat = runBlocking { featureFlagService.isFeatureEnabled(FeatureFlags.PrintLogsToLogcat) },
+            writesToLogcat = writesToLogcat,
             writesToFilesConfiguration = bugReporter.createWriteToFilesConfiguration(),
             logLevel = logLevel,
             extraTargets = listOf(ELEMENT_X_TARGET),
@@ -54,9 +61,22 @@ class PlatformInitializer : Initializer<Unit> {
         )
         bugReporter.setCurrentTracingLogLevel(logLevel.name)
         platformService.init(tracingConfiguration)
-        // 同时设置 Rust 堆栈回溯的环境变量
         Os.setenv("RUST_BACKTRACE", "1", true)
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = mutableListOf()
+}
+
+/**
+ * 华为 Android 10 真机上已经复现过：Rust tracing 文件日志正常，但 system log 不出应用日志。
+ * 这里用最小范围的设备门控打开 Logcat fallback，优先保证现场调试可观测性。
+ */
+private fun shouldPlantAndroidLogcatFallback(
+    buildMeta: BuildMeta,
+    writesToLogcat: Boolean,
+): Boolean {
+    return writesToLogcat &&
+        buildMeta.isDebuggable &&
+        Build.VERSION.SDK_INT == Build.VERSION_CODES.Q &&
+        Build.MANUFACTURER.equals("HUAWEI", ignoreCase = true)
 }

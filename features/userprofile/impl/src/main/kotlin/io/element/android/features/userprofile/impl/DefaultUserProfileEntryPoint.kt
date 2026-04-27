@@ -16,7 +16,20 @@ import io.element.android.features.userprofile.api.UserProfileEntryPoint
 import io.element.android.libraries.architecture.createNode
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的用户资料页入口实现。
+ *
+ * 负责把外部导航请求包装为 [UserProfileFlowNode]。
+ */
 class DefaultUserProfileEntryPoint : UserProfileEntryPoint {
+    /**
+     * 创建用户资料流程节点。
+     *
+     * @param parentNode 父节点。
+     * @param buildContext 当前节点构建上下文。
+     * @param params 资料页入参。
+     * @param callback 资料页导航回调。
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

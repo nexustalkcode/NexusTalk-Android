@@ -22,6 +22,11 @@ import io.element.android.libraries.permissions.api.PermissionsEvent
 import io.element.android.libraries.permissions.api.PermissionsPresenter
 
 @Inject
+/**
+ * 二维码登录引导页 Presenter。
+ *
+ * 负责管理相机权限申请流程，并在权限满足后放行到扫码页。
+ */
 class QrCodeIntroPresenter(
     private val buildMeta: BuildMeta,
     permissionsPresenterFactory: PermissionsPresenter.Factory,
@@ -29,6 +34,9 @@ class QrCodeIntroPresenter(
     private val cameraPermissionPresenter: PermissionsPresenter = permissionsPresenterFactory.create(Manifest.permission.CAMERA)
     private var pendingPermissionRequest by mutableStateOf(false)
 
+    /**
+     * 生成引导页状态并处理页面事件。
+     */
     @Composable
     override fun present(): QrCodeIntroState {
         val cameraPermissionState = cameraPermissionPresenter.present()

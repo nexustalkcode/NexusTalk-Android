@@ -25,6 +25,8 @@ import io.element.android.features.call.impl.BuildConfig
 import kotlinx.coroutines.flow.MutableSharedFlow
 import timber.log.Timber
 
+private const val CALL_WEB_VIEW_LOGGER_TAG = "ElementCallWebView"
+
 /**
  * WebView 小组件消息拦截器
  *
@@ -61,6 +63,7 @@ class WebViewWidgetMessageInterceptor(
         webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
+                Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d("Element Call WebView page started: url=%s", url.toRedactedLogString())
 
                 // Due to https://github.com/element-hq/element-x-android/issues/4097
                 // we need to supply a logging implementation that correctly includes
@@ -82,6 +85,11 @@ class WebViewWidgetMessageInterceptor(
                     """.trimIndent(),
                     null
                 )
+
+                /*
+                 * 注入媒体诊断脚本，用 console 日志观察 getUserMedia、MediaStreamTrack 和 video 元素状态，不改变页面业务逻辑。
+                 */
+                view.evaluateJavascript(mediaDiagnosticsScript, null)
 
                 // We inject this JS code when the page starts loading to attach a message listener to the window.
                 // This listener will receive both messages:
@@ -106,12 +114,20 @@ class WebViewWidgetMessageInterceptor(
             }
 
             override fun onPageFinished(view: WebView, url: String) {
+                Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d("Element Call WebView page finished in client: url=%s", url.toRedactedLogString())
                 onUrlLoaded(url)
             }
 
             override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
                 // No network for instance, transmit the error
-                Timber.e("onReceivedError error: ${error?.errorCode} ${error?.description}")
+                Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).e(
+                    "onReceivedError error=%s description=%s requestUrl=%s isForMainFrame=%s currentUrl=%s",
+                    error?.errorCode,
+                    error?.description,
+                    request?.url?.toString()?.toRedactedLogString(),
+                    request?.isForMainFrame,
+                    view?.url?.toRedactedLogString(),
+                )
 
                 // Only propagate the error if it happens while loading the current page
                 if (view?.url == request?.url.toString()) {
@@ -122,7 +138,14 @@ class WebViewWidgetMessageInterceptor(
             }
 
             override fun onReceivedHttpError(view: WebView?, request: WebResourceRequest?, errorResponse: WebResourceResponse?) {
-                Timber.e("onReceivedHttpError error: ${errorResponse?.statusCode} ${errorResponse?.reasonPhrase}")
+                Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).e(
+                    "onReceivedHttpError status=%s reason=%s requestUrl=%s isForMainFrame=%s currentUrl=%s",
+                    errorResponse?.statusCode,
+                    errorResponse?.reasonPhrase,
+                    request?.url?.toString()?.toRedactedLogString(),
+                    request?.isForMainFrame,
+                    view?.url?.toRedactedLogString(),
+                )
 
                 // Only propagate the error if it happens while loading the current page
                 if (view?.url == request?.url.toString()) {
@@ -133,7 +156,12 @@ class WebViewWidgetMessageInterceptor(
             }
 
             override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
-                Timber.e("onReceivedSslError error: ${error?.primaryError}")
+                Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).e(
+                    "onReceivedSslError primaryError=%s url=%s currentUrl=%s",
+                    error?.primaryError,
+                    error?.url?.toRedactedLogString(),
+                    view?.url?.toRedactedLogString(),
+                )
 
                 // Only propagate the error if it happens while loading the current page
                 if (view?.url == error?.url.toString()) {
@@ -177,11 +205,192 @@ class WebViewWidgetMessageInterceptor(
     }
 
     override fun sendMessage(message: String) {
+        Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d("Sending widget message to Element Call WebView: length=%s", message.length)
         webView.evaluateJavascript("postMessage($message, '*')", null)
     }
 
     private fun onMessageReceived(json: String?) {
         // Here is where we would handle the messages from the WebView, passing them to the Rust SDK
-        json?.let { interceptedMessages.tryEmit(it) }
+        if (json == null) {
+            Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).w("Received null widget message from Element Call WebView")
+            return
+        }
+        Timber.tag(CALL_WEB_VIEW_LOGGER_TAG).d("Received widget message from Element Call WebView: length=%s", json.length)
+        interceptedMessages.tryEmit(json)
+    }
+}
+
+private val mediaDiagnosticsScript = """
+        (function() {
+          if (globalThis.__elementXMediaDiagnosticsInstalled) {
+            console.debug('[ElementXMedia] diagnostics already installed');
+            return;
+          }
+          globalThis.__elementXMediaDiagnosticsInstalled = true;
+
+          function safeJson(value) {
+            try {
+              return JSON.stringify(value);
+            } catch (error) {
+              return String(value);
+            }
+          }
+
+          function log(message, data) {
+            console.debug('[ElementXMedia] ' + message + (data === undefined ? '' : ' ' + safeJson(data)));
+          }
+
+          function trackStream(label, stream) {
+            if (!stream || typeof stream.getTracks !== 'function') {
+              log(label + ' returned without a MediaStream', { hasStream: !!stream });
+              return;
+            }
+            log(label + ' stream', {
+              id: stream.id,
+              active: stream.active,
+              tracks: stream.getTracks().map(function(track) {
+                return {
+                  id: track.id,
+                  kind: track.kind,
+                  label: track.label,
+                  enabled: track.enabled,
+                  muted: track.muted,
+                  readyState: track.readyState
+                };
+              })
+            });
+            stream.getTracks().forEach(function(track) {
+              ['ended', 'mute', 'unmute'].forEach(function(eventName) {
+                track.addEventListener(eventName, function() {
+                  log(label + ' track ' + eventName, {
+                    id: track.id,
+                    kind: track.kind,
+                    enabled: track.enabled,
+                    muted: track.muted,
+                    readyState: track.readyState
+                  });
+                });
+              });
+            });
+          }
+
+          if (navigator.mediaDevices) {
+            var originalGetUserMedia = navigator.mediaDevices.getUserMedia && navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+            if (originalGetUserMedia) {
+              navigator.mediaDevices.getUserMedia = function(constraints) {
+                log('getUserMedia called', constraints);
+                return originalGetUserMedia(constraints).then(function(stream) {
+                  trackStream('getUserMedia resolved', stream);
+                  return stream;
+                }).catch(function(error) {
+                  log('getUserMedia rejected', { name: error && error.name, message: error && error.message });
+                  throw error;
+                });
+              };
+            }
+
+            var originalEnumerateDevices = navigator.mediaDevices.enumerateDevices && navigator.mediaDevices.enumerateDevices.bind(navigator.mediaDevices);
+            if (originalEnumerateDevices) {
+              navigator.mediaDevices.enumerateDevices = function() {
+                return originalEnumerateDevices().then(function(devices) {
+                  log('enumerateDevices resolved', devices.map(function(device) {
+                    return {
+                      kind: device.kind,
+                      label: device.label,
+                      deviceIdPresent: !!device.deviceId,
+                      groupIdPresent: !!device.groupId
+                    };
+                  }));
+                  return devices;
+                });
+              };
+            }
+          } else {
+            log('navigator.mediaDevices is unavailable');
+          }
+
+          function describeVideo(video) {
+            var tracks = [];
+            if (video.srcObject && typeof video.srcObject.getTracks === 'function') {
+              tracks = video.srcObject.getTracks().map(function(track) {
+                return {
+                  id: track.id,
+                  kind: track.kind,
+                  enabled: track.enabled,
+                  muted: track.muted,
+                  readyState: track.readyState
+                };
+              });
+            }
+            return {
+              id: video.id,
+              className: video.className,
+              readyState: video.readyState,
+              videoWidth: video.videoWidth,
+              videoHeight: video.videoHeight,
+              paused: video.paused,
+              muted: video.muted,
+              hasSrcObject: !!video.srcObject,
+              tracks: tracks
+            };
+          }
+
+          var observedVideos = new WeakSet();
+          function observeVideo(video) {
+            if (observedVideos.has(video)) return;
+            observedVideos.add(video);
+            log('video element observed', describeVideo(video));
+            [
+              'loadedmetadata',
+              'loadeddata',
+              'canplay',
+              'playing',
+              'pause',
+              'waiting',
+              'stalled',
+              'suspend',
+              'emptied',
+              'error',
+              'resize'
+            ].forEach(function(eventName) {
+              video.addEventListener(eventName, function() {
+                log('video ' + eventName, describeVideo(video));
+              });
+            });
+          }
+
+          function scanVideos() {
+            document.querySelectorAll('video').forEach(observeVideo);
+          }
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', scanVideos);
+          } else {
+            scanVideos();
+          }
+
+          if (document.documentElement) {
+            new MutationObserver(scanVideos).observe(document.documentElement, { childList: true, subtree: true });
+          }
+
+          log('media diagnostics installed');
+        })();
+""".trimIndent()
+
+private fun String.toRedactedLogString(): String = toUri().let { uri ->
+    buildString {
+        uri.scheme?.let { append(it).append("://") }
+        uri.host?.let { append(it) }
+        if (uri.path.isNullOrBlank()) {
+            append("/")
+        } else {
+            append(uri.path)
+        }
+        if (!uri.query.isNullOrBlank()) {
+            append("?<redacted>")
+        }
+        if (!uri.fragment.isNullOrBlank()) {
+            append("#<redacted>")
+        }
     }
 }

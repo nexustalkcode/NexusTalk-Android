@@ -15,6 +15,11 @@ import io.element.android.libraries.architecture.overlay.operation.Hide
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * Overlay 返回键处理策略。
+ *
+ * 当 overlay 中存在元素时，返回键会隐藏当前 overlay。
+ */
 class HideOverlayBackPressHandler<NavTarget : Any> :
     BaseBackPressHandlerStrategy<NavTarget, BackStack.State>() {
     override val canHandleBackPressFlow: Flow<Boolean> by lazy {
@@ -24,6 +29,9 @@ class HideOverlayBackPressHandler<NavTarget : Any> :
     private fun areThereElements(elements: BackStackElements<NavTarget>) =
         elements.isNotEmpty()
 
+    /**
+     * 处理返回键，隐藏当前 overlay。
+     */
     override fun onBackPressed() {
         navModel.accept(Hide())
     }

@@ -24,11 +24,19 @@ import io.element.android.libraries.core.meta.BuildMeta
 
 @ContributesNode(QrCodeLoginScope::class)
 @AssistedInject
+/**
+ * 二维码登录错误页节点。
+ *
+ * 负责读取错误类型并渲染对应错误页面，同时提供统一重试出口。
+ */
 class QrCodeErrorNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val buildMeta: BuildMeta,
 ) : Node(buildContext = buildContext, plugins = plugins) {
+    /**
+     * 错误页向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun onRetry()
     }
@@ -36,6 +44,11 @@ class QrCodeErrorNode(
     private val callback: Callback = callback()
     private val qrCodeErrorScreenType = inputs<QrCodeErrorScreenType>()
 
+    /**
+     * 渲染二维码登录错误页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         QrCodeErrorView(

@@ -15,9 +15,20 @@ import io.element.android.features.knockrequests.api.banner.KnockRequestsBannerR
 import io.element.android.libraries.di.RoomScope
 
 @ContributesBinding(RoomScope::class)
+/**
+ * 默认的敲门请求横幅渲染器。
+ *
+ * 负责把 [KnockRequestsBannerPresenter] 产出的状态桥接到 [KnockRequestsBannerView]。
+ */
 class DefaultKnockRequestsBannerRenderer(
     private val presenter: KnockRequestsBannerPresenter,
 ) : KnockRequestsBannerRenderer {
+    /**
+     * 渲染当前房间的敲门请求横幅。
+     *
+     * @param modifier 应用于横幅根节点的修饰符。
+     * @param onViewRequestsClick 点击“查看请求”后的回调。
+     */
     @Composable
     override fun View(modifier: Modifier, onViewRequestsClick: () -> Unit) {
         val state = presenter.present()

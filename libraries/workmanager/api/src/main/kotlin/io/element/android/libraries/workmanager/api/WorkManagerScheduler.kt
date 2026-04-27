@@ -8,15 +8,14 @@
 
 package io.element.android.libraries.workmanager.api
 
-import io.element.android.libraries.matrix.api.core.SessionId
-
 interface WorkManagerScheduler {
     fun submit(workManagerRequest: WorkManagerRequest)
-    fun hasPendingWork(sessionId: SessionId, requestType: WorkManagerRequestType): Boolean
-    fun cancel(sessionId: SessionId)
+    // workmanager 只需要一个稳定的会话字符串来打 tag，不需要依赖 matrix api 里的 SessionId 类型别名。
+    fun hasPendingWork(sessionId: String, requestType: WorkManagerRequestType): Boolean
+    fun cancel(sessionId: String)
 }
 
-fun workManagerTag(sessionId: SessionId, requestType: WorkManagerRequestType): String {
+fun workManagerTag(sessionId: String, requestType: WorkManagerRequestType): String {
     val prefix = when (requestType) {
         WorkManagerRequestType.NOTIFICATION_SYNC -> "notifications"
         WorkManagerRequestType.DB_VACUUM -> "db_vacuum"

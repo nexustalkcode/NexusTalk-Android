@@ -14,10 +14,15 @@ import io.element.android.libraries.architecture.NodeInputs
 import kotlinx.parcelize.Parcelize
 
 @Immutable
+/**
+ * 二维码登录确认页的显示步骤。
+ */
 sealed interface QrCodeConfirmationStep : NodeInputs, Parcelable {
+    /** 显示两位设备校验码。 */
     @Parcelize
     data class DisplayCheckCode(val code: String) : QrCodeConfirmationStep
 
+    /** 显示更长的验证码。 */
     @Parcelize
     data class DisplayVerificationCode(val code: String) : QrCodeConfirmationStep
 }

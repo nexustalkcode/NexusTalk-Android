@@ -20,9 +20,15 @@ import io.element.android.libraries.matrix.api.timeline.MatrixTimelineItem
 import io.element.android.libraries.matrix.api.timeline.item.virtual.VirtualTimelineItem
 
 @Inject
+/**
+ * 虚拟时间线项工厂。
+ */
 class TimelineItemVirtualFactory(
     private val daySeparatorFactory: TimelineItemDaySeparatorFactory,
 ) {
+    /**
+     * 将底层虚拟时间线项转换为 UI 虚拟项。
+     */
     fun create(
         virtualTimelineItem: MatrixTimelineItem.Virtual,
     ): TimelineItem.Virtual {
@@ -32,6 +38,9 @@ class TimelineItemVirtualFactory(
         )
     }
 
+    /**
+     * 根据底层虚拟项类型生成对应 UI 模型。
+     */
     private fun MatrixTimelineItem.Virtual.computeModel(): TimelineItemVirtualModel {
         return when (val inner = virtual) {
             is VirtualTimelineItem.DayDivider -> daySeparatorFactory.create(inner)

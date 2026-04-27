@@ -29,6 +29,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 private val CORNER_RADIUS = 8.dp
 
 @Composable
+/**
+ * 状态事件消息的点击容器。
+ */
 fun MessageStateEventContainer(
     interactionSource: MutableInteractionSource,
     onClick: () -> Unit,

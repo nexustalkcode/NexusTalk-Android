@@ -16,6 +16,9 @@ import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.matrix.api.verification.VerificationRequest
 
+/**
+ * 为发起验证页面预览提供样例状态。
+ */
 open class OutgoingVerificationStateProvider : PreviewParameterProvider<OutgoingVerificationState> {
     override val values: Sequence<OutgoingVerificationState>
         get() = sequenceOf(
@@ -73,9 +76,18 @@ open class OutgoingVerificationStateProvider : PreviewParameterProvider<Outgoing
         )
 }
 
+/**
+ * 构造一份“验证其他用户”请求样例。
+ */
 internal fun anOutgoingUserVerificationRequest() = VerificationRequest.Outgoing.User(userId = UserId("@alice:example.com"))
+/**
+ * 构造一份“验证当前会话”请求样例。
+ */
 internal fun anOutgoingSessionVerificationRequest() = VerificationRequest.Outgoing.CurrentSession
 
+/**
+ * 构造一份发起验证页面样例状态。
+ */
 internal fun anOutgoingVerificationState(
     step: Step = Step.Initial,
     request: VerificationRequest.Outgoing = anOutgoingSessionVerificationRequest(),

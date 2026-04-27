@@ -19,6 +19,9 @@ import io.element.android.features.call.impl.utils.IntentProvider
 import io.element.android.libraries.di.annotations.ApplicationContext
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.UserId
+import timber.log.Timber
+
+private const val incomingCallTraceTag = "IncomingCallTrace"
 
 /**
  * Element Call 入口点默认实现
@@ -82,13 +85,29 @@ class DefaultElementCallEntryPoint(
         expirationTimestamp: Long,
         notificationChannelId: String,
         textContent: String?,
+        isDm: Boolean,
     ) {
+        /**
+         * 自己发起的通话不应该再回流成“来电”。
+         * 这里在统一入口做兜底过滤，避免前台 timeline 观察和 push 链路分别重复踩到同一个误判。
+         */
+        if (senderId == callType.sessionId) {
+            Timber.tag(incomingCallTraceTag).i(
+                "DefaultElementCallEntryPoint ignored self-originated call sessionId=%s roomId=%s eventId=%s senderId=%s",
+                callType.sessionId,
+                callType.roomId,
+                eventId,
+                senderId,
+            )
+            return
+        }
         val incomingCallNotificationData = CallNotificationData(
             sessionId = callType.sessionId,
             roomId = callType.roomId,
             eventId = eventId,
             senderId = senderId,
             roomName = roomName,
+            isDm = isDm,
             senderName = senderName,
             avatarUrl = avatarUrl,
             timestamp = timestamp,
@@ -96,6 +115,17 @@ class DefaultElementCallEntryPoint(
             notificationChannelId = notificationChannelId,
             textContent = textContent,
         )
+        Timber.tag(incomingCallTraceTag).w(
+            "DefaultElementCallEntryPoint registering incoming call sessionId=%s roomId=%s eventId=%s senderId=%s",
+            callType.sessionId,
+            callType.roomId,
+            eventId,
+            senderId,
+        )
         activeCallManager.registerIncomingCall(notificationData = incomingCallNotificationData)
+        Timber.tag(incomingCallTraceTag).w(
+            "DefaultElementCallEntryPoint registered incoming call eventId=%s",
+            eventId,
+        )
     }
 }

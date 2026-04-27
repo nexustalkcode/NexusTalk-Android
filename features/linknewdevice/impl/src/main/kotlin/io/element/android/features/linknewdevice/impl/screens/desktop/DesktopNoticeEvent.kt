@@ -7,6 +7,9 @@
 
 package io.element.android.features.linknewdevice.impl.screens.desktop
 
+/**
+ * 桌面端关联提示页可能产生的用户事件。
+ */
 sealed interface DesktopNoticeEvent {
     // 点击继续，进入扫码页
     data object Continue : DesktopNoticeEvent

@@ -8,8 +8,14 @@
 
 package io.element.android.appnav.loggedin
 
+/**
+ * 已登录根页面可能触发的用户事件。
+ */
 sealed interface LoggedInEvents {
+    /** 关闭当前错误对话框。 */
     data class CloseErrorDialog(val doNotShowAgain: Boolean) : LoggedInEvents
+    /** 检查 Sliding Sync 代理可用性。 */
     data object CheckSlidingSyncProxyAvailability : LoggedInEvents
+    /** 登出并迁移到原生 Sliding Sync。 */
     data object LogoutAndMigrateToNativeSlidingSync : LoggedInEvents
 }

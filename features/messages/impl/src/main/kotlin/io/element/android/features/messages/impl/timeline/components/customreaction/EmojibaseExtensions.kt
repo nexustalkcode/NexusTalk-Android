@@ -22,6 +22,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import io.element.android.emojibasebindings.EmojibaseCategory
 import io.element.android.features.messages.impl.R
 
+/**
+ * 将 [EmojibaseCategory] 映射为本地化标题资源。
+ */
 @get:StringRes
 val EmojibaseCategory.title: Int
     get() = when (this) {
@@ -35,6 +38,9 @@ val EmojibaseCategory.title: Int
         EmojibaseCategory.Flags -> R.string.emoji_picker_category_flags
     }
 
+/**
+ * 将 [EmojibaseCategory] 映射为顶部标签图标。
+ */
 val EmojibaseCategory.icon: ImageVector
     get() = when (this) {
         EmojibaseCategory.People -> Icons.Outlined.EmojiPeople

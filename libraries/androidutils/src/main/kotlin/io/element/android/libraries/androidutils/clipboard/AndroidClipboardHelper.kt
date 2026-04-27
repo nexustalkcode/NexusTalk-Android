@@ -19,11 +19,17 @@ import io.element.android.libraries.di.annotations.ApplicationContext
 
 @ContributesBinding(AppScope::class)
 @SingleIn(AppScope::class)
+/**
+ * 基于 Android ClipboardManager 的剪贴板实现。
+ */
 class AndroidClipboardHelper(
     @ApplicationContext private val context: Context,
 ) : ClipboardHelper {
     private val clipboardManager = requireNotNull(context.getSystemService<ClipboardManager>())
 
+    /**
+     * 复制纯文本到系统剪贴板。
+     */
     override fun copyPlainText(text: String) {
         clipboardManager.setPrimaryClip(ClipData.newPlainText("", text))
     }

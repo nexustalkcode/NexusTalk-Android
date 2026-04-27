@@ -29,7 +29,9 @@ import io.element.android.features.messages.impl.timeline.components.layout.Cont
 import io.element.android.libraries.designsystem.theme.components.Text
 
 /**
- * package-private, you should only use TimelineItemFileView and TimelineItemAudioView.
+ * 附件类时间线条目的共享基础视图。
+ *
+ * 仅供 [TimelineItemFileView] 与 [TimelineItemAudioView] 复用。
  */
 @Composable
 fun TimelineItemAttachmentView(
@@ -60,6 +62,9 @@ fun TimelineItemAttachmentView(
     }
 }
 
+/**
+ * 渲染附件头部区域。
+ */
 @Composable
 private fun TimelineItemAttachmentHeaderView(
     filename: String,
@@ -111,6 +116,9 @@ private fun TimelineItemAttachmentHeaderView(
     }
 }
 
+/**
+ * 渲染附件说明文案。
+ */
 @Composable
 private fun TimelineItemAttachmentCaptionView(
     caption: String,

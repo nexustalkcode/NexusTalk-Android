@@ -53,6 +53,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @Inject
+/**
+ * Space 主页 Presenter。
+ *
+ * 负责收集子房间分页、权限、邀请状态和管理模式状态，
+ * 并把界面事件映射为加入房间、接受邀请、移除房间等业务动作。
+ */
 class SpacePresenter(
     private val spaceRoomList: SpaceRoomList,
     private val room: BaseRoom,
@@ -66,6 +72,9 @@ class SpacePresenter(
 ) : Presenter<SpaceState> {
     private var children by mutableStateOf<ImmutableList<SpaceRoom>>(persistentListOf())
 
+    /**
+     * 生成 Space 主页状态并处理页面事件。
+     */
     @Composable
     override fun present(): SpaceState {
         LaunchedEffect(Unit) {
@@ -232,6 +241,13 @@ class SpacePresenter(
         )
     }
 
+    /**
+     * 对指定子房间执行加入操作，并回写该房间对应的异步状态。
+     *
+     * @param spaceRoom 需要加入的空间子房间。
+     * @param joinActions 当前所有加入动作状态。
+     * @param setJoinActions 用于更新加入动作状态映射的回调。
+     */
     private fun CoroutineScope.joinRoom(
         spaceRoom: SpaceRoom,
         joinActions: Map<RoomId, AsyncAction<Unit>>,
@@ -247,6 +263,9 @@ class SpacePresenter(
         }
     }
 
+    /**
+     * 继续加载下一页 space children。
+     */
     private fun CoroutineScope.paginate() = launch {
         spaceRoomList.paginate()
     }

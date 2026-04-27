@@ -17,6 +17,9 @@ import io.element.android.libraries.matrix.ui.messages.reply.InReplyToDetailsOth
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览回复“他人消息”的事件行。
+ */
 internal fun TimelineItemEventRowWithReplyOtherPreview(
     @PreviewParameter(InReplyToDetailsOtherProvider::class) inReplyToDetails: InReplyToDetails,
 ) = ElementPreview {

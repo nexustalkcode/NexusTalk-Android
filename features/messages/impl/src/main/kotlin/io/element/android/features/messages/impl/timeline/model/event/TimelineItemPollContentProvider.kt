@@ -15,6 +15,9 @@ import io.element.android.features.poll.api.pollcontent.aPollQuestion
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.poll.PollKind
 
+/**
+ * 为投票消息内容预览提供样例数据。
+ */
 open class TimelineItemPollContentProvider : PreviewParameterProvider<TimelineItemPollContent> {
     override val values: Sequence<TimelineItemPollContent>
         get() = sequenceOf(
@@ -25,6 +28,9 @@ open class TimelineItemPollContentProvider : PreviewParameterProvider<TimelineIt
         )
 }
 
+/**
+ * 构造一份投票消息内容样例。
+ */
 fun aTimelineItemPollContent(
     question: String = aPollQuestion(),
     answerItems: List<PollAnswerItem> = aPollAnswerItemList(),

@@ -7,12 +7,10 @@
 
 package io.element.android.services.analytics.noop.watchers
 
-import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import io.element.android.services.analytics.api.watchers.AnalyticsColdStartWatcher
 
-@ContributesBinding(AppScope::class)
-class NoopAnalyticsColdStartWatcher : AnalyticsColdStartWatcher {
+class NoopAnalyticsColdStartWatcher @Inject constructor() : AnalyticsColdStartWatcher {
     override fun start() {}
     override fun whenLoggingIn() {}
     override fun onRoomListVisible() {}

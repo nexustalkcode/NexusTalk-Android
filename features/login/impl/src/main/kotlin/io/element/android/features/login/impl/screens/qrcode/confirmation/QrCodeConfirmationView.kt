@@ -40,6 +40,13 @@ import io.element.android.libraries.designsystem.theme.components.OutlinedButton
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染二维码登录确认页。
+ *
+ * @param step 当前确认步骤。
+ * @param onCancel 取消动作。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 @Composable
 fun QrCodeConfirmationView(
     step: QrCodeConfirmationStep,
@@ -70,6 +77,9 @@ fun QrCodeConfirmationView(
     )
 }
 
+/**
+ * 渲染确认页主体内容。
+ */
 @Composable
 private fun Content(step: QrCodeConfirmationStep) {
     Column(
@@ -92,6 +102,9 @@ private fun Content(step: QrCodeConfirmationStep) {
 }
 
 @OptIn(ExperimentalLayoutApi::class)
+/**
+ * 渲染验证码数字块。
+ */
 @Composable
 private fun Digits(code: String) {
     FlowRow(
@@ -111,6 +124,9 @@ private fun Digits(code: String) {
     }
 }
 
+/**
+ * 渲染等待另一台设备确认的加载提示。
+ */
 @Composable
 private fun WaitingForOtherDevice() {
     Column(
@@ -133,6 +149,9 @@ private fun WaitingForOtherDevice() {
     }
 }
 
+/**
+ * 渲染确认页底部按钮区。
+ */
 @Composable
 private fun Buttons(
     onCancel: () -> Unit,

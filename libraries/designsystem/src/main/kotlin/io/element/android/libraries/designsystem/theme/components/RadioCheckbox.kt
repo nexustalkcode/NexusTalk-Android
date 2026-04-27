@@ -43,7 +43,13 @@ fun RadioCheckbox(
 ) {
     androidx.compose.material3.Checkbox(
         checked = selected,
-        onCheckedChange = { onClick?.invoke() },
+        // 当 onClick 为空时，把底层 Checkbox 也视为纯展示节点，
+        // 避免它继续占用点击命中区域，导致父级 ListItem 无法收到点击事件。
+        onCheckedChange = onClick?.let { callback ->
+            {
+                callback()
+            }
+        },
         modifier = modifier.minimumInteractiveComponentSize(),
         enabled = enabled,
         colors = colors,

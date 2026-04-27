@@ -47,6 +47,9 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染 Space 设置页面。
+ */
 fun SpaceSettingsView(
     state: SpaceSettingsState,
     onBackClick: () -> Unit,
@@ -97,6 +100,9 @@ fun SpaceSettingsView(
 }
 
 @Composable
+/**
+ * 渲染 Space 基础信息区块。
+ */
 private fun SpaceInfoSection(
     roomId: RoomId,
     name: String,
@@ -136,6 +142,9 @@ private fun SpaceInfoSection(
 }
 
 @Composable
+/**
+ * 渲染设置分区容器。
+ */
 private fun Section(
     modifier: Modifier = Modifier,
     isVisible: Boolean = true,
@@ -148,6 +157,9 @@ private fun Section(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染 Space 设置页顶栏。
+ */
 private fun SpaceSettingsTopBar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -160,6 +172,9 @@ private fun SpaceSettingsTopBar(
 }
 
 @Composable
+/**
+ * 渲染“安全与隐私”设置项。
+ */
 private fun SecurityAndPrivacyItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -173,6 +188,9 @@ private fun SecurityAndPrivacyItem(
 }
 
 @Composable
+/**
+ * 渲染“成员”设置项。
+ */
 private fun MembersItem(
     memberCount: Long,
     onClick: () -> Unit,
@@ -188,6 +206,9 @@ private fun MembersItem(
 }
 
 @Composable
+/**
+ * 渲染“角色与权限”设置项。
+ */
 private fun RolesAndPermissionsItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -201,6 +222,9 @@ private fun RolesAndPermissionsItem(
 }
 
 @Composable
+/**
+ * 渲染“离开空间”设置项。
+ */
 private fun LeaveSpaceItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

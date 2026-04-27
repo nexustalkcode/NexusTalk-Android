@@ -46,6 +46,11 @@ import io.element.android.libraries.testtags.testTag
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 用户资料页头部区域。
+ *
+ * 负责展示头像、名称、用户 ID 和验证状态，并处理头像预览与复制用户 ID 等交互。
+ */
 @Composable
 fun UserProfileHeaderSection(
     avatarUrl: String?,

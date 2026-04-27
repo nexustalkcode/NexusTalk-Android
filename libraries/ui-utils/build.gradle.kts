@@ -18,5 +18,5 @@ android {
 
 dependencies {
     implementation(projects.libraries.androidutils)
-    implementation(projects.services.toolbox.impl)
+    implementation(project(":services:toolbox"))
 }

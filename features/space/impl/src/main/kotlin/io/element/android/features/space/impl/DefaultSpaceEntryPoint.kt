@@ -16,7 +16,13 @@ import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.di.SessionScope
 
 @ContributesBinding(SessionScope::class)
+/**
+ * 默认的 Space 入口实现。
+ */
 class DefaultSpaceEntryPoint : SpaceEntryPoint {
+    /**
+     * 创建 Space 流程节点。
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

@@ -29,6 +29,9 @@ import io.element.android.libraries.push.api.PusherRegistrationFailure
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染已登录根页面。
+ */
 fun LoggedInView(
     state: LoggedInState,
     navigateToNotificationTroubleshoot: () -> Unit,
@@ -84,6 +87,9 @@ fun LoggedInView(
     }
 }
 
+/**
+ * 将 pusher 注册错误转换为用户可见原因。
+ */
 private fun Throwable.getReason(): String? {
     return when (this) {
         is PusherRegistrationFailure.RegistrationFailure -> {
@@ -102,6 +108,9 @@ private fun Throwable.getReason(): String? {
 }
 
 @Composable
+/**
+ * 渲染强制迁移到原生 Sliding Sync 的对话框。
+ */
 private fun ForceNativeSlidingSyncMigrationDialog(
     appName: String,
     onSubmit: () -> Unit,

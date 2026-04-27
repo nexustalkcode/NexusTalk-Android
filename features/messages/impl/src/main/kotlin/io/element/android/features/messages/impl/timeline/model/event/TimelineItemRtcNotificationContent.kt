@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.model.event
 
+/**
+ * RTC 通知事件的 UI 内容模型。
+ */
 class TimelineItemRtcNotificationContent : TimelineItemEventContent {
     override val type: String = "org.matrix.msc4075.rtc.notification"
 }

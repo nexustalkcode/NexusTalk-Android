@@ -51,6 +51,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染“向 Space 添加房间”页面。
+ */
 @Composable
 fun AddRoomToSpaceView(
     state: AddRoomToSpaceState,
@@ -174,6 +177,9 @@ fun AddRoomToSpaceView(
     )
 }
 
+/**
+ * 渲染保存动作的异步反馈。
+ */
 @Composable
 private fun SaveActionView(
     saveAction: AsyncAction<Unit>,
@@ -194,6 +200,9 @@ private fun SaveActionView(
     )
 }
 
+/**
+ * 渲染已选房间横向列表。
+ */
 @Composable
 private fun SelectedRoomsRow(
     selectedRooms: ImmutableList<SelectRoomInfo>,
@@ -211,6 +220,9 @@ private fun SelectedRoomsRow(
     }
 }
 
+/**
+ * 渲染单个房间选择项。
+ */
 @Composable
 private fun RoomListItem(
     roomInfo: SelectRoomInfo,

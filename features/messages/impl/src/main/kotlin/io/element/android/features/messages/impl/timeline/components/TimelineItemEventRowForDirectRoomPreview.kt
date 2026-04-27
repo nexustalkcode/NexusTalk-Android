@@ -20,6 +20,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览直聊房间中的时间线事件行。
+ */
 internal fun TimelineItemEventRowForDirectRoomPreview() = ElementPreview {
     Column {
         sequenceOf(false, true).forEach {

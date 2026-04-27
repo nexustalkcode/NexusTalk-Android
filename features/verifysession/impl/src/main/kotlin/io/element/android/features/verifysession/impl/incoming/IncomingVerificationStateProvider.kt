@@ -19,6 +19,9 @@ import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.matrix.api.verification.SessionVerificationRequestDetails
 import io.element.android.libraries.matrix.api.verification.VerificationRequest
 
+/**
+ * 为传入验证页面预览提供样例状态。
+ */
 open class IncomingVerificationStateProvider : PreviewParameterProvider<IncomingVerificationState> {
     override val values: Sequence<IncomingVerificationState>
         get() = sequenceOf(
@@ -46,6 +49,9 @@ open class IncomingVerificationStateProvider : PreviewParameterProvider<Incoming
         )
 }
 
+/**
+ * 构造一份初始步骤样例。
+ */
 internal fun aStepInitial(
     isWaiting: Boolean = false,
 ) = Step.Initial(
@@ -55,6 +61,9 @@ internal fun aStepInitial(
     isWaiting = isWaiting,
 )
 
+/**
+ * 构造一份“其他设备请求验证”的样例请求。
+ */
 internal fun anIncomingSessionVerificationRequest() = VerificationRequest.Incoming.OtherSession(
     details = SessionVerificationRequestDetails(
         senderProfile = MatrixUser(
@@ -69,6 +78,9 @@ internal fun anIncomingSessionVerificationRequest() = VerificationRequest.Incomi
     )
 )
 
+/**
+ * 构造一份“用户请求验证”的样例请求。
+ */
 internal fun anIncomingUserVerificationRequest() = VerificationRequest.Incoming.User(
     details = SessionVerificationRequestDetails(
         senderProfile = MatrixUser(
@@ -83,6 +95,9 @@ internal fun anIncomingUserVerificationRequest() = VerificationRequest.Incoming.
     )
 )
 
+/**
+ * 构造一份传入验证页面样例状态。
+ */
 internal fun anIncomingVerificationState(
     step: Step = aStepInitial(),
     verificationRequest: VerificationRequest.Incoming = anIncomingSessionVerificationRequest(),

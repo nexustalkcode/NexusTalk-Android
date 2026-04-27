@@ -14,7 +14,6 @@ import io.element.android.libraries.matrix.test.A_SESSION_ID
 import io.element.android.libraries.push.impl.notifications.fake.FakeNotificationCreator
 import io.element.android.libraries.push.impl.notifications.fake.FakeNotificationDisplayer
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
-import io.element.android.libraries.troubleshoot.test.runAndTestState
 import io.element.android.services.toolbox.test.strings.FakeStringProvider
 import io.element.android.tests.testutils.lambda.lambdaRecorder
 import kotlinx.coroutines.test.runTest

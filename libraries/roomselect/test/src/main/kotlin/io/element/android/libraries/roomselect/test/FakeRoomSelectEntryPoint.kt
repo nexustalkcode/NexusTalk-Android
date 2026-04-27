@@ -11,7 +11,6 @@ package io.element.android.libraries.roomselect.test
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import io.element.android.libraries.roomselect.api.RoomSelectEntryPoint
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeRoomSelectEntryPoint : RoomSelectEntryPoint {
     override fun createNode(
@@ -19,5 +18,5 @@ class FakeRoomSelectEntryPoint : RoomSelectEntryPoint {
         buildContext: BuildContext,
         params: RoomSelectEntryPoint.Params,
         callback: RoomSelectEntryPoint.Callback,
-    ): Node = lambdaError()
+    ): Node = error("createNode should be provided in tests")
 }

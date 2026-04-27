@@ -1,20 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="screen_edit_room_address_room_address_section_footer">"Ще ви е необходим адрес, за да го направите видим в публичната директория."</string>
+  <string name="screen_edit_room_address_title">"Редактиране на адреса"</string>
+  <string name="screen_manage_authorized_spaces_header">"Пространства, където членовете могат да се присъединят към стаята без покана."</string>
+  <string name="screen_manage_authorized_spaces_title">"Управление на пространства"</string>
+  <string name="screen_manage_authorized_spaces_unknown_space">"(Неизвестно пространство)"</string>
+  <string name="screen_manage_authorized_spaces_unknown_spaces_section_title">"Други пространства, в които не членувате"</string>
+  <string name="screen_manage_authorized_spaces_your_spaces_section_title">"Вашите пространства"</string>
   <string name="screen_security_and_privacy_add_room_address_action">"Добавяне на адрес на стаята"</string>
+  <string name="screen_security_and_privacy_ask_to_join_multiple_spaces_members_option_description">"Всеки в разрешените пространства може да се присъедини, но всички останали трябва да поискат достъп."</string>
+  <string name="screen_security_and_privacy_ask_to_join_option_description">"Всеки трябва да поиска достъп."</string>
+  <string name="screen_security_and_privacy_ask_to_join_option_title">"Поискайте да се присъедините"</string>
+  <string name="screen_security_and_privacy_ask_to_join_single_space_members_option_description">"Всеки от %1$s може да се присъедини, но всички останали трябва да поискат достъп."</string>
   <string name="screen_security_and_privacy_enable_encryption_alert_confirm_button_title">"Да, включване на шифроването"</string>
+  <string name="screen_security_and_privacy_enable_encryption_alert_description">"Веднъж активирано, криптирането за стая не може да бъде деактивирано, историята на съобщенията ще бъде видима само за членовете на стаята, откакто са били поканени или откакто са се присъединили към стаята.
+Никой освен членовете на стаята няма да може да чете съобщения. Това може да попречи на ботовете и мостовете да работят правилно.
+Не препоръчваме да активирате криптиране за стаи, които всеки може да намери и да се присъедини."</string>
   <string name="screen_security_and_privacy_enable_encryption_alert_title">"Да се включи ли шифроването?"</string>
   <string name="screen_security_and_privacy_encryption_section_footer">"Веднъж включено, шифроването не може да бъде изключено."</string>
   <string name="screen_security_and_privacy_encryption_section_header">"Шифроване"</string>
   <string name="screen_security_and_privacy_encryption_toggle_title">"Включване на шифроване от край до край"</string>
   <string name="screen_security_and_privacy_room_access_anyone_option_description">"Всеки може да намери и да се присъедини"</string>
+  <string name="screen_security_and_privacy_room_access_anyone_option_title">"всеки"</string>
+  <string name="screen_security_and_privacy_room_access_footer">"Изберете членовете на кои пространства могат да се присъединят към тази стая без покана. %1$s"</string>
+  <string name="screen_security_and_privacy_room_access_footer_manage_spaces_action">"Управление на пространства"</string>
   <string name="screen_security_and_privacy_room_access_invite_only_option_description">"Хората могат да се присъединят само ако са поканени"</string>
   <string name="screen_security_and_privacy_room_access_invite_only_option_title">"Само с покана"</string>
   <string name="screen_security_and_privacy_room_access_section_header">"Достъп до стаята"</string>
+  <string name="screen_security_and_privacy_room_access_space_members_option_multiple_parents_description">"Всеки в разрешените пространства може да се присъедини."</string>
+  <string name="screen_security_and_privacy_room_access_space_members_option_single_parent_description">"Всеки от %1$s може да се присъедини."</string>
   <string name="screen_security_and_privacy_room_access_space_members_option_title">"Членове на пространството"</string>
   <string name="screen_security_and_privacy_room_access_space_members_option_unavailable_description">"Пространствата в момента не се поддържат"</string>
+  <string name="screen_security_and_privacy_room_address_section_footer">"Ще ви е необходим адрес, за да го направите видим в публичната директория."</string>
+  <string name="screen_security_and_privacy_room_address_section_header">"Адрес"</string>
+  <string name="screen_security_and_privacy_room_directory_visibility_section_footer">"Разрешете тази стая да бъде намерена чрез търсене в директорията на обществените стаи %1$s"</string>
+  <string name="screen_security_and_privacy_room_directory_visibility_toggle_description">"Позволете да бъдете намерени чрез търсене в публичната директория."</string>
   <string name="screen_security_and_privacy_room_directory_visibility_toggle_title">"Видима в директорията на обществените стаи"</string>
+  <string name="screen_security_and_privacy_room_history_anyone_option_title">"Всеки (историята е публична)"</string>
+  <string name="screen_security_and_privacy_room_history_section_footer">"Промените няма да засегнат минали съобщения, а само нови. %1$s"</string>
   <string name="screen_security_and_privacy_room_history_section_header">"Кой може да чете историята"</string>
   <string name="screen_security_and_privacy_room_history_since_invite_option_title">"Само за членове откакто са поканени"</string>
   <string name="screen_security_and_privacy_room_history_since_selecting_option_title">"Само за членове от избирането на тази опция"</string>
+  <string name="screen_security_and_privacy_room_publishing_section_footer">"Адресите на стаите са начини за намиране и достъп до стаи. Това също гарантира, че можете лесно да споделяте стаята си с други.
+Можете да изберете да публикувате стаята си в директорията на обществените стаи на домашния сървър."</string>
+  <string name="screen_security_and_privacy_room_publishing_section_header">"Стайна публикация"</string>
+  <string name="screen_security_and_privacy_room_visibility_section_footer">"Адресите са начин за намиране и достъп до стаи и пространства. Това също гарантира, че можете лесно да ги споделяте с други."</string>
+  <string name="screen_security_and_privacy_room_visibility_section_header">"Видимост"</string>
   <string name="screen_security_and_privacy_title">"Защита и поверителност"</string>
 </resources>

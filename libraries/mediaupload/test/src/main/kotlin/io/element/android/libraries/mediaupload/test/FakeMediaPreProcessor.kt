@@ -17,7 +17,6 @@ import io.element.android.libraries.matrix.api.media.VideoInfo
 import io.element.android.libraries.mediaupload.api.MediaOptimizationConfig
 import io.element.android.libraries.mediaupload.api.MediaPreProcessor
 import io.element.android.libraries.mediaupload.api.MediaUploadInfo
-import io.element.android.tests.testutils.simulateLongTask
 import kotlinx.coroutines.CompletableDeferred
 import java.io.File
 import kotlin.time.Duration.Companion.seconds
@@ -48,10 +47,10 @@ class FakeMediaPreProcessor(
         mimeType: String,
         deleteOriginal: Boolean,
         mediaOptimizationConfig: MediaOptimizationConfig,
-    ): Result<MediaUploadInfo> = simulateLongTask {
+    ): Result<MediaUploadInfo> {
         processLatch?.await()
         processCallCount++
-        result
+        return result
     }
 
     fun givenResult(value: Result<MediaUploadInfo>) {

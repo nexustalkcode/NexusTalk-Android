@@ -31,6 +31,11 @@ import io.element.android.services.analytics.api.AnalyticsService
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 开始聊天主页节点。
+ *
+ * 负责渲染联系人搜索与快捷入口页面，并把导航动作委托给 [StartChatNavigator]。
+ */
 class StartChatNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -48,6 +53,11 @@ class StartChatNode(
         )
     }
 
+    /**
+     * 渲染开始聊天主页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()
@@ -69,6 +79,11 @@ class StartChatNode(
         )
     }
 
+    /**
+     * 触发系统分享/邀请流程，并在发起后关闭当前页面。
+     *
+     * @param activity 当前宿主 Activity。
+     */
     private fun invitePeople(activity: Activity) {
         inviteFriendsUseCase.execute(activity)
         navigateUp()

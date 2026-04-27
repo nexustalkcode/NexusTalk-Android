@@ -8,7 +8,12 @@
 
 package io.element.android.features.home.impl.filters
 
+/**
+ * 房间列表筛选器可能触发的用户事件。
+ */
 sealed interface RoomListFiltersEvents {
+    /** 切换指定筛选项的选中状态。 */
     data class ToggleFilter(val filter: RoomListFilter) : RoomListFiltersEvents
+    /** 清空所有已选筛选项。 */
     data object ClearSelectedFilters : RoomListFiltersEvents
 }

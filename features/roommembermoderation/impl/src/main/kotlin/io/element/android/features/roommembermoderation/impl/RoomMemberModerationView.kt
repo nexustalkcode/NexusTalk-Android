@@ -58,6 +58,9 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Composable
+/**
+ * 渲染房间成员管理 UI。
+ */
 fun RoomMemberModerationView(
     state: InternalRoomMemberModerationState,
     onSelectAction: (ModerationAction, MatrixUser) -> Unit,
@@ -78,6 +81,9 @@ fun RoomMemberModerationView(
 }
 
 @Composable
+/**
+ * 渲染 kick/ban/unban 等异步反馈。
+ */
 private fun RoomMemberAsyncActions(
     state: InternalRoomMemberModerationState,
     modifier: Modifier = Modifier,
@@ -207,6 +213,9 @@ private fun RoomMemberAsyncActions(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染成员动作选择底部弹窗。
+ */
 private fun RoomMemberActionsBottomSheet(
     user: MatrixUser,
     actions: ImmutableList<ModerationActionState>,

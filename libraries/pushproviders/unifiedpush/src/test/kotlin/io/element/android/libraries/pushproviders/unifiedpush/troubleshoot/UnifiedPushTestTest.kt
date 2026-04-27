@@ -13,8 +13,6 @@ import io.element.android.libraries.pushproviders.api.Distributor
 import io.element.android.libraries.pushproviders.unifiedpush.UnifiedPushConfig
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
 import io.element.android.libraries.troubleshoot.api.test.TestFilterData
-import io.element.android.libraries.troubleshoot.test.FakeNotificationTroubleshootNavigator
-import io.element.android.libraries.troubleshoot.test.runAndTestState
 import io.element.android.services.toolbox.test.strings.FakeStringProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest

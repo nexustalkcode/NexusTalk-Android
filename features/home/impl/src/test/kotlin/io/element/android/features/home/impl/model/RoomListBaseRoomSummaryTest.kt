@@ -82,6 +82,24 @@ class RoomListBaseRoomSummaryTest {
     }
 
     @Test
+    fun `when invite is unseen then displayed unread count is one`() {
+        val sut = createRoomListRoomSummary(
+            displayType = RoomSummaryDisplayType.INVITE,
+        )
+        assertThat(sut.displayedUnreadCount(isInviteSeen = false)).isEqualTo(1)
+        assertThat(sut.shouldShowUnreadIndicator(isInviteSeen = false)).isTrue()
+    }
+
+    @Test
+    fun `when invite is seen then displayed unread count stays zero`() {
+        val sut = createRoomListRoomSummary(
+            displayType = RoomSummaryDisplayType.INVITE,
+        )
+        assertThat(sut.displayedUnreadCount(isInviteSeen = true)).isEqualTo(0)
+        assertThat(sut.shouldShowUnreadIndicator(isInviteSeen = true)).isFalse()
+    }
+
+    @Test
     fun `mention only room has new content and unread indicator`() {
         val sut = createRoomListRoomSummary(
             numberOfUnreadMentions = 1,

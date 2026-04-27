@@ -37,6 +37,9 @@ import io.element.android.libraries.matrix.api.timeline.item.event.isCritical
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染时间线事件的时间戳与状态图标区域。
+ */
 fun TimelineEventTimestampView(
     event: TimelineItem.Event,
     eventSink: (TimelineEvents.EventFromTimelineItem) -> Unit,
@@ -115,6 +118,9 @@ internal fun TimelineEventTimestampViewPreview(@PreviewParameter(TimelineItemEve
     )
 }
 
+/**
+ * 时间戳视图默认值。
+ */
 object TimelineEventTimestampViewDefaults {
     val spacing = 16.dp
 }

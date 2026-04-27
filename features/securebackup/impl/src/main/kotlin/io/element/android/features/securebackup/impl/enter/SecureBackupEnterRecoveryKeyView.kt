@@ -80,6 +80,9 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
+/**
+ * 渲染输入恢复密钥页面。
+ */
 fun SecureBackupEnterRecoveryKeyView(
     state: SecureBackupEnterRecoveryKeyState,
     onSuccess: () -> Unit,
@@ -105,6 +108,9 @@ fun SecureBackupEnterRecoveryKeyView(
 }
 
 @Composable
+/**
+ * 渲染页面脚手架内容。
+ */
 private fun ScaffoldContent(
     state: SecureBackupEnterRecoveryKeyState,
     onBackClick: () -> Unit,
@@ -155,6 +161,9 @@ private fun ScaffoldContent(
 }
 
 @Composable
+/**
+ * 渲染“我丢失了恢复密钥”动作。
+ */
 private fun ResetRecoveryKeyAction(
     onResetRecoveryKeyClick: () -> Unit,
 ) {
@@ -167,6 +176,9 @@ private fun ResetRecoveryKeyAction(
 }
 
 @Composable
+/**
+ * 渲染页面头部说明区。
+ */
 private fun HeaderSection() {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -204,6 +216,9 @@ private fun HeaderSection() {
 }
 
 @Composable
+/**
+ * 渲染风险提醒卡片。
+ */
 private fun WarningCard() {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -238,6 +253,9 @@ private fun WarningCard() {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
+/**
+ * 渲染恢复密钥输入区。
+ */
 private fun RecoveryKeyInputSection(
     state: SecureBackupEnterRecoveryKeyState,
 ) {
@@ -282,6 +300,9 @@ private fun RecoveryKeyInputSection(
 }
 
 @Composable
+/**
+ * 渲染恢复密钥输入框。
+ */
 private fun RecoveryKeyTextField(
     state: RecoveryKeyViewState,
     onChange: (String) -> Unit,
@@ -342,6 +363,9 @@ private fun RecoveryKeyTextField(
 }
 
 @Composable
+/**
+ * 渲染“为什么需要恢复密钥”说明卡片。
+ */
 private fun WhyRecoveryKeyCard() {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -378,6 +402,9 @@ private fun WhyRecoveryKeyCard() {
 }
 
 @Composable
+/**
+ * 渲染说明卡片中的单条 bullet。
+ */
 private fun WhyRecoveryKeyBullet(text: String) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -398,6 +425,9 @@ private fun WhyRecoveryKeyBullet(text: String) {
 }
 
 @Composable
+/**
+ * 渲染底部操作区。
+ */
 private fun ActionBar(
     state: SecureBackupEnterRecoveryKeyState,
     onBackClick: () -> Unit,

@@ -17,6 +17,9 @@ import io.element.android.libraries.matrix.ui.messages.reply.InReplyToDetailsDis
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览带重名发送者的回复行。
+ */
 internal fun TimelineItemEventRowDisambiguatedPreview(
     @PreviewParameter(InReplyToDetailsDisambiguatedProvider::class) inReplyToDetails: InReplyToDetails,
 ) = ElementPreview {

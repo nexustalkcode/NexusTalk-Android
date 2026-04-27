@@ -37,6 +37,11 @@ import io.element.android.libraries.matrix.ui.media.ImageLoaderHolder
 import io.element.android.services.analytics.api.watchers.AnalyticsColdStartWatcher
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 未登录态总流程节点。
+ *
+ * 负责承载登录流程，并在未登录场景下强制保持竖屏。
+ */
 @ContributesNode(AppScope::class)
 @AssistedInject
 class NotLoggedInFlowNode(
@@ -53,10 +58,16 @@ class NotLoggedInFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 未登录流程输入参数。
+     */
     data class Params(
         val loginParams: LoginParams?,
     ) : NodeInputs
 
+    /**
+     * 未登录流程回调。
+     */
     interface Callback : Plugin {
         fun navigateToBugReport()
         fun onDone()
@@ -65,6 +76,9 @@ class NotLoggedInFlowNode(
     private val callback: Callback = callback()
     private val inputs = inputs<Params>()
 
+    /**
+     * 在构建完成后注册冷启动分析与全局图片加载器。
+     */
     override fun onBuilt() {
         super.onBuilt()
         analyticsColdStartWatcher.whenLoggingIn()
@@ -75,11 +89,17 @@ class NotLoggedInFlowNode(
         )
     }
 
+    /**
+     * 未登录流程中的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         @Parcelize
         data object Root : NavTarget
     }
 
+    /**
+     * 解析并创建当前导航目标对应的子节点。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             NavTarget.Root -> {
@@ -106,6 +126,9 @@ class NotLoggedInFlowNode(
     }
 
     @Composable
+    /**
+     * 渲染未登录流程的 back stack。
+     */
     override fun View(modifier: Modifier) {
         // The login flow doesn't support landscape mode on mobile devices yet
         ForceOrientationInMobileDevices(orientation = ScreenOrientation.PORTRAIT)

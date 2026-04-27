@@ -17,13 +17,16 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.core.ThreadId
+import io.element.android.libraries.matrix.api.timeline.item.event.EventType
 import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.matrix.ui.media.ImageLoaderHolder
 import io.element.android.libraries.push.api.notifications.NotificationCleaner
 import io.element.android.libraries.push.api.notifications.NotificationIdProvider
 import io.element.android.libraries.push.impl.notifications.factories.NotificationCreator
 import io.element.android.libraries.push.impl.notifications.model.NotifiableEvent
+import io.element.android.libraries.push.impl.notifications.model.NotifiableMessageEvent
 import io.element.android.libraries.push.impl.notifications.model.shouldIgnoreEventInRoom
+import io.element.android.services.appnavstate.api.AppForegroundStateService
 import io.element.android.services.appnavstate.api.AppNavigationStateService
 import io.element.android.services.appnavstate.api.NavigationState
 import io.element.android.services.appnavstate.api.currentSessionId
@@ -46,6 +49,7 @@ class DefaultNotificationDrawerManager(
     private val matrixClientProvider: MatrixClientProvider,
     private val imageLoaderHolder: ImageLoaderHolder,
     private val activeNotificationsProvider: ActiveNotificationsProvider,
+    private val appForegroundStateService: AppForegroundStateService,
 ) : NotificationCleaner {
     // TODO EAx add a setting per user for this
     private var useCompleteNotificationFormat = true
@@ -93,14 +97,14 @@ class DefaultNotificationDrawerManager(
      * Events might be grouped and there might not be one notification per event!
      */
     suspend fun onNotifiableEventReceived(notifiableEvent: NotifiableEvent) {
-        if (notifiableEvent.shouldIgnoreEventInRoom(appNavigationStateService.appNavigationState.value)) {
+        if (shouldIgnoreEvent(notifiableEvent)) {
             return
         }
         renderEvents(listOf(notifiableEvent))
     }
 
     suspend fun onNotifiableEventsReceived(notifiableEvents: List<NotifiableEvent>) {
-        val eventsToNotify = notifiableEvents.filter { !it.shouldIgnoreEventInRoom(appNavigationStateService.appNavigationState.value) }
+        val eventsToNotify = notifiableEvents.filter { !shouldIgnoreEvent(it) }
         renderEvents(eventsToNotify)
     }
 
@@ -169,6 +173,19 @@ class DefaultNotificationDrawerManager(
         if (summaryNotification != null && activeNotificationsProvider.count(sessionId) == 1) {
             notificationDisplayer.cancelNotification(null, summaryNotification.id)
         }
+    }
+
+    private fun shouldIgnoreEvent(notifiableEvent: NotifiableEvent): Boolean {
+        return notifiableEvent.shouldIgnoreEventInRoom(appNavigationStateService.appNavigationState.value) ||
+            notifiableEvent.shouldIgnoreForegroundCallMessage()
+    }
+
+    private fun NotifiableEvent.shouldIgnoreForegroundCallMessage(): Boolean {
+        // App 在前台时，来电由内部浮层/页面承接；普通消息通知只会重复展示“来电”文案并触发 heads-up。
+        // 后台场景仍保留 missed-call 类普通通知；只有已经处于振铃状态时才跳过重复的 RTC 消息通知。
+        return (appForegroundStateService.isInForeground.value || appForegroundStateService.hasRingingCall.value) &&
+            this is NotifiableMessageEvent &&
+            type == EventType.RTC_NOTIFICATION
     }
 
     private suspend fun renderEvents(eventsToRender: List<NotifiableEvent>) {

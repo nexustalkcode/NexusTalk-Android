@@ -20,6 +20,9 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 
 @Composable
+/**
+ * 渲染默认通知设置选项项。
+ */
 fun DefaultNotificationSettingOption(
     mode: RoomNotificationMode,
     onSelectOption: (RoomNotificationMode) -> Unit,

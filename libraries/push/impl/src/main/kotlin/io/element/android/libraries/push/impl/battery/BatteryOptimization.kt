@@ -10,8 +10,10 @@ package io.element.android.libraries.push.impl.battery
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.content.getSystemService
@@ -21,6 +23,9 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.libraries.di.annotations.ApplicationContext
 import io.element.android.services.toolbox.api.intent.ExternalIntentLauncher
 import timber.log.Timber
+import java.util.Locale
+
+private const val batteryOptimizationDebugTag = "BatteryOptimizationDebug"
 
 interface BatteryOptimization {
     /**
@@ -33,6 +38,17 @@ interface BatteryOptimization {
      * @return true if battery optimisations are ignored
      */
     fun isIgnoringBatteryOptimizations(): Boolean
+
+    /**
+     * 小米和 Redmi 这类机会在没有失败记录时也需要主动提示。
+     */
+    fun shouldDisplayBannerWithoutPreviousPushFailure(): Boolean
+
+    /**
+     * 对荣耀/华为这类只能跳到厂商“启动管理”页、但又缺少稳定已配置检测能力的设备，
+     * 在成功拉起设置页后直接结束后续重复提示，避免用户每次重进应用都看到相同横幅。
+     */
+    fun shouldDismissBannerAfterSuccessfulRequest(): Boolean
 
     /**
      * Request the user to disable battery optimizations for this app.
@@ -55,31 +71,193 @@ class AndroidBatteryOptimization(
             ?.isIgnoringBatteryOptimizations(context.packageName) == true
     }
 
-    @SuppressLint("BatteryLife")
-    override fun requestDisablingBatteryOptimization(): Boolean {
-        val ignoreBatteryOptimizationsResult = launchAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, withData = true)
-        if (ignoreBatteryOptimizationsResult) {
-            return true
-        }
-        // Open settings as a fallback if the first attempt fails
-        return launchAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS, withData = false)
+    override fun shouldDisplayBannerWithoutPreviousPushFailure(): Boolean {
+        return requiresProactiveBatteryOptimizationBanner(
+            manufacturer = Build.MANUFACTURER.orEmpty(),
+            brand = Build.BRAND.orEmpty(),
+        ) && !isIgnoringBatteryOptimizations()
     }
 
-    private fun launchAction(
-        action: String,
-        withData: Boolean,
-    ): Boolean {
-        val intent = Intent()
-        intent.action = action
-        if (withData) {
-            intent.data = ("package:" + context.packageName).toUri()
+    override fun shouldDismissBannerAfterSuccessfulRequest(): Boolean {
+        return isHuaweiOrHonorFamily(
+            manufacturer = Build.MANUFACTURER.orEmpty(),
+            brand = Build.BRAND.orEmpty(),
+        )
+    }
+
+    @SuppressLint("BatteryLife")
+    override fun requestDisablingBatteryOptimization(): Boolean {
+        val launchIntents = createBatteryOptimizationIntents(
+            manufacturer = Build.MANUFACTURER.orEmpty(),
+            brand = Build.BRAND.orEmpty(),
+            packageName = context.packageName,
+        )
+        Timber.tag(batteryOptimizationDebugTag).i(
+            "AndroidBatteryOptimization.request_disable_optimizations manufacturer=%s brand=%s packageName=%s ignoringOptimizations=%s candidateCount=%s",
+            Build.MANUFACTURER,
+            Build.BRAND,
+            context.packageName,
+            isIgnoringBatteryOptimizations(),
+            launchIntents.size,
+        )
+        launchIntents.forEachIndexed { index, candidate ->
+            if (launchIntent(candidate, index)) {
+                return true
+            }
         }
+        Timber.tag(batteryOptimizationDebugTag).w(
+            "AndroidBatteryOptimization.request_disable_optimizations no_candidate_succeeded manufacturer=%s brand=%s",
+            Build.MANUFACTURER,
+            Build.BRAND,
+        )
+        return false
+    }
+
+    private fun launchIntent(
+        intent: Intent,
+        index: Int,
+    ): Boolean {
+        Timber.tag(batteryOptimizationDebugTag).i(
+            "AndroidBatteryOptimization.launch_candidate start index=%s action=%s component=%s data=%s",
+            index,
+            intent.action,
+            intent.component?.flattenToShortString(),
+            intent.data,
+        )
         return try {
             externalIntentLauncher.launch(intent)
+            Timber.tag(batteryOptimizationDebugTag).i(
+                "AndroidBatteryOptimization.launch_candidate success index=%s action=%s component=%s",
+                index,
+                intent.action,
+                intent.component?.flattenToShortString(),
+            )
             true
-        } catch (exception: ActivityNotFoundException) {
-            Timber.w(exception, "Cannot launch intent with action $action.")
+        } catch (exception: Exception) {
+            Timber.tag(batteryOptimizationDebugTag).w(
+                exception,
+                "AndroidBatteryOptimization.launch_candidate failed index=%s action=%s component=%s data=%s exception=%s",
+                index,
+                intent.action,
+                intent.component?.flattenToShortString(),
+                intent.data,
+                exception::class.java.simpleName,
+            )
+            when (exception) {
+                is ActivityNotFoundException,
+                is SecurityException -> Unit
+                else -> Timber.w(exception, "Unexpected failure while launching battery optimization intent.")
+            }
             false
         }
     }
+}
+
+/**
+ * 这里按“厂商专用页 -> 标准 Android 电池页 -> 应用详情页”的顺序尝试，
+ * 让荣耀/华为优先落到真正影响后台保活的启动管理页，其它设备继续走系统标准入口。
+ */
+internal fun createBatteryOptimizationIntents(
+    manufacturer: String,
+    brand: String,
+    packageName: String,
+): List<Intent> {
+    return buildList {
+        if (isHuaweiOrHonorFamily(manufacturer, brand)) {
+            addAll(createHuaweiOrHonorBatteryIntents(packageName))
+        }
+        add(createBatteryOptimizationIntent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, packageName))
+        add(createBatteryOptimizationIntent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+        add(createBatteryOptimizationIntent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, packageName))
+    }
+}
+
+private fun createHuaweiOrHonorBatteryIntents(packageName: String): List<Intent> = listOf(
+    createBatteryOptimizationComponentIntent(
+        packageName = "com.hihonor.systemmanager",
+        className = "com.hihonor.systemmanager.startupmgr.ui.StartupNormalAppListActivity",
+        targetPackageName = packageName,
+    ),
+    createBatteryOptimizationComponentIntent(
+        packageName = "com.hihonor.systemmanager",
+        className = "com.hihonor.systemmanager.optimize.process.ProtectActivity",
+        targetPackageName = packageName,
+    ),
+    createBatteryOptimizationComponentIntent(
+        packageName = "com.hihonor.systemmanager",
+        className = "com.hihonor.systemmanager.appcontrol.activity.StartupAppControlActivity",
+        targetPackageName = packageName,
+    ),
+    createBatteryOptimizationComponentIntent(
+        packageName = "com.huawei.systemmanager",
+        className = "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity",
+        targetPackageName = packageName,
+    ),
+    createBatteryOptimizationComponentIntent(
+        packageName = "com.huawei.systemmanager",
+        className = "com.huawei.systemmanager.optimize.process.ProtectActivity",
+        targetPackageName = packageName,
+    ),
+    createBatteryOptimizationComponentIntent(
+        packageName = "com.huawei.systemmanager",
+        className = "com.huawei.systemmanager.appcontrol.activity.StartupAppControlActivity",
+        targetPackageName = packageName,
+    ),
+)
+
+/**
+ * 荣耀/华为系统页没有公开稳定的 deep link 协议，这里带上一组常见的包名参数做“尽量直达”：
+ * 如果系统页识别这些 extras，就能直接落到当前应用详情；如果不识别，也会退化成打开入口页。
+ */
+private fun createBatteryOptimizationComponentIntent(
+    packageName: String,
+    className: String,
+    targetPackageName: String,
+): Intent {
+    return Intent()
+        .setComponent(ComponentName(packageName, className))
+        .setData(("package:" + targetPackageName).toUri())
+        .putExtra(Settings.EXTRA_APP_PACKAGE, targetPackageName)
+        .putExtra(Intent.EXTRA_PACKAGE_NAME, targetPackageName)
+        .putExtra("packageName", targetPackageName)
+        .putExtra("package_name", targetPackageName)
+        .putExtra("pkg_name", targetPackageName)
+        .putExtra("pkgName", targetPackageName)
+        .putExtra("app_package_name", targetPackageName)
+        .putExtra("appPackageName", targetPackageName)
+}
+
+private fun createBatteryOptimizationIntent(
+    action: String,
+    packageName: String? = null,
+): Intent {
+    val intent = Intent(action)
+    if (packageName != null) {
+        intent.data = ("package:" + packageName).toUri()
+    }
+    return intent
+}
+
+internal fun requiresProactiveBatteryOptimizationBanner(
+    manufacturer: String,
+    brand: String,
+): Boolean {
+    val normalizedManufacturer = manufacturer.lowercase(Locale.ROOT)
+    val normalizedBrand = brand.lowercase(Locale.ROOT)
+    return normalizedManufacturer.contains("xiaomi") ||
+        normalizedBrand.contains("xiaomi") ||
+        normalizedManufacturer.contains("redmi") ||
+        normalizedBrand.contains("redmi")
+}
+
+internal fun isHuaweiOrHonorFamily(
+    manufacturer: String,
+    brand: String,
+): Boolean {
+    val normalizedManufacturer = manufacturer.lowercase(Locale.ROOT)
+    val normalizedBrand = brand.lowercase(Locale.ROOT)
+    return normalizedManufacturer.contains("huawei") ||
+        normalizedBrand.contains("huawei") ||
+        normalizedManufacturer.contains("honor") ||
+        normalizedBrand.contains("honor")
 }

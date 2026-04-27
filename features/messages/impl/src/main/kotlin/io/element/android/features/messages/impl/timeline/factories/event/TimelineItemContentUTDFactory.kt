@@ -14,7 +14,13 @@ import io.element.android.features.messages.impl.timeline.model.event.TimelineIt
 import io.element.android.libraries.matrix.api.timeline.item.event.UnableToDecryptContent
 
 @Inject
+/**
+ * 无法解密内容工厂。
+ */
 class TimelineItemContentUTDFactory {
+    /**
+     * 将 UTD 内容转换为 UI 加密失败模型。
+     */
     fun create(content: UnableToDecryptContent): TimelineItemEventContent {
         return TimelineItemEncryptedContent(content.data)
     }

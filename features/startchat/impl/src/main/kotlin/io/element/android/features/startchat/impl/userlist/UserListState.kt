@@ -15,6 +15,9 @@ import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.usersearch.api.UserSearchResult
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 用户列表组件展示状态。
+ */
 data class UserListState(
     val searchQuery: TextFieldState,
     val searchResults: SearchBarResultState<ImmutableList<UserSearchResult>>,
@@ -25,5 +28,8 @@ data class UserListState(
     val recentDirectRooms: ImmutableList<RecentDirectRoom>,
     val eventSink: (UserListEvents) -> Unit,
 ) {
+    /**
+     * 当前是否允许多选。
+     */
     val isMultiSelectionEnabled = selectionMode == SelectionMode.Multiple
 }

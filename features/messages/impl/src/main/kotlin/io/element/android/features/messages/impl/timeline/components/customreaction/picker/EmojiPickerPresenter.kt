@@ -32,11 +32,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * emoji picker Presenter。
+ *
+ * 负责构造分类数据、处理搜索输入，并生成搜索结果列表。
+ */
 class EmojiPickerPresenter(
     private val emojibaseStore: EmojibaseStore,
     private val recentEmojis: ImmutableList<String>,
     private val coroutineDispatchers: CoroutineDispatchers,
 ) : Presenter<EmojiPickerState> {
+    /**
+     * 生成 emoji picker 状态并处理交互事件。
+     */
     @Composable
     override fun present(): EmojiPickerState {
         val queryState = rememberTextFieldState()

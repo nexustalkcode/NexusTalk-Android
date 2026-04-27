@@ -8,6 +8,10 @@
 
 package io.element.android.features.signedout.impl
 
+/**
+ * 已登出页面可能触发的用户事件。
+ */
 sealed interface SignedOutEvents {
+    /** 移除当前无效会话并重新登录。 */
     data object SignInAgain : SignedOutEvents
 }

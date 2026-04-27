@@ -18,6 +18,9 @@ import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.matrix.api.user.MatrixUser
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为房间成员管理内部状态预览提供样例数据。
+ */
 class InternalRoomMemberModerationStateProvider : PreviewParameterProvider<InternalRoomMemberModerationState> {
     override val values: Sequence<InternalRoomMemberModerationState>
         get() = sequenceOf(
@@ -77,12 +80,18 @@ class InternalRoomMemberModerationStateProvider : PreviewParameterProvider<Inter
         )
 }
 
+/**
+ * 构造 Alice 的样例用户数据。
+ */
 fun anAlice() = MatrixUser(
     UserId(value = "@alice:server.org"),
     displayName = "Alice",
     avatarUrl = null,
 )
 
+/**
+ * 构造一份房间成员管理内部状态样例。
+ */
 fun aRoomMembersModerationState(
     permissions: RoomMemberModerationPermissions = RoomMemberModerationPermissions.DEFAULT,
     selectedUser: MatrixUser? = null,

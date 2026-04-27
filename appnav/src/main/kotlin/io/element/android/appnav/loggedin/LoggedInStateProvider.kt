@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncData
 import io.element.android.libraries.push.api.PusherRegistrationFailure
 
+/**
+ * 为已登录根页面预览提供样例状态。
+ */
 open class LoggedInStateProvider : PreviewParameterProvider<LoggedInState> {
     override val values: Sequence<LoggedInState>
         get() = sequenceOf(
@@ -22,6 +25,9 @@ open class LoggedInStateProvider : PreviewParameterProvider<LoggedInState> {
         )
 }
 
+/**
+ * 构造一份已登录根页面样例状态。
+ */
 fun aLoggedInState(
     showSyncSpinner: Boolean = false,
     pusherRegistrationState: AsyncData<Unit> = AsyncData.Uninitialized,

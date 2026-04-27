@@ -45,6 +45,7 @@ import io.element.android.libraries.matrix.api.encryption.RecoveryState
 import io.element.android.libraries.matrix.api.room.CurrentUserMembership
 import io.element.android.libraries.matrix.api.room.RoomNotificationMode
 import io.element.android.libraries.matrix.api.roomlist.RoomList
+import io.element.android.libraries.matrix.api.roomlist.LatestEventValue
 import io.element.android.libraries.matrix.api.sync.SyncState
 import io.element.android.libraries.matrix.api.timeline.ReceiptType
 import io.element.android.libraries.matrix.api.verification.SessionVerifiedStatus
@@ -56,6 +57,7 @@ import io.element.android.libraries.matrix.test.FakeMatrixClient
 import io.element.android.libraries.matrix.test.encryption.FakeEncryptionService
 import io.element.android.libraries.matrix.test.notificationsettings.FakeNotificationSettingsService
 import io.element.android.libraries.matrix.test.room.FakeBaseRoom
+import io.element.android.libraries.matrix.test.room.aRemoteLatestEvent
 import io.element.android.libraries.matrix.test.room.aRoomInfo
 import io.element.android.libraries.matrix.test.room.aRoomMember
 import io.element.android.libraries.matrix.test.room.aRoomSummary
@@ -126,6 +128,48 @@ class RoomListPresenterTest {
                 )
             )
             assertThat(withRoomsState.contentAsRooms().seenRoomInvites).containsExactly(A_ROOM_ID, A_ROOM_ID_2, A_ROOM_ID_3)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `present - unseen invite is moved to the top of the recent list`() = runTest {
+        val roomListService = FakeRoomListService()
+        val matrixClient = FakeMatrixClient(
+            roomListService = roomListService
+        )
+        val inviteRoomId = RoomId("!invite:example.org")
+        val joinedRoomId = RoomId("!joined:example.org")
+        val presenter = createRoomListPresenter(
+            client = matrixClient,
+            seenInvitesStore = InMemorySeenInvitesStore(emptySet()),
+        )
+
+        presenter.test {
+            consumeItemsUntilPredicate { state -> state.contentState is RoomListContentState.Skeleton }
+            roomListService.postAllRoomsLoadingState(RoomList.LoadingState.Loaded(2))
+            roomListService.postAllRooms(
+                listOf(
+                    aRoomSummary(
+                        roomId = joinedRoomId,
+                        name = "Joined room",
+                        latestEvent = aRemoteLatestEvent(timestamp = 100L),
+                    ),
+                    aRoomSummary(
+                        roomId = inviteRoomId,
+                        name = "Invite room",
+                        currentUserMembership = CurrentUserMembership.INVITED,
+                        latestEvent = LatestEventValue.None,
+                    ),
+                )
+            )
+
+            val roomsState = consumeItemsUntilPredicate { state ->
+                state.contentState is RoomListContentState.Rooms &&
+                    state.contentAsRooms().summaries.size == 2
+            }.last()
+
+            assertThat(roomsState.contentAsRooms().summaries.map { it.roomId }).containsExactly(inviteRoomId, joinedRoomId).inOrder()
             cancelAndIgnoreRemainingEvents()
         }
     }

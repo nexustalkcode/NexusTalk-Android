@@ -10,6 +10,9 @@ package io.element.android.features.messages.impl.timeline.model
 
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 构造一份时间线 reaction 状态样例。
+ */
 fun aTimelineItemReactions() = TimelineItemReactions(
     // Use values from AggregatedReactionProvider
     reactions = AggregatedReactionProvider().values.toImmutableList()

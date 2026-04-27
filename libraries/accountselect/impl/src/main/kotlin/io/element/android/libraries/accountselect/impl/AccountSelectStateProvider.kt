@@ -13,6 +13,9 @@ import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.matrix.ui.components.aMatrixUserList
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为账号选择页预览提供样例状态。
+ */
 open class AccountSelectStateProvider : PreviewParameterProvider<AccountSelectState> {
     override val values: Sequence<AccountSelectState>
         get() = sequenceOf(
@@ -21,6 +24,9 @@ open class AccountSelectStateProvider : PreviewParameterProvider<AccountSelectSt
         )
 }
 
+/**
+ * 构造一份账号选择页样例状态。
+ */
 private fun anAccountSelectState(
     accounts: List<MatrixUser> = listOf(),
 ) = AccountSelectState(

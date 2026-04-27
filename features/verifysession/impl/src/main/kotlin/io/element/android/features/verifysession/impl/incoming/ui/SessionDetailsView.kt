@@ -34,6 +34,9 @@ import io.element.android.libraries.matrix.api.core.DeviceId
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染会话详情卡片。
+ */
 fun SessionDetailsView(
     deviceName: String?,
     deviceId: DeviceId,

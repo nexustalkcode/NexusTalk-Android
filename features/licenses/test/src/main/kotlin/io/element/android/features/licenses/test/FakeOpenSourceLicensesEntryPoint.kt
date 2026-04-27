@@ -11,13 +11,12 @@ package io.element.android.features.licenses.test
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import io.element.android.features.licenses.api.OpenSourceLicensesEntryPoint
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeOpenSourceLicensesEntryPoint : OpenSourceLicensesEntryPoint {
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,
     ): Node {
-        lambdaError()
+        error("FakeOpenSourceLicensesEntryPoint.createNode must be provided in tests")
     }
 }

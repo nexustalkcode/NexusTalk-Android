@@ -10,11 +10,14 @@ package io.element.android.libraries.push.test
 
 import io.element.android.libraries.matrix.api.MatrixClient
 import io.element.android.libraries.pushproviders.api.PusherSubscriber
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakePusherSubscriber(
-    private val registerPusherResult: (MatrixClient, String, String) -> Result<Unit> = { _, _, _ -> lambdaError() },
-    private val unregisterPusherResult: (MatrixClient, String, String) -> Result<Unit> = { _, _, _ -> lambdaError() },
+    private val registerPusherResult: (MatrixClient, String, String) -> Result<Unit> = { _, _, _ ->
+        error("registerPusherResult should be provided in tests")
+    },
+    private val unregisterPusherResult: (MatrixClient, String, String) -> Result<Unit> = { _, _, _ ->
+        error("unregisterPusherResult should be provided in tests")
+    },
 ) : PusherSubscriber {
     override suspend fun registerPusher(matrixClient: MatrixClient, pushKey: String, gateway: String): Result<Unit> {
         return registerPusherResult(matrixClient, pushKey, gateway)

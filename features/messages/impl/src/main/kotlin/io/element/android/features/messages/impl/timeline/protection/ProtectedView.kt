@@ -36,6 +36,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 
 @SuppressWarnings("ModifierClickableOrder")
 @Composable
+/**
+ * 渲染受保护媒体内容的遮罩层。
+ */
 fun ProtectedView(
     hideContent: Boolean,
     onShowClick: () -> Unit,

@@ -8,4 +8,7 @@
 
 package io.element.android.features.space.impl.di
 
+/**
+ * Space 流程内使用的自定义依赖注入作用域。
+ */
 abstract class SpaceFlowScope private constructor()

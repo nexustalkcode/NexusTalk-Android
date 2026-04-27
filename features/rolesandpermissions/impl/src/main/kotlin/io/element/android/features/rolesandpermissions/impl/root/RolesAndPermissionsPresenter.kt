@@ -33,11 +33,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Inject
+/**
+ * 角色与权限主页 Presenter。
+ *
+ * 负责收集管理员/版主数量、当前用户可自降级动作，以及处理重置/降级操作。
+ */
 class RolesAndPermissionsPresenter(
     private val room: JoinedRoom,
     private val dispatchers: CoroutineDispatchers,
     private val analyticsService: AnalyticsService,
 ) : Presenter<RolesAndPermissionsState> {
+    /**
+     * 生成主页状态并处理用户事件。
+     */
     @Composable
     override fun present(): RolesAndPermissionsState {
         val coroutineScope = rememberCoroutineScope()
@@ -95,6 +103,9 @@ class RolesAndPermissionsPresenter(
         )
     }
 
+    /**
+     * 执行自降级操作。
+     */
     private fun CoroutineScope.demoteSelfTo(
         role: RoomMember.Role,
         changeOwnRoleAction: MutableState<AsyncAction<Unit>>,
@@ -104,6 +115,9 @@ class RolesAndPermissionsPresenter(
         }
     }
 
+    /**
+     * 将房间权限恢复为默认值。
+     */
     private fun CoroutineScope.resetPermissions(
         resetPermissionsAction: MutableState<AsyncAction<Unit>>,
     ) = launch(dispatchers.io) {

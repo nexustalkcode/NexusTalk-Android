@@ -13,15 +13,22 @@ import io.element.android.libraries.matrix.api.core.EventId
 import kotlinx.collections.immutable.ImmutableList
 
 /**
- * 反应摘要状态数据类
+ * reaction summary 底部弹层展示状态。
  *
- * @property target 反应摘要目标
- * @property eventSink 事件处理函数
+ * @property target 当前选中的 reaction 汇总目标；为 `null` 时表示弹层关闭。
+ * @property eventSink 页面事件分发函数。
  */
 data class ReactionSummaryState(
     val target: Summary?,
     val eventSink: (ReactionSummaryEvents) -> Unit
 ) {
+    /**
+     * 当前 reaction 汇总目标。
+     *
+     * @property reactions 当前事件的聚合 reaction 列表。
+     * @property selectedKey 当前默认高亮的 reaction key。
+     * @property selectedEventId 当前对应的事件 ID。
+     */
     data class Summary(
         val reactions: ImmutableList<AggregatedReaction>,
         val selectedKey: String,

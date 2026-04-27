@@ -36,6 +36,13 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染已读回执底部弹窗。
+ *
+ * @param state 弹窗展示状态。
+ * @param onUserDataClick 点击某个用户后的回调。
+ * @param modifier 应用于弹窗根节点的修饰符。
+ */
 @Composable
 internal fun ReadReceiptBottomSheet(
     state: ReadReceiptBottomSheetState,
@@ -75,6 +82,9 @@ internal fun ReadReceiptBottomSheet(
     }
 }
 
+/**
+ * 渲染已读回执底部弹窗主体内容。
+ */
 @Composable
 private fun ReadReceiptBottomSheetContent(
     state: ReadReceiptBottomSheetState,

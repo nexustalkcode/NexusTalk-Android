@@ -20,6 +20,9 @@ import io.element.android.libraries.matrix.api.timeline.item.event.MessageShield
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览带消息盾牌提示的事件行。
+ */
 internal fun TimelineItemEventRowShieldPreview() = ElementPreview {
     Column {
         ATimelineItemEventRow(
@@ -65,6 +68,12 @@ internal fun TimelineItemEventRowShieldPreview() = ElementPreview {
     }
 }
 
+/**
+ * 构造一份非致命的盾牌样例。
+ */
 private fun aWarningShield() = MessageShield.AuthenticityNotGuaranteed(isCritical = false)
 
+/**
+ * 构造一份致命的盾牌样例。
+ */
 internal fun aCriticalShield() = MessageShield.UnverifiedIdentity(isCritical = true)

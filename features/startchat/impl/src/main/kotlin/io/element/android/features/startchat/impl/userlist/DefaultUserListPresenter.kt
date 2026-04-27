@@ -38,6 +38,11 @@ import kotlinx.coroutines.flow.toList
 private const val MAX_SUGGESTIONS_COUNT = 5
 
 @AssistedInject
+/**
+ * 默认的用户列表 Presenter 实现。
+ *
+ * 负责查询用户搜索结果、维护搜索状态，并提供最近私聊建议。
+ */
 class DefaultUserListPresenter(
     @Assisted val args: UserListPresenterArgs,
     @Assisted val userRepository: UserRepository,
@@ -46,6 +51,9 @@ class DefaultUserListPresenter(
 ) : UserListPresenter {
     @AssistedFactory
     @ContributesBinding(SessionScope::class)
+    /**
+     * DefaultUserListPresenter 的工厂绑定。
+     */
     interface DefaultUserListFactory : UserListPresenter.Factory {
         override fun create(
             args: UserListPresenterArgs,
@@ -54,6 +62,9 @@ class DefaultUserListPresenter(
         ): DefaultUserListPresenter
     }
 
+    /**
+     * 生成用户列表状态并处理事件。
+     */
     @Composable
     override fun present(): UserListState {
         var recentDirectRooms by remember { mutableStateOf(emptyList<RecentDirectRoom>()) }

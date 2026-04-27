@@ -20,6 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
+/**
+ * 预览企业版默认应用图标。
+ */
 internal fun IconPreview() {
     Box {
         Image(painter = painterResource(id = R.mipmap.ic_launcher_background_enterprise), contentDescription = null)
@@ -33,6 +36,9 @@ internal fun IconPreview() {
 
 @Preview
 @Composable
+/**
+ * 预览企业版圆形应用图标。
+ */
 internal fun RoundIconPreview() {
     Box(modifier = Modifier.clip(shape = CircleShape)) {
         Image(painter = painterResource(id = R.mipmap.ic_launcher_background_enterprise), contentDescription = null)

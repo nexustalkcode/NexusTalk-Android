@@ -76,6 +76,13 @@ import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 渲染敲门请求列表页。
+ *
+ * @param state 页面展示状态。
+ * @param onBackClick 返回动作。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 @Composable
 fun KnockRequestsListView(
     state: KnockRequestsListState,
@@ -98,6 +105,9 @@ fun KnockRequestsListView(
     )
 }
 
+/**
+ * 渲染敲门请求列表页主体内容。
+ */
 @Composable
 private fun KnockRequestsListContent(
     state: KnockRequestsListState,
@@ -179,6 +189,9 @@ private fun KnockRequestsListContent(
     }
 }
 
+/**
+ * 统一渲染当前列表动作的确认框、进度框和错误提示。
+ */
 @Composable
 private fun KnockRequestsActionsView(
     currentAction: KnockRequestsAction,
@@ -217,6 +230,9 @@ private fun KnockRequestsActionsView(
     }
 }
 
+/**
+ * 渲染当前动作对应的确认弹窗。
+ */
 @Composable
 private fun KnockRequestActionConfirmation(
     currentAction: KnockRequestsAction,
@@ -252,6 +268,9 @@ private fun KnockRequestActionConfirmation(
     )
 }
 
+/**
+ * 渲染当前动作对应的进度弹窗。
+ */
 @Composable
 private fun KnockRequestActionProgress(
     target: KnockRequestsAction,
@@ -270,6 +289,9 @@ private fun KnockRequestActionProgress(
     )
 }
 
+/**
+ * 渲染敲门请求列表。
+ */
 @Composable
 private fun KnockRequestsList(
     knockRequests: ImmutableList<KnockRequestPresentable>,
@@ -303,6 +325,9 @@ private fun KnockRequestsList(
     }
 }
 
+/**
+ * 渲染单条敲门请求条目。
+ */
 @Composable
 private fun KnockRequestItem(
     knockRequest: KnockRequestPresentable,
@@ -434,6 +459,9 @@ private fun KnockRequestItem(
     }
 }
 
+/**
+ * 渲染底部“全部接受”操作条。
+ */
 @Composable
 private fun KnockRequestsAcceptAll(
     onClick: () -> Unit,
@@ -456,6 +484,9 @@ private fun KnockRequestsAcceptAll(
     }
 }
 
+/**
+ * 渲染空列表占位态。
+ */
 @Composable
 private fun KnockRequestsEmptyList(
     modifier: Modifier = Modifier,
@@ -476,6 +507,9 @@ private fun KnockRequestsEmptyList(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染列表页顶栏。
+ */
 @Composable
 private fun KnockRequestsListTopBar(onBackClick: () -> Unit) {
     TopAppBar(

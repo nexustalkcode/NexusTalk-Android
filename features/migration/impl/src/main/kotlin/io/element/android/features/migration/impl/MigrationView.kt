@@ -26,6 +26,12 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染应用迁移页面。
+ *
+ * @param migrationState 当前迁移状态。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 fun MigrationView(
     migrationState: MigrationState,
     modifier: Modifier = Modifier,

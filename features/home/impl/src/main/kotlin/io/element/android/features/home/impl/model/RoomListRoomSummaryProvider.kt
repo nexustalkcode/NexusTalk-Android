@@ -138,7 +138,17 @@ open class RoomListRoomSummaryProvider : PreviewParameterProvider<RoomListRoomSu
                     name = "A tombstoned room",
                     displayType = RoomSummaryDisplayType.ROOM,
                     isTombstoned = true,
-                )
+                ),
+                aRoomListRoomSummary(
+                    name = "A DM room",
+                    displayType = RoomSummaryDisplayType.ROOM,
+                    isDm = true,
+                ),
+                aRoomListRoomSummary(
+                    name = "A space room",
+                    displayType = RoomSummaryDisplayType.ROOM,
+                    isSpace = true,
+                ),
             ),
             listOf(
                 aRoomListRoomSummary(latestEvent = LatestEvent.Sending("A sending message")),

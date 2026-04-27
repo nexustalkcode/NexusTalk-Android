@@ -17,6 +17,9 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.timeline.item.event.LocalEventSendState
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为已读回执视图预览提供样例状态。
+ */
 class ReadReceiptViewStateProvider : PreviewParameterProvider<ReadReceiptViewState> {
     override val values: Sequence<ReadReceiptViewState>
         get() = sequenceOf(
@@ -46,6 +49,9 @@ class ReadReceiptViewStateProvider : PreviewParameterProvider<ReadReceiptViewSta
         )
 }
 
+/**
+ * 构造一份已读回执视图样例状态。
+ */
 internal fun aReadReceiptViewState(
     sendState: LocalEventSendState? = null,
     isLastOutgoingMessage: Boolean = true,
@@ -56,6 +62,9 @@ internal fun aReadReceiptViewState(
     receipts = receipts.toImmutableList(),
 )
 
+/**
+ * 构造一条已读回执样例数据。
+ */
 internal fun aReadReceiptData(
     index: Int,
     avatarData: AvatarData = anAvatarData(

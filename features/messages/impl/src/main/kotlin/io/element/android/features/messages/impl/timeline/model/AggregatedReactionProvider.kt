@@ -15,6 +15,9 @@ import java.text.DateFormat
 import java.util.Date
 import java.util.TimeZone
 
+/**
+ * 为聚合 reaction 预览提供样例数据。
+ */
 open class AggregatedReactionProvider : PreviewParameterProvider<AggregatedReaction> {
     override val values: Sequence<AggregatedReaction>
         get() = sequenceOf(false, true).flatMap {
@@ -25,6 +28,9 @@ open class AggregatedReactionProvider : PreviewParameterProvider<AggregatedReact
         }
 }
 
+/**
+ * 构造一条聚合 reaction 样例。
+ */
 fun anAggregatedReaction(
     userId: UserId = UserId("@alice:server.org"),
     key: String = "👍",

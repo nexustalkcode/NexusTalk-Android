@@ -16,7 +16,13 @@ import io.element.android.features.preferences.api.PreferencesEntryPoint
 import io.element.android.libraries.architecture.createNode
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的设置入口实现。
+ */
 class DefaultPreferencesEntryPoint : PreferencesEntryPoint {
+    /**
+     * 创建设置流程节点。
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,
@@ -30,6 +36,9 @@ class DefaultPreferencesEntryPoint : PreferencesEntryPoint {
     }
 }
 
+/**
+ * 把公开入口层的初始目标映射为设置流程内部导航目标。
+ */
 internal fun PreferencesEntryPoint.InitialTarget.toNavTarget() = when (this) {
     is PreferencesEntryPoint.InitialTarget.Root -> PreferencesFlowNode.NavTarget.Root
     is PreferencesEntryPoint.InitialTarget.NotificationSettings -> PreferencesFlowNode.NavTarget.NotificationSettings

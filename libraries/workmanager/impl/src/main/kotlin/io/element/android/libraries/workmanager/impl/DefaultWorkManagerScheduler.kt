@@ -13,7 +13,6 @@ import androidx.work.WorkManager
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.SingleIn
-import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.sessionstorage.api.observer.SessionListener
 import io.element.android.libraries.sessionstorage.api.observer.SessionObserver
 import io.element.android.libraries.workmanager.api.WorkManagerRequest
@@ -31,12 +30,11 @@ class DefaultWorkManagerScheduler(
     private val workManager by lazyWorkManager
 
     init {
-        // Observe session removals to cancel associated work automatically
+        // 这里只关心“删除了哪个会话”的字符串标识，用来清理对应的 WorkManager tag。
         sessionObserver.addListener(object : SessionListener {
             override suspend fun onSessionDeleted(userId: String, wasLastSession: Boolean) {
-                val sessionId = SessionId(userId)
                 Timber.d("Session deleted for userId: $userId, cancelling associated workmanager requests")
-                cancel(sessionId)
+                cancel(userId)
             }
         })
     }
@@ -52,7 +50,7 @@ class DefaultWorkManagerScheduler(
         )
     }
 
-    override fun hasPendingWork(sessionId: SessionId, requestType: WorkManagerRequestType): Boolean {
+    override fun hasPendingWork(sessionId: String, requestType: WorkManagerRequestType): Boolean {
         val workInfos = workManager.getWorkInfosByTag(workManagerTag(sessionId, requestType)).get().orEmpty()
         return workInfos.any { info ->
             val isPeriodic = info.periodicityInfo != null
@@ -64,7 +62,7 @@ class DefaultWorkManagerScheduler(
         }
     }
 
-    override fun cancel(sessionId: SessionId) {
+    override fun cancel(sessionId: String) {
         Timber.d("Cancelling work for sessionId: $sessionId")
         for (requestType in WorkManagerRequestType.entries) {
             workManager.cancelAllWorkByTag(workManagerTag(sessionId, requestType))

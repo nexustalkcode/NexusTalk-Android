@@ -26,6 +26,7 @@ import io.element.android.libraries.push.impl.test.TestPush
 import io.element.android.libraries.push.impl.unregistration.ServiceUnregisteredHandler
 import io.element.android.libraries.pushproviders.api.Distributor
 import io.element.android.libraries.pushproviders.api.PushProvider
+import io.element.android.libraries.pushproviders.api.PushRegistrationService
 import io.element.android.libraries.pushproviders.api.RegistrationFailure
 import io.element.android.libraries.pushstore.api.UserPushStoreFactory
 import io.element.android.libraries.pushstore.api.clientsecret.PushClientSecretStore
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.first
 import timber.log.Timber
 
 @ContributesBinding(AppScope::class, binding = binding<PushService>())
+@ContributesBinding(AppScope::class, binding = binding<PushRegistrationService>())
 @SingleIn(AppScope::class)
 class DefaultPushService(
     private val testPush: TestPush,
@@ -47,7 +49,7 @@ class DefaultPushService(
     private val pushDataStore: PushDataStore,
     private val mutableBatteryOptimizationStore: MutableBatteryOptimizationStore,
     private val serviceUnregisteredHandler: ServiceUnregisteredHandler,
-) : PushService, SessionListener {
+) : PushService, PushRegistrationService, SessionListener {
     init {
         observeSessions()
     }

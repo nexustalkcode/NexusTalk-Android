@@ -13,11 +13,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 import com.freeletics.flowredux.dsl.State as MachineState
 
+/**
+ * 打印状态机状态迁移日志，并返回原对象。
+ */
 internal fun <T : Any> T.andLogStateChange() = also {
     Timber.w("Verification: state machine state moved to [${this::class.simpleName}]")
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
+/**
+ * 为 FlowRedux 状态机构建器注册统一的事件日志记录逻辑。
+ */
 inline fun <State : Any, reified Event : Any> InStateBuilderBlock<State, State, Event>.logReceivedEvents() {
     on { event: Event, state: MachineState<State> ->
         Timber.w("Verification in state [${state.snapshot::class.simpleName}] receiving event [${event::class.simpleName}]")

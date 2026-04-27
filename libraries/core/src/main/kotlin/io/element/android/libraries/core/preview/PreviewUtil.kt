@@ -8,6 +8,9 @@
 
 package io.element.android.libraries.core.preview
 
+/**
+ * 预览中使用的长文本样例。
+ */
 val loremIpsum = """
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut la
     bore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris

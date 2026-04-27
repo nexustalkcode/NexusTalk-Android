@@ -10,6 +10,9 @@ package io.element.android.features.login.impl.screens.qrcode.confirmation
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
+/**
+ * 为二维码登录确认页预览提供样例步骤。
+ */
 class QrCodeConfirmationStepProvider : PreviewParameterProvider<QrCodeConfirmationStep> {
     override val values: Sequence<QrCodeConfirmationStep>
         get() = sequenceOf(

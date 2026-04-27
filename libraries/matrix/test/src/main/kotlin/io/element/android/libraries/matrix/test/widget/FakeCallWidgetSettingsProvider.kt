@@ -8,22 +8,28 @@
 
 package io.element.android.libraries.matrix.test.widget
 
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.matrix.api.widget.CallWidgetSettingsProvider
 import io.element.android.libraries.matrix.api.widget.MatrixWidgetSettings
 
 class FakeCallWidgetSettingsProvider(
-    private val provideFn: (String, String, Boolean, Boolean, Boolean) -> MatrixWidgetSettings = { _, _, _, _, _ -> MatrixWidgetSettings("id", true, "url") }
+    private val provideFn: (String, String, Boolean, Boolean, Boolean, CallWidgetMode) -> MatrixWidgetSettings = { _, _, _, _, _, _ ->
+        MatrixWidgetSettings("id", true, "url")
+    }
 ) : CallWidgetSettingsProvider {
     val providedBaseUrls = mutableListOf<String>()
+    val providedCallModes = mutableListOf<CallWidgetMode>()
 
     override suspend fun provide(
         baseUrl: String,
         widgetId: String,
         encrypted: Boolean,
         direct: Boolean,
-        hasActiveCall: Boolean
+        hasActiveCall: Boolean,
+        callMode: CallWidgetMode,
     ): MatrixWidgetSettings {
         providedBaseUrls += baseUrl
-        return provideFn(baseUrl, widgetId, encrypted, direct, hasActiveCall)
+        providedCallModes += callMode
+        return provideFn(baseUrl, widgetId, encrypted, direct, hasActiveCall, callMode)
     }
 }

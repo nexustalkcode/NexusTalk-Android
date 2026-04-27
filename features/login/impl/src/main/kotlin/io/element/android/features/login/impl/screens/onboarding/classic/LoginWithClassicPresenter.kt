@@ -26,11 +26,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Inject
+/**
+ * “使用 Element Classic 登录”页面 Presenter。
+ *
+ * 负责监听 Element Classic 连接状态、判断是否可导入会话，并维护登录确认/执行状态。
+ */
 class LoginWithClassicPresenter(
     private val elementClassicConnection: ElementClassicConnection,
     private val sessionStore: SessionStore,
     private val featureFlagService: FeatureFlagService,
 ) : Presenter<LoginWithClassicState> {
+    /**
+     * 生成页面状态并处理用户事件。
+     */
     @Composable
     override fun present(): LoginWithClassicState {
         val coroutineScope = rememberCoroutineScope()

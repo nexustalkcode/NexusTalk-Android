@@ -29,6 +29,7 @@ import io.element.android.appconfig.AnalyticsConfig
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.features.analytics.api.AnalyticsOptInEvents
+import io.element.android.features.analytics.api.R
 import io.element.android.libraries.designsystem.atomic.molecules.ButtonColumnMolecule
 import io.element.android.libraries.designsystem.atomic.molecules.IconTitleSubtitleMolecule
 import io.element.android.libraries.designsystem.atomic.organisms.InfoListItem

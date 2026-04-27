@@ -54,6 +54,7 @@ fun EditDefaultNotificationSettingView(
     }
     PreferencePage(
         modifier = modifier,
+        handleSystemBack = true,
         onBackClick = onBackClick,
         title = stringResource(id = title)
     ) {

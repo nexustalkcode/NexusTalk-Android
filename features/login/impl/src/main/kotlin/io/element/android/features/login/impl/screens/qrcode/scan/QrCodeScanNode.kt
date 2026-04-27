@@ -22,11 +22,19 @@ import io.element.android.libraries.matrix.api.auth.qrlogin.MatrixQrCodeLoginDat
 
 @ContributesNode(QrCodeLoginScope::class)
 @AssistedInject
+/**
+ * 二维码扫码页节点。
+ *
+ * 负责连接 [QrCodeScanPresenter] 与页面视图，并在解析成功后把数据回传给外层流程。
+ */
 class QrCodeScanNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: QrCodeScanPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 扫码页向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun handleScannedCode(qrCodeLoginData: MatrixQrCodeLoginData)
         fun cancel()
@@ -34,6 +42,11 @@ class QrCodeScanNode(
 
     private val callback: Callback = callback()
 
+    /**
+     * 渲染二维码扫码页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

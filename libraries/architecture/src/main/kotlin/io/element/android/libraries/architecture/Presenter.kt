@@ -10,6 +10,9 @@ package io.element.android.libraries.architecture
 
 import androidx.compose.runtime.Composable
 
+/**
+ * 产出 UI 状态的 Presenter 接口。
+ */
 fun interface Presenter<State> {
     @Composable
     fun present(): State

@@ -12,6 +12,9 @@ import io.element.android.libraries.core.bool.orFalse
 
 // The Android SDK does not provide constant for mime type, add some of them here
 @Suppress("ktlint:standard:property-naming")
+/**
+ * 常用 MIME 类型常量与辅助判断函数。
+ */
 object MimeTypes {
     const val Any: String = "*/*"
     const val Json = "application/json"
@@ -38,6 +41,9 @@ object MimeTypes {
 
     const val PlainText = "text/plain"
 
+    /**
+     * 归一化已知不标准 MIME 类型。
+     */
     fun String?.normalizeMimeType() = if (this == BadJpg) Jpeg else this
 
     fun String?.isMimeTypeImage() = this?.startsWith("image/").orFalse()
@@ -49,6 +55,9 @@ object MimeTypes {
     fun String?.isMimeTypeText() = this?.startsWith("text/").orFalse()
     fun String?.isMimeTypeAny() = this?.startsWith("*/").orFalse()
 
+    /**
+     * 根据文件扩展名推断 MIME 类型。
+     */
     fun fromFileExtension(fileExtension: String): String {
         return when (fileExtension.lowercase()) {
             "apk" -> Apk
@@ -57,6 +66,9 @@ object MimeTypes {
         }
     }
 
+    /**
+     * 判断 MIME 类型是否有明确 subtype。
+     */
     fun hasSubtype(mimeType: String): Boolean {
         val components = mimeType.split("/")
         if (components.size != 2) return false

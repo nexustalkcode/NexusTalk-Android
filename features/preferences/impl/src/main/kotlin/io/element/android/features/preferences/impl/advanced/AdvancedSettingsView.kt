@@ -55,6 +55,9 @@ import io.element.android.services.analyticsproviders.api.trackers.captureIntera
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
+/**
+ * 渲染高级设置页面。
+ */
 fun AdvancedSettingsView(
     state: AdvancedSettingsState,
     onBackClick: () -> Unit,
@@ -68,6 +71,7 @@ fun AdvancedSettingsView(
 
     PreferencePage(
         modifier = modifier,
+        handleSystemBack = true,
         onBackClick = onBackClick,
         title = stringResource(id = CommonStrings.common_advanced_settings),
         snackbarHost = {
@@ -207,6 +211,9 @@ fun AdvancedSettingsView(
 }
 
 @Composable
+/**
+ * 渲染视频质量选择对话框。
+ */
 private fun VideoQualitySelectorDialog(
     selectedPreset: VideoCompressionPreset,
     onSubmit: (VideoCompressionPreset) -> Unit,
@@ -264,6 +271,9 @@ private fun VideoQualitySelectorDialog(
 }
 
 @Composable
+/**
+ * 渲染高级设置中的审核与安全分区。
+ */
 private fun ModerationAndSafety(
     state: AdvancedSettingsState,
     modifier: Modifier = Modifier,
@@ -352,6 +362,9 @@ internal fun AdvancedSettingsViewDarkPreview(@PreviewParameter(AdvancedSettingsS
 
 @ExcludeFromCoverage
 @Composable
+/**
+ * 供预览复用的高级设置内容。
+ */
 private fun ContentToPreview(state: AdvancedSettingsState) {
     AdvancedSettingsView(
         state = state,
@@ -361,6 +374,9 @@ private fun ContentToPreview(state: AdvancedSettingsState) {
 
 @Composable
 @PreviewsDayNight
+/**
+ * 视频质量选择对话框预览。
+ */
 internal fun VideoQualitySelectorDialogPreview() {
     ElementPreview {
         VideoQualitySelectorDialog(

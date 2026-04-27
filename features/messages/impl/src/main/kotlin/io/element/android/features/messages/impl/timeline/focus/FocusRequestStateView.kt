@@ -22,6 +22,11 @@ import io.element.android.libraries.matrix.api.room.errors.FocusEventException
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染时间线焦点请求状态视图。
+ *
+ * 当定位某条消息失败或仍在加载时，展示对应的对话框/进度框。
+ */
 fun FocusRequestStateView(
     focusRequestState: FocusRequestState,
     onClearFocusRequestState: () -> Unit,

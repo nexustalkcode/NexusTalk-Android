@@ -18,6 +18,9 @@ import com.bumble.appyx.core.state.SavedStateMap
 import com.bumble.appyx.navmodel.backstack.BackStack
 import com.bumble.appyx.navmodel.backstack.BackStackOnScreenResolver
 
+/**
+ * 基于 BackStack 状态实现的单层 overlay 导航模型。
+ */
 class Overlay<NavTarget : Any>(
     savedStateMap: SavedStateMap?,
     key: String = requireNotNull(Overlay::class.qualifiedName),

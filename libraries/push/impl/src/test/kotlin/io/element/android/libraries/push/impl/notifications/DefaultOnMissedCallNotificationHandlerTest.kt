@@ -22,6 +22,7 @@ import io.element.android.libraries.push.impl.notifications.fake.FakeNotificatio
 import io.element.android.libraries.push.impl.notifications.fake.FakeNotificationDisplayer
 import io.element.android.libraries.push.impl.notifications.fixtures.aNotifiableMessageEvent
 import io.element.android.libraries.push.test.notifications.FakeCallNotificationEventResolver
+import io.element.android.services.appnavstate.test.FakeAppForegroundStateService
 import io.element.android.services.appnavstate.test.FakeAppNavigationStateService
 import io.element.android.tests.testutils.lambda.lambdaRecorder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,6 +58,7 @@ class DefaultOnMissedCallNotificationHandlerTest {
                 matrixClientProvider = FakeMatrixClientProvider(),
                 imageLoaderHolder = FakeImageLoaderHolder(),
                 activeNotificationsProvider = FakeActiveNotificationsProvider(),
+                appForegroundStateService = FakeAppForegroundStateService(),
             ),
             callNotificationEventResolver = FakeCallNotificationEventResolver(resolveEventLambda = { _, _, _ ->
                 Result.success(aNotifiableMessageEvent())

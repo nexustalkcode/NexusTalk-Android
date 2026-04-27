@@ -53,6 +53,18 @@ import io.element.android.libraries.matrix.ui.components.CreateDmConfirmationBot
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染用户资料页。
+ *
+ * @param state 页面展示状态。
+ * @param onShareUser 点击分享用户时的回调。
+ * @param onOpenDm 私聊打开成功后的回调。
+ * @param onStartCall 点击发起通话时的回调。
+ * @param goBack 返回动作。
+ * @param openAvatarPreview 打开头像预览时的回调。
+ * @param onVerifyClick 点击开始验证时的回调。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 @Composable
 fun UserProfileView(
     state: UserProfileState,
@@ -145,6 +157,9 @@ fun UserProfileView(
     }
 }
 
+/**
+ * 渲染“验证用户”入口区域。
+ */
 @Composable
 private fun VerifyUserSection(
     state: UserProfileState,

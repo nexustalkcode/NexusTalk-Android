@@ -10,6 +10,12 @@ package io.element.android.appnav.di
 
 import io.element.android.libraries.matrix.api.MatrixClient
 
+/**
+ * 创建 Session 级依赖图的工厂接口。
+ */
 interface SessionGraphFactory {
+    /**
+     * 基于当前 MatrixClient 创建 Session 图。
+     */
     fun create(client: MatrixClient): Any
 }

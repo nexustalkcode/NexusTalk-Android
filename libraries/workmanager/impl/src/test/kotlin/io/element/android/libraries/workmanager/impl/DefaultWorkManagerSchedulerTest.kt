@@ -9,7 +9,6 @@ package io.element.android.libraries.workmanager.impl
 
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
-import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.sessionstorage.test.observer.FakeSessionObserver
 import io.element.android.libraries.workmanager.api.WorkManagerRequest
 import io.element.android.libraries.workmanager.api.WorkManagerRequestType
@@ -83,7 +82,7 @@ class DefaultWorkManagerSchedulerTest {
             sessionObserver = FakeSessionObserver(),
         )
 
-        val sessionId = SessionId("@alice:matrix.org")
+        val sessionId = "@alice:matrix.org"
         val tagToRemove = workManagerTag(sessionId, WorkManagerRequestType.NOTIFICATION_SYNC)
         val mockSessionA = mockk<WorkRequest> {
             every { tags } returns setOf(tagToRemove)

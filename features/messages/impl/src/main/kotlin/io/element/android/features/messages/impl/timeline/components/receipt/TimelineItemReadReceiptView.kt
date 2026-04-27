@@ -50,6 +50,14 @@ import io.element.android.libraries.ui.strings.CommonPlurals
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 渲染时间线消息行右下角的已读回执区域。
+ *
+ * @param state 已读回执展示状态。
+ * @param renderReadReceipts 是否渲染真实头像回执。
+ * @param onReadReceiptsClick 点击回执后的回调。
+ * @param modifier 应用于视图根节点的修饰符。
+ */
 @Composable
 fun TimelineItemReadReceiptView(
     state: ReadReceiptViewState,
@@ -107,6 +115,9 @@ fun TimelineItemReadReceiptView(
     }
 }
 
+/**
+ * 渲染已读回执所在的对齐行。
+ */
 @Composable
 private fun ReadReceiptsRow(
     modifier: Modifier = Modifier,
@@ -129,6 +140,9 @@ private fun ReadReceiptsRow(
     }
 }
 
+/**
+ * 渲染已读回执头像列表。
+ */
 @Composable
 private fun ReadReceiptsAvatars(
     receipts: ImmutableList<ReadReceiptData>,
@@ -180,6 +194,9 @@ private fun ReadReceiptsAvatars(
     }
 }
 
+/**
+ * 生成已读回执区域的无障碍描述。
+ */
 @Composable
 private fun computeReceiptDescription(receipts: ImmutableList<ReadReceiptData>): String {
     return when (receipts.size) {

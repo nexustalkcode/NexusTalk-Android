@@ -22,7 +22,11 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesTo(SessionScope::class)
 @BindingContainer
+/**
+ * 社区列表相关依赖绑定模块。
+ */
 interface GroupListModule {
     @Binds
+    /** 绑定社区列表 Presenter。 */
     fun bindGroupListPresenter(presenter: GroupListPresenter): Presenter<GroupListState>
 }

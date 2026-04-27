@@ -125,6 +125,11 @@ import kotlinx.collections.immutable.persistentListOf
 import timber.log.Timber
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * 渲染消息时间线页面。
+ *
+ * 负责组合顶部栏、时间线、输入框、Pinned banner、reaction/read receipt 底部弹层等所有子区域。
+ */
 @Composable
 fun MessagesView(
     state: MessagesState,
@@ -136,6 +141,8 @@ fun MessagesView(
     onSendLocationClick: () -> Unit,
     onCreatePollClick: () -> Unit,
     onJoinCallClick: () -> Unit,
+    onStartVoiceCallClick: () -> Unit,
+    onStartVideoCallClick: () -> Unit,
     onViewAllPinnedMessagesClick: () -> Unit,
     modifier: Modifier = Modifier,
     forceJumpToBottomVisibility: Boolean = false,
@@ -247,6 +254,8 @@ fun MessagesView(
                                 onBackClick = { hidingKeyboard { onBackClick() } },
                                 onRoomDetailsClick = { hidingKeyboard { onRoomDetailsClick() } },
                                 onJoinCallClick = onJoinCallClick,
+                                onStartVoiceCallClick = onStartVoiceCallClick,
+                                onStartVideoCallClick = onStartVideoCallClick,
                             )
                         }
                     },
@@ -286,6 +295,7 @@ fun MessagesView(
                                 },
                                 forceJumpToBottomVisibility = forceJumpToBottomVisibility,
                                 onJoinCallClick = onJoinCallClick,
+                                onStartVideoCallClick = onStartVideoCallClick,
                                 onViewAllPinnedMessagesClick = onViewAllPinnedMessagesClick,
                                 knockRequestsBannerView = knockRequestsBannerView,
                             )
@@ -395,6 +405,9 @@ fun MessagesView(
     )
 }
 
+/**
+ * 渲染重新邀请确认对话框。
+ */
 @Composable
 private fun ReinviteDialog(state: MessagesState) {
     if (state.showReinvitePrompt) {
@@ -409,6 +422,9 @@ private fun ReinviteDialog(state: MessagesState) {
     }
 }
 
+/**
+ * 渲染消息页主体内容，包括时间线与附加浮层。
+ */
 @Composable
 private fun MessagesViewContent(
     state: MessagesState,
@@ -423,6 +439,7 @@ private fun MessagesViewContent(
     onSendLocationClick: () -> Unit,
     onCreatePollClick: () -> Unit,
     onJoinCallClick: () -> Unit,
+    onStartVideoCallClick: () -> Unit,
     onViewAllPinnedMessagesClick: () -> Unit,
     forceJumpToBottomVisibility: Boolean,
     onSwipeToReply: (TimelineItem.Event) -> Unit,
@@ -503,6 +520,9 @@ private fun MessagesViewContent(
     }
 }
 
+/**
+ * 渲染输入区上方的附加底部内容。
+ */
 @Composable
 private fun MessagesViewComposerBottomSheetContents(
     state: MessagesState,
@@ -550,6 +570,9 @@ private fun MessagesViewComposerBottomSheetContents(
     }
 }
 
+/**
+ * 渲染“无发言权限”提示横幅。
+ */
 @Composable
 private fun CantSendMessageBanner() {
     Row(
@@ -570,6 +593,9 @@ private fun CantSendMessageBanner() {
     }
 }
 
+/**
+ * 渲染“该房间已迁移”提示横幅。
+ */
 @Composable
 private fun SuccessorRoomBanner(
     roomSuccessor: SuccessorRoom,
@@ -598,6 +624,8 @@ internal fun MessagesViewPreview(@PreviewParameter(MessagesStateProvider::class)
         onSendLocationClick = {},
         onCreatePollClick = {},
         onJoinCallClick = {},
+        onStartVoiceCallClick = {},
+        onStartVideoCallClick = {},
         onViewAllPinnedMessagesClick = { },
         forceJumpToBottomVisibility = true,
         knockRequestsBannerView = {},
@@ -652,6 +680,8 @@ internal fun MessagesViewA11yPreview() = ElementPreview {
         onSendLocationClick = {},
         onCreatePollClick = {},
         onJoinCallClick = {},
+        onStartVoiceCallClick = {},
+        onStartVideoCallClick = {},
         onViewAllPinnedMessagesClick = { },
         forceJumpToBottomVisibility = true,
         knockRequestsBannerView = {},

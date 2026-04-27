@@ -15,17 +15,26 @@ import android.provider.OpenableColumns
 import androidx.core.net.toFile
 import io.element.android.libraries.core.extensions.runCatchingExceptions
 
+/**
+ * 读取指定 Uri 的 MIME 类型。
+ */
 fun Context.getMimeType(uri: Uri): String? = when (uri.scheme) {
     ContentResolver.SCHEME_CONTENT -> contentResolver.getType(uri)
     else -> null
 }
 
+/**
+ * 读取指定 Uri 对应的文件名。
+ */
 fun Context.getFileName(uri: Uri): String? = when (uri.scheme) {
     ContentResolver.SCHEME_CONTENT -> getContentFileName(uri)
     ContentResolver.SCHEME_FILE -> uri.toFile().name
     else -> null
 }
 
+/**
+ * 读取指定 Uri 对应文件大小。
+ */
 fun Context.getFileSize(uri: Uri): Long {
     return when (uri.scheme) {
         ContentResolver.SCHEME_CONTENT -> getContentFileSize(uri)
@@ -34,6 +43,9 @@ fun Context.getFileSize(uri: Uri): Long {
     } ?: 0
 }
 
+/**
+ * 从 Content Uri 读取文件大小。
+ */
 private fun Context.getContentFileSize(uri: Uri): Long? = runCatchingExceptions {
     contentResolver.query(uri, null, null, null, null)?.use { cursor ->
         cursor.moveToFirst()
@@ -41,6 +53,9 @@ private fun Context.getContentFileSize(uri: Uri): Long? = runCatchingExceptions 
     }
 }.getOrNull()
 
+/**
+ * 从 Content Uri 读取显示文件名。
+ */
 private fun Context.getContentFileName(uri: Uri): String? = runCatchingExceptions {
     contentResolver.query(uri, null, null, null, null)?.use { cursor ->
         cursor.moveToFirst()

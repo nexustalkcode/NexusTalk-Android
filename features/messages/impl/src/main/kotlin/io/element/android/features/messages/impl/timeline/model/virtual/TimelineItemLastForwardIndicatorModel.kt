@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.model.virtual
 
+/**
+ * 正向分页末尾占位虚拟项模型。
+ */
 data object TimelineItemLastForwardIndicatorModel : TimelineItemVirtualModel {
     override val type: String = "TimelineItemLastForwardIndicatorModel"
 }

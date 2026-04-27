@@ -13,6 +13,9 @@ import im.vector.app.features.analytics.plan.UserProperties
 import io.element.android.libraries.matrix.api.encryption.RecoveryState
 import io.element.android.libraries.matrix.api.verification.SessionVerifiedStatus
 
+/**
+ * 将会话验证状态映射为用户属性埋点值。
+ */
 fun SessionVerifiedStatus.toAnalyticsUserPropertyValue(): UserProperties.VerificationState? {
     return when (this) {
         // we don't need to report transient states
@@ -22,6 +25,9 @@ fun SessionVerifiedStatus.toAnalyticsUserPropertyValue(): UserProperties.Verific
     }
 }
 
+/**
+ * 将恢复状态映射为用户属性埋点值。
+ */
 fun RecoveryState.toAnalyticsUserPropertyValue(): UserProperties.RecoveryState? {
     return when (this) {
         RecoveryState.ENABLED -> UserProperties.RecoveryState.Enabled
@@ -31,6 +37,9 @@ fun RecoveryState.toAnalyticsUserPropertyValue(): UserProperties.RecoveryState? 
         else -> null
     }
 }
+/**
+ * 将会话验证状态映射为状态变化埋点值。
+ */
 fun SessionVerifiedStatus.toAnalyticsStateChangeValue(): CryptoSessionStateChange.VerificationState? {
     return when (this) {
         // we don't need to report transient states
@@ -40,6 +49,9 @@ fun SessionVerifiedStatus.toAnalyticsStateChangeValue(): CryptoSessionStateChang
     }
 }
 
+/**
+ * 将恢复状态映射为状态变化埋点值。
+ */
 fun RecoveryState.toAnalyticsStateChangeValue(): CryptoSessionStateChange.RecoveryState? {
     return when (this) {
         RecoveryState.ENABLED -> CryptoSessionStateChange.RecoveryState.Enabled

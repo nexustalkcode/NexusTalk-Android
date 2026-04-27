@@ -25,6 +25,9 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.collections.immutable.toImmutableSet
 
+/**
+ * 为 Space 页面预览提供样例状态。
+ */
 open class SpaceStateProvider : PreviewParameterProvider<SpaceState> {
     override val values: Sequence<SpaceState>
         get() = sequenceOf(
@@ -64,6 +67,9 @@ open class SpaceStateProvider : PreviewParameterProvider<SpaceState> {
         )
 }
 
+/**
+ * 构造一份 Space 页面样例状态。
+ */
 fun aSpaceState(
     spaceInfo: RoomInfo = aSpaceInfo(),
     children: List<SpaceRoom> = emptyList(),
@@ -97,6 +103,9 @@ fun aSpaceState(
     eventSink = eventSink,
 )
 
+/**
+ * 构造一份 Space 房间信息样例。
+ */
 private fun aSpaceInfo(
     joinRule: JoinRule? = null,
 ): RoomInfo {
@@ -139,6 +148,9 @@ private fun aSpaceInfo(
     )
 }
 
+/**
+ * 构造一组 Space 子房间样例。
+ */
 private fun aListOfSpaceRooms(): List<SpaceRoom> {
     return listOf(
         aSpaceRoom(

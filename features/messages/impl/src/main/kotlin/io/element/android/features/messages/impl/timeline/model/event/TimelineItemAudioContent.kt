@@ -12,6 +12,9 @@ import io.element.android.libraries.matrix.api.media.MediaSource
 import io.element.android.libraries.mediaviewer.api.helper.formatFileExtensionAndSize
 import kotlin.time.Duration
 
+/**
+ * 音频消息的 UI 内容模型。
+ */
 data class TimelineItemAudioContent(
     override val filename: String,
     override val fileSize: Long?,
@@ -24,6 +27,9 @@ data class TimelineItemAudioContent(
     override val formattedFileSize: String,
     override val fileExtension: String,
 ) : TimelineItemEventContentWithAttachment {
+    /**
+     * 供附件视图直接展示的“扩展名 + 大小”文案。
+     */
     val fileExtensionAndSize =
         formatFileExtensionAndSize(
             fileExtension,

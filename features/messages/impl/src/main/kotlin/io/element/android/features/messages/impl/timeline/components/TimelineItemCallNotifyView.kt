@@ -42,16 +42,21 @@ import io.element.android.libraries.designsystem.text.toDp
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染通话通知事件视图。
+ */
 internal fun TimelineItemCallNotifyView(
     event: TimelineItem.Event,
     isLatestCallNotify: Boolean = false,
     roomCallState: RoomCallState,
     onLongClick: (TimelineItem.Event) -> Unit,
     onJoinCallClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onStartVideoCallClick: () -> Unit = onJoinCallClick,
+    modifier: Modifier = Modifier,
 ) {
     val onGoingRoomCallState = roomCallState as? RoomCallState.OnGoing
     val isJoinableCall = onGoingRoomCallState != null && isLatestCallNotify
+    val onCallClick = if (isJoinableCall) onJoinCallClick else onStartVideoCallClick
 
     Row(
         modifier = modifier
@@ -59,7 +64,7 @@ internal fun TimelineItemCallNotifyView(
             .border(1.dp, ElementTheme.colors.borderInteractiveSecondary, RoundedCornerShape(8.dp))
             .combinedClickable(
                 enabled = true,
-                onClick = {},
+                onClick = onCallClick,
                 onLongClick = { onLongClick(event) },
                 onLongClickLabel = stringResource(CommonStrings.action_open_context_menu),
             )
@@ -81,7 +86,7 @@ internal fun TimelineItemCallNotifyView(
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     modifier = Modifier.size(20.sp.toDp()),
@@ -95,7 +100,7 @@ internal fun TimelineItemCallNotifyView(
                             CommonStrings.common_call_started
                         } else {
                             CommonStrings.common_call_ended
-                        }
+                        },
                     ),
                     style = ElementTheme.typography.fontBodyMdRegular,
                     color = ElementTheme.colors.textSecondary,

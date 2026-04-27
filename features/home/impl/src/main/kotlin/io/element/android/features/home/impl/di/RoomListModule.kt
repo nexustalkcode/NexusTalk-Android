@@ -22,13 +22,19 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesTo(SessionScope::class)
 @BindingContainer
+/**
+ * 首页房间列表相关依赖绑定模块。
+ */
 interface RoomListModule {
     @Binds
+    /** 绑定房间列表 Presenter。 */
     fun bindRoomListPresenter(presenter: RoomListPresenter): Presenter<RoomListState>
 
     @Binds
+    /** 绑定房间搜索 Presenter。 */
     fun bindSearchPresenter(presenter: RoomListSearchPresenter): Presenter<RoomListSearchState>
 
     @Binds
+    /** 绑定筛选器 Presenter。 */
     fun bindFiltersPresenter(presenter: RoomListFiltersPresenter): Presenter<RoomListFiltersState>
 }

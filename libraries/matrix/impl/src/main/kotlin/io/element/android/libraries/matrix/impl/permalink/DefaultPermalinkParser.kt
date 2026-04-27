@@ -23,6 +23,9 @@ import io.element.android.libraries.matrix.api.permalink.PermalinkParser
 import kotlinx.collections.immutable.toImmutableList
 import org.matrix.rustcomponents.sdk.MatrixId
 import org.matrix.rustcomponents.sdk.parseMatrixEntityFrom
+import timber.log.Timber
+
+private const val permalinkDebugTag = "PermalinkDebug"
 
 /**
  * This class turns a uri to a [PermalinkData].
@@ -41,6 +44,8 @@ class DefaultPermalinkParser(
      */
     override fun parse(uriString: String): PermalinkData {
         val uri = uriString.toUri()
+        // 这里记录 permalink 解析链路的输入与归一化结果，便于区分“没进解析器”和“解析后变成了 FallbackLink”。
+        Timber.tag(permalinkDebugTag).i("PermalinkParser.parse input=%s scheme=%s host=%s", uriString, uri.scheme, uri.host)
         val matrixToUri = if (uri.scheme == "matrix") {
             // take matrix: URI as is to [parseMatrixEntityFrom]
             uri
@@ -48,13 +53,21 @@ class DefaultPermalinkParser(
             // the client or element-based domain permalinks (e.g. https://app.element.io/#/user/@chagai95:matrix.org) don't have the
             // mxid in the first param (like matrix.to does - https://matrix.to/#/@chagai95:matrix.org) but rather in the second after /user/ so /user/mxid
             // so convert URI to matrix.to to simplify parsing process
-            matrixToConverter.convert(uri) ?: return PermalinkData.FallbackLink(uri)
+            matrixToConverter.convert(uri) ?: return PermalinkData.FallbackLink(uri).also {
+                Timber.tag(permalinkDebugTag).w("PermalinkParser.parse converter returned null for input=%s", uri)
+            }
         }
+        Timber.tag(permalinkDebugTag).i("PermalinkParser.parse normalizedMatrixUri=%s", matrixToUri)
 
-        val result = runCatchingExceptions {
+        val parseResult = runCatchingExceptions {
             parseMatrixEntityFrom(matrixToUri.toString())
-        }.getOrNull()
-        return if (result == null) {
+        }
+        val parsingError = parseResult.exceptionOrNull()
+        if (parsingError != null) {
+            Timber.tag(permalinkDebugTag).e(parsingError, "PermalinkParser.parse parseMatrixEntityFrom failed for %s", matrixToUri)
+        }
+        val result = parseResult.getOrNull()
+        val permalinkData = if (result == null) {
             PermalinkData.FallbackLink(uri)
         } else {
             val viaParameters = result.via.toImmutableList()
@@ -82,5 +95,7 @@ class DefaultPermalinkParser(
                 )
             }
         }
+        Timber.tag(permalinkDebugTag).i("PermalinkParser.parse output=%s", permalinkData)
+        return permalinkData
     }
 }

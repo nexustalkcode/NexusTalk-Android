@@ -20,6 +20,9 @@ import io.element.android.libraries.matrix.ui.components.aMatrixUser
 import io.element.android.libraries.usersearch.api.UserSearchResult
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 为开始聊天主页预览提供样例状态。
+ */
 open class StartChatStateProvider : PreviewParameterProvider<StartChatState> {
     override val values: Sequence<StartChatState>
         get() = sequenceOf(
@@ -60,6 +63,9 @@ open class StartChatStateProvider : PreviewParameterProvider<StartChatState> {
         )
 }
 
+/**
+ * 构造一份开始聊天主页样例状态。
+ */
 fun aCreateRoomRootState(
     applicationName: String = "Element X Preview",
     userListState: UserListState = aUserListState(),

@@ -10,6 +10,9 @@ package io.element.android.features.messages.impl.timeline.model.event
 
 import io.element.android.features.location.api.Location
 
+/**
+ * 位置消息的 UI 内容模型。
+ */
 data class TimelineItemLocationContent(
     val body: String,
     val location: Location,

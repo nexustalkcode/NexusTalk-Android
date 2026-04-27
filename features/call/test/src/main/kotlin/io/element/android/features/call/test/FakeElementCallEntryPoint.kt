@@ -42,6 +42,7 @@ class FakeElementCallEntryPoint(
         expirationTimestamp: Long,
         notificationChannelId: String,
         textContent: String?,
+        isDm: Boolean,
     ) {
         handleIncomingCallResult(
             callType,

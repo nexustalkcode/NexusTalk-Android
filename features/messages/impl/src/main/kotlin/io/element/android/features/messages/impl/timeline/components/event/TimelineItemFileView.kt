@@ -25,6 +25,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染文件消息条目视图。
+ */
 @Composable
 fun TimelineItemFileView(
     content: TimelineItemFileContent,

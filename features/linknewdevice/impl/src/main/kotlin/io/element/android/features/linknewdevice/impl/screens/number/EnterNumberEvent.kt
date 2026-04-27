@@ -7,7 +7,12 @@
 
 package io.element.android.features.linknewdevice.impl.screens.number
 
+/**
+ * 输入校验码页面可能触发的用户事件。
+ */
 sealed interface EnterNumberEvent {
+    /** 更新当前输入的数字串。 */
     data class UpdateNumber(val number: String) : EnterNumberEvent
+    /** 继续提交当前输入的校验码。 */
     data object Continue : EnterNumberEvent
 }

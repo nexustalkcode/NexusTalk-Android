@@ -19,6 +19,11 @@ import io.element.android.libraries.textcomposer.model.MessageComposerMode
 
 @SingleIn(RoomScope::class)
 @ContributesBinding(RoomScope::class)
+/**
+ * [MessageComposerContext] 的默认实现。
+ *
+ * 用于在房间作用域内共享当前输入框模式。
+ */
 class DefaultMessageComposerContext : MessageComposerContext {
     override var composerMode: MessageComposerMode by mutableStateOf(MessageComposerMode.Normal)
         internal set

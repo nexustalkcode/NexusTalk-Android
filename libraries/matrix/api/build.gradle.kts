@@ -46,13 +46,13 @@ android {
 dependencies {
     implementation(projects.libraries.di)
     implementation(projects.libraries.androidutils)
-    implementation(projects.libraries.core)
-    implementation(projects.services.analytics.api)
+    api(projects.libraries.core)
+    implementation(libs.matrix.analytics.events)
     implementation(libs.serialization.json)
-    api(projects.libraries.sessionStorage.api)
+    api(project(":libraries:session-storage"))
     implementation(libs.coroutines.core)
     api(projects.libraries.architecture)
 
    
-    testImplementation(projects.libraries.matrix.test)
+    testImplementation(project(":libraries:matrix:test"))
 }

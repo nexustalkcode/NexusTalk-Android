@@ -28,17 +28,28 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @AssistedInject
+/**
+ * 创建账号页面 Presenter。
+ *
+ * 负责维护注册页加载进度，并在收到外部注册结果消息后导入新会话。
+ */
 class CreateAccountPresenter(
     @Assisted private val url: String,
     private val authenticationService: MatrixAuthenticationService,
     private val messageParser: MessageParser,
     private val buildMeta: BuildMeta,
 ) : Presenter<CreateAccountState> {
+    /**
+     * 创建 Presenter 的 Assisted 工厂。
+     */
     @AssistedFactory
     interface Factory {
         fun create(url: String): CreateAccountPresenter
     }
 
+    /**
+     * 生成创建账号页面状态并处理页面事件。
+     */
     @Composable
     override fun present(): CreateAccountState {
         val coroutineScope = rememberCoroutineScope()
@@ -67,6 +78,12 @@ class CreateAccountPresenter(
         )
     }
 
+    /**
+     * 解析注册完成消息并把外部会话导入到本地认证服务。
+     *
+     * @param message 注册页回传的原始消息。
+     * @param loggedInState 需要回写的创建账号异步状态。
+     */
     private fun CoroutineScope.importSession(message: String, loggedInState: MutableState<AsyncAction<SessionId>>) = launch {
         loggedInState.value = AsyncAction.Loading
         runCatchingExceptions {

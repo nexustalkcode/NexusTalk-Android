@@ -22,6 +22,9 @@ import io.element.android.libraries.matrix.api.timeline.item.event.UnableToDecry
 import io.element.android.libraries.matrix.api.timeline.item.event.UtdCause
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染无法解密事件的提示视图。
+ */
 @Composable
 fun TimelineItemEncryptedView(
     content: TimelineItemEncryptedContent,

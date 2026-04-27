@@ -12,10 +12,16 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.features.messages.impl.timeline.aTimelineItemReactions
 import io.element.android.libraries.matrix.api.core.EventId
 
+/**
+ * 为 reaction summary 预览提供样例状态。
+ */
 open class ReactionSummaryStateProvider : PreviewParameterProvider<ReactionSummaryState> {
     override val values = sequenceOf(aReactionSummaryState())
 }
 
+/**
+ * 构造一份 reaction summary 样例状态。
+ */
 fun aReactionSummaryState(): ReactionSummaryState {
     val reactions = aTimelineItemReactions(8, true).reactions
     return ReactionSummaryState(

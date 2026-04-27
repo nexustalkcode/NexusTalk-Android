@@ -20,6 +20,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
 
+/**
+ * 修改房间权限页面展示状态。
+ */
 data class ChangeRoomPermissionsState(
     private val ownPowerLevel: Long,
     val currentPermissions: RoomPowerLevelsValues?,
@@ -30,7 +33,9 @@ data class ChangeRoomPermissionsState(
 ) {
     private val ownRole = RoomMember.Role.forPowerLevel(ownPowerLevel)
 
-    // Roles that the user can select based on their own role
+    /**
+     * 当前用户可选择的角色列表。
+     */
     val selectableRoles: ImmutableList<SelectableRole> = when (ownRole) {
         is RoomMember.Role.Owner,
         RoomMember.Role.Admin -> persistentListOf(SelectableRole.Admin, SelectableRole.Moderator, SelectableRole.Everyone)
@@ -38,6 +43,9 @@ data class ChangeRoomPermissionsState(
         RoomMember.Role.User -> persistentListOf(SelectableRole.Everyone)
     }
 
+    /**
+     * 读取某个权限项当前选中的角色。
+     */
     fun selectedRoleForType(type: RoomPermissionType): SelectableRole? {
         val powerLevel = currentPowerLevelForType(type = type) ?: return null
         return when (RoomMember.Role.forPowerLevel(powerLevel)) {
@@ -48,11 +56,17 @@ data class ChangeRoomPermissionsState(
         }
     }
 
+    /**
+     * 判断当前用户是否可以修改某个权限项。
+     */
     fun canChangePermission(type: RoomPermissionType): Boolean {
         val currentPowerLevel = currentPowerLevelForType(type) ?: return false
         return ownPowerLevel >= currentPowerLevel
     }
 
+    /**
+     * 读取某个权限项当前的 power level。
+     */
     private fun currentPowerLevelForType(type: RoomPermissionType): Long? {
         if (currentPermissions == null) return null
         return when (type) {
@@ -69,6 +83,9 @@ data class ChangeRoomPermissionsState(
     }
 }
 
+/**
+ * 权限页面中的分区。
+ */
 enum class RoomPermissionsSection {
     ManageMembers,
     EditDetails,
@@ -76,6 +93,9 @@ enum class RoomPermissionsSection {
     ManageSpace
 }
 
+/**
+ * 权限项可选择的角色。
+ */
 enum class SelectableRole : DropdownOption {
     Admin {
         @Composable
@@ -94,6 +114,9 @@ enum class SelectableRole : DropdownOption {
     }
 }
 
+/**
+ * 可编辑的房间权限项。
+ */
 enum class RoomPermissionType {
     BAN,
     INVITE,

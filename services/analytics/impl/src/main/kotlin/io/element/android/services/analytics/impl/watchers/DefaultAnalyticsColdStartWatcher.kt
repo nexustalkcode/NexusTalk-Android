@@ -8,7 +8,7 @@
 package io.element.android.services.analytics.impl.watchers
 
 import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.element.android.libraries.di.annotations.AppCoroutineScope
 import io.element.android.services.analytics.api.AnalyticsLongRunningTransaction
@@ -24,8 +24,7 @@ import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 
 @SingleIn(AppScope::class)
-@ContributesBinding(AppScope::class)
-class DefaultAnalyticsColdStartWatcher(
+class DefaultAnalyticsColdStartWatcher @Inject constructor(
     private val analyticsService: AnalyticsService,
     @AppCoroutineScope private val appCoroutineScope: CoroutineScope,
 ) : AnalyticsColdStartWatcher {

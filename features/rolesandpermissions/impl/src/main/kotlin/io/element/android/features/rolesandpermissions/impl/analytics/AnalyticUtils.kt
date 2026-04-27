@@ -13,6 +13,9 @@ import io.element.android.libraries.matrix.api.room.RoomMember
 import io.element.android.libraries.matrix.api.room.powerlevels.RoomPowerLevelsValues
 import io.element.android.services.analytics.api.AnalyticsService
 
+/**
+ * 将内部角色模型映射为分析埋点使用的角色。
+ */
 internal fun RoomMember.Role.toAnalyticsMemberRole(): RoomModeration.Role = when (this) {
     is RoomMember.Role.Owner -> RoomModeration.Role.Administrator // TODO - distinguish creator from admin
     RoomMember.Role.Admin -> RoomModeration.Role.Administrator
@@ -20,10 +23,16 @@ internal fun RoomMember.Role.toAnalyticsMemberRole(): RoomModeration.Role = when
     RoomMember.Role.User -> RoomModeration.Role.User
 }
 
+/**
+ * 根据 power level 推导分析埋点使用的角色。
+ */
 internal fun analyticsMemberRoleForPowerLevel(powerLevel: Long): RoomModeration.Role {
     return RoomMember.Role.forPowerLevel(powerLevel).toAnalyticsMemberRole()
 }
 
+/**
+ * 追踪权限变更相关的分析事件。
+ */
 internal fun AnalyticsService.trackPermissionChangeAnalytics(initial: RoomPowerLevelsValues?, updated: RoomPowerLevelsValues) {
     if (updated.ban != initial?.ban) {
         capture(RoomModeration(RoomModeration.Action.ChangePermissionsBanMembers, analyticsMemberRoleForPowerLevel(updated.ban)))

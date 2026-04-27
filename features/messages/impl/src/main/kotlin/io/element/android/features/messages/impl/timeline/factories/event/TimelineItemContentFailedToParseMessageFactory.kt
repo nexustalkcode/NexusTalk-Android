@@ -14,7 +14,13 @@ import io.element.android.features.messages.impl.timeline.model.event.TimelineIt
 import io.element.android.libraries.matrix.api.timeline.item.event.FailedToParseMessageLikeContent
 
 @Inject
+/**
+ * 无法解析的消息型事件内容工厂。
+ */
 class TimelineItemContentFailedToParseMessageFactory {
+    /**
+     * 把解析失败的消息型内容降级为未知内容视图。
+     */
     fun create(@Suppress("UNUSED_PARAMETER") failedToParseMessageLike: FailedToParseMessageLikeContent): TimelineItemEventContent {
         return TimelineItemUnknownContent
     }

@@ -10,7 +10,7 @@ package io.element.android.libraries.pushproviders.unifiedpush.troubleshoot
 
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesIntoSet
-import io.element.android.libraries.pushproviders.unifiedpush.R
+import io.element.android.libraries.pushproviders.R
 import io.element.android.libraries.pushproviders.unifiedpush.UnifiedPushConfig
 import io.element.android.libraries.pushproviders.unifiedpush.UnifiedPushDistributorProvider
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootNavigator
@@ -29,6 +29,9 @@ class UnifiedPushTest(
     private val stringProvider: StringProvider,
 ) : NotificationTroubleshootTest {
     override val order = 400
+
+    // unifiedpush 资源现在和 firebase 一样都并入了同一个 pushproviders 模块，
+    // 所以运行时只能依赖根 namespace 的 R，不能再依赖旧的 unifiedpush.R。
     private val delegate = NotificationTroubleshootTestDelegate(
         defaultName = stringProvider.getString(R.string.troubleshoot_notifications_test_unified_push_title),
         defaultDescription = stringProvider.getString(R.string.troubleshoot_notifications_test_unified_push_description),

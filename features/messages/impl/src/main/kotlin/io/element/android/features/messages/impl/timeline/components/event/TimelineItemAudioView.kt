@@ -22,6 +22,9 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Icon
 
+/**
+ * 渲染音频消息条目视图。
+ */
 @Composable
 fun TimelineItemAudioView(
     content: TimelineItemAudioContent,

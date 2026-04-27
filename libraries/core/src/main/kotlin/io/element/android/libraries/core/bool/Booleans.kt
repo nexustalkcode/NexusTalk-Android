@@ -8,6 +8,12 @@
 
 package io.element.android.libraries.core.bool
 
+/**
+ * 当可空布尔值为 `null` 时按 `true` 处理。
+ */
 fun Boolean?.orTrue() = this ?: true
 
+/**
+ * 当可空布尔值为 `null` 时按 `false` 处理。
+ */
 fun Boolean?.orFalse() = this ?: false

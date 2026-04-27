@@ -10,7 +10,12 @@ package io.element.android.features.messages.impl.timeline.components.customreac
 
 import io.element.android.features.messages.impl.timeline.model.TimelineItem
 
+/**
+ * 自定义 reaction 底部弹层可能触发的事件。
+ */
 sealed interface CustomReactionEvents {
+    /** 显示指定事件的自定义 reaction 面板。 */
     data class ShowCustomReactionSheet(val event: TimelineItem.Event) : CustomReactionEvents
+    /** 关闭自定义 reaction 面板。 */
     data object DismissCustomReactionSheet : CustomReactionEvents
 }

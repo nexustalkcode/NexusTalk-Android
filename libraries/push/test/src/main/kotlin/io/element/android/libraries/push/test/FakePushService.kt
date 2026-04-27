@@ -15,8 +15,6 @@ import io.element.android.libraries.push.api.PushService
 import io.element.android.libraries.push.api.history.PushHistoryItem
 import io.element.android.libraries.pushproviders.api.Distributor
 import io.element.android.libraries.pushproviders.api.PushProvider
-import io.element.android.tests.testutils.lambda.lambdaError
-import io.element.android.tests.testutils.simulateLongTask
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -27,12 +25,24 @@ class FakePushService(
         Result.success(Unit)
     },
     private val currentPushProvider: (SessionId) -> PushProvider? = { availablePushProviders.firstOrNull() },
-    private val selectPushProviderLambda: suspend (SessionId, PushProvider) -> Unit = { _, _ -> lambdaError() },
-    private val setIgnoreRegistrationErrorLambda: (SessionId, Boolean) -> Unit = { _, _ -> lambdaError() },
-    private val resetPushHistoryResult: () -> Unit = { lambdaError() },
-    private val resetBatteryOptimizationStateResult: () -> Unit = { lambdaError() },
-    private val onServiceUnregisteredResult: (UserId) -> Unit = { lambdaError() },
-    private val ensurePusherIsRegisteredResult: () -> Result<Unit> = { lambdaError() },
+    private val selectPushProviderLambda: suspend (SessionId, PushProvider) -> Unit = { _, _ ->
+        error("selectPushProviderLambda should be provided in tests")
+    },
+    private val setIgnoreRegistrationErrorLambda: (SessionId, Boolean) -> Unit = { _, _ ->
+        error("setIgnoreRegistrationErrorLambda should be provided in tests")
+    },
+    private val resetPushHistoryResult: () -> Unit = {
+        error("resetPushHistoryResult should be provided in tests")
+    },
+    private val resetBatteryOptimizationStateResult: () -> Unit = {
+        error("resetBatteryOptimizationStateResult should be provided in tests")
+    },
+    private val onServiceUnregisteredResult: (UserId) -> Unit = {
+        error("onServiceUnregisteredResult should be provided in tests")
+    },
+    private val ensurePusherIsRegisteredResult: () -> Result<Unit> = {
+        error("ensurePusherIsRegisteredResult should be provided in tests")
+    },
 ) : PushService {
     override suspend fun getCurrentPushProvider(sessionId: SessionId): PushProvider? {
         return registeredPushProvider ?: currentPushProvider(sessionId)
@@ -48,7 +58,7 @@ class FakePushService(
         matrixClient: MatrixClient,
         pushProvider: PushProvider,
         distributor: Distributor,
-    ): Result<Unit> = simulateLongTask {
+    ): Result<Unit> {
         return registerWithLambda(matrixClient, pushProvider, distributor)
             .also {
                 if (it.isSuccess) {
@@ -76,9 +86,7 @@ class FakePushService(
         setIgnoreRegistrationErrorLambda(sessionId, ignore)
     }
 
-    override suspend fun testPush(sessionId: SessionId): Boolean = simulateLongTask {
-        testPushBlock(sessionId)
-    }
+    override suspend fun testPush(sessionId: SessionId): Boolean = testPushBlock(sessionId)
 
     private val pushHistoryItemsFlow = MutableStateFlow<List<PushHistoryItem>>(emptyList())
 
@@ -98,9 +106,7 @@ class FakePushService(
         pushCounterFlow.value = counter
     }
 
-    override suspend fun resetPushHistory() = simulateLongTask {
-        resetPushHistoryResult()
-    }
+    override suspend fun resetPushHistory() = resetPushHistoryResult()
 
     override suspend fun resetBatteryOptimizationState() {
         resetBatteryOptimizationStateResult()

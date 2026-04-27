@@ -12,6 +12,9 @@ import io.element.android.features.poll.api.pollcontent.PollAnswerItem
 import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.poll.PollKind
 
+/**
+ * 投票消息的 UI 内容模型。
+ */
 data class TimelineItemPollContent(
     val isMine: Boolean,
     val isEditable: Boolean,

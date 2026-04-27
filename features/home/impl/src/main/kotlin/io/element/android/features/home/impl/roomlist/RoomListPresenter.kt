@@ -8,7 +8,6 @@
 
 package io.element.android.features.home.impl.roomlist
 
-import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -29,6 +28,8 @@ import io.element.android.features.announcement.api.Announcement
 import io.element.android.features.announcement.api.AnnouncementService
 import io.element.android.features.home.impl.datasource.RoomListDataSource
 import io.element.android.features.home.impl.filters.RoomListFiltersState
+import io.element.android.features.home.impl.model.RoomListRoomSummary
+import io.element.android.features.home.impl.model.RoomSummaryDisplayType
 import io.element.android.features.home.impl.search.RoomListSearchEvents
 import io.element.android.features.home.impl.search.RoomListSearchState
 import io.element.android.features.invite.api.SeenInvitesStore
@@ -374,14 +375,15 @@ class RoomListPresenter(
                     batteryOptimizationState = batteryOptimizationState.copy(
                         shouldDisplayBanner = batteryOptimizationState.shouldDisplayBanner && !batteryOptimizationBannerDismissed,
                     ),
-                    summaries = roomSummaries.dataOrNull().orEmpty().toImmutableList(),
+                    summaries = roomSummaries.dataOrNull()
+                        .orEmpty()
+                        .prioritizeUnseenInvites(seenRoomInvites)
+                        .toImmutableList(),
                     seenRoomInvites = seenRoomInvites.toImmutableSet(),
                 )
             }
         }
     }
-
-    private fun isXiaomiDevice(): Boolean = Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)
 
     /**
      * 显示上下文菜单
@@ -505,4 +507,20 @@ class RoomListPresenter(
             roomListDataSource.subscribeToVisibleRooms(roomIds)
         }
     }
+}
+
+/**
+ * 将“尚未查看的邀请”稳定提到列表最前面。
+ *
+ * 这里只调整新邀请相对其他房间的位置，不改动其余房间之间原有的排序结果，
+ * 这样可以在修复邀请置顶问题的同时，尽量减少对现有列表行为的影响。
+ */
+private fun List<RoomListRoomSummary>.prioritizeUnseenInvites(
+    seenRoomInvites: Set<RoomId>,
+): List<RoomListRoomSummary> {
+    val (unseenInvites, otherRooms) = partition { summary ->
+        summary.displayType == RoomSummaryDisplayType.INVITE &&
+            summary.roomId !in seenRoomInvites
+    }
+    return unseenInvites + otherRooms
 }

@@ -24,6 +24,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染同步中提示条。
+ */
 fun SyncStateView(
     isVisible: Boolean,
     modifier: Modifier = Modifier

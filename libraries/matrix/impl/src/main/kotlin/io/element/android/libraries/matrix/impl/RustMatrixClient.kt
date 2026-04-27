@@ -131,6 +131,21 @@ import org.matrix.rustcomponents.sdk.CreateRoomParameters as RustCreateRoomParam
 import org.matrix.rustcomponents.sdk.RoomPreset as RustRoomPreset
 import org.matrix.rustcomponents.sdk.SyncService as ClientSyncService
 
+/**
+ * `MatrixClient` 的 Rust SDK 适配实现。
+ *
+ * 这个类承担的职责比较集中，核心目标是把 Rust FFI 暴露出来的 `Client`、`SyncService`
+ * 以及若干 listener/handler，整理成 Android 业务层可以直接消费的 Kotlin API。
+ *
+ * 主要职责包括：
+ * - 管理当前会话的基础标识与协程作用域；
+ * - 持有并装配房间列表、Space、通知、加密、媒体等会话级服务；
+ * - 在 Kotlin 层补齐 Rust SDK 不直接提供的初始化、等待、映射与兜底逻辑；
+ * - 负责会话销毁、登出、停用账号等生命周期收尾，避免 FFI 资源泄漏。
+ *
+ * 由于底层是跨语言 FFI，对资源释放顺序、回调取消时机、同步完成时序都比较敏感，
+ * 因此这里会看到一些显式的作用域管理、`TaskHandle` 保存、以及“先等待同步可见再返回”的处理。
+ */
 class RustMatrixClient(
     private val innerClient: Client,
     private val sessionStore: SessionStore,
@@ -148,11 +163,31 @@ class RustMatrixClient(
     override val sessionId: UserId = UserId(innerClient.userId())
     override val deviceId: DeviceId = DeviceId(innerClient.deviceId())
     override val sessionCoroutineScope = appCoroutineScope.childScope(dispatchers.main, "Session-$sessionId")
+
+    /**
+     * 当前会话专用的 IO 调度器。
+     *
+     * 这里没有直接复用共享 IO 调度器，而是额外做了一层并发限制，原因是 Matrix SDK 的很多调用都会落到
+     * 磁盘、数据库或网络路径上。如果完全不受限地并发执行，会更容易把共享线程池打满，进而影响 UI 线程
+     * 切换、其他会话任务，甚至让本会话内部的任务互相争抢资源。
+     *
+     * `64` 不是业务语义阈值，而是一个工程层面的并发上限，用来平衡吞吐与稳定性。
+     */
     private val sessionDispatcher = dispatchers.io.limitedParallelism(64)
 
     private val innerRoomListService = innerSyncService.roomListService()
 
     // TODO refactor this and `innerNotificationClient` to be behind a suspend function instead
+
+    /**
+     * Space 服务的底层 Rust 实例。
+     *
+     * 当前 Rust SDK 在这里提供的是阻塞式获取方式，因此只能在构造阶段通过 `runBlocking` 同步拿到实例。
+     * 这不是理想形态，但能保证 `spaceService` 在对象创建完成后即可用。
+     *
+     * 如果后续 SDK 暴露 suspend 风格的初始化接口，应该把这里和通知客户端一起迁移成懒加载或 suspend 初始化，
+     * 以减少构造函数阶段的阻塞行为。
+     */
     private val innerSpaceService = runBlocking { innerClient.spaceService() }
 
     override val roomMembershipObserver = RoomMembershipObserver()
@@ -243,6 +278,15 @@ class RustMatrixClient(
         sessionDispatcher = sessionDispatcher,
     )
 
+    /**
+     * Rust Client delegate 对应的可取消句柄。
+     *
+     * Rust SDK 的 delegate 注册后会持续向 Kotlin 层投递事件，例如鉴权失败、会话异常等。
+     * 因此这里必须保存注册返回的 `TaskHandle`，以便在登出、销毁、停用账号时显式取消监听。
+     *
+     * 如果不在合适的时机取消，旧会话可能在本地资源已经释放后仍继续接收回调，造成重复登出、状态错乱，
+     * 甚至访问已经销毁对象的问题。
+     */
     private var clientDelegateTaskHandle: TaskHandle? = innerClient.setDelegate(sessionDelegate)
 
     private val _userProfile: MutableStateFlow<MatrixUser> = MutableStateFlow(
@@ -255,8 +299,14 @@ class RustMatrixClient(
 
     override val userProfile: StateFlow<MatrixUser> = _userProfile
 
+    /**
+     * 当前账号的忽略用户列表流。
+     *
+     * Rust SDK 的订阅接口只负责推送后续变化，不会在订阅建立时自动补发当前快照。
+     * 因此这里先主动读取一次初始值，再挂上订阅监听，保证上层一旦开始收集就能拿到完整状态，
+     * 不会因为等待第一次变更事件而误判“当前没有忽略用户”。
+     */
     override val ignoredUsersFlow = mxCallbackFlow<ImmutableList<UserId>> {
-        // Fetch the initial value manually, the SDK won't return it automatically
         channel.trySend(innerClient.ignoredUsers().map(::UserId).toImmutableList())
 
         innerClient.subscribeToIgnoredUsers(object : IgnoredUsersListener {
@@ -273,10 +323,19 @@ class RustMatrixClient(
         sessionDelegate.bindClient(this)
 
         sessionCoroutineScope.launch {
-            // Start notification settings
+            /*
+             * 通知设置依赖会话上下文与同步状态，因此在会话构建完成后立即启动。
+             *
+             * 这样做的目的是尽早接入后续同步带来的通知配置更新，避免应用刚启动时漏掉一段窗口期内的设置变化。
+             */
             notificationSettingsService.start()
 
-            // Update the user profile in the session store if needed
+            /*
+             * 先使用本地会话存储回填当前用户资料。
+             *
+             * 这样应用在冷启动或会话恢复时，不需要等待首个网络请求完成，就能先显示已有的昵称和头像，
+             * 改善页面首屏可用性。
+             */
             sessionStore.getSession(sessionId.value)?.let { sessionData ->
                 _userProfile.emit(
                     MatrixUser(
@@ -286,11 +345,21 @@ class RustMatrixClient(
                     )
                 )
             }
-            // Force a refresh of the profile
+
+            /*
+             * 本地回填之后仍然强制刷新一次远端资料，确保本地缓存最终与服务端保持一致。
+             *
+             * 这一步可以修正昵称、头像等资料在其他端修改后，本端尚未持久化更新的情况。
+             */
             getUserProfile()
         }
 
-        // Schedule regular database vacuuming to ensure DB performance remains optimal
+        /*
+         * 启动时确保数据库整理任务已经注册。
+         *
+         * 这里不直接执行 vacuum，而是注册 WorkManager 周期任务，让数据库优化以后台维护任务的形式持续运行，
+         * 从而降低会话数据库长期使用后的碎片化和性能退化风险。
+         */
         scheduleDatabaseVacuum()
     }
 
@@ -320,11 +389,20 @@ class RustMatrixClient(
     }
 
     /**
-     * Wait for the room to be available in the client with the correct membership for the current user.
-     * @param roomId the room id to wait for
-     * @param timeout the timeout to wait for the room to be available
-     * @param currentUserMembership the membership to wait for
-     * @throws TimeoutCancellationException if the room is not available after the timeout
+     * 等待指定房间在本地客户端侧变成“可用状态”。
+     *
+     * 这里的“可用”不是简单指服务端操作已经返回成功，而是指：
+     * - 房间已经通过同步进入本地房间信息流；
+     * - 当前用户在该房间上的 membership 已经达到调用方期望的状态；
+     * - 必要的 remote echo 已完成，避免房间虽然可见但发送队列/本地状态尚未稳定。
+     *
+     * 这个等待逻辑主要服务于建房、入房、knock 等场景，保证方法返回后调用方能尽量立即拿到一致的房间状态。
+     *
+     * @param roomId 需要等待的房间 ID。
+     * @param timeout 最长等待时长；超时后会抛出 [TimeoutCancellationException]。
+     * @param currentUserMembership 期望当前用户达到的 membership 状态。
+     * @return 满足条件后的最新 [RoomInfo]。
+     * @throws TimeoutCancellationException 当指定时间内没有等到目标房间进入预期状态时抛出。
      */
     private suspend fun awaitRoom(
         roomId: RoomId,
@@ -335,7 +413,12 @@ class RustMatrixClient(
             getRoomInfoFlow(roomId)
                 .mapNotNull { roomInfo -> roomInfo.getOrNull() }
                 .first { info -> info.currentUserMembership == currentUserMembership }
-                // Ensure that the room is ready
+                /*
+                 * 仅在房间列表里看到了目标 membership 还不够。
+                 *
+                 * 继续等待 remote echo，可以进一步确保本地发送队列已经完成必要确认，避免调用方拿到“理论上已加入，
+                 * 但本地对象还未完全稳定”的中间态。
+                 */
                 .also { innerClient.awaitRoomRemoteEcho(roomId.value).destroy() }
         }
     }
@@ -370,6 +453,12 @@ class RustMatrixClient(
     override suspend fun createRoom(createRoomParams: CreateRoomParameters): Result<RoomId> = withContext(sessionDispatcher) {
         runCatchingExceptions {
             val hasPublicAccess = createRoomParams.preset == RoomPreset.PUBLIC_CHAT || createRoomParams.joinRuleOverride == JoinRule.Public
+
+            /*
+             * 房间默认权限在 Kotlin 层统一生成。
+             *
+             * 这样可以避免各调用方分别拼装权限结构导致策略漂移，也能把 room 与 space 的差异化默认权限集中维护在一处。
+             */
             val powerLevels = defaultRoomCreationPowerLevels(isSpace = createRoomParams.isSpace, isPublic = hasPublicAccess)
 
             val rustParams = RustCreateRoomParameters(
@@ -387,7 +476,12 @@ class RustMatrixClient(
                 avatar = createRoomParams.avatar,
                 powerLevelContentOverride = powerLevels.copy(
                     invite = if (createRoomParams.joinRuleOverride == JoinRule.Knock) {
-                        // override the invite power level so it's the same as kick.
+                        /*
+                         * Knock 场景下，邀请权限提升到 moderator 等级。
+                         *
+                         * 目的是避免普通成员在启用 knock 语义的房间中，绕过“申请加入”的流程直接邀请其他用户。
+                         * 这里让 invite 与 kick 采用同级权限，保持更一致的治理模型。
+                         */
                         RoomMember.Role.Moderator.powerLevel.toInt()
                     } else {
                         powerLevels.invite
@@ -399,7 +493,13 @@ class RustMatrixClient(
                 isSpace = createRoomParams.isSpace,
             )
             val roomId = RoomId(innerClient.createRoom(rustParams))
-            // Wait to receive the room back from the sync but do not returns failure if it fails.
+
+            /*
+             * 建房接口返回成功，只能说明服务端已经受理创建请求。
+             *
+             * 为了让调用方更容易在返回后立即操作该房间，这里额外等待同步把房间带回本地房间列表。
+             * 但这一步属于“增强一致性”的等待，而不是创建动作本身的硬失败条件，所以超时只记日志，不把整个创建结果改为失败。
+             */
             try {
                 awaitRoom(roomId, 30.seconds, CurrentUserMembership.JOINED)
             } catch (e: Exception) {
@@ -555,6 +655,14 @@ class RustMatrixClient(
         }.mapFailure { it.mapClientException() }
     }
 
+    /**
+     * 销毁当前会话关联的所有本地资源。
+     *
+     * 该方法用于会话彻底结束前的收尾，包括关闭通知客户端、停止同步、销毁房间工厂、取消协程作用域、
+     * 释放 Rust service 以及移除 delegate 关联。
+     *
+     * 这里尤其强调资源释放顺序：优先停止外部输入与回调来源，再逐层销毁内部对象，尽量避免在销毁途中收到新的 SDK 事件。
+     */
     internal suspend fun destroy() {
         innerNotificationClient.close()
 
@@ -597,7 +705,13 @@ class RustMatrixClient(
 
     override suspend fun logout(userInitiated: Boolean, ignoreSdkError: Boolean) {
         sessionCoroutineScope.cancel()
-        // Remove current delegate so we don't receive an auth error
+
+        /*
+         * 登出前先摘掉 delegate。
+         *
+         * 否则在 logout 请求过程中，如果服务端又回来了一个鉴权失败或会话失效回调，可能再次触发会话层退出逻辑，
+         * 造成重复清理、重复跳转或资源状态混乱。
+         */
         clientDelegateTaskHandle?.cancelAndDestroy()
         clientDelegateTaskHandle = null
         withContext(sessionDispatcher) {
@@ -608,7 +722,11 @@ class RustMatrixClient(
                     if (ignoreSdkError) {
                         Timber.e(failure, "Fail to call logout on HS. Still delete local files.")
                     } else {
-                        // If the logout failed we need to restore the delegate
+                        /*
+                         * 用户主动登出失败且选择不忽略 SDK 错误时，需要恢复 delegate。
+                         *
+                         * 因为这意味着当前会话并未真正结束，如果不恢复监听，后续该会话上的鉴权问题或 SDK 事件将无法继续传递到上层。
+                         */
                         clientDelegateTaskHandle = innerClient.setDelegate(sessionDelegate)
                         Timber.e(failure, "Fail to call logout on HS.")
                         throw failure
@@ -634,11 +752,20 @@ class RustMatrixClient(
 
     override suspend fun deactivateAccount(password: String, eraseData: Boolean): Result<Unit> = withContext(sessionDispatcher) {
         Timber.w("Deactivating account")
-        // Remove current delegate so we don't receive an auth error
+
+        /*
+         * 停用账号前同样先取消 delegate，避免服务端状态变化回调与本地销毁过程交错。
+         */
         clientDelegateTaskHandle?.cancelAndDestroy()
         clientDelegateTaskHandle = null
         runCatchingExceptions {
-            // First call without AuthData, should fail
+
+            /*
+             * 按 UIAA（用户交互认证）流程先发起一次不带认证信息的请求。
+             *
+             * 对停用账号这类敏感操作，服务端通常会先返回一个“需要额外认证”的失败结果，
+             * 再由客户端补充密码等认证信息继续完成操作。
+             */
             val firstAttempt = runCatchingExceptions {
                 innerClient.deactivateAccount(
                     authData = null,
@@ -647,7 +774,13 @@ class RustMatrixClient(
             }
             if (firstAttempt.isFailure) {
                 Timber.w(firstAttempt.exceptionOrNull(), "Expected failure, try again")
-                // This is expected, try again with the password
+
+                /*
+                 * 第二阶段携带密码完成真正停用。
+                 *
+                 * 如果这里仍然失败，说明当前会话还处于继续可用的状态，因此要把 delegate 恢复回来，
+                 * 保证剩余会话生命周期内的事件仍可正常处理。
+                 */
                 runCatchingExceptions {
                     innerClient.deactivateAccount(
                         authData = AuthData.Password(
@@ -806,8 +939,18 @@ class RustMatrixClient(
         val sessionDirectory = sessionPathsProvider.provides(sessionId) ?: return@withContext 0L
         val cacheSize = sessionDirectory.cacheDirectory.getSizeOfFiles()
         if (includeCryptoDb) {
+            /*
+             * 需要统计完整会话占用时，把 file 目录一并计算进去。
+             *
+             * 这种口径更适合做“当前会话总占用”展示或做彻底清理前的体积评估。
+             */
             cacheSize + sessionDirectory.fileDirectory.getSizeOfFiles()
         } else {
+            /*
+             * 默认缓存大小只额外计入状态库文件，而不把整个 file 目录都当作“可清理缓存”。
+             *
+             * 这样可以避免把更偏持久化/敏感的数据一并算进缓存口径，导致上层在展示或清理策略上产生误导。
+             */
             cacheSize + listOf(
                 "matrix-sdk-state.sqlite3",
                 "matrix-sdk-state.sqlite3-shm",
@@ -825,18 +968,33 @@ class RustMatrixClient(
         sessionPathsProvider.provides(sessionId)?.deleteRecursively()
     }
 
+    /**
+     * 为当前会话注册数据库 vacuum 周期任务。
+     *
+     * 该任务用于长期运行过程中定期整理数据库空间，减少碎片并维持查询性能。
+     * 这里会先按 `sessionId + DB_VACUUM` 维度检查是否已有待执行任务，避免每次应用启动都重复注册。
+     */
     private fun scheduleDatabaseVacuum() {
-        // If there's already a periodic work request, do not schedule another one
-        if (workManagerScheduler.hasPendingWork(sessionId, WorkManagerRequestType.DB_VACUUM)) return
+        if (workManagerScheduler.hasPendingWork(sessionId.value, WorkManagerRequestType.DB_VACUUM)) return
 
         Timber.i("Scheduling periodic database vacuuming for session $sessionId")
-        val request = PerformDatabaseVacuumWorkManagerRequest(sessionId)
+        val request = PerformDatabaseVacuumWorkManagerRequest(sessionId.value)
         workManagerScheduler.submit(request)
     }
 }
 
+/**
+ * 生成建房时使用的默认权限配置。
+ *
+ * 这里集中描述 room 与 space 的默认 power levels 差异，避免调用方在多个地方重复维护同一套策略。
+ *
+ * @param isPublic 是否为公开房间；公开房间默认降低邀请门槛。
+ * @param isSpace 是否创建的是 space；space 默认收紧事件发送权限。
+ * @return 传递给 Rust SDK 的默认 [PowerLevels]。
+ */
 private fun defaultRoomCreationPowerLevels(isPublic: Boolean, isSpace: Boolean) = PowerLevels(
     usersDefault = null,
+    // Space 主要承载结构和权限管理，不应该默认允许普通成员发送状态事件，因此把 eventsDefault 提升到管理员级别。
     // Only admins should be able to send events in general
     eventsDefault = if (isSpace) 100 else null,
     stateDefault = null,
@@ -847,6 +1005,7 @@ private fun defaultRoomCreationPowerLevels(isPublic: Boolean, isSpace: Boolean) 
     notifications = null,
     users = mapOf(),
     events = if (!isSpace) {
+        // 通话成员事件保持 0 级，保证普通成员也能上报通话成员状态，否则群通话建立会被默认权限拦住。
         mapOf(
             "m.call.member" to 0,
             "org.matrix.msc3401.call.member" to 0,

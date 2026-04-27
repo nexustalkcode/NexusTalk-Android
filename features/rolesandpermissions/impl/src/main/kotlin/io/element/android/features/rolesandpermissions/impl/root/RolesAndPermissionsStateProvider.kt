@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncAction
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为角色与权限主页预览提供样例状态。
+ */
 class RolesAndPermissionsStateProvider : PreviewParameterProvider<RolesAndPermissionsState> {
     override val values: Sequence<RolesAndPermissionsState>
         get() = sequenceOf(
@@ -51,6 +54,9 @@ class RolesAndPermissionsStateProvider : PreviewParameterProvider<RolesAndPermis
         )
 }
 
+/**
+ * 构造一份角色与权限主页样例状态。
+ */
 internal fun aRolesAndPermissionsState(
     roomSupportsOwners: Boolean = true,
     adminCount: Int = 0,

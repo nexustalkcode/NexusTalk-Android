@@ -33,11 +33,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Inject
+/**
+ * 修改房间权限页面 Presenter。
+ *
+ * 负责根据当前房间类型构建可编辑权限项，并驱动保存/退出逻辑。
+ */
 class ChangeRoomPermissionsPresenter(
     private val room: JoinedRoom,
     private val analyticsService: AnalyticsService,
 ) : Presenter<ChangeRoomPermissionsState> {
     companion object {
+        /**
+         * 返回某个分区下应显示的权限项。
+         */
         private fun itemsForSection(section: RoomPermissionsSection) = when (section) {
             RoomPermissionsSection.EditDetails -> persistentListOf(
                 RoomPermissionType.ROOM_NAME,
@@ -67,6 +75,9 @@ class ChangeRoomPermissionsPresenter(
             }
         }
 
+        /**
+         * 根据房间是否是 Space 构建按分区组织的权限项映射。
+         */
         internal fun buildItems(isSpace: Boolean) =
             RoomPermissionsSection.entries
                 .filter { section -> section.shouldShow(isSpace) }
@@ -80,6 +91,9 @@ class ChangeRoomPermissionsPresenter(
     private var currentPermissions by mutableStateOf<RoomPowerLevelsValues?>(null)
     private var saveAction by mutableStateOf<AsyncAction<Boolean>>(AsyncAction.Uninitialized)
 
+    /**
+     * 生成页面状态并处理用户事件。
+     */
     @Composable
     override fun present(): ChangeRoomPermissionsState {
         val coroutineScope = rememberCoroutineScope()
@@ -139,12 +153,18 @@ class ChangeRoomPermissionsPresenter(
         )
     }
 
+    /**
+     * 从房间读取并刷新当前权限值。
+     */
     private suspend fun updatePermissions() {
         val powerLevels = room.powerLevels().getOrNull() ?: return
         initialPermissions = powerLevels
         currentPermissions = initialPermissions
     }
 
+    /**
+     * 保存当前权限修改。
+     */
     private fun CoroutineScope.save() = launch {
         saveAction = AsyncAction.Loading
         val updatedRoomPowerLevels = currentPermissions ?: run {

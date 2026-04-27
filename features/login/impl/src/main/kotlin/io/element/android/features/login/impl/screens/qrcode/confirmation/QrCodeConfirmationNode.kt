@@ -22,10 +22,18 @@ import io.element.android.libraries.architecture.inputs
 
 @ContributesNode(QrCodeLoginScope::class)
 @AssistedInject
+/**
+ * 二维码登录确认页节点。
+ *
+ * 负责展示设备码或验证码确认步骤，并将取消动作回传给流程外层。
+ */
 class QrCodeConfirmationNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
 ) : Node(buildContext = buildContext, plugins = plugins) {
+    /**
+     * 确认页向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun onCancel()
     }
@@ -33,6 +41,11 @@ class QrCodeConfirmationNode(
     private val callback: Callback = callback()
     private val step = inputs<QrCodeConfirmationStep>()
 
+    /**
+     * 渲染二维码登录确认页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         QrCodeConfirmationView(

@@ -16,7 +16,13 @@ import io.element.android.features.signedout.api.SignedOutEntryPoint
 import io.element.android.libraries.architecture.createNode
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的已登出页面入口实现。
+ */
 class DefaultSignedOutEntryPoint : SignedOutEntryPoint {
+    /**
+     * 创建已登出页面节点。
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

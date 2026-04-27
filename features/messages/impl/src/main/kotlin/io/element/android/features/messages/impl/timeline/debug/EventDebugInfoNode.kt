@@ -24,10 +24,18 @@ import io.element.android.libraries.matrix.api.timeline.item.TimelineItemDebugIn
 
 @ContributesNode(RoomScope::class)
 @AssistedInject
+/**
+ * 事件调试信息页面节点。
+ *
+ * 用于展示某个时间线事件的原始 JSON 和解析后模型，方便调试。
+ */
 class EventDebugInfoNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 调试信息页面输入。
+     */
     data class Inputs(
         val eventId: EventId?,
         val timelineItemDebugInfo: TimelineItemDebugInfo,
@@ -35,10 +43,18 @@ class EventDebugInfoNode(
 
     private val inputs = inputs<Inputs>()
 
+    /**
+     * 关闭当前调试信息页。
+     */
     private fun onBackClick() {
         navigateUp()
     }
 
+    /**
+     * 渲染事件调试信息页面。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) = with(inputs) {
         EventDebugInfoView(

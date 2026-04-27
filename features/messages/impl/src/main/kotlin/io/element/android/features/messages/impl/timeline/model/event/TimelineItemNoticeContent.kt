@@ -11,6 +11,9 @@ package io.element.android.features.messages.impl.timeline.model.event
 import io.element.android.libraries.matrix.ui.messages.toPlainText
 import org.jsoup.nodes.Document
 
+/**
+ * notice 消息的 UI 内容模型。
+ */
 data class TimelineItemNoticeContent(
     override val body: String,
     override val htmlDocument: Document?,
@@ -18,5 +21,8 @@ data class TimelineItemNoticeContent(
     override val isEdited: Boolean,
 ) : TimelineItemTextBasedContent {
     override val type: String = "TimelineItemNoticeContent"
+    /**
+     * 供无障碍与复制等场景使用的纯文本内容。
+     */
     override val plainText: String = htmlDocument?.toPlainText() ?: body
 }

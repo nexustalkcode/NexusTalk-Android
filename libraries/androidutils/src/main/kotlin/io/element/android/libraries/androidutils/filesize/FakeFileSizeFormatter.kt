@@ -8,7 +8,13 @@
 
 package io.element.android.libraries.androidutils.filesize
 
+/**
+ * 用于测试或预览的文件大小格式化假实现。
+ */
 class FakeFileSizeFormatter : FileSizeFormatter {
+    /**
+     * 直接返回字节数字符串。
+     */
     override fun format(fileSize: Long, useShortFormat: Boolean): String {
         return "$fileSize Bytes"
     }

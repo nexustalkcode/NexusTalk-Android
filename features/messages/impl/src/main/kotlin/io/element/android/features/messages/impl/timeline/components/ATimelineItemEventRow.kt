@@ -18,6 +18,9 @@ import io.element.android.libraries.matrix.api.timeline.Timeline
 
 // For previews
 @Composable
+/**
+ * 供预览使用的简化版时间线事件行封装。
+ */
 internal fun ATimelineItemEventRow(
     event: TimelineItem.Event,
     timelineMode: Timeline.Mode = Timeline.Mode.Live,

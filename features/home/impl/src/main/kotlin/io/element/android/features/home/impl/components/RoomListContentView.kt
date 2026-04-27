@@ -68,6 +68,11 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 import timber.log.Timber
 
+/**
+ * 渲染首页房间列表内容区域。
+ *
+ * 根据 [RoomListContentState] 在骨架屏、空态和房间列表之间切换。
+ */
 @Composable
 fun RoomListContentView(
     contentState: RoomListContentState,
@@ -117,6 +122,9 @@ fun RoomListContentView(
     }
 }
 
+/**
+ * 渲染房间列表骨架屏。
+ */
 @Composable
 private fun SkeletonView(
     count: Int,
@@ -138,6 +146,9 @@ private fun SkeletonView(
     }
 }
 
+/**
+ * 渲染首页空态视图。
+ */
 @Composable
 private fun EmptyView(
     state: RoomListContentState.Empty,
@@ -176,6 +187,9 @@ private fun EmptyView(
     }
 }
 
+/**
+ * 渲染有房间数据时的内容区域。
+ */
 @Composable
 private fun RoomsView(
     state: RoomListContentState.Rooms,
@@ -209,6 +223,9 @@ private fun RoomsView(
     }
 }
 
+/**
+ * 渲染实际的房间列表。
+ */
 @Composable
 private fun RoomsViewList(
     state: RoomListContentState.Rooms,
@@ -278,6 +295,9 @@ private fun RoomsViewList(
     }
 }
 
+/**
+ * 渲染首页顶部横幅区域。
+ */
 @Composable
 private fun RoomListBanner(
     securityBannerState: SecurityBannerState,
@@ -332,7 +352,8 @@ private fun RoomListBanner(
                 onDismissClick = { eventSink(RoomListEvents.DismissBanner) },
             )
         }
-        SecurityBannerState.None -> if (fullScreenIntentPermissionsState.shouldDisplayBanner) {
+        SecurityBannerState.None ->
+            if (fullScreenIntentPermissionsState.shouldDisplayBanner) {
             FullScreenIntentPermissionBanner(
                 state = fullScreenIntentPermissionsState,
                 onDismissClick = { eventSink(RoomListEvents.DismissFullScreenIntentPermissionBanner) },
@@ -350,6 +371,9 @@ private fun RoomListBanner(
     }
 }
 
+/**
+ * 渲染筛选命中为空时的空态。
+ */
 @Composable
 private fun EmptyViewForFilterStates(
     selectedFilters: ImmutableList<RoomListFilter>,
@@ -363,6 +387,9 @@ private fun EmptyViewForFilterStates(
     )
 }
 
+/**
+ * 渲染通用空态脚手架。
+ */
 @Composable
 private fun EmptyScaffold(
     @StringRes title: Int,

@@ -10,8 +10,14 @@ package io.element.android.features.startchat.impl.userlist
 
 import io.element.android.libraries.matrix.api.user.MatrixUser
 
+/**
+ * 用户列表组件可能触发的用户事件。
+ */
 sealed interface UserListEvents {
+    /** 把用户加入当前选择集合。 */
     data class AddToSelection(val matrixUser: MatrixUser) : UserListEvents
+    /** 把用户从当前选择集合移除。 */
     data class RemoveFromSelection(val matrixUser: MatrixUser) : UserListEvents
+    /** 切换搜索栏是否处于激活状态。 */
     data class OnSearchActiveChanged(val active: Boolean) : UserListEvents
 }

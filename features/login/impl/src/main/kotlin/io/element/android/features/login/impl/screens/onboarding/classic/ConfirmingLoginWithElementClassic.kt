@@ -10,6 +10,11 @@ package io.element.android.features.login.impl.screens.onboarding.classic
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.core.UserId
 
+/**
+ * 表示“使用 Element Classic 登录”进入确认态。
+ *
+ * @property userId 从 Element Classic 检测到的用户 ID。
+ */
 class ConfirmingLoginWithElementClassic(
     val userId: UserId,
 ) : AsyncAction.Confirming

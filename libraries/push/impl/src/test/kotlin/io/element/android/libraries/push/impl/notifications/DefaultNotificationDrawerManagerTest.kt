@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.enterprise.api.EnterpriseService
 import io.element.android.features.enterprise.test.FakeEnterpriseService
+import io.element.android.libraries.matrix.api.timeline.item.event.EventType
 import io.element.android.libraries.matrix.test.AN_EVENT_ID
 import io.element.android.libraries.matrix.test.A_ROOM_ID
 import io.element.android.libraries.matrix.test.A_SESSION_ID
@@ -35,6 +36,7 @@ import io.element.android.libraries.sessionstorage.test.InMemorySessionStore
 import io.element.android.services.appnavstate.api.AppNavigationState
 import io.element.android.services.appnavstate.api.AppNavigationStateService
 import io.element.android.services.appnavstate.api.NavigationState
+import io.element.android.services.appnavstate.test.FakeAppForegroundStateService
 import io.element.android.services.appnavstate.test.FakeAppNavigationStateService
 import io.element.android.services.appnavstate.test.aNavigationState
 import io.element.android.services.toolbox.test.strings.FakeStringProvider
@@ -175,6 +177,36 @@ class DefaultNotificationDrawerManagerTest {
     }
 
     @Test
+    fun `onNotifiableEventReceived ignores RTC message notification while a call is ringing`() = runTest {
+        val messageCreator = FakeRoomGroupMessageCreator()
+        val defaultNotificationDrawerManager = createDefaultNotificationDrawerManager(
+            roomGroupMessageCreator = messageCreator,
+            appForegroundStateService = FakeAppForegroundStateService(initialHasRingingCall = true),
+        )
+
+        defaultNotificationDrawerManager.onNotifiableEventReceived(
+            aNotifiableMessageEvent(type = EventType.RTC_NOTIFICATION)
+        )
+
+        messageCreator.createRoomMessageResult.assertions().isNeverCalled()
+    }
+
+    @Test
+    fun `onNotifiableEventReceived ignores RTC message notification while the app is foreground`() = runTest {
+        val messageCreator = FakeRoomGroupMessageCreator()
+        val defaultNotificationDrawerManager = createDefaultNotificationDrawerManager(
+            roomGroupMessageCreator = messageCreator,
+            appForegroundStateService = FakeAppForegroundStateService(initialForegroundValue = true),
+        )
+
+        defaultNotificationDrawerManager.onNotifiableEventReceived(
+            aNotifiableMessageEvent(type = EventType.RTC_NOTIFICATION)
+        )
+
+        messageCreator.createRoomMessageResult.assertions().isNeverCalled()
+    }
+
+    @Test
     fun `clearSummaryNotificationIfNeeded will run after clearing all other notifications`() = runTest {
         val cancelNotificationResult = lambdaRecorder<String?, Int, Unit> { _, _ -> }
         val notificationDisplayer = FakeNotificationDisplayer(
@@ -214,6 +246,7 @@ class DefaultNotificationDrawerManagerTest {
         matrixClientProvider: FakeMatrixClientProvider = FakeMatrixClientProvider(),
         sessionStore: SessionStore = InMemorySessionStore(),
         enterpriseService: EnterpriseService = FakeEnterpriseService(),
+        appForegroundStateService: FakeAppForegroundStateService = FakeAppForegroundStateService(initialForegroundValue = false),
     ): DefaultNotificationDrawerManager {
         return DefaultNotificationDrawerManager(
             notificationDisplayer = notificationDisplayer,
@@ -234,6 +267,7 @@ class DefaultNotificationDrawerManagerTest {
             matrixClientProvider = matrixClientProvider,
             imageLoaderHolder = FakeImageLoaderHolder(),
             activeNotificationsProvider = activeNotificationsProvider,
+            appForegroundStateService = appForegroundStateService,
         )
     }
 }

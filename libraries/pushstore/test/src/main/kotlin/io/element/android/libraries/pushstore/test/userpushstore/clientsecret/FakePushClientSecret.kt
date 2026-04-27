@@ -10,11 +10,14 @@ package io.element.android.libraries.pushstore.test.userpushstore.clientsecret
 
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.pushstore.api.clientsecret.PushClientSecret
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakePushClientSecret(
-    private val getSecretForUserResult: (SessionId) -> String = { lambdaError() },
-    private val getUserIdFromSecretResult: (String) -> SessionId? = { lambdaError() }
+    private val getSecretForUserResult: (SessionId) -> String = {
+        error("getSecretForUserResult should be provided in tests")
+    },
+    private val getUserIdFromSecretResult: (String) -> SessionId? = {
+        error("getUserIdFromSecretResult should be provided in tests")
+    }
 ) : PushClientSecret {
     override suspend fun getSecretForUser(userId: SessionId): String {
         return getSecretForUserResult(userId)

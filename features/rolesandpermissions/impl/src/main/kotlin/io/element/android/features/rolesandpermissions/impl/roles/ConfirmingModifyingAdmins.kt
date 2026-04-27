@@ -9,4 +9,7 @@ package io.element.android.features.rolesandpermissions.impl.roles
 
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 表示“修改管理员列表”进入确认态。
+ */
 data object ConfirmingModifyingAdmins : AsyncAction.Confirming

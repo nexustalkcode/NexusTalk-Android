@@ -73,6 +73,9 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
+private const val startupTraceTag = "StartupTrace"
+private const val permalinkDebugTag = "PermalinkDebug"
+
 /**
  * RootFlowNode 是应用导航体系中的根节点，负责管理整个应用的生命周期状态和全局导航流程。
  *
@@ -133,6 +136,8 @@ class RootFlowNode(
      * 4. 开始观察导航状态变化，以便根据登录状态自动切换流程
      */
     override fun onBuilt() {
+        // 这是应用级导航开始接管启动流程的时间锚点，可用于判断空白是否发生在登录态判定之前。
+        Timber.tag(startupTraceTag).i("RootFlowNode.onBuilt")
         analyticsColdStartWatcher.start()
         matrixSessionCache.restoreWithSavedState(buildContext.savedStateMap)
         super.onBuilt()
@@ -171,6 +176,7 @@ class RootFlowNode(
     private fun observeNavState() {
         navStateFlowFactory.create(buildContext.savedStateMap).distinctUntilChanged().onEach { navState ->
             Timber.v("navState=$navState")
+            Timber.tag(startupTraceTag).i("RootFlowNode.observeNavState loggedInState=%s cacheIndex=%s", navState.loggedInState, navState.cacheIndex)
             when (navState.loggedInState) {
                 is LoggedInState.LoggedIn -> {
                     if (navState.loggedInState.isTokenValid) {
@@ -199,6 +205,7 @@ class RootFlowNode(
      * @param navId 导航状态索引，用于恢复之前的导航位置
      */
     private fun switchToLoggedInFlow(sessionId: SessionId, navId: Int) {
+        Timber.tag(startupTraceTag).i("RootFlowNode.switchToLoggedInFlow sessionId=%s navId=%s", sessionId, navId)
         backstack.safeRoot(NavTarget.LoggedInFlow(sessionId, navId))
     }
 
@@ -211,6 +218,7 @@ class RootFlowNode(
      * @param params 可选的登录参数，用于预填充登录界面（如处理登录链接时）
      */
     private fun switchToNotLoggedInFlow(params: LoginParams?) {
+        Timber.tag(startupTraceTag).i("RootFlowNode.switchToNotLoggedInFlow hasParams=%s", params != null)
         matrixSessionCache.removeAll()
         backstack.safeRoot(NavTarget.NotLoggedInFlow(params))
     }
@@ -224,6 +232,7 @@ class RootFlowNode(
      * @param sessionId 已失效的会话ID，用于显示适当的注销信息
      */
     private fun switchToSignedOutFlow(sessionId: SessionId) {
+        Timber.tag(startupTraceTag).i("RootFlowNode.switchToSignedOutFlow sessionId=%s", sessionId)
         backstack.safeRoot(NavTarget.SignedOutFlow(sessionId))
     }
 
@@ -242,11 +251,15 @@ class RootFlowNode(
         onFailure: () -> Unit,
         onSuccess: (SessionId) -> Unit,
     ) {
+        // 如果 splash 结束后仍然空白，这里就是首个需要确认是否卡住的异步会话恢复关口。
+        Timber.tag(startupTraceTag).i("RootFlowNode.restoreSessionIfNeeded start sessionId=%s", sessionId)
         matrixSessionCache.getOrRestore(sessionId).onSuccess {
             Timber.v("Succeed to restore session $sessionId")
+            Timber.tag(startupTraceTag).i("RootFlowNode.restoreSessionIfNeeded success sessionId=%s", sessionId)
             onSuccess(sessionId)
         }.onFailure {
             Timber.e(it, "Failed to restore session $sessionId")
+            Timber.tag(startupTraceTag).e(it, "RootFlowNode.restoreSessionIfNeeded failure sessionId=%s", sessionId)
             onFailure()
         }
     }
@@ -266,9 +279,11 @@ class RootFlowNode(
     ) {
         val latestSessionId = sessionStore.getLatestSessionId()
         if (latestSessionId == null) {
+            Timber.tag(startupTraceTag).w("RootFlowNode.tryToRestoreLatestSession no latest session")
             onFailure()
             return
         }
+        Timber.tag(startupTraceTag).i("RootFlowNode.tryToRestoreLatestSession latestSessionId=%s", latestSessionId)
         restoreSessionIfNeeded(latestSessionId, onFailure, onSuccess)
     }
 
@@ -388,12 +403,14 @@ class RootFlowNode(
      * @return 创建完成的节点实例
      */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
+        Timber.tag(startupTraceTag).i("RootFlowNode.resolve navTarget=%s", navTarget)
         return when (navTarget) {
             // 已登录流程：创建登录用户的主流程节点
             is NavTarget.LoggedInFlow -> {
                 val matrixClient = matrixSessionCache.getOrNull(navTarget.sessionId)
                     ?: return emptyNode(buildContext).also {
                         Timber.w("Couldn't find any session, go through SplashScreen")
+                        Timber.tag(startupTraceTag).w("RootFlowNode.resolve LoggedInFlow missing sessionId=%s, return empty node", navTarget.sessionId)
                     }
                 val inputs = LoggedInAppScopeFlowNode.Inputs(matrixClient)
                 val callback = object : LoggedInAppScopeFlowNode.Callback {
@@ -434,7 +451,9 @@ class RootFlowNode(
                 )
             }
             // 启动屏幕：创建空节点
-            NavTarget.SplashScreen -> emptyNode(buildContext)
+            NavTarget.SplashScreen -> emptyNode(buildContext).also {
+                Timber.tag(startupTraceTag).i("RootFlowNode.resolve SplashScreen")
+            }
             // 错误报告界面：创建错误报告节点
             NavTarget.BugReport -> {
                 val callback = object : BugReportEntryPoint.Callback {
@@ -498,7 +517,15 @@ class RootFlowNode(
      * @param intent 需要处理的外部 Intent
      */
     suspend fun handleIntent(intent: Intent) {
+        // 这里记录 RootFlowNode 收到的原始 Intent 与解析结果，方便确认问题是卡在解析前还是导航前。
+        Timber.tag(permalinkDebugTag).i(
+            "RootFlowNode.handleIntent action=%s data=%s extras=%s",
+            intent.action,
+            intent.dataString,
+            intent.extras,
+        )
         val resolvedIntent = intentResolver.resolve(intent) ?: return
+        Timber.tag(permalinkDebugTag).i("RootFlowNode.handleIntent resolvedIntent=%s", resolvedIntent)
         when (resolvedIntent) {
             is ResolvedIntent.Navigation -> {
                 val openingRoomFromNotification = intent.getBooleanExtra(ROOM_OPENED_FROM_NOTIFICATION, false)
@@ -612,6 +639,12 @@ class RootFlowNode(
         Timber.d("Navigating to $permalinkData")
         // Is there a session already?
         val latestSessionId = sessionStore.getLatestSessionId()
+        Timber.tag(permalinkDebugTag).i(
+            "RootFlowNode.navigateToPermalink permalinkData=%s latestSessionId=%s sessionCount=%s",
+            permalinkData,
+            latestSessionId,
+            sessionStore.numberOfSessions(),
+        )
         if (latestSessionId == null) {
             // No session, open login
             switchToNotLoggedInFlow(null)
@@ -656,6 +689,13 @@ class RootFlowNode(
             is PermalinkData.FallbackLink -> Unit
             is PermalinkData.RoomEmailInviteLink -> Unit
             is PermalinkData.RoomLink -> {
+                Timber.tag(permalinkDebugTag).i(
+                    "RootFlowNode.attachPermalinkData roomIdOrAlias=%s eventId=%s threadId=%s via=%s",
+                    permalinkData.roomIdOrAlias,
+                    permalinkData.eventId,
+                    permalinkData.threadId,
+                    permalinkData.viaParameters,
+                )
                 // If there is a thread id, focus on it in the main timeline
                 val focusedEventId = if (permalinkData.threadId != null) {
                     permalinkData.threadId?.asEventId()
@@ -671,6 +711,7 @@ class RootFlowNode(
                 ).maybeAttachThread(permalinkData.threadId, permalinkData.eventId)
             }
             is PermalinkData.UserLink -> {
+                Timber.tag(permalinkDebugTag).i("RootFlowNode.attachPermalinkData userId=%s", permalinkData.userId)
                 attachUser(permalinkData.userId)
             }
         }

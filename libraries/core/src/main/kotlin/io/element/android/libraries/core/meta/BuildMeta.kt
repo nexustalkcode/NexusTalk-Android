@@ -8,6 +8,9 @@
 
 package io.element.android.libraries.core.meta
 
+/**
+ * 应用构建元信息。
+ */
 data class BuildMeta(
     val buildType: BuildType,
     val isDebuggable: Boolean,

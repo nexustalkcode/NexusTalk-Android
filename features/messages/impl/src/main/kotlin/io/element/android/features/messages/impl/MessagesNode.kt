@@ -66,6 +66,7 @@ import io.element.android.libraries.matrix.api.room.JoinedRoom
 import io.element.android.libraries.matrix.api.room.alias.matches
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.libraries.matrix.api.timeline.item.TimelineItemDebugInfo
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.mediaplayer.api.MediaPlayer
 import io.element.android.libraries.ui.strings.CommonStrings
 import io.element.android.services.analytics.api.AnalyticsLongRunningTransaction.LoadMessagesUi
@@ -227,7 +228,7 @@ class MessagesNode(
          *
          * @param roomId 房间ID
          */
-        fun navigateToRoomCall(roomId: RoomId)
+        fun navigateToRoomCall(roomId: RoomId, callMode: CallWidgetMode = CallWidgetMode.Video)
 
         /**
          * 导航到线程页面
@@ -395,6 +396,8 @@ class MessagesNode(
                 onSendLocationClick = callback::navigateToSendLocation,
                 onCreatePollClick = callback::navigateToCreatePoll,
                 onJoinCallClick = { callback.navigateToRoomCall(room.roomId) },
+                onStartVoiceCallClick = { callback.navigateToRoomCall(room.roomId, CallWidgetMode.Audio) },
+                onStartVideoCallClick = { callback.navigateToRoomCall(room.roomId, CallWidgetMode.Video) },
                 onViewAllPinnedMessagesClick = callback::navigateToPinnedMessagesList,
                 modifier = modifier,
                 knockRequestsBannerView = {

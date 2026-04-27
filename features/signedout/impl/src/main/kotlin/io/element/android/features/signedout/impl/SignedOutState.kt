@@ -10,6 +10,13 @@ package io.element.android.features.signedout.impl
 
 import io.element.android.libraries.sessionstorage.api.SessionData
 
+/**
+ * 已登出页面展示状态。
+ *
+ * @property appName 当前应用名。
+ * @property signedOutSession 当前已登出会话信息。
+ * @property eventSink 页面事件分发函数。
+ */
 data class SignedOutState(
     val appName: String,
     val signedOutSession: SessionData?,

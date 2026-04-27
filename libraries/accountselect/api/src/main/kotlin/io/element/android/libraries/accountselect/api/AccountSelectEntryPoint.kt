@@ -14,13 +14,22 @@ import com.bumble.appyx.core.plugin.Plugin
 import io.element.android.libraries.architecture.FeatureEntryPoint
 import io.element.android.libraries.matrix.api.core.SessionId
 
+/**
+ * 账号选择页入口接口。
+ */
 interface AccountSelectEntryPoint : FeatureEntryPoint {
+    /**
+     * 创建账号选择页节点。
+     */
     fun createNode(
         parentNode: Node,
         buildContext: BuildContext,
         callback: Callback,
     ): Node
 
+    /**
+     * 账号选择页回调。
+     */
     interface Callback : Plugin {
         fun onAccountSelected(sessionId: SessionId)
         fun onCancel()

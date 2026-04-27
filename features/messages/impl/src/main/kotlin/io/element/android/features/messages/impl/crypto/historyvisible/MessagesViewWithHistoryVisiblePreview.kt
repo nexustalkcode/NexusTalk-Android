@@ -55,6 +55,8 @@ internal fun MessagesViewWithHistoryVisiblePreview() = ElementPreview {
         onSendLocationClick = {},
         onCreatePollClick = {},
         onJoinCallClick = {},
+        onStartVoiceCallClick = {},
+        onStartVideoCallClick = {},
         onViewAllPinnedMessagesClick = {},
         knockRequestsBannerView = {}
     )

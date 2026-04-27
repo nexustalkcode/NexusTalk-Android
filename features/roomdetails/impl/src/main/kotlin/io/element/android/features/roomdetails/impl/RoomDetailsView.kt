@@ -225,6 +225,7 @@ fun RoomDetailsView(
                     roomTopic = state.roomTopic,
                     onActionClick = onActionClick,
                 )
+                Spacer(modifier = Modifier.height(16.dp))
             }
             Column(
                 modifier = Modifier

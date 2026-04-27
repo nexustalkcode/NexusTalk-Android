@@ -36,7 +36,7 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "NexusTalk"
+rootProject.name = "ElementX"
 include(":app")
 include(":appnav")
 include(":appconfig")
@@ -53,6 +53,11 @@ fun includeProjects(directory: File, path: String, maxDepth: Int = 1) {
             if (buildFile.exists()) {
                 include(newPath)
                 logger.lifecycle("Included project: $newPath")
+                // 单模块合并过渡期需要允许“父模块 + 旧子模块”并存，
+                // 否则一旦父目录新增 build.gradle.kts，就会把更深层的 api/impl/test 子项目挤出 settings。
+                if (maxDepth > 0) {
+                    includeProjects(file, newPath, maxDepth - 1)
+                }
             } else if (maxDepth > 0) {
                 includeProjects(file, newPath, maxDepth - 1)
             }

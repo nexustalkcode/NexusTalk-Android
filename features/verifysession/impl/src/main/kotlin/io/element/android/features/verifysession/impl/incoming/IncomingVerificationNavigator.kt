@@ -8,6 +8,12 @@
 
 package io.element.android.features.verifysession.impl.incoming
 
+/**
+ * 传入验证流程内部使用的导航接口。
+ */
 fun interface IncomingVerificationNavigator {
+    /**
+     * 结束当前验证流程。
+     */
     fun onFinish()
 }

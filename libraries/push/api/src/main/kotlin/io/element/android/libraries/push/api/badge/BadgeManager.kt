@@ -23,6 +23,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import io.element.android.libraries.designsystem.utils.CommonDrawables
+import io.element.android.libraries.push.impl.R
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -388,18 +389,10 @@ object BadgeManager {
         return context.packageManager.getApplicationLabel(applicationInfo).toString()
     }
 
-    private fun getBadgeContentText(context: Context, count: Int): String {
-        val resources = context.resources
-        val resId = resources.getIdentifier(
-            "notification_unread_notified_messages",
-            "plurals",
-            context.packageName,
-        )
-        return if (resId != 0) {
-            resources.getQuantityString(resId, count, count)
-        } else {
-            count.toString()
-        }
+    internal fun getBadgeContentText(context: Context, count: Int): String {
+        // 使用静态 R 引用让资源成为编译期依赖，避免 getIdentifier 在资源裁剪、包名差异
+        // 或模块合并场景下返回 0 后退化成纯数字。
+        return context.resources.getQuantityString(R.plurals.notification_unread_notified_messages, count, count)
     }
 
     private fun canPostNotifications(context: Context): Boolean {

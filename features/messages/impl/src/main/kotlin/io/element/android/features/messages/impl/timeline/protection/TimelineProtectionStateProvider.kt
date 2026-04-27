@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.protection
 
+/**
+ * 构造一份时间线媒体保护状态样例。
+ */
 fun aTimelineProtectionState(
     protectionState: ProtectionState = ProtectionState.RenderAll,
     eventSink: (TimelineProtectionEvent) -> Unit = {},

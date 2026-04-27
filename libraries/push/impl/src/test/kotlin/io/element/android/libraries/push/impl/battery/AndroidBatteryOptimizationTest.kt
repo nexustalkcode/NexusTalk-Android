@@ -9,6 +9,7 @@
 package io.element.android.libraries.push.impl.battery
 
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Intent
 import android.provider.Settings
 import androidx.test.platform.app.InstrumentationRegistry
@@ -23,13 +24,68 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class AndroidBatteryOptimizationTest {
     @Test
+    fun `requiresProactiveBatteryOptimizationBanner returns true for Xiaomi family`() {
+        assertThat(requiresProactiveBatteryOptimizationBanner("Xiaomi", "2211133C")).isTrue()
+        assertThat(requiresProactiveBatteryOptimizationBanner("Redmi", "note")).isTrue()
+    }
+
+    @Test
+    fun `requiresProactiveBatteryOptimizationBanner returns false for other vendors`() {
+        assertThat(requiresProactiveBatteryOptimizationBanner("Google", "Pixel")).isFalse()
+    }
+
+    @Test
+    fun `isHuaweiOrHonorFamily returns true for Huawei and Honor`() {
+        assertThat(isHuaweiOrHonorFamily("HUAWEI", "HUAWEI")).isTrue()
+        assertThat(isHuaweiOrHonorFamily("HONOR", "HONOR")).isTrue()
+    }
+
+    @Test
+    fun `isHuaweiOrHonorFamily returns false for other vendors`() {
+        assertThat(isHuaweiOrHonorFamily("Google", "Pixel")).isFalse()
+    }
+
+    @Test
+    fun `createBatteryOptimizationIntents uses Huawei specific candidates first on Honor devices`() {
+        val intents = createBatteryOptimizationIntents(
+            manufacturer = "HONOR",
+            brand = "HONOR",
+            packageName = "chat.haddpp.android.z",
+        )
+        assertThat(intents.first().component).isEqualTo(
+            ComponentName(
+                "com.hihonor.systemmanager",
+                "com.hihonor.systemmanager.startupmgr.ui.StartupNormalAppListActivity",
+            )
+        )
+        assertThat(intents.first().data.toString()).isEqualTo("package:chat.haddpp.android.z")
+        assertThat(intents.first().getStringExtra(Settings.EXTRA_APP_PACKAGE)).isEqualTo("chat.haddpp.android.z")
+        assertThat(intents.first().getStringExtra(Intent.EXTRA_PACKAGE_NAME)).isEqualTo("chat.haddpp.android.z")
+        assertThat(intents.first().getStringExtra("packageName")).isEqualTo("chat.haddpp.android.z")
+        assertThat(intents[6].action).isEqualTo(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        assertThat(intents[6].data.toString()).isEqualTo("package:chat.haddpp.android.z")
+    }
+
+    @Test
+    fun `createBatteryOptimizationIntents uses standard android candidates on non Huawei devices`() {
+        val intents = createBatteryOptimizationIntents(
+            manufacturer = "Google",
+            brand = "Pixel",
+            packageName = "chat.haddpp.android.z",
+        )
+        assertThat(intents).hasSize(3)
+        assertThat(intents.first().action).isEqualTo(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        assertThat(intents.first().data.toString()).isEqualTo("package:chat.haddpp.android.z")
+    }
+
+    @Test
     fun `isIgnoringBatteryOptimizations should return false`() {
         val sut = createAndroidBatteryOptimization()
         assertThat(sut.isIgnoringBatteryOptimizations()).isFalse()
     }
 
     @Test
-    fun `requestDisablingBatteryOptimization is called once with expected intent`() {
+    fun `requestDisablingBatteryOptimization uses standard android intent on non Huawei devices`() {
         val launchLambda = lambdaRecorder<Intent, Unit> { intent ->
             assertThat(intent.action).isEqualTo(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
             assertThat(intent.data.toString()).isEqualTo("package:${InstrumentationRegistry.getInstrumentation().context.packageName}")
@@ -44,63 +100,25 @@ class AndroidBatteryOptimizationTest {
     }
 
     @Test
-    fun `in case of 1 error, requestDisablingBatteryOptimization returns true`() {
-        var callNumber = 0
-        val launchLambda = lambdaRecorder<Intent, Unit> { intent ->
-            callNumber++
-            when (callNumber) {
-                1 -> {
-                    assertThat(intent.action).isEqualTo(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                    assertThat(intent.data.toString()).isEqualTo("package:${InstrumentationRegistry.getInstrumentation().context.packageName}")
-                    throw ActivityNotFoundException("Test exception")
-                }
-                2 -> {
-                    assertThat(intent.action).isEqualTo(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                    assertThat(intent.data).isNull()
-                    // No error
-                }
-                else -> {
-                    throw AssertionError("Unexpected call number: $callNumber")
-                }
-            }
-        }
-        val externalIntentLauncher = FakeExternalIntentLauncher(launchLambda)
-        val sut = createAndroidBatteryOptimization(
-            externalIntentLauncher = externalIntentLauncher,
+    fun `createBatteryOptimizationIntents includes Huawei and Honor launch management chain before android fallback`() {
+        val intents = createBatteryOptimizationIntents(
+            manufacturer = "HONOR",
+            brand = "HONOR",
+            packageName = "chat.haddpp.android.z",
         )
-        val result = sut.requestDisablingBatteryOptimization()
-        launchLambda.assertions().isCalledExactly(2)
-        assertThat(result).isTrue()
-    }
-
-    @Test
-    fun `in case of 2 errors, requestDisablingBatteryOptimization returns false`() {
-        var callNumber = 0
-        val launchLambda = lambdaRecorder<Intent, Unit> { intent ->
-            callNumber++
-            when (callNumber) {
-                1 -> {
-                    assertThat(intent.action).isEqualTo(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                    assertThat(intent.data.toString()).isEqualTo("package:${InstrumentationRegistry.getInstrumentation().context.packageName}")
-                    throw ActivityNotFoundException("Test exception")
-                }
-                2 -> {
-                    assertThat(intent.action).isEqualTo(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                    assertThat(intent.data).isNull()
-                    throw ActivityNotFoundException("Test exception")
-                }
-                else -> {
-                    throw AssertionError("Unexpected call number: $callNumber")
-                }
-            }
-        }
-        val externalIntentLauncher = FakeExternalIntentLauncher(launchLambda)
-        val sut = createAndroidBatteryOptimization(
-            externalIntentLauncher = externalIntentLauncher,
+        assertThat(intents.map { it.component?.flattenToShortString() }).containsAtLeast(
+            "com.hihonor.systemmanager/com.hihonor.systemmanager.appcontrol.activity.StartupAppControlActivity",
+            "com.hihonor.systemmanager/com.hihonor.systemmanager.startupmgr.ui.StartupNormalAppListActivity",
+            "com.hihonor.systemmanager/com.hihonor.systemmanager.optimize.process.ProtectActivity",
+            "com.huawei.systemmanager/com.huawei.systemmanager.appcontrol.activity.StartupAppControlActivity",
+            "com.huawei.systemmanager/com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity",
+            "com.huawei.systemmanager/com.huawei.systemmanager.optimize.process.ProtectActivity",
         )
-        val result = sut.requestDisablingBatteryOptimization()
-        launchLambda.assertions().isCalledExactly(2)
-        assertThat(result).isFalse()
+        assertThat(intents.takeLast(3).map { it.action }).containsExactly(
+            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+            Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS,
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        ).inOrder()
     }
 
     private fun createAndroidBatteryOptimization(

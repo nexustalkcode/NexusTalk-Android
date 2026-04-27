@@ -78,6 +78,12 @@ import kotlinx.coroutines.launch
 internal val REACTION_SUMMARY_LINE_HEIGHT = 25.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染 reaction summary 底部弹层。
+ *
+ * @param state reaction summary 展示状态。
+ * @param modifier 应用于弹层根节点的修饰符。
+ */
 @Composable
 fun ReactionSummaryView(
     state: ReactionSummaryState,
@@ -97,6 +103,9 @@ fun ReactionSummaryView(
     }
 }
 
+/**
+ * 渲染 reaction summary 的主体内容。
+ */
 @Composable
 private fun ReactionSummaryViewContent(
     summary: ReactionSummaryState.Summary,
@@ -157,6 +166,9 @@ private fun ReactionSummaryViewContent(
     }
 }
 
+/**
+ * 渲染单个聚合 reaction 切换按钮。
+ */
 @Composable
 private fun AggregatedReactionButton(
     reaction: AggregatedReaction,
@@ -232,6 +244,9 @@ private fun AggregatedReactionButton(
     }
 }
 
+/**
+ * 渲染单个发送者条目。
+ */
 @Composable
 private fun SenderRow(
     avatarData: AvatarData,

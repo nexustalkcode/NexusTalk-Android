@@ -11,6 +11,9 @@ package io.element.android.features.call.impl.utils
 import android.net.Uri
 import androidx.core.net.toUri
 import dev.zacsweers.metro.Inject
+import timber.log.Timber
+
+private const val CALL_INTENT_LOG_TAG = "CallIntentDataParser"
 
 /**
  * 通话意图数据解析器
@@ -45,7 +48,14 @@ class CallIntentDataParser {
     fun parse(data: String?): String? {
         val parsedUrl = data?.toUri() ?: return null
         val scheme = parsedUrl.scheme
-        return when {
+        Timber.tag(CALL_INTENT_LOG_TAG).i(
+            "Parsing call intent data: scheme=%s host=%s hasQuery=%s hasFragment=%s",
+            scheme,
+            parsedUrl.host,
+            !parsedUrl.query.isNullOrEmpty(),
+            !parsedUrl.fragment.isNullOrEmpty(),
+        )
+        val resolvedUri = when {
             scheme in validHttpSchemes -> parsedUrl
             scheme == "element" && parsedUrl.host == "call" -> {
                 parsedUrl.getUrlParameter()
@@ -54,10 +64,40 @@ class CallIntentDataParser {
                 parsedUrl.getUrlParameter()
             }
             // This should never be possible, but we still need to take into account the possibility
-            else -> null
+            else -> {
+                Timber.tag(CALL_INTENT_LOG_TAG).w(
+                    "Rejecting call intent data because scheme/host is unsupported: scheme=%s host=%s",
+                    scheme,
+                    parsedUrl.host,
+                )
+                null
+            }
         }
-            ?.takeIf { it.host in knownHosts }
-            ?.withCustomParameters()
+        if (resolvedUri == null) {
+            Timber.tag(CALL_INTENT_LOG_TAG).w(
+                "Rejecting call intent data because no embedded URL could be resolved"
+            )
+            return null
+        }
+        if (resolvedUri.host !in knownHosts) {
+            Timber.tag(CALL_INTENT_LOG_TAG).w(
+                "Rejecting call intent data because host is not trusted: host=%s",
+                resolvedUri.host,
+            )
+            return null
+        }
+        return resolvedUri.withCustomParameters().also {
+            /*
+             * 这里只记录解析结果的结构信息，不输出完整 URL，
+             * 方便排查游客入会分支时确认是外链路径命中且参数已被补齐。
+             */
+            Timber.tag(CALL_INTENT_LOG_TAG).i(
+                "Accepted call intent data: host=%s forceAppPrompt=%s forceConfineToRoom=%s",
+                resolvedUri.host,
+                it.contains("$APP_PROMPT_PARAMETER=false"),
+                it.contains("$CONFINE_TO_ROOM_PARAMETER=true"),
+            )
+        }
     }
 
     /**

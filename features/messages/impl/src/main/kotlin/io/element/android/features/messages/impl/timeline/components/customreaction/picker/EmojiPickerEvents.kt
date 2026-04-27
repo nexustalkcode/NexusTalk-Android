@@ -8,6 +8,10 @@
 
 package io.element.android.features.messages.impl.timeline.components.customreaction.picker
 
+/**
+ * emoji picker 可能触发的交互事件。
+ */
 sealed interface EmojiPickerEvents {
+    /** 切换搜索模式是否激活。 */
     data class ToggleSearchActive(val isActive: Boolean) : EmojiPickerEvents
 }

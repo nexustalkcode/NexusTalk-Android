@@ -36,6 +36,9 @@ import io.element.android.libraries.matrix.api.timeline.item.event.isCritical
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染消息盾牌提示。
+ */
 internal fun MessageShieldView(
     shield: MessageShieldData,
     modifier: Modifier = Modifier,
@@ -59,6 +62,9 @@ internal fun MessageShieldView(
     }
 }
 
+/**
+ * 供 UI 展示的消息盾牌数据。
+ */
 data class MessageShieldData(
     /**
      * The message shield that the rust layer thinks we should show.
@@ -76,6 +82,9 @@ val MessageShieldData.isCritical: Boolean
     get() = shield.isCritical
 
 @Composable
+/**
+ * 计算盾牌图标颜色。
+ */
 internal fun MessageShieldData.toIconColor(): Color {
     return when (isCritical) {
         true -> ElementTheme.colors.iconCriticalPrimary
@@ -84,6 +93,9 @@ internal fun MessageShieldData.toIconColor(): Color {
 }
 
 @Composable
+/**
+ * 计算盾牌文本颜色。
+ */
 private fun MessageShieldData.toTextColor(): Color {
     return when (isCritical) {
         true -> ElementTheme.colors.textCriticalPrimary
@@ -92,6 +104,9 @@ private fun MessageShieldData.toTextColor(): Color {
 }
 
 @Composable
+/**
+ * 生成盾牌提示文案。
+ */
 internal fun MessageShieldData.toText(): String {
     if (shield is MessageShield.AuthenticityNotGuaranteed && forwarder != null) {
         var displayName = forwarderProfile?.getDisplayName()
@@ -122,6 +137,9 @@ internal fun MessageShieldData.toText(): String {
 }
 
 @Composable
+/**
+ * 选择盾牌图标。
+ */
 internal fun MessageShieldData.toIcon(): ImageVector {
     return when (shield) {
         is MessageShield.AuthenticityNotGuaranteed -> CompoundIcons.Info()

@@ -24,6 +24,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 // Previous name: TimelineItemEventRowWithSendingStateAndReadReceiptPreview
 @PreviewsDayNight
 @Composable
+/**
+ * 预览带发送状态和已读回执的事件行。
+ */
 internal fun TimelineItemEventRowWithRRPreview(
     @PreviewParameter(ReadReceiptViewStateForTimelineItemEventRowProvider::class) state: ReadReceiptViewState,
 ) = ElementPreview {

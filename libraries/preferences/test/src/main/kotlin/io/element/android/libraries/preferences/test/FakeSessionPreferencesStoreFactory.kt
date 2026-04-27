@@ -8,24 +8,23 @@
 
 package io.element.android.libraries.preferences.test
 
-import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.preferences.api.store.SessionPreferencesStore
 import io.element.android.libraries.preferences.api.store.SessionPreferencesStoreFactory
-import io.element.android.tests.testutils.lambda.LambdaOneParamRecorder
-import io.element.android.tests.testutils.lambda.LambdaTwoParamsRecorder
-import io.element.android.tests.testutils.lambda.lambdaError
-import io.element.android.tests.testutils.lambda.lambdaRecorder
 import kotlinx.coroutines.CoroutineScope
 
 class FakeSessionPreferencesStoreFactory(
-    val getLambda: LambdaTwoParamsRecorder<SessionId, CoroutineScope, SessionPreferencesStore> = lambdaRecorder { _, _ -> lambdaError() },
-    val removeLambda: LambdaOneParamRecorder<SessionId, Unit> = lambdaRecorder { _ -> lambdaError() },
+    val getLambda: (String, CoroutineScope) -> SessionPreferencesStore = { _, _ ->
+        error("getLambda should be provided in tests")
+    },
+    val removeLambda: (String) -> Unit = {
+        error("removeLambda should be provided in tests")
+    },
 ) : SessionPreferencesStoreFactory {
-    override fun get(sessionId: SessionId, sessionCoroutineScope: CoroutineScope): SessionPreferencesStore {
+    override fun get(sessionId: String, sessionCoroutineScope: CoroutineScope): SessionPreferencesStore {
         return getLambda(sessionId, sessionCoroutineScope)
     }
 
-    override fun remove(sessionId: SessionId) {
+    override fun remove(sessionId: String) {
         removeLambda(sessionId)
     }
 }

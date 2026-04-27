@@ -8,7 +8,12 @@
 
 package io.element.android.features.migration.impl.migrations
 
+/**
+ * 单个应用迁移步骤接口。
+ */
 interface AppMigration {
+    /** 迁移顺序号，数值越小越先执行。 */
     val order: Int
+    /** 执行当前迁移。 */
     suspend fun migrate(isFreshInstall: Boolean)
 }

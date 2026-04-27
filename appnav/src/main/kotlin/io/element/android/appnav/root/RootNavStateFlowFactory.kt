@@ -64,7 +64,7 @@ class RootNavStateFlowFactory(
                 // Ensure image loader will be recreated with the new MatrixClient
                 imageLoaderHolder.remove(sessionId)
                 // Also remove cached value for SessionPreferencesStore
-                sessionPreferencesStoreFactory.remove(sessionId)
+                sessionPreferencesStoreFactory.remove(sessionId.value)
             }
             .toIndexFlow(initialCacheIndex)
             .onEach { cacheIndex ->

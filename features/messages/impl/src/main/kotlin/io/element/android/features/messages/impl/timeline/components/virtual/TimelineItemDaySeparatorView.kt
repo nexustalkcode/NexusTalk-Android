@@ -27,6 +27,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Text
 
 @Composable
+/**
+ * 渲染日期分隔虚拟项。
+ */
 internal fun TimelineItemDaySeparatorView(
     model: TimelineItemDaySeparatorModel,
     modifier: Modifier = Modifier

@@ -18,6 +18,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 修改成员角色页面展示状态。
+ */
 data class ChangeRolesState(
     val role: RoomMember.Role,
     val searchQuery: TextFieldState,
@@ -30,6 +33,9 @@ data class ChangeRolesState(
     val eventSink: (ChangeRolesEvent) -> Unit,
 )
 
+/**
+ * 按角色分组后的房间成员集合。
+ */
 data class MembersByRole(
     val owners: ImmutableList<RoomMember> = persistentListOf(),
     val admins: ImmutableList<RoomMember> = persistentListOf(),
@@ -46,6 +52,9 @@ data class MembersByRole(
     fun isEmpty() = owners.isEmpty() && admins.isEmpty() && moderators.isEmpty() && members.isEmpty()
 }
 
+/**
+ * 过滤并按指定比较器排序成员列表。
+ */
 private fun Iterable<RoomMember>.filterAndSort(
     comparator: Comparator<RoomMember>,
     predicate: (RoomMember) -> Boolean,

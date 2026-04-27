@@ -19,9 +19,17 @@ import io.element.android.libraries.matrix.api.room.JoinedRoom
 import io.element.android.libraries.matrix.api.room.powerlevels.permissionsAsState
 
 @Inject
+/**
+ * Space 设置主页 Presenter。
+ *
+ * 负责收集房间信息和权限，并计算各设置入口是否可见。
+ */
 class SpaceSettingsPresenter(
     private val room: JoinedRoom,
 ) : Presenter<SpaceSettingsState> {
+    /**
+     * 生成 Space 设置主页状态。
+     */
     @Composable
     override fun present(): SpaceSettingsState {
         val roomInfo by room.roomInfoFlow.collectAsState()

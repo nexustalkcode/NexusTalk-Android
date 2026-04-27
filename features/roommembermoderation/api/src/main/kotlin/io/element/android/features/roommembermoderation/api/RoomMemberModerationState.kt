@@ -11,16 +11,25 @@ package io.element.android.features.roommembermoderation.api
 import androidx.compose.runtime.Immutable
 
 @Immutable
+/**
+ * 房间成员管理 UI 需要的最小状态接口。
+ */
 interface RoomMemberModerationState {
     val permissions: RoomMemberModerationPermissions
     val eventSink: (RoomMemberModerationEvents) -> Unit
 }
 
+/**
+ * 单个成员管理动作的可用状态。
+ */
 data class ModerationActionState(
     val action: ModerationAction,
     val isEnabled: Boolean,
 )
 
+/**
+ * 房间成员可执行的管理动作。
+ */
 sealed interface ModerationAction {
     data object DisplayProfile : ModerationAction
     data object KickUser : ModerationAction

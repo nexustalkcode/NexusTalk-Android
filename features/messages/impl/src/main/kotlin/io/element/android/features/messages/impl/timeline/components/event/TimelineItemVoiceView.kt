@@ -58,6 +58,9 @@ import io.element.android.libraries.voiceplayer.api.VoiceMessageState
 import io.element.android.libraries.voiceplayer.api.VoiceMessageStateProvider
 import kotlinx.coroutines.delay
 
+/**
+ * 渲染语音消息条目视图。
+ */
 @Composable
 fun TimelineItemVoiceView(
     state: VoiceMessageState,
@@ -142,6 +145,9 @@ fun TimelineItemVoiceView(
     }
 }
 
+/**
+ * 渲染播放按钮。
+ */
 @Composable
 private fun PlayButton(
     onClick: () -> Unit,
@@ -158,6 +164,9 @@ private fun PlayButton(
     }
 }
 
+/**
+ * 渲染暂停按钮。
+ */
 @Composable
 private fun PauseButton(
     onClick: () -> Unit,
@@ -172,6 +181,9 @@ private fun PauseButton(
     }
 }
 
+/**
+ * 渲染重试按钮。
+ */
 @Composable
 private fun RetryButton(
     onClick: () -> Unit,
@@ -186,6 +198,9 @@ private fun RetryButton(
     }
 }
 
+/**
+ * 渲染语音消息控制图标。
+ */
 @Composable
 private fun ControlIcon(
     imageVector: ImageVector,
@@ -199,11 +214,9 @@ private fun ControlIcon(
 }
 
 /**
- * Progress button is shown when the voice message is being downloaded.
+ * 下载中的进度按钮。
  *
- * The progress indicator is optimistic and displays a pause button (which
- * indicates the audio is playing) for 2 seconds before revealing the
- * actual progress indicator.
+ * 为了减少闪烁，开始时会先短暂显示暂停图标，再切换为实际进度指示器。
  */
 @Composable
 private fun ProgressButton(
@@ -235,6 +248,9 @@ private fun ProgressButton(
     }
 }
 
+/**
+ * 渲染语音消息控制按钮外壳。
+ */
 @Composable
 private fun CustomIconButton(
     onClick: () -> Unit,
@@ -255,6 +271,9 @@ private fun CustomIconButton(
     )
 }
 
+/**
+ * 为语音消息视图预览提供状态与内容参数组合。
+ */
 open class TimelineItemVoiceViewParametersProvider : PreviewParameterProvider<TimelineItemVoiceViewParameters> {
     private val voiceMessageStateProvider = VoiceMessageStateProvider()
     private val timelineItemVoiceContentProvider = TimelineItemVoiceContentProvider()
@@ -269,6 +288,9 @@ open class TimelineItemVoiceViewParametersProvider : PreviewParameterProvider<Ti
         }
 }
 
+/**
+ * 语音消息视图预览参数。
+ */
 data class TimelineItemVoiceViewParameters(
     val state: VoiceMessageState,
     val content: TimelineItemVoiceContent,

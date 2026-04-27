@@ -41,6 +41,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染“按地址加入房间”页面。
+ */
 fun JoinRoomByAddressView(
     state: JoinRoomByAddressState,
     modifier: Modifier = Modifier,
@@ -84,6 +87,9 @@ fun JoinRoomByAddressView(
 }
 
 @Composable
+/**
+ * 渲染房间地址输入框。
+ */
 private fun RoomAddressField(
     address: String,
     addressState: RoomAddressState,

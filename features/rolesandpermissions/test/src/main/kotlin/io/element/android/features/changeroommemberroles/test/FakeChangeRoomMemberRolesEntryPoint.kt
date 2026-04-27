@@ -13,7 +13,6 @@ import com.bumble.appyx.core.node.Node
 import io.element.android.features.rolesandpermissions.api.ChangeRoomMemberRolesEntryPoint
 import io.element.android.features.rolesandpermissions.api.ChangeRoomMemberRolesListType
 import io.element.android.libraries.matrix.api.room.JoinedRoom
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeChangeRoomMemberRolesEntryPoint : ChangeRoomMemberRolesEntryPoint {
     override fun createNode(
@@ -22,6 +21,6 @@ class FakeChangeRoomMemberRolesEntryPoint : ChangeRoomMemberRolesEntryPoint {
         room: JoinedRoom,
         listType: ChangeRoomMemberRolesListType,
     ): Node {
-        lambdaError()
+        error("FakeChangeRoomMemberRolesEntryPoint.createNode must be provided in tests")
     }
 }

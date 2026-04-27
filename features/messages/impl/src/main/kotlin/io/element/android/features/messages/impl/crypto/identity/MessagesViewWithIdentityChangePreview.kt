@@ -57,6 +57,8 @@ internal fun MessagesViewWithIdentityChangePreview(
         onSendLocationClick = {},
         onCreatePollClick = {},
         onJoinCallClick = {},
+        onStartVoiceCallClick = {},
+        onStartVideoCallClick = {},
         onViewAllPinnedMessagesClick = {},
         knockRequestsBannerView = {}
     )

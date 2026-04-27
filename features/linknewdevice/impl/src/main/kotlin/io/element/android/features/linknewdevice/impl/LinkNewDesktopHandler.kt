@@ -28,6 +28,12 @@ private val loggerTag = LoggerTag("LinkNewDesktopHandler", LoggerTags.linkNewDev
 
 @Inject
 @SingleIn(SessionScope::class)
+/**
+ * 管理“把桌面端设备关联到当前会话”的底层流程。
+ *
+ * 该处理器包装 Matrix SDK 提供的 desktop linking handler，
+ * 并把步骤状态转发为 UI 层更容易订阅的 [stepFlow]。
+ */
 class LinkNewDesktopHandler(
     private val matrixClient: MatrixClient,
 ) {
@@ -42,6 +48,11 @@ class LinkNewDesktopHandler(
     private var currentJob: Job? = null
     private var handler: LinkDesktopHandler? = null
 
+    /**
+     * 重新创建桌面端关联处理器实例。
+     *
+     * 会先取消之前的观察任务，避免旧 handler 继续推送状态。
+     */
     fun createNewHandler() {
         // 创建前先取消旧任务，避免重复监听
         currentJob?.cancel()
@@ -49,6 +60,9 @@ class LinkNewDesktopHandler(
         handler = matrixClient.createLinkDesktopHandler().getOrNull()
     }
 
+    /**
+     * 取消当前流程并恢复到未初始化状态。
+     */
     fun reset() {
         // 重置状态并清理当前任务
         currentJob?.cancel()
@@ -58,6 +72,11 @@ class LinkNewDesktopHandler(
         }
     }
 
+    /**
+     * 处理扫描到的桌面端二维码数据。
+     *
+     * @param data 扫码得到的原始字节数组。
+     */
     fun onScannedCode(data: ByteArray) {
         // 扫码后触发桌面端流程
         currentJob?.cancel()

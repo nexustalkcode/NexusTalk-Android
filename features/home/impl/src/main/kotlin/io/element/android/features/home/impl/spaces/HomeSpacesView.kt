@@ -44,6 +44,11 @@ import io.element.android.libraries.matrix.ui.model.getAvatarData
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 渲染首页 Spaces 页面内容。
+ *
+ * 当用户还没有任何 Space 时展示空态，否则展示当前 Space 及其子空间列表。
+ */
 @Composable
 fun HomeSpacesView(
     state: HomeSpacesState,
@@ -114,6 +119,9 @@ fun HomeSpacesView(
     }
 }
 
+/**
+ * 渲染 Spaces 首页空态。
+ */
 @Composable
 private fun EmptySpaceHomeView(
     onCreateSpaceClick: () -> Unit,

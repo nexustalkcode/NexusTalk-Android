@@ -9,6 +9,9 @@ package io.element.android.features.linknewdevice.impl.screens.error
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
+/**
+ * 为错误页预览提供所有错误类型样例。
+ */
 class ErrorScreenTypeProvider : PreviewParameterProvider<ErrorScreenType> {
     override val values: Sequence<ErrorScreenType> = sequenceOf(
         ErrorScreenType.Cancelled,

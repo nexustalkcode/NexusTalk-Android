@@ -11,6 +11,13 @@ package io.element.android.features.startchat.api
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.user.MatrixUser
 
+/**
+ * 表示“开始私聊”操作进入二次确认态。
+ *
+ * 当目标用户还没有现成 DM 房间时，UI 会收到该状态以决定是否继续创建新私聊。
+ *
+ * @property matrixUser 需要发起私聊的目标用户。
+ */
 data class ConfirmingStartDmWithMatrixUser(
     val matrixUser: MatrixUser,
 ) : AsyncAction.Confirming

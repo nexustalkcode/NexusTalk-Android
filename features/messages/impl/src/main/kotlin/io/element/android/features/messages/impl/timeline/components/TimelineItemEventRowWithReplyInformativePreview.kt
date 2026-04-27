@@ -17,6 +17,9 @@ import io.element.android.libraries.matrix.ui.messages.reply.InReplyToDetailsInf
 
 @PreviewsDayNight
 @Composable
+/**
+ * 预览回复“信息提示类消息”的事件行。
+ */
 internal fun TimelineItemEventRowWithReplyInformativePreview(
     @PreviewParameter(InReplyToDetailsInformativeProvider::class) inReplyToDetails: InReplyToDetails,
 ) = ElementPreview {

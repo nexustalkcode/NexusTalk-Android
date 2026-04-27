@@ -14,19 +14,30 @@ import io.element.android.features.login.impl.accountprovider.AccountProviderDat
 import io.element.android.libraries.androidutils.json.JsonProvider
 import io.element.android.libraries.matrix.api.auth.external.ExternalSession
 
+/**
+ * 解析注册页面通过消息通道回传的结果。
+ */
 interface MessageParser {
     /**
-     * Parse the message and return the ExternalSession object, or
-     * throw an exception if the message is invalid.
+     * 解析消息并返回 [ExternalSession]。
+     *
+     * @param message 注册页回传的原始消息。
+     * @throws Throwable 当消息内容非法或缺少关键字段时抛出异常。
      */
     fun parse(message: String): ExternalSession
 }
 
 @ContributesBinding(AppScope::class)
+/**
+ * [MessageParser] 的默认实现。
+ */
 class DefaultMessageParser(
     private val accountProviderDataSource: AccountProviderDataSource,
     private val json: JsonProvider,
 ) : MessageParser {
+    /**
+     * 把注册页 JSON 响应解析成可导入的外部会话。
+     */
     override fun parse(message: String): ExternalSession {
         val response = json().decodeFromString(MobileRegistrationResponse.serializer(), message)
         val userId = response.userId ?: error("No user ID in response")

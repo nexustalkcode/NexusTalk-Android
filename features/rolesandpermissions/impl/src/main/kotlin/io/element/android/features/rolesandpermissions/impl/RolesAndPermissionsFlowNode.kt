@@ -51,6 +51,11 @@ import kotlinx.parcelize.Parcelize
 
 @ContributesNode(RoomScope::class)
 @AssistedInject
+/**
+ * 房间角色与权限总流程节点。
+ *
+ * 负责在主页、管理员列表、版主列表和权限编辑页之间导航切换。
+ */
 class RolesAndPermissionsFlowNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -63,6 +68,9 @@ class RolesAndPermissionsFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * 角色与权限流程中的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         @Parcelize
         data object Root : NavTarget
@@ -80,6 +88,9 @@ class RolesAndPermissionsFlowNode(
     private val callback: RolesAndPermissionsEntryPoint.Callback = callback()
     private val asyncIndicatorState = AsyncIndicatorState()
 
+    /**
+     * 监听子流程完成和权限变化，必要时自动关闭当前流程。
+     */
     override fun onBuilt() {
         super.onBuilt()
         whenChildAttached { lifecycle, node: ChangeRolesNode ->
@@ -99,6 +110,9 @@ class RolesAndPermissionsFlowNode(
         }
     }
 
+    /**
+     * 处理“修改完成”后的返回和提示逻辑。
+     */
     private fun onChangeComplete(changesSaved: Boolean) {
         backstack.pop()
         if (changesSaved) {
@@ -108,6 +122,9 @@ class RolesAndPermissionsFlowNode(
         }
     }
 
+    /**
+     * 根据导航目标创建对应子节点。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             is NavTarget.Root -> {
@@ -148,6 +165,9 @@ class RolesAndPermissionsFlowNode(
         }
     }
 
+    /**
+     * 渲染当前流程的 back stack 和状态提示。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         Box(modifier = modifier) {

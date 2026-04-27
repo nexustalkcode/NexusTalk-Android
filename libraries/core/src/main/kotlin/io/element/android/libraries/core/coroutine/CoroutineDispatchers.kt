@@ -11,12 +11,18 @@ package io.element.android.libraries.core.coroutine
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
+/**
+ * 应用内统一注入使用的协程调度器集合。
+ */
 data class CoroutineDispatchers(
     val io: CoroutineDispatcher,
     val computation: CoroutineDispatcher,
     val main: CoroutineDispatcher,
 ) {
     companion object {
+        /**
+         * 基于 Kotlinx 默认调度器的生产配置。
+         */
         val Default = CoroutineDispatchers(
             io = Dispatchers.IO,
             computation = Dispatchers.Default,

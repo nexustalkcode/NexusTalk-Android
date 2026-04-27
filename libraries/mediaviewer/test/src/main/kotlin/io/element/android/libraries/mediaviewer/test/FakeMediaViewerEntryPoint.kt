@@ -11,15 +11,15 @@ package io.element.android.libraries.mediaviewer.test
 import com.bumble.appyx.core.modality.BuildContext
 import com.bumble.appyx.core.node.Node
 import io.element.android.libraries.mediaviewer.api.MediaViewerEntryPoint
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeMediaViewerEntryPoint : MediaViewerEntryPoint {
-    override fun createParamsForAvatar(filename: String, avatarUrl: String) = lambdaError()
+    override fun createParamsForAvatar(filename: String, avatarUrl: String) =
+        error("FakeMediaViewerEntryPoint.createParamsForAvatar must be provided in tests")
 
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,
         params: MediaViewerEntryPoint.Params,
         callback: MediaViewerEntryPoint.Callback,
-    ): Node = lambdaError()
+    ): Node = error("FakeMediaViewerEntryPoint.createNode must be provided in tests")
 }

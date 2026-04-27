@@ -13,6 +13,9 @@ import io.element.android.libraries.matrix.api.media.MediaSource
 import kotlinx.collections.immutable.ImmutableList
 import kotlin.time.Duration
 
+/**
+ * 语音消息的 UI 内容模型。
+ */
 data class TimelineItemVoiceContent(
     val eventId: EventId?,
     override val filename: String,

@@ -53,6 +53,19 @@ class RingingCallNotificationCreatorTest {
 
         assertThat(result).isNotNull()
         assertThat(result!!.headsUpContentView).isNotNull()
+        assertThat(result.fullScreenIntent).isNotNull()
+    }
+
+    @Test
+    fun `createNotification - can omit the full screen intent`() = runTest {
+        val notificationCreator = createRingingCallNotificationCreator(
+            matrixClientProvider = FakeMatrixClientProvider(getClient = { Result.success(FakeMatrixClient()) })
+        )
+
+        val result = notificationCreator.createTestNotification(useFullScreenIntent = false)
+
+        assertThat(result).isNotNull()
+        assertThat(result!!.fullScreenIntent).isNull()
     }
 
     @Test
@@ -80,7 +93,9 @@ class RingingCallNotificationCreatorTest {
         getUserIconLambda.assertions().isCalledOnce()
     }
 
-    private suspend fun RingingCallNotificationCreator.createTestNotification() = createNotification(
+    private suspend fun RingingCallNotificationCreator.createTestNotification(
+        useFullScreenIntent: Boolean = true,
+    ) = createNotification(
         sessionId = A_SESSION_ID,
         roomId = A_ROOM_ID,
         eventId = AN_EVENT_ID,
@@ -92,6 +107,7 @@ class RingingCallNotificationCreatorTest {
         timestamp = 0L,
         expirationTimestamp = 20L,
         textContent = "textContent",
+        useFullScreenIntent = useFullScreenIntent,
     )
 
     private val targetContext

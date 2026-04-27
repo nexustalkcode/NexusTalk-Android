@@ -18,6 +18,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为离开 Space 页面预览提供样例状态。
+ */
 class LeaveSpaceStateProvider : PreviewParameterProvider<LeaveSpaceState> {
     override val values: Sequence<LeaveSpaceState>
         get() = sequenceOf(
@@ -112,6 +115,9 @@ class LeaveSpaceStateProvider : PreviewParameterProvider<LeaveSpaceState> {
         )
 }
 
+/**
+ * 构造一份离开 Space 页面样例状态。
+ */
 fun aLeaveSpaceState(
     spaceName: String? = "Space name",
     isLastAdmin: Boolean = false,
@@ -125,6 +131,9 @@ fun aLeaveSpaceState(
     eventSink = { }
 )
 
+/**
+ * 构造一条可选择离开的 Space 房间样例。
+ */
 fun aSelectableSpaceRoom(
     spaceRoom: SpaceRoom = aSpaceRoom(),
     isLastAdmin: Boolean = false,

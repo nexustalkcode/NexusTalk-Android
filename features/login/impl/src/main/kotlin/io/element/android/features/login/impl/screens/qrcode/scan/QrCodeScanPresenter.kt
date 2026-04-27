@@ -35,6 +35,11 @@ import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 
 @Inject
+/**
+ * 二维码扫码页 Presenter。
+ *
+ * 负责解析扫码结果、监听二维码登录流程失败状态，并维护扫描页异步状态。
+ */
 class QrCodeScanPresenter(
     private val qrCodeLoginDataFactory: MatrixQrCodeLoginDataFactory,
     private val qrCodeLoginManager: QrCodeLoginManager,
@@ -45,6 +50,9 @@ class QrCodeScanPresenter(
 
     private val isProcessingCode = AtomicBoolean(false)
 
+    /**
+     * 生成扫码页状态并处理用户事件。
+     */
     @Composable
     override fun present(): QrCodeScanState {
         val coroutineScope = rememberCoroutineScope()
@@ -74,6 +82,9 @@ class QrCodeScanPresenter(
         )
     }
 
+    /**
+     * 监听二维码登录流程中的失败状态并回写到页面。
+     */
     @Composable
     private fun ObserveQRCodeLoginFailures(onQrCodeLoginError: (QrLoginException) -> Unit) {
         LaunchedEffect(onQrCodeLoginError) {
@@ -89,6 +100,9 @@ class QrCodeScanPresenter(
         }
     }
 
+    /**
+     * 解析二维码内容并生成 [MatrixQrCodeLoginData]。
+     */
     private fun CoroutineScope.getQrCodeData(codeScannedAction: MutableState<AsyncAction<MatrixQrCodeLoginData>>, code: ByteArray) {
         if (codeScannedAction.value.isSuccess() || isProcessingCode.compareAndSet(true, true)) return
 

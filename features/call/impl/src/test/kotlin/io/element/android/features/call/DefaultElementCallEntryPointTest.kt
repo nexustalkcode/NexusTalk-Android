@@ -70,6 +70,31 @@ class DefaultElementCallEntryPointTest {
         registerIncomingCallLambda.assertions().isCalledOnce()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `handleIncomingCall - ignores self originated incoming call`() = runTest {
+        val registerIncomingCallLambda = lambdaRecorder<CallNotificationData, Unit> {}
+        val activeCallManager = FakeActiveCallManager(registerIncomingCallResult = registerIncomingCallLambda)
+        val entryPoint = createEntryPoint(activeCallManager = activeCallManager)
+
+        entryPoint.handleIncomingCall(
+            callType = CallType.RoomCall(A_SESSION_ID, A_ROOM_ID),
+            eventId = AN_EVENT_ID,
+            senderId = A_SESSION_ID,
+            roomName = "roomName",
+            senderName = "senderName",
+            avatarUrl = "avatarUrl",
+            timestamp = 0,
+            expirationTimestamp = 0,
+            notificationChannelId = "notificationChannelId",
+            textContent = "textContent",
+        )
+
+        advanceTimeBy(1.seconds)
+
+        registerIncomingCallLambda.assertions().isNeverCalled()
+    }
+
     private fun TestScope.createEntryPoint(
         activeCallManager: FakeActiveCallManager = FakeActiveCallManager(),
     ) = DefaultElementCallEntryPoint(

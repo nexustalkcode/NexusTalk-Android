@@ -14,7 +14,13 @@ import io.element.android.features.messages.impl.timeline.model.event.TimelineIt
 import io.element.android.libraries.matrix.api.timeline.item.event.FailedToParseStateContent
 
 @Inject
+/**
+ * 无法解析的状态事件内容工厂。
+ */
 class TimelineItemContentFailedToParseStateFactory {
+    /**
+     * 把解析失败的状态内容降级为未知内容视图。
+     */
     @Suppress("UNUSED_PARAMETER")
     fun create(failedToParseState: FailedToParseStateContent): TimelineItemEventContent {
         return TimelineItemUnknownContent

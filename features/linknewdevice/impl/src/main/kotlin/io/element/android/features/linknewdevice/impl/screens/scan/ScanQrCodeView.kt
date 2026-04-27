@@ -46,6 +46,13 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.qrcode.QrCodeCameraView
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染扫描二维码页面。
+ *
+ * @param state 页面展示状态。
+ * @param onBackClick 返回动作。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 @Composable
 fun ScanQrCodeView(
     state: ScanQrCodeState,
@@ -63,6 +70,9 @@ fun ScanQrCodeView(
     )
 }
 
+/**
+ * 渲染扫描页主体内容，包括相机取景区域。
+ */
 @Composable
 private fun Content(
     state: ScanQrCodeState,
@@ -102,6 +112,9 @@ private fun Content(
     }
 }
 
+/**
+ * 渲染扫描页底部按钮和错误/加载状态。
+ */
 @Composable
 private fun ColumnScope.Buttons(
     state: ScanQrCodeState,

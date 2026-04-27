@@ -60,6 +60,11 @@ import io.element.android.wysiwyg.link.Link
 
 private val OUTGOING_MESSAGE_TEXT_COLOR = Color(0xFF0A0A0A)
 
+/**
+ * 渲染图片消息条目视图。
+ *
+ * 支持媒体保护、点击预览、长按菜单以及带格式的图片说明文案。
+ */
 @Composable
 fun TimelineItemImageView(
     content: TimelineItemImageContent,

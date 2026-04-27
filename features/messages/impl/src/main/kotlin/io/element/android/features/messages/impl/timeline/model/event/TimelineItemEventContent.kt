@@ -13,16 +13,26 @@ import io.element.android.libraries.matrix.api.media.MediaSource
 import kotlin.time.Duration
 
 @Immutable
+/**
+ * 所有时间线事件内容模型的共同接口。
+ */
 sealed interface TimelineItemEventContent {
+    /** 用于调试和路由的稳定类型标识。 */
     val type: String
 }
 
+/**
+ * 表示该事件内容本身具备“可被编辑”属性。
+ */
 interface TimelineItemEventMutableContent {
     /** Whether the event has been edited. */
     val isEdited: Boolean
 }
 
 @Immutable
+/**
+ * 带附件的事件内容共同接口。
+ */
 sealed interface TimelineItemEventContentWithAttachment :
     TimelineItemEventContent,
     TimelineItemEventMutableContent {
@@ -35,18 +45,21 @@ sealed interface TimelineItemEventContentWithAttachment :
     val formattedFileSize: String
     val fileExtension: String
 
+    /**
+     * 优先用于展示的描述文案。
+     */
     val bestDescription: String
         get() = caption ?: filename
 }
 
 /**
- * Only text based content can be copied.
+ * 判断当前事件内容是否允许复制。
  */
 fun TimelineItemEventContent.canBeCopied(): Boolean =
     this is TimelineItemTextBasedContent
 
 /**
- * Returns true if the event content can be forwarded.
+ * 判断当前事件内容是否允许转发。
  */
 fun TimelineItemEventContent.canBeForwarded(): Boolean =
     when (this) {
@@ -64,8 +77,9 @@ fun TimelineItemEventContent.canBeForwarded(): Boolean =
     }
 
 /**
- * Return true if user can react (i.e. send a reaction) on the event content.
- * This does not take into account the power level of the user.
+ * 判断当前事件内容是否允许添加 reaction。
+ *
+ * 这里只判断内容类型，不考虑用户权级。
  */
 fun TimelineItemEventContent.canReact(): Boolean =
     when (this) {
@@ -87,7 +101,7 @@ fun TimelineItemEventContent.canReact(): Boolean =
     }
 
 /**
- * Whether the event content has been edited.
+ * 判断当前事件内容是否已经被编辑过。
  */
 fun TimelineItemEventContent.isEdited(): Boolean = when (this) {
     is TimelineItemEventMutableContent -> isEdited
@@ -95,10 +109,13 @@ fun TimelineItemEventContent.isEdited(): Boolean = when (this) {
 }
 
 /**
- * Whether the event content has been redacted.
+ * 判断当前事件内容是否已被撤回。
  */
 fun TimelineItemEventContent.isRedacted(): Boolean = this is TimelineItemRedactedContent
 
+/**
+ * 如果当前内容携带时长信息，则返回对应时长。
+ */
 fun TimelineItemEventContentWithAttachment.duration(): Duration? {
     return when (this) {
         is TimelineItemAudioContent -> duration

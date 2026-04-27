@@ -16,6 +16,9 @@ import io.element.android.libraries.matrix.ui.components.aMatrixUser
 import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 构造一份设置主页样例状态。
+ */
 fun aPreferencesRootState(
     myUser: MatrixUser = aMatrixUser(),
     otherSessions: List<MatrixUser> = emptyList(),

@@ -13,11 +13,20 @@ import com.bumble.appyx.core.node.Node
 import com.bumble.appyx.core.plugin.Plugin
 import io.element.android.libraries.architecture.FeatureEntryPoint
 
+/**
+ * 房间角色与权限页面入口接口。
+ */
 fun interface RolesAndPermissionsEntryPoint : FeatureEntryPoint {
+    /**
+     * 页面流程回调。
+     */
     interface Callback : Plugin {
         fun onDone()
     }
 
+    /**
+     * 创建角色与权限流程节点。
+     */
     fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

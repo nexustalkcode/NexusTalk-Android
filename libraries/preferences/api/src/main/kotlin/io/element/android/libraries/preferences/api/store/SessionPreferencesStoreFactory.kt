@@ -8,10 +8,9 @@
 
 package io.element.android.libraries.preferences.api.store
 
-import io.element.android.libraries.matrix.api.core.SessionId
 import kotlinx.coroutines.CoroutineScope
 
 interface SessionPreferencesStoreFactory {
-    fun get(sessionId: SessionId, sessionCoroutineScope: CoroutineScope): SessionPreferencesStore
-    fun remove(sessionId: SessionId)
+    fun get(sessionId: String, sessionCoroutineScope: CoroutineScope): SessionPreferencesStore
+    fun remove(sessionId: String)
 }

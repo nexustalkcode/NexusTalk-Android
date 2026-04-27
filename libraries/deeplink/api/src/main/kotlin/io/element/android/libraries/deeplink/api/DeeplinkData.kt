@@ -13,6 +13,9 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.core.ThreadId
 
+/**
+ * 应用内部 deeplink 解析结果。
+ */
 sealed interface DeeplinkData {
     /** Session id is common for all deep links. */
     val sessionId: SessionId

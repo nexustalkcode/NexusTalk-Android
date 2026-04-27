@@ -31,6 +31,11 @@ import kotlinx.parcelize.Parcelize
 
 @ContributesNode(SpaceFlowScope::class)
 @AssistedInject
+/**
+ * Space 设置流程节点。
+ *
+ * 负责在设置主页、编辑详情、安全与隐私、角色与权限等子页面之间切换。
+ */
 class SpaceSettingsFlowNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -45,6 +50,9 @@ class SpaceSettingsFlowNode(
     buildContext = buildContext,
     plugins = plugins,
 ) {
+    /**
+     * Space 设置流程对上层暴露的回调。
+     */
     interface Callback : Plugin {
         fun initialTarget(): NavTarget = NavTarget.Root
         fun navigateToSpaceMembers()
@@ -52,6 +60,9 @@ class SpaceSettingsFlowNode(
         fun closeSettings()
     }
 
+    /**
+     * Space 设置流程中的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         @Parcelize
         data object Root : NavTarget
@@ -68,6 +79,12 @@ class SpaceSettingsFlowNode(
 
     private val callback: Callback = callback()
 
+    /**
+     * 根据导航目标创建对应子节点。
+     *
+     * @param navTarget 当前需要解析的导航目标。
+     * @param buildContext 子节点构建上下文。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             is NavTarget.Root -> {
@@ -134,12 +151,20 @@ class SpaceSettingsFlowNode(
         }
     }
 
+    /**
+     * 渲染当前设置流程的 back stack。
+     *
+     * @param modifier 应用于根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         BackstackView(modifier)
     }
 }
 
+/**
+ * 从回调插件中解析 Space 设置流程的初始页面。
+ */
 fun initialElement(plugins: List<Plugin>): SpaceSettingsFlowNode.NavTarget {
     return plugins.callback<SpaceSettingsFlowNode.Callback>().initialTarget()
 }

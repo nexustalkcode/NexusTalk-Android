@@ -15,6 +15,7 @@ import io.element.android.libraries.matrix.api.MatrixClientProvider
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.room.isDm
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.matrix.api.widget.CallWidgetSettingsProvider
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
 import io.element.android.services.appnavstate.api.ActiveRoomsHolder
@@ -62,6 +63,7 @@ class DefaultCallWidgetProvider(
         clientId: String,
         languageTag: String?,
         theme: String?,
+        callMode: CallWidgetMode,
     ): Result<CallWidgetProvider.GetWidgetResult> = runCatchingExceptions {
         val matrixClient = matrixClientsProvider.getOrRestore(sessionId).getOrThrow()
         val room = activeRoomsHolder.getActiveRoomMatching(sessionId, roomId)
@@ -78,6 +80,7 @@ class DefaultCallWidgetProvider(
             encrypted = isEncrypted,
             direct = room.isDm(),
             hasActiveCall = roomInfo.hasRoomCall,
+            callMode = callMode,
         )
         val callUrl = room.generateWidgetWebViewUrl(
             widgetSettings = widgetSettings,

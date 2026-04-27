@@ -21,11 +21,19 @@ import io.element.android.libraries.architecture.callback
 
 @ContributesNode(QrCodeLoginScope::class)
 @AssistedInject
+/**
+ * 二维码登录引导页节点。
+ *
+ * 负责渲染引导说明，并把返回/继续动作回传给流程外层。
+ */
 class QrCodeIntroNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: QrCodeIntroPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 引导页向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun cancel()
         fun navigateToQrCodeScan()
@@ -33,6 +41,11 @@ class QrCodeIntroNode(
 
     private val callback: Callback = callback()
 
+    /**
+     * 渲染二维码登录引导页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

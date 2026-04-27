@@ -9,10 +9,11 @@
 package io.element.android.features.preferences.impl.user.editprofile
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,14 +35,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.features.preferences.impl.R
+import io.element.android.libraries.androidutils.system.copyToClipboard
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.designsystem.components.async.AsyncActionView
 import io.element.android.libraries.designsystem.components.async.AsyncActionViewDefaults
@@ -52,7 +61,10 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Button
 import io.element.android.libraries.designsystem.theme.components.ButtonSize
 import io.element.android.libraries.designsystem.theme.components.CenteredTitleTopBar
+import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Scaffold
+import io.element.android.libraries.designsystem.theme.components.Surface
+import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.theme.components.TextField
 import io.element.android.libraries.matrix.ui.components.AvatarActionBottomSheet
 import io.element.android.libraries.matrix.ui.components.AvatarPickerState
@@ -62,14 +74,20 @@ import io.element.android.libraries.ui.strings.CommonStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染编辑用户资料页面。
+ */
 fun EditUserProfileView(
     state: EditUserProfileState,
     onEditProfileSuccess: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val isAvatarActionsSheetVisible = remember { mutableStateOf(false) }
     val bgColor = ElementTheme.colors.bgCanvasDefault
+    val copyActionDescription = stringResource(CommonStrings.action_copy)
+    val copiedToClipboardMessage = stringResource(CommonStrings.common_copied_to_clipboard)
 
     fun onAvatarClick() {
         focusManager.clearFocus()
@@ -165,12 +183,16 @@ fun EditUserProfileView(
                 onValueChange = { state.eventSink(EditUserProfileEvent.UpdateDisplayName(it)) },
             )
             Spacer(modifier = Modifier.height(16.dp))
-            TextField(
+            ReadOnlyCopyableField(
                 label = stringResource(R.string.screen_edit_profile_username),
                 value = state.userId.value,
-                readOnly = true,
-                singleLine = true,
-                onValueChange = {},
+                copyActionDescription = copyActionDescription,
+                onCopyClick = {
+                    context.copyToClipboard(
+                        text = state.userId.value,
+                        toastMessage = copiedToClipboardMessage,
+                    )
+                },
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(
@@ -221,6 +243,62 @@ fun EditUserProfileView(
     PermissionsView(
         state = state.cameraPermissionState,
     )
+}
+
+@Composable
+/**
+ * 渲染只读且可复制的文本字段。
+ */
+private fun ReadOnlyCopyableField(
+    label: String,
+    value: String,
+    copyActionDescription: String,
+    onCopyClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            color = ElementTheme.colors.textPrimary,
+            style = ElementTheme.typography.fontBodyMdRegular,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            color = ElementTheme.colors.bgSubtleSecondary,
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = value,
+                    modifier = Modifier.weight(1f),
+                    color = ElementTheme.colors.textPrimary,
+                    style = ElementTheme.typography.fontBodyLgRegular,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable(onClickLabel = copyActionDescription, onClick = onCopyClick)
+                        .padding(4.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = CompoundIcons.Copy(),
+                        contentDescription = copyActionDescription,
+                        tint = ElementTheme.colors.iconSecondary,
+                    )
+                }
+            }
+        }
+    }
 }
 
 @PreviewsDayNight

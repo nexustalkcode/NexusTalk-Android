@@ -29,8 +29,8 @@ dependencies {
     implementation(projects.libraries.di)
     implementation(projects.libraries.architecture)
     implementation(projects.libraries.androidutils)
-    implementation(projects.libraries.matrix.api)
-    implementation(projects.libraries.matrixmedia.api)
+    implementation(project(":libraries:matrix"))
+    implementation(project(":libraries:matrixmedia"))
     implementation(projects.libraries.designsystem)
     implementation(projects.libraries.core)
     implementation(projects.libraries.uiStrings)
@@ -39,7 +39,7 @@ dependencies {
     implementation(libs.matrix.richtexteditor)
     implementation(projects.libraries.previewutils)
 
-    testImplementation(projects.libraries.matrix.test)
-    testImplementation(projects.libraries.dateformatter.test)
-    testImplementation(projects.libraries.sessionStorage.test)
+    testImplementation(project(":libraries:matrix:test"))
+    testImplementation(project(":libraries:dateformatter"))
+    testImplementation(project(":libraries:session-storage"))
 }

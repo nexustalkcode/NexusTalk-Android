@@ -10,6 +10,10 @@ package io.element.android.features.messages.impl.timeline.protection
 
 import io.element.android.libraries.matrix.api.core.EventId
 
+/**
+ * 时间线媒体保护层可能触发的事件。
+ */
 sealed interface TimelineProtectionEvent {
+    /** 请求显示指定事件的受保护内容。 */
     data class ShowContent(val eventId: EventId?) : TimelineProtectionEvent
 }

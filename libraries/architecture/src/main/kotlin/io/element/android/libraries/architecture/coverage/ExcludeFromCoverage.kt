@@ -8,6 +8,9 @@
 
 package io.element.android.libraries.architecture.coverage
 
+/**
+ * 标记不需要纳入覆盖率统计的声明。
+ */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 annotation class ExcludeFromCoverage

@@ -23,10 +23,22 @@ import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.services.analytics.api.AnalyticsService
 
 @ContributesBinding(SessionScope::class)
+/**
+ * [StartDMAction] 的默认实现。
+ *
+ * 负责调用 Matrix 层查找或创建 DM，并将结果写回调用方持有的 [AsyncAction] 状态。
+ */
 class DefaultStartDMAction(
     private val matrixClient: MatrixClient,
     private val analyticsService: AnalyticsService,
 ) : StartDMAction {
+    /**
+     * 执行发起私聊动作。
+     *
+     * @param matrixUser 需要发起私聊的目标用户。
+     * @param createIfDmDoesNotExist 不存在私聊房间时是否直接创建。
+     * @param actionState 需要更新的异步动作状态。
+     */
     override suspend fun execute(
         matrixUser: MatrixUser,
         createIfDmDoesNotExist: Boolean,

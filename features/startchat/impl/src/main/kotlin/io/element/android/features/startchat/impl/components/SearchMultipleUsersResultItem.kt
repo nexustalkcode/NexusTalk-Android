@@ -23,6 +23,9 @@ import io.element.android.libraries.matrix.ui.model.getBestName
 import io.element.android.libraries.usersearch.api.UserSearchResult
 
 @Composable
+/**
+ * 渲染多选模式下的用户搜索结果项。
+ */
 fun SearchMultipleUsersResultItem(
     searchResult: UserSearchResult,
     isUserSelected: Boolean,

@@ -11,4 +11,7 @@ package io.element.android.libraries.architecture.overlay.operation
 import com.bumble.appyx.core.navigation.Operation
 import com.bumble.appyx.navmodel.backstack.BackStack
 
+/**
+ * Overlay 导航模型使用的操作接口。
+ */
 interface OverlayOperation<T> : Operation<T, BackStack.State>

@@ -123,6 +123,7 @@ fun TimelineView(
     onMoreReactionsClick: (TimelineItem.Event) -> Unit,
     onReadReceiptClick: (TimelineItem.Event) -> Unit,
     onJoinCallClick: () -> Unit,
+    onStartVideoCallClick: () -> Unit = onJoinCallClick,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     forceJumpToBottomVisibility: Boolean = false,
@@ -234,6 +235,7 @@ fun TimelineView(
                         onReadReceiptClick = onReadReceiptClick,
                         onSwipeToReply = onSwipeToReply,
                         onJoinCallClick = onJoinCallClick,
+                        onStartVideoCallClick = onStartVideoCallClick,
                         eventSink = state.eventSink,
                     )
                 }

@@ -17,9 +17,15 @@ import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.matrix.api.timeline.item.event.EventContent
 
 @Inject
+/**
+ * 房间成员关系变更事件内容工厂。
+ */
 class TimelineItemContentRoomMembershipFactory(
     private val timelineEventFormatter: TimelineEventFormatter,
 ) {
+    /**
+     * 将成员关系变更事件格式化为 UI 文本内容。
+     */
     fun create(eventContent: EventContent, isOutgoing: Boolean, sender: UserId, senderDisambiguatedDisplayName: String): TimelineItemEventContent {
         val text = timelineEventFormatter.format(eventContent, isOutgoing, sender, senderDisambiguatedDisplayName)
         return TimelineItemRoomMembershipContent(text.orEmpty().toString())

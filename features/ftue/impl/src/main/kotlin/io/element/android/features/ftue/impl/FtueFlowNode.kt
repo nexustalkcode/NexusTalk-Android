@@ -56,6 +56,9 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
+
+private const val startupTraceTag = "StartupTrace"
 
 /**
  * FTUE 引导流程节点构造函数
@@ -146,9 +149,12 @@ class FtueFlowNode(
      */
     override fun onBuilt() {
         super.onBuilt()
+        // 这里记录 FTUE 流程节点何时开始接管页面，以及它收到的下一步到底是什么。
+        Timber.tag(startupTraceTag).i("FtueFlowNode.onBuilt")
         defaultFtueService.ftueStepStateFlow
             .filterIsInstance(InternalFtueState.Incomplete::class)
             .onEach {
+                Timber.tag(startupTraceTag).i("FtueFlowNode.observe incomplete nextStep=%s", it.nextStep)
                 showStep(it.nextStep)
             }
             .launchIn(lifecycleScope)
@@ -172,6 +178,7 @@ class FtueFlowNode(
      * @return 对应的 Node 实例
      */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
+        Timber.tag(startupTraceTag).i("FtueFlowNode.resolve navTarget=%s", navTarget)
         return when (navTarget) {
             NavTarget.Placeholder -> {
                 emptyNode(buildContext)
@@ -244,6 +251,8 @@ class FtueFlowNode(
      * @param ftueStep 要显示的 FTUE 步骤枚举值
      */
     private fun showStep(ftueStep: FtueStep) {
+        // 这里记录内部 FTUE 步骤到真实导航目标的映射，便于确认“状态变了但页面没切”是否发生。
+        Timber.tag(startupTraceTag).i("FtueFlowNode.showStep ftueStep=%s", ftueStep)
         when (ftueStep) {
             FtueStep.WaitingForInitialState -> {
                 backstack.newRoot(NavTarget.Placeholder)

@@ -33,6 +33,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染修改房间权限页面。
+ */
 fun ChangeRoomPermissionsView(
     state: ChangeRoomPermissionsState,
     onComplete: (Boolean) -> Unit,
@@ -109,6 +112,9 @@ fun ChangeRoomPermissionsView(
 }
 
 @Composable
+/**
+ * 返回某个权限分区的标题文案。
+ */
 private fun titleForSection(section: RoomPermissionsSection): String = when (section) {
     RoomPermissionsSection.EditDetails -> stringResource(R.string.screen_room_change_permissions_room_details)
     RoomPermissionsSection.MessagesAndContent -> stringResource(R.string.screen_room_change_permissions_messages_and_content)
@@ -117,6 +123,9 @@ private fun titleForSection(section: RoomPermissionsSection): String = when (sec
 }
 
 @Composable
+/**
+ * 返回某个权限项的标题文案。
+ */
 private fun titleForType(type: RoomPermissionType): String = when (type) {
     RoomPermissionType.INVITE -> stringResource(R.string.screen_room_change_permissions_invite_people)
     RoomPermissionType.KICK -> stringResource(R.string.screen_room_change_permissions_remove_people)

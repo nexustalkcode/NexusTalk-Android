@@ -16,6 +16,9 @@ import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.user.MatrixUser
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 房间成员管理内部完整状态。
+ */
 data class InternalRoomMemberModerationState(
     override val permissions: RoomMemberModerationPermissions,
     val selectedUser: MatrixUser?,
@@ -25,5 +28,8 @@ data class InternalRoomMemberModerationState(
     val unbanUserAsyncAction: AsyncAction<Unit>,
     override val eventSink: (RoomMemberModerationEvents) -> Unit,
 ) : RoomMemberModerationState {
+    /**
+     * 当前是否应展示动作底部弹窗。
+     */
     val canDisplayActions = actions.isNotEmpty()
 }

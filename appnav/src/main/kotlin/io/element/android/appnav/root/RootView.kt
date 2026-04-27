@@ -24,6 +24,11 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.services.apperror.impl.AppErrorView
 
 @Composable
+/**
+ * 渲染应用根页面。
+ *
+ * 负责承载子页面内容以及崩溃/摇一摇/应用错误覆盖层。
+ */
 fun RootView(
     state: RootState,
     onOpenBugReport: () -> Unit,

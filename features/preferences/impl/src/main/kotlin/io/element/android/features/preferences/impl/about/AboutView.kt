@@ -20,6 +20,9 @@ import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染“关于”页面。
+ */
 fun AboutView(
     state: AboutState,
     onElementLegalClick: (ElementLegal) -> Unit,
@@ -30,6 +33,7 @@ fun AboutView(
     PreferencePage(
         modifier = modifier,
         onBackClick = onBackClick,
+        handleSystemBack = true,
         title = stringResource(id = CommonStrings.common_about)
     ) {
         state.elementLegals.forEach { elementLegal ->

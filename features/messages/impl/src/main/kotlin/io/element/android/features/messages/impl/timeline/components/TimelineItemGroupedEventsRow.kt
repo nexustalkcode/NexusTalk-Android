@@ -38,6 +38,9 @@ import io.element.android.libraries.ui.utils.time.isTalkbackActive
 import io.element.android.wysiwyg.link.Link
 
 @Composable
+/**
+ * 渲染分组后的时间线事件集合。
+ */
 fun TimelineItemGroupedEventsRow(
     timelineItem: TimelineItem.GroupedEvents,
     timelineMode: Timeline.Mode,
@@ -110,6 +113,9 @@ fun TimelineItemGroupedEventsRow(
 }
 
 @Composable
+/**
+ * 渲染分组事件集合的主体内容。
+ */
 private fun TimelineItemGroupedEventsRowContent(
     isExpanded: Boolean,
     onExpandGroupClick: () -> Unit,

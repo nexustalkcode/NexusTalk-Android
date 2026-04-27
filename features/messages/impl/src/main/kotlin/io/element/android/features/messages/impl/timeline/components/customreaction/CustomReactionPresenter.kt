@@ -26,10 +26,18 @@ import kotlinx.collections.immutable.toImmutableSet
 import kotlinx.coroutines.launch
 
 @Inject
+/**
+ * 自定义 reaction 底部弹层 Presenter。
+ *
+ * 负责加载最近使用的 emoji，并在需要时准备 emojibase 数据源。
+ */
 class CustomReactionPresenter(
     private val emojibaseProvider: EmojibaseProvider,
     private val getRecentEmojis: GetRecentEmojis,
 ) : Presenter<CustomReactionState> {
+    /**
+     * 生成自定义 reaction 状态并处理事件。
+     */
     @Composable
     override fun present(): CustomReactionState {
         val localCoroutineScope = rememberCoroutineScope()

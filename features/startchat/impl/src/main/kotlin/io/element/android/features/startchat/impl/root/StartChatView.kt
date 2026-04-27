@@ -63,6 +63,9 @@ import kotlinx.collections.immutable.persistentListOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染开始聊天主页弹层。
+ */
 fun StartChatView(
     state: StartChatState,
     isVisible: Boolean,
@@ -186,6 +189,9 @@ fun StartChatView(
 }
 
 @Composable
+/**
+ * 渲染创建房间/邀请等快捷操作列表。
+ */
 private fun CreateRoomActionButtonsList(
     state: StartChatState,
     onNewRoomClick: () -> Unit,
@@ -253,6 +259,9 @@ private fun CreateRoomActionButtonsList(
 }
 
 @Composable
+/**
+ * 渲染单个快捷操作按钮。
+ */
 private fun CreateRoomActionButton(
     @DrawableRes iconRes: Int,
     text: String,

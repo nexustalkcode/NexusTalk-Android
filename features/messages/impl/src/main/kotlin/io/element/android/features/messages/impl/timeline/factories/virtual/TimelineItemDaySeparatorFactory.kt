@@ -16,9 +16,15 @@ import io.element.android.libraries.dateformatter.api.DateFormatterMode
 import io.element.android.libraries.matrix.api.timeline.item.virtual.VirtualTimelineItem
 
 @Inject
+/**
+ * 日期分隔虚拟项工厂。
+ */
 class TimelineItemDaySeparatorFactory(
     private val dateFormatter: DateFormatter,
 ) {
+    /**
+     * 将底层日期分隔项转换为 UI 虚拟模型。
+     */
     fun create(virtualItem: VirtualTimelineItem.DayDivider): TimelineItemVirtualModel {
         val formattedDate = dateFormatter.format(
             timestamp = virtualItem.timestamp,

@@ -15,7 +15,18 @@ import io.element.android.features.login.api.LoginIntentResolver
 import io.element.android.features.login.api.LoginParams
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的登录链接解析器。
+ *
+ * 用于从 Element 移动端 deeplink 中提取账号提供商和登录 hint。
+ */
 class DefaultLoginIntentResolver : LoginIntentResolver {
+    /**
+     * 解析登录 deeplink。
+     *
+     * @param uriString 待解析的 URI 字符串。
+     * @return 成功时返回登录参数，无法识别时返回 `null`。
+     */
     override fun parse(uriString: String): LoginParams? {
         val uri = uriString.toUri()
         if (uri.host != "mobile.element.io") return null

@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.dp
 import io.element.android.libraries.designsystem.atomic.molecules.ButtonColumnMolecule
 
 @Composable
+/**
+ * 验证流程页面共用的底部按钮容器。
+ */
 internal fun VerificationBottomMenu(
     modifier: Modifier = Modifier,
     buttons: @Composable ColumnScope.() -> Unit,

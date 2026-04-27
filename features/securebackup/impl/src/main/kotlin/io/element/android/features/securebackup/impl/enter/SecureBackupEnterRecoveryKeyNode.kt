@@ -21,11 +21,17 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 输入恢复密钥页面节点。
+ */
 class SecureBackupEnterRecoveryKeyNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: SecureBackupEnterRecoveryKeyPresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 页面向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun onEnterRecoveryKeySuccess()
         fun onResetRecoveryKey()
@@ -33,6 +39,9 @@ class SecureBackupEnterRecoveryKeyNode(
 
     private val callback: Callback = callback()
 
+    /**
+     * 渲染输入恢复密钥页面。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

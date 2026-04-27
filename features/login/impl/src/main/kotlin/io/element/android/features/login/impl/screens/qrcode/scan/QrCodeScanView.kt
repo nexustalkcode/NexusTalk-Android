@@ -52,6 +52,14 @@ import io.element.android.libraries.matrix.api.auth.qrlogin.MatrixQrCodeLoginDat
 import io.element.android.libraries.matrix.api.auth.qrlogin.QrLoginException
 import io.element.android.libraries.qrcode.QrCodeCameraView
 
+/**
+ * 渲染二维码扫码页。
+ *
+ * @param state 页面展示状态。
+ * @param onBackClick 返回动作。
+ * @param onQrCodeDataReady 二维码解析成功后的回调。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 @Composable
 fun QrCodeScanView(
     state: QrCodeScanState,
@@ -77,6 +85,9 @@ fun QrCodeScanView(
     )
 }
 
+/**
+ * 渲染扫码页主体内容。
+ */
 @Composable
 private fun Content(
     state: QrCodeScanState,
@@ -112,6 +123,9 @@ private fun Content(
     }
 }
 
+/**
+ * 渲染扫码页底部按钮和错误/加载状态。
+ */
 @Composable
 private fun ColumnScope.Buttons(
     state: QrCodeScanState,

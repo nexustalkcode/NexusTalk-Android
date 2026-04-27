@@ -29,6 +29,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
 
+/**
+ * 渲染信息提示类时间线条目视图。
+ */
 @Composable
 fun TimelineItemInformativeView(
     text: String,

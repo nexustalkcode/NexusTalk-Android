@@ -35,6 +35,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 @Suppress("MultipleEmitters") // False positive
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染账号选择页。
+ */
 fun AccountSelectView(
     state: AccountSelectState,
     onSelectAccount: (SessionId) -> Unit,

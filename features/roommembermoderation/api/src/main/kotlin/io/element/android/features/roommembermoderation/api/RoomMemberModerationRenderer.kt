@@ -12,8 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.element.android.libraries.matrix.api.user.MatrixUser
 
+/**
+ * 房间成员管理 UI 渲染入口接口。
+ */
 interface RoomMemberModerationRenderer {
     @Composable
+    /**
+     * 渲染房间成员管理 UI。
+     */
     fun Render(
         state: RoomMemberModerationState,
         onSelectAction: (ModerationAction, MatrixUser) -> Unit,

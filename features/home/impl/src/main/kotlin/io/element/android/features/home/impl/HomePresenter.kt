@@ -43,6 +43,9 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import timber.log.Timber
+
+private const val startupTraceTag = "StartupTrace"
 
 /**
  * 首页 Presenter
@@ -116,7 +119,9 @@ class HomePresenter(
         // 头像指示器
         val showAvatarIndicator by indicatorService.showRoomListTopBarIndicator()
         val showSecureBackupBadge by indicatorService.showSettingChatBackupIndicator()
-        val canVerifyUserSession by sessionVerificationService.needsSessionVerification.collectAsState(false)
+        // 未验证会话会优先在 Chats 页通过安全横幅进入 SessionVerification 流程，
+        // 因此 Home 内嵌设置页中的 Encryption 入口只在“不再需要会话验证”时展示。
+        val needsSessionVerification by sessionVerificationService.needsSessionVerification.collectAsState(false)
         val showBlockedUsersItem by remember {
             client.ignoredUsersFlow.map { it.isNotEmpty() }
         }.collectAsState(initial = false)
@@ -127,13 +132,33 @@ class HomePresenter(
             devicesManagementUrl.value = client.getAccountManagementUrl(AccountManagementAction.SessionsList).getOrNull()
         }
         val directLogoutState = logoutPresenter.present()
+        // 这里记录 Presenter 是否已经把首页渲染所需的关键状态拼好，用来判断空白是否卡在状态聚合阶段。
+        LaunchedEffect(
+            currentHomeNavigationBarItem,
+            roomListState.contentState,
+            groupListState.contentState,
+            homeSpacesState.canCreateSpaces,
+            homeSpacesState.spaceRooms.size,
+        ) {
+            Timber.tag(startupTraceTag).i(
+                "HomePresenter.present navItem=%s roomList=%s groupList=%s spaces=%s canCreateSpaces=%s",
+                currentHomeNavigationBarItem,
+                roomListState.contentState.javaClass.simpleName,
+                groupListState.contentState.javaClass.simpleName,
+                homeSpacesState.spaceRooms.size,
+                homeSpacesState.canCreateSpaces,
+            )
+        }
 
         // 计算 Chats 标签页的未读消息数量
         val chatsUnreadCount by remember(roomListState) {
             derivedStateOf {
                 val contentState = roomListState.contentState
                 if (contentState is RoomListContentState.Rooms) {
-                    contentState.summaries.sumOf { it.totalUnreadCount.toInt() }
+                    contentState.summaries.sumOf { summary ->
+                        val isInviteSeen = contentState.seenRoomInvites.contains(summary.roomId)
+                        summary.displayedUnreadCount(isInviteSeen).toInt()
+                    }
                 } else {
                     0
                 }
@@ -175,7 +200,7 @@ class HomePresenter(
             devicesManagementUrl = devicesManagementUrl.value,
             showLinkNewDevice = showLinkNewDevice,
             showBlockedUsersItem = showBlockedUsersItem,
-            showSecureBackup = !canVerifyUserSession,
+            showSecureBackup = !needsSessionVerification,
             showSecureBackupBadge = showSecureBackupBadge,
             directLogoutState = directLogoutState,
             eventSink = ::handleEvent,

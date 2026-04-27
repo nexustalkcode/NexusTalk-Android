@@ -14,7 +14,13 @@ import io.element.android.features.messages.impl.timeline.model.event.TimelineIt
 import io.element.android.libraries.matrix.api.timeline.item.event.RedactedContent
 
 @Inject
+/**
+ * 撤回事件内容工厂。
+ */
 class TimelineItemContentRedactedFactory {
+    /**
+     * 将撤回内容转换为统一的“消息已移除”视图模型。
+     */
     fun create(@Suppress("UNUSED_PARAMETER") content: RedactedContent): TimelineItemEventContent {
         return TimelineItemRedactedContent
     }

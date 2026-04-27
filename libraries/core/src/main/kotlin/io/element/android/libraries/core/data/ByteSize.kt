@@ -7,6 +7,9 @@
 
 package io.element.android.libraries.core.data
 
+/**
+ * 字节大小单位。
+ */
 enum class ByteUnit(val bitShift: Int) {
     BYTES(0),
     KB(10),
@@ -14,7 +17,13 @@ enum class ByteUnit(val bitShift: Int) {
     GB(30)
 }
 
+/**
+ * 带单位的字节大小值。
+ */
 class ByteSize internal constructor(val value: Long, val unit: ByteUnit) {
+    /**
+     * 将当前大小转换到目标单位。
+     */
     fun into(dest: ByteUnit): Long {
         if (unit == dest) return value
         return value shl unit.bitShift shr dest.bitShift
@@ -43,7 +52,7 @@ val Number.megaBytes get() = ByteSize(toLong(), ByteUnit.MB)
 val Number.kiloBytes get() = ByteSize(toLong(), ByteUnit.KB)
 val Number.bytes get() = ByteSize(toLong(), ByteUnit.BYTES)
 
-// For the SDK values
+/** 供 SDK 返回的无符号大小值使用。 */
 val ULong.gigaBytes get() = ByteSize(toLong(), ByteUnit.GB)
 val ULong.megaBytes get() = ByteSize(toLong(), ByteUnit.MB)
 val ULong.kiloBytes get() = ByteSize(toLong(), ByteUnit.KB)

@@ -128,6 +128,28 @@ class ResetIdentityFlowManagerTest {
         assertThat(isDone).isTrue()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `whenResetIsDone - replaces previous waiting job before registering a new one`() = runTest {
+        val verificationService = FakeSessionVerificationService()
+        val flowManager = createFlowManager(sessionVerificationService = verificationService)
+        var firstCallbackCount = 0
+        var secondCallbackCount = 0
+
+        flowManager.whenResetIsDone {
+            firstCallbackCount += 1
+        }
+        flowManager.whenResetIsDone {
+            secondCallbackCount += 1
+        }
+
+        verificationService.emitVerifiedStatus(SessionVerifiedStatus.Verified)
+        advanceUntilIdle()
+
+        assertThat(firstCallbackCount).isEqualTo(0)
+        assertThat(secondCallbackCount).isEqualTo(1)
+    }
+
     private fun TestScope.createFlowManager(
         encryptionService: FakeEncryptionService = FakeEncryptionService(),
         sessionVerificationService: FakeSessionVerificationService = FakeSessionVerificationService(),

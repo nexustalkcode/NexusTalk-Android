@@ -10,6 +10,7 @@ package io.element.android.features.call.impl.utils
 
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.matrix.api.widget.MatrixWidgetDriver
 
 /**
@@ -39,6 +40,7 @@ interface CallWidgetProvider {
         clientId: String,
         languageTag: String?,
         theme: String?,
+        callMode: CallWidgetMode = CallWidgetMode.Video,
     ): Result<GetWidgetResult>
 
     /**

@@ -7,7 +7,12 @@
 
 package io.element.android.features.linknewdevice.impl.screens.root
 
+/**
+ * 新设备关联根页面可能触发的用户事件。
+ */
 sealed interface LinkNewDeviceRootEvent {
+    /** 开始关联移动端设备。 */
     data object LinkMobileDevice : LinkNewDeviceRootEvent
+    /** 关闭当前弹窗或提示。 */
     data object CloseDialog : LinkNewDeviceRootEvent
 }

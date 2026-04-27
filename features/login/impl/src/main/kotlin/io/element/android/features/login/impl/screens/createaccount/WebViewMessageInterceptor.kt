@@ -16,6 +16,12 @@ import android.webkit.WebViewClient
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
 
+/**
+ * 拦截注册 WebView 与原生层之间的消息通信。
+ *
+ * 负责把注册页通过 `postMessage` 发送的结果传回原生层，
+ * 并把页面内需要跳到外部浏览器的链接交给回调处理。
+ */
 class WebViewMessageInterceptor(
     webView: WebView,
     private val debugLog: Boolean,
@@ -23,12 +29,15 @@ class WebViewMessageInterceptor(
     private val onMessage: (String) -> Unit,
 ) {
     companion object {
-        // We call both the WebMessageListener and the JavascriptInterface objects in JS with this
-        // 'listenerName' so they can both receive the data from the WebView when
-        // `${LISTENER_NAME}.postMessage(...)` is called
+        /**
+         * JS 侧调用 `postMessage` 时使用的统一监听器名称。
+         */
         const val LISTENER_NAME = "elementX"
     }
 
+    /**
+     * 在初始化时安装 WebViewClient 和消息桥接能力。
+     */
     init {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -84,8 +93,10 @@ class WebViewMessageInterceptor(
         }
     }
 
+    /**
+     * 把 WebView 回传的消息转交给调用方。
+     */
     private fun onMessageReceived(json: String?) {
-        // Here is where we would handle the messages from the WebView, passing them to the listener
         json?.let { onMessage(it) }
     }
 }

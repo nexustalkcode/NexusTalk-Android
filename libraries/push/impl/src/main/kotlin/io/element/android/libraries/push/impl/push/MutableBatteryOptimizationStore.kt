@@ -11,9 +11,12 @@ package io.element.android.libraries.push.impl.push
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import io.element.android.libraries.push.impl.store.DefaultPushDataStore
+import timber.log.Timber
+
+private const val batteryOptimizationDebugTag = "BatteryOptimizationDebug"
 
 interface MutableBatteryOptimizationStore {
-    suspend fun showBatteryOptimizationBanner()
+    suspend fun showBatteryOptimizationBanner(reason: String)
     suspend fun onOptimizationBannerDismissed()
     suspend fun reset()
 }
@@ -22,15 +25,25 @@ interface MutableBatteryOptimizationStore {
 class DefaultMutableBatteryOptimizationStore(
     private val defaultPushDataStore: DefaultPushDataStore,
 ) : MutableBatteryOptimizationStore {
-    override suspend fun showBatteryOptimizationBanner() {
-        defaultPushDataStore.setBatteryOptimizationBannerState(DefaultPushDataStore.BATTERY_OPTIMIZATION_BANNER_STATE_SHOW)
+    override suspend fun showBatteryOptimizationBanner(reason: String) {
+        Timber.tag(batteryOptimizationDebugTag).w("BatteryOptimizationStore.show_banner reason=%s", reason)
+        defaultPushDataStore.setBatteryOptimizationBannerState(
+            newState = DefaultPushDataStore.BATTERY_OPTIMIZATION_BANNER_STATE_SHOW,
+            reason = reason,
+        )
     }
 
     override suspend fun onOptimizationBannerDismissed() {
-        defaultPushDataStore.setBatteryOptimizationBannerState(DefaultPushDataStore.BATTERY_OPTIMIZATION_BANNER_STATE_DISMISSED)
+        Timber.tag(batteryOptimizationDebugTag).i("BatteryOptimizationStore.dismiss_banner")
+        defaultPushDataStore.setBatteryOptimizationBannerState(
+            newState = DefaultPushDataStore.BATTERY_OPTIMIZATION_BANNER_STATE_DISMISSED,
+        )
     }
 
     override suspend fun reset() {
-        defaultPushDataStore.setBatteryOptimizationBannerState(DefaultPushDataStore.BATTERY_OPTIMIZATION_BANNER_STATE_INIT)
+        Timber.tag(batteryOptimizationDebugTag).i("BatteryOptimizationStore.reset_banner_state")
+        defaultPushDataStore.setBatteryOptimizationBannerState(
+            newState = DefaultPushDataStore.BATTERY_OPTIMIZATION_BANNER_STATE_INIT,
+        )
     }
 }

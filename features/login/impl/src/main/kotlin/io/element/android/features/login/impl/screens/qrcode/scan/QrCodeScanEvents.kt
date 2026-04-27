@@ -8,7 +8,12 @@
 
 package io.element.android.features.login.impl.screens.qrcode.scan
 
+/**
+ * 二维码扫码页可能触发的用户事件。
+ */
 sealed interface QrCodeScanEvents {
+    /** 成功扫描到二维码字节内容。 */
     data class QrCodeScanned(val code: ByteArray) : QrCodeScanEvents
+    /** 用户点击重试。 */
     data object TryAgain : QrCodeScanEvents
 }

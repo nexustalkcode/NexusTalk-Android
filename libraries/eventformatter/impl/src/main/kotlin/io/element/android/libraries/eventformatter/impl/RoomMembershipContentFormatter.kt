@@ -9,6 +9,7 @@
 package io.element.android.libraries.eventformatter.impl
 
 import dev.zacsweers.metro.Inject
+import io.element.android.libraries.eventformatter.R
 import io.element.android.libraries.matrix.api.MatrixClient
 import io.element.android.libraries.matrix.api.timeline.item.event.MembershipChange
 import io.element.android.libraries.matrix.api.timeline.item.event.RoomMembershipContent

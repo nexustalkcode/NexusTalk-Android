@@ -35,6 +35,11 @@ import io.element.android.libraries.matrix.api.timeline.item.event.UnknownConten
 import io.element.android.libraries.matrix.api.timeline.item.event.getDisambiguatedDisplayName
 
 @Inject
+/**
+ * 事件内容工厂分发器。
+ *
+ * 负责根据底层 [EventContent] 的具体类型选择对应子工厂，并产出 UI 层内容模型。
+ */
 class TimelineItemContentFactory(
     private val messageFactory: TimelineItemContentMessageFactory,
     private val redactedMessageFactory: TimelineItemContentRedactedFactory,
@@ -48,6 +53,9 @@ class TimelineItemContentFactory(
     private val failedToParseStateFactory: TimelineItemContentFailedToParseStateFactory,
     private val sessionId: SessionId,
 ) {
+    /**
+     * 直接根据 [EventTimelineItem] 构建 UI 内容模型。
+     */
     suspend fun create(eventTimelineItem: EventTimelineItem): TimelineItemEventContent {
         return create(
             itemContent = eventTimelineItem.content,
@@ -58,6 +66,9 @@ class TimelineItemContentFactory(
         )
     }
 
+    /**
+     * 根据底层事件内容构建 UI 内容模型。
+     */
     suspend fun create(
         itemContent: EventContent,
         eventId: EventId?,

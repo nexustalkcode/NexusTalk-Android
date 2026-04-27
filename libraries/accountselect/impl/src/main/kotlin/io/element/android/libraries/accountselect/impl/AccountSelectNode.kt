@@ -22,6 +22,9 @@ import io.element.android.libraries.architecture.callback
 
 @ContributesNode(AppScope::class)
 @AssistedInject
+/**
+ * 账号选择页节点。
+ */
 class AccountSelectNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -29,6 +32,9 @@ class AccountSelectNode(
 ) : Node(buildContext, plugins = plugins) {
     private val callback: AccountSelectEntryPoint.Callback = callback()
 
+    /**
+     * 渲染账号选择页。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

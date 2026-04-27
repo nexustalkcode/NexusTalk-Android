@@ -45,6 +45,14 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染 emoji 选择器。
+ *
+ * @param onSelectEmoji 选中 emoji 后的回调。
+ * @param state emoji picker 展示状态。
+ * @param selectedEmojis 当前已选中的 emoji 集合。
+ * @param modifier 应用于根节点的修饰符。
+ */
 @Composable
 fun EmojiPicker(
     onSelectEmoji: (Emoji) -> Unit,
@@ -112,6 +120,9 @@ fun EmojiPicker(
     }
 }
 
+/**
+ * 渲染当前页或搜索结果中的 emoji 网格。
+ */
 @Composable
 private fun EmojiResults(
     emojis: ImmutableList<Emoji>,

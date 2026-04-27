@@ -86,64 +86,59 @@ fun DependencyHandlerScope.composeDependencies(libs: LibrariesForLibs) {
 
 fun DependencyHandlerScope.allLibrariesImpl() {
     implementation(project(":libraries:androidutils"))
-    implementation(project(":libraries:deeplink:impl"))
+    implementation(project(":libraries:deeplink"))
     implementation(project(":libraries:designsystem"))
-    implementation(project(":libraries:matrix:impl"))
+    // matrix 已合并到根模块，这里统一走 :libraries:matrix，避免 app 装配阶段继续引用已删除的 impl 子模块。
+    implementation(project(":libraries:matrix"))
     implementation(project(":libraries:matrixui"))
-    implementation(project(":libraries:matrixmedia:impl"))
+    implementation(project(":libraries:matrixmedia"))
     implementation(project(":libraries:network"))
     implementation(project(":libraries:core"))
-    implementation(project(":libraries:eventformatter:impl"))
-    implementation(project(":libraries:indicator:impl"))
-    implementation(project(":libraries:permissions:impl"))
-    implementation(project(":libraries:audio:impl"))
-    implementation(project(":libraries:push:impl"))
-    implementation(project(":libraries:featureflag:impl"))
-    implementation(project(":libraries:pushstore:impl"))
-    implementation(project(":libraries:preferences:impl"))
+    implementation(project(":libraries:eventformatter"))
+    implementation(project(":libraries:indicator"))
+    implementation(project(":libraries:permissions"))
+    implementation(project(":libraries:audio"))
+    implementation(project(":libraries:push"))
+    implementation(project(":libraries:featureflag"))
+    implementation(project(":libraries:pushstore"))
+    implementation(project(":libraries:preferences"))
     implementation(project(":libraries:architecture"))
-    implementation(project(":libraries:dateformatter:impl"))
+    implementation(project(":libraries:dateformatter"))
     implementation(project(":libraries:di"))
-    implementation(project(":libraries:session-storage:impl"))
-    implementation(project(":libraries:mediapickers:impl"))
-    implementation(project(":libraries:mediaupload:impl"))
-    implementation(project(":libraries:usersearch:impl"))
-    implementation(project(":libraries:textcomposer:impl"))
-    implementation(project(":libraries:accountselect:impl"))
-    implementation(project(":libraries:roomselect:impl"))
-    implementation(project(":libraries:cryptography:impl"))
-    implementation(project(":libraries:voiceplayer:impl"))
-    implementation(project(":libraries:voicerecorder:impl"))
-    implementation(project(":libraries:mediaplayer:impl"))
-    implementation(project(":libraries:mediaviewer:impl"))
-    implementation(project(":libraries:troubleshoot:impl"))
-    implementation(project(":libraries:fullscreenintent:impl"))
-    implementation(project(":libraries:wellknown:impl"))
-    implementation(project(":libraries:oidc:impl"))
-    implementation(project(":libraries:workmanager:impl"))
-    implementation(project(":libraries:recentemojis:impl"))
+    implementation(project(":libraries:session-storage"))
+    implementation(project(":libraries:mediapickers"))
+    implementation(project(":libraries:mediaupload"))
+    implementation(project(":libraries:usersearch"))
+    implementation(project(":libraries:textcomposer"))
+    implementation(project(":libraries:accountselect"))
+    implementation(project(":libraries:roomselect"))
+    implementation(project(":libraries:cryptography"))
+    implementation(project(":libraries:voiceplayer"))
+    implementation(project(":libraries:voicerecorder"))
+    implementation(project(":libraries:mediaplayer"))
+    implementation(project(":libraries:mediaviewer"))
+    implementation(project(":libraries:troubleshoot"))
+    implementation(project(":libraries:fullscreenintent"))
+    implementation(project(":libraries:wellknown"))
+    implementation(project(":libraries:oidc"))
+    implementation(project(":libraries:workmanager"))
+    implementation(project(":libraries:recentemojis"))
 }
 
 fun DependencyHandlerScope.allServicesImpl() {
-    implementation(project(":services:analytics:compose"))
+    implementation(project(":services:analytics"))
     when (ModulesConfig.analyticsConfig) {
-        AnalyticsConfig.Disabled -> {
-            implementation(project(":services:analytics:noop"))
-        }
+        AnalyticsConfig.Disabled -> Unit
         is AnalyticsConfig.Enabled -> {
-            implementation(project(":services:analytics:impl"))
-            if (ModulesConfig.analyticsConfig.withPosthog) {
-                implementation(project(":services:analyticsproviders:posthog"))
-            }
-            if (ModulesConfig.analyticsConfig.withSentry) {
-                implementation(project(":services:analyticsproviders:sentry"))
+            if (ModulesConfig.analyticsConfig.withPosthog || ModulesConfig.analyticsConfig.withSentry) {
+                implementation(project(":services:analyticsproviders"))
             }
         }
     }
 
-    implementation(project(":services:apperror:impl"))
-    implementation(project(":services:appnavstate:impl"))
-    implementation(project(":services:toolbox:impl"))
+    implementation(project(":services:apperror"))
+    implementation(project(":services:appnavstate"))
+    implementation(project(":services:toolbox"))
 }
 
 fun DependencyHandlerScope.allEnterpriseImpl(project: Project) = addAll(
@@ -152,17 +147,23 @@ fun DependencyHandlerScope.allEnterpriseImpl(project: Project) = addAll(
     moduleSuffix = ":impl",
 )
 
-fun DependencyHandlerScope.allFeaturesImpl(project: Project) = addAll(
-    project = project,
-    modulePrefix = ":features",
-    moduleSuffix = ":impl",
-)
+fun DependencyHandlerScope.allFeaturesImpl(project: Project) {
+    addTopLevelFeatureRoots(project)
+    addAll(
+        project = project,
+        modulePrefix = ":features",
+        moduleSuffix = ":impl",
+    )
+}
 
-fun DependencyHandlerScope.allFeaturesApi(project: Project) = addAll(
-    project = project,
-    modulePrefix = ":features",
-    moduleSuffix = ":api",
-)
+fun DependencyHandlerScope.allFeaturesApi(project: Project) {
+    addTopLevelFeatureRoots(project)
+    addAll(
+        project = project,
+        modulePrefix = ":features",
+        moduleSuffix = ":api",
+    )
+}
 
 private fun DependencyHandlerScope.addAll(
     project: Project,
@@ -171,6 +172,16 @@ private fun DependencyHandlerScope.addAll(
 ) {
     val subProjects = project.rootProject.subprojects.filter { it.path.startsWith(modulePrefix) && it.path.endsWith(moduleSuffix) }
     for (p in subProjects) {
+        add("implementation", p)
+    }
+}
+
+private fun DependencyHandlerScope.addTopLevelFeatureRoots(project: Project) {
+    val topLevelFeatureRoots = project.rootProject.subprojects.filter { candidate ->
+        candidate.path.startsWith(":features:") &&
+            candidate.path.count { it == ':' } == 2
+    }
+    for (p in topLevelFeatureRoots) {
         add("implementation", p)
     }
 }

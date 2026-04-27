@@ -11,6 +11,11 @@ package io.element.android.features.rageshake.impl.crash
 import android.os.Build
 import io.element.android.libraries.core.meta.BuildMeta
 
+/**
+ * 生成崩溃诊断文本。
+ *
+ * 将应用版本、设备信息和原始崩溃内容拼接成可随 bug report 一起上报的文本块。
+ */
 internal fun formatCrashDiagnosticInfo(
     buildMeta: BuildMeta,
     crashInfo: String,

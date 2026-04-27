@@ -20,6 +20,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.matrix.api.core.EventId
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 渲染投票消息条目视图。
+ */
 @Composable
 fun TimelineItemPollView(
     content: TimelineItemPollContent,

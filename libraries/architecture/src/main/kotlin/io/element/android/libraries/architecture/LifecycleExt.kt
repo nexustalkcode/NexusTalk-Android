@@ -12,6 +12,9 @@ import androidx.lifecycle.Lifecycle
 import com.bumble.appyx.core.lifecycle.subscribe
 import timber.log.Timber
 
+/**
+ * 输出某个生命周期对象的调试日志。
+ */
 fun Lifecycle.logLifecycle(name: String) {
     subscribe(
         onCreate = { Timber.tag("Lifecycle").d("onCreate $name") },

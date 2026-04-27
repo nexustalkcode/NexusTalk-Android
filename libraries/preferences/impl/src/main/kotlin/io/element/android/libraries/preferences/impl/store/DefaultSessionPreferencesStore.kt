@@ -19,7 +19,6 @@ import io.element.android.libraries.androidutils.file.safeDelete
 import io.element.android.libraries.androidutils.hash.hash
 import io.element.android.libraries.core.data.tryOrNull
 import io.element.android.libraries.di.annotations.SessionCoroutineScope
-import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.preferences.api.store.SessionPreferencesStore
 import io.element.android.libraries.preferences.api.store.VideoCompressionPreset
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +36,7 @@ import java.io.File
  */
 class DefaultSessionPreferencesStore(
     context: Context,
-    sessionId: SessionId,
+    sessionId: String,
     @SessionCoroutineScope sessionCoroutineScope: CoroutineScope,
 ) : SessionPreferencesStore {
 
@@ -52,8 +51,8 @@ class DefaultSessionPreferencesStore(
          * @param sessionId 当前会话 ID
          * @return 该会话的偏好存储文件（路径，非已创建的文件句柄）
          */
-        fun storeFile(context: Context, sessionId: SessionId): File {
-            val hashedUserId = sessionId.value.hash().take(16)
+        fun storeFile(context: Context, sessionId: String): File {
+            val hashedUserId = sessionId.hash().take(16)
             return context.preferencesDataStoreFile("session_${hashedUserId}_preferences")
         }
     }

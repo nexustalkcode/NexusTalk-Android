@@ -10,6 +10,7 @@ package io.element.android.features.messages.impl.timeline.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
@@ -32,10 +33,15 @@ import io.element.android.libraries.designsystem.theme.components.IconButton
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染时间线顶部的通话操作入口。
+ */
 @Composable
 internal fun CallMenuItem(
     roomCallState: RoomCallState,
     onJoinCallClick: () -> Unit,
+    onStartVoiceCallClick: () -> Unit = onJoinCallClick,
+    onStartVideoCallClick: () -> Unit = onJoinCallClick,
     modifier: Modifier = Modifier,
 ) {
     when (roomCallState) {
@@ -45,7 +51,8 @@ internal fun CallMenuItem(
         is RoomCallState.StandBy -> {
             StandByCallMenuItem(
                 roomCallState = roomCallState,
-                onJoinCallClick = onJoinCallClick,
+                onStartVoiceCallClick = onStartVoiceCallClick,
+                onStartVideoCallClick = onStartVideoCallClick,
                 modifier = modifier,
             )
         }
@@ -59,24 +66,44 @@ internal fun CallMenuItem(
     }
 }
 
+/**
+ * 渲染待机态通话入口。
+ */
 @Composable
 private fun StandByCallMenuItem(
     roomCallState: RoomCallState.StandBy,
-    onJoinCallClick: () -> Unit,
+    onStartVoiceCallClick: () -> Unit,
+    onStartVideoCallClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        modifier = modifier,
-        onClick = onJoinCallClick,
-        enabled = roomCallState.canStartCall,
-    ) {
-        Icon(
-            imageVector = CompoundIcons.VideoCallSolid(),
-            contentDescription = stringResource(CommonStrings.a11y_start_call),
-        )
+    // StandBy 表示房间当前没有通话，此时才需要让用户在“语音”和“视频”之间做启动选择。
+    // 已有通话时继续走单一 Join 入口，避免让用户误以为可以重新选择已有会议的媒体类型。
+    Row(modifier = modifier) {
+        IconButton(
+            onClick = onStartVideoCallClick,
+            enabled = roomCallState.canStartCall,
+        ) {
+            Icon(
+                imageVector = CompoundIcons.VideoCall(),
+                contentDescription = stringResource(CommonStrings.a11y_start_video_call),
+            )
+        }
+
+        IconButton(
+            onClick = onStartVoiceCallClick,
+            enabled = roomCallState.canStartCall,
+        ) {
+            Icon(
+                imageVector = CompoundIcons.VoiceCall(),
+                contentDescription = stringResource(CommonStrings.a11y_start_voice_call),
+            )
+        }
     }
 }
 
+/**
+ * 渲染进行中通话的 Join 按钮。
+ */
 @Composable
 private fun OnGoingCallMenuItem(
     roomCallState: RoomCallState.OnGoing,
@@ -96,7 +123,7 @@ private fun OnGoingCallMenuItem(
         ) {
             Icon(
                 modifier = Modifier.size(20.dp),
-                imageVector = CompoundIcons.VideoCallSolid(),
+                imageVector = CompoundIcons.VideoCall(),
                 contentDescription = null
             )
             Spacer(Modifier.width(8.dp))
@@ -119,6 +146,6 @@ internal fun CallMenuItemPreview(
 ) = ElementPreview {
     CallMenuItem(
         roomCallState = roomCallState,
-        onJoinCallClick = {}
+        onJoinCallClick = {},
     )
 }

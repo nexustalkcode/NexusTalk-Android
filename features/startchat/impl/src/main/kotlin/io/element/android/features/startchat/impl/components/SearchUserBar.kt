@@ -39,6 +39,11 @@ import io.element.android.libraries.usersearch.api.UserSearchResult
 import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染用户搜索栏及搜索结果列表。
+ *
+ * 支持单选/多选模式，并在多选时展示已选用户的横向列表。
+ */
 @Composable
 fun SearchUserBar(
     queryState: TextFieldState,

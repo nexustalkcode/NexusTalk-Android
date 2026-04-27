@@ -113,8 +113,10 @@ class PreferencesRootPresenter(
         val snackbarMessage by snackbarDispatcher.collectSnackbarMessageAsState()
         val hasAnalyticsProviders = remember { analyticsService.getAvailableAnalyticsProviders().isNotEmpty() }
 
-        // We should display the 'complete verification' option if the current session can be verified
-        val canVerifyUserSession by sessionVerificationService.needsSessionVerification.collectAsState(false)
+        // `needsSessionVerification=true` 代表当前会话仍未完成自验证。
+        // 当前产品路径会优先通过 Home 页安全横幅把用户带入 SessionVerification 流程，
+        // 因此设置页里的 Encryption 入口只在“不需要继续做会话验证”时显示。
+        val needsSessionVerification by sessionVerificationService.needsSessionVerification.collectAsState(false)
 
         val showSecureBackupIndicator by indicatorService.showSettingChatBackupIndicator()
 
@@ -165,7 +167,7 @@ class PreferencesRootPresenter(
             deviceId = matrixClient.deviceId,
             isMultiAccountEnabled = isMultiAccountEnabled,
             otherSessions = otherSessions,
-            showSecureBackup = !canVerifyUserSession,
+            showSecureBackup = !needsSessionVerification,
             showSecureBackupBadge = showSecureBackupIndicator,
             accountManagementUrl = accountManagementUrl.value,
             devicesManagementUrl = devicesManagementUrl.value,

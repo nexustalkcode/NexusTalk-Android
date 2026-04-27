@@ -8,5 +8,7 @@
 
 package io.element.android.libraries.deeplink.impl
 
-internal const val SCHEME = "elementx"
+/** 应用内部 deeplink scheme。 */
+internal const val SCHEME = "nexustalk"
+/** 应用内部 deeplink host。 */
 internal const val HOST = "open"

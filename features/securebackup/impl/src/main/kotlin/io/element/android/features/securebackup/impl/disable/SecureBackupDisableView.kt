@@ -34,6 +34,9 @@ import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.Text
 
 @Composable
+/**
+ * 渲染禁用安全备份页面。
+ */
 fun SecureBackupDisableView(
     state: SecureBackupDisableState,
     onSuccess: () -> Unit,
@@ -61,6 +64,9 @@ fun SecureBackupDisableView(
 }
 
 @Composable
+/**
+ * 渲染禁用按钮区。
+ */
 private fun ColumnScope.Buttons(
     state: SecureBackupDisableState,
 ) {
@@ -74,6 +80,9 @@ private fun ColumnScope.Buttons(
 }
 
 @Composable
+/**
+ * 渲染禁用安全备份页面主体内容。
+ */
 private fun Content(state: SecureBackupDisableState) {
     Column(
         modifier = Modifier
@@ -87,6 +96,9 @@ private fun Content(state: SecureBackupDisableState) {
 }
 
 @Composable
+/**
+ * 渲染禁用说明条目。
+ */
 private fun SecureBackupDisableItem(text: String) {
     Row(
         modifier = Modifier

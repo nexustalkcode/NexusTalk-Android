@@ -15,6 +15,9 @@ import timber.log.Timber
 import java.io.File
 import java.util.UUID
 
+/**
+ * 安全删除文件，异常时仅记录日志。
+ */
 fun File.safeDelete() {
     if (exists().not()) return
     tryOrNull(
@@ -29,6 +32,9 @@ fun File.safeDelete() {
     )
 }
 
+/**
+ * 安全重命名文件，异常时仅记录日志。
+ */
 fun File.safeRenameTo(dest: File) {
     tryOrNull(
         onException = {
@@ -42,6 +48,9 @@ fun File.safeRenameTo(dest: File) {
     )
 }
 
+/**
+ * 在缓存目录创建一个临时文件。
+ */
 fun Context.createTmpFile(baseDir: File = cacheDir, extension: String? = null): File {
     val suffix = extension?.let { ".$extension" }
     return File.createTempFile(UUID.randomUUID().toString(), suffix, baseDir).apply { mkdirs() }
@@ -52,6 +61,9 @@ fun Context.createTmpFile(baseDir: File = cacheDir, extension: String? = null): 
  * ========================================================================================== */
 
 @WorkerThread
+/**
+ * 递归计算目录下所有文件大小总和。
+ */
 fun File.getSizeOfFiles(): Long {
     return walkTopDown()
         .onEnter {

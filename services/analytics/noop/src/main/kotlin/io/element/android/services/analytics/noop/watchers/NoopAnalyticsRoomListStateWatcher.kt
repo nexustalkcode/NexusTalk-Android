@@ -7,12 +7,10 @@
 
 package io.element.android.services.analytics.noop.watchers
 
-import dev.zacsweers.metro.ContributesBinding
-import io.element.android.libraries.di.SessionScope
+import dev.zacsweers.metro.Inject
 import io.element.android.services.analytics.api.watchers.AnalyticsRoomListStateWatcher
 
-@ContributesBinding(SessionScope::class)
-class NoopAnalyticsRoomListStateWatcher : AnalyticsRoomListStateWatcher {
+class NoopAnalyticsRoomListStateWatcher @Inject constructor() : AnalyticsRoomListStateWatcher {
     override fun start() {}
     override fun stop() {}
 }

@@ -13,8 +13,6 @@ import com.google.common.truth.Truth.assertThat
 import io.element.android.libraries.permissions.impl.action.FakePermissionActions
 import io.element.android.libraries.permissions.test.FakePermissionStateProvider
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
-import io.element.android.libraries.troubleshoot.test.FakeNotificationTroubleshootNavigator
-import io.element.android.libraries.troubleshoot.test.runAndTestState
 import io.element.android.services.toolbox.test.sdk.FakeBuildVersionSdkIntProvider
 import io.element.android.services.toolbox.test.strings.FakeStringProvider
 import kotlinx.coroutines.launch

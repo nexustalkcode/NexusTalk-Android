@@ -15,7 +15,19 @@ import io.element.android.libraries.architecture.createNode
 import io.element.android.libraries.di.SessionScope
 
 @ContributesBinding(SessionScope::class)
+/**
+ * 默认的新设备关联流程入口。
+ *
+ * 负责把外部导航请求转换为 [LinkNewDeviceFlowNode]，并把回调插件传递给流程节点。
+ */
 class DefaultLinkNewDeviceEntryPoint : LinkNewDeviceEntryPoint {
+    /**
+     * 创建新设备关联流程节点。
+     *
+     * @param parentNode 父节点。
+     * @param buildContext 当前节点构建上下文。
+     * @param callback 流程完成后的回调。
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.model.event
 
+/**
+ * 普通状态事件文本的 UI 内容模型。
+ */
 data class TimelineItemStateEventContent(
     override val body: String,
 ) : TimelineItemStateContent {

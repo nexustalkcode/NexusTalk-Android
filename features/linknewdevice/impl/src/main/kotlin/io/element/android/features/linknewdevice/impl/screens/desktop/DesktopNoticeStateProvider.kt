@@ -13,6 +13,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.permissions.api.PermissionsState
 import io.element.android.libraries.permissions.api.aPermissionsState
 
+/**
+ * 为桌面端说明页预览提供样例状态。
+ */
 open class DesktopNoticeStateProvider : PreviewParameterProvider<DesktopNoticeState> {
     override val values: Sequence<DesktopNoticeState>
         get() = sequenceOf(
@@ -23,6 +26,9 @@ open class DesktopNoticeStateProvider : PreviewParameterProvider<DesktopNoticeSt
         )
 }
 
+/**
+ * 构造一份桌面端说明页样例状态。
+ */
 fun aDesktopNoticeState(
     cameraPermissionState: PermissionsState = aPermissionsState(
         showDialog = false,

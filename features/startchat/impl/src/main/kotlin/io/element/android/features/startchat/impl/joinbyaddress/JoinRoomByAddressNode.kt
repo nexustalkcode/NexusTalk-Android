@@ -22,6 +22,11 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * “按地址加入房间”页面节点。
+ *
+ * 负责把导航器注入 Presenter，并渲染加入房间表单页面。
+ */
 class JoinRoomByAddressNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -30,6 +35,11 @@ class JoinRoomByAddressNode(
     private val navigator = plugins<StartChatNavigator>().first()
     private val presenter = presenterFactory.create(navigator)
 
+    /**
+     * 渲染“按地址加入房间”页面。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

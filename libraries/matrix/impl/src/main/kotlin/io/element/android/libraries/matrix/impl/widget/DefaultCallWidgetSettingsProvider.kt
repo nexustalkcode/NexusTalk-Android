@@ -13,6 +13,7 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.core.meta.BuildType
 import io.element.android.libraries.matrix.api.widget.CallAnalyticCredentialsProvider
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.matrix.api.widget.CallWidgetSettingsProvider
 import io.element.android.libraries.matrix.api.widget.MatrixWidgetSettings
 import io.element.android.services.analytics.api.AnalyticsService
@@ -30,7 +31,14 @@ class DefaultCallWidgetSettingsProvider(
     private val callAnalyticsCredentialsProvider: CallAnalyticCredentialsProvider,
     private val analyticsService: AnalyticsService,
 ) : CallWidgetSettingsProvider {
-    override suspend fun provide(baseUrl: String, widgetId: String, encrypted: Boolean, direct: Boolean, hasActiveCall: Boolean): MatrixWidgetSettings {
+    override suspend fun provide(
+        baseUrl: String,
+        widgetId: String,
+        encrypted: Boolean,
+        direct: Boolean,
+        hasActiveCall: Boolean,
+        callMode: CallWidgetMode,
+    ): MatrixWidgetSettings {
         val isAnalyticsEnabled = analyticsService.userConsentFlow.first()
         val properties = VirtualElementCallWidgetProperties(
             elementCallUrl = baseUrl,
@@ -54,6 +62,9 @@ class DefaultCallWidgetSettingsProvider(
             intent = when {
                 direct && hasActiveCall -> CallIntent.JOIN_EXISTING_DM
                 hasActiveCall -> CallIntent.JOIN_EXISTING
+                // 当前 Element Call/Rust widget API 只有 DM voice 预设会序列化为真正的 voice intent。
+                // Android 侧先复用该预设来把语音启动意图传给 widget，避免只关闭本地摄像头而丢失对端语音来电语义。
+                callMode == CallWidgetMode.Audio -> CallIntent.START_CALL_DM_VOICE
                 direct -> CallIntent.START_CALL_DM
                 else -> CallIntent.START_CALL
             }.also {

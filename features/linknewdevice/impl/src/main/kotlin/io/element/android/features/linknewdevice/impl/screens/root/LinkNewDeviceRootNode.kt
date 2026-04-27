@@ -20,20 +20,31 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 新设备关联根页面节点。
+ *
+ * 负责渲染“关联移动端/桌面端”的起始页面，并把用户选择回传给外层流程。
+ */
 class LinkNewDeviceRootNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: LinkNewDeviceRootPresenter,
 ) : Node(buildContext, plugins = plugins) {
-    // 页面回调：关闭流程或进入桌面设备流程
+    /**
+     * 根页面向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun onDone()
         fun linkDesktopDevice()
     }
 
-    // 读取回调实现
     private val callback: Callback = callback()
 
+    /**
+     * 渲染新设备关联根页面。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

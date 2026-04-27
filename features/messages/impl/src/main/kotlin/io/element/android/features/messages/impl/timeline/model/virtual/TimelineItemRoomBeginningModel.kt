@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.model.virtual
 
+/**
+ * “房间开始”虚拟项模型。
+ */
 data object TimelineItemRoomBeginningModel : TimelineItemVirtualModel {
     override val type: String = "TimelineItemRoomBeginningModel"
 }

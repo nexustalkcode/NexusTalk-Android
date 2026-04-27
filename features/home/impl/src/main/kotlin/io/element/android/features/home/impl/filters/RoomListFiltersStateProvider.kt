@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.features.home.impl.filters.selection.FilterSelectionState
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为房间列表筛选器预览提供样例状态。
+ */
 class RoomListFiltersStateProvider : PreviewParameterProvider<RoomListFiltersState> {
     override val values: Sequence<RoomListFiltersState>
         get() = sequenceOf(
@@ -22,6 +25,7 @@ class RoomListFiltersStateProvider : PreviewParameterProvider<RoomListFiltersSta
         )
 }
 
+/** 构造一份房间列表筛选器样例状态。 */
 fun aRoomListFiltersState(
     filterSelectionStates: List<FilterSelectionState> = RoomListFilter.entries.map { FilterSelectionState(it, isSelected = false) },
     eventSink: (RoomListFiltersEvents) -> Unit = {},

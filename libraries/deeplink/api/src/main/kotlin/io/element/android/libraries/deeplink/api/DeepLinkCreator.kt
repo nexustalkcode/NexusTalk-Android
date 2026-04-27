@@ -13,6 +13,12 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.core.ThreadId
 
+/**
+ * 应用内部 deeplink 创建接口。
+ */
 fun interface DeepLinkCreator {
+    /**
+     * 创建指向指定会话/房间/线程/事件的 deeplink。
+     */
     fun create(sessionId: SessionId, roomId: RoomId?, threadId: ThreadId?, eventId: EventId?): String
 }

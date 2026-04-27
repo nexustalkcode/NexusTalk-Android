@@ -40,12 +40,15 @@ import io.element.android.libraries.core.data.ByteUnit
 import io.element.android.libraries.core.extensions.runCatchingExceptions
 import io.element.android.libraries.core.meta.BuildMeta
 import io.element.android.libraries.core.meta.BuildType
+import io.element.android.libraries.featureflag.api.Feature
 import io.element.android.libraries.featureflag.api.FeatureFlagService
 import io.element.android.libraries.featureflag.api.FeatureFlags
 import io.element.android.libraries.featureflag.ui.model.FeatureUiModel
 import io.element.android.libraries.matrix.api.analytics.GetDatabaseSizesUseCase
 import io.element.android.libraries.matrix.api.core.SessionId
+import io.element.android.libraries.matrix.api.tracing.TraceLogPack
 import io.element.android.libraries.preferences.api.store.AppPreferencesStore
+import io.element.android.services.toolbox.api.strings.StringProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
@@ -94,6 +97,7 @@ class DeveloperSettingsPresenter(
     private val vacuumStoresUseCase: VacuumStoresUseCase,
     private val databaseSizesUseCase: GetDatabaseSizesUseCase,
     private val fileSizeFormatter: FileSizeFormatter,
+    private val stringProvider: StringProvider,
 ) : Presenter<DeveloperSettingsState> {
     @Composable
     override fun present(): DeveloperSettingsState {
@@ -122,10 +126,10 @@ class DeveloperSettingsPresenter(
             appPreferencesStore.getTracingLogLevelFlow().map { AsyncData.Success(it.toLogLevelItem()) }
         }
         val tracingLogLevel by tracingLogLevelFlow.collectAsState(initial = AsyncData.Uninitialized)
-        val tracingLogPacks by produceState(persistentListOf()) {
+        val tracingLogPacks by produceState<ImmutableList<TraceLogPack>>(persistentListOf<TraceLogPack>()) {
             appPreferencesStore.getTracingLogPacksFlow()
-                // Sort the entries alphabetically by its title
-                .map { it.sortedBy { pack -> pack.title } }
+                // 使用稳定的非 UI 排序键，避免 Presenter 依赖已经本地化到 View 层的展示文案。
+                .map { it.sortedBy { pack -> pack.sortOrder } }
                 .collectLatest { value = it.toImmutableList() }
         }
 
@@ -218,11 +222,13 @@ class DeveloperSettingsPresenter(
     ): ImmutableList<FeatureUiModel> {
         return enabledFeatures.map { enabledFeature ->
             key(enabledFeature.feature.key) {
-                remember(enabledFeature) {
+                val title = enabledFeature.feature.localizedTitle()
+                val description = enabledFeature.feature.localizedDescription()
+                remember(enabledFeature, title, description) {
                     FeatureUiModel(
                         key = enabledFeature.feature.key,
-                        title = enabledFeature.feature.title,
-                        description = enabledFeature.feature.description,
+                        title = title,
+                        description = description,
                         icon = null,
                         isEnabled = enabledFeature.isEnabled
                     )
@@ -276,6 +282,16 @@ class DeveloperSettingsPresenter(
             clearCacheUseCase()
         }.runCatchingUpdatingState(clearCacheAction)
     }
+
+    private fun Feature.localizedTitle(): String {
+        // 功能开关的默认英文文案仍保留在 API 层作为 fallback；真实 UI 优先使用可本地化资源。
+        return titleResource?.let(stringProvider::getString) ?: title
+    }
+
+    private fun Feature.localizedDescription(): String? {
+        // description 允许为空，因此只有资源 ID 存在时才覆盖 fallback。
+        return descriptionResource?.let(stringProvider::getString) ?: description
+    }
 }
 
 private fun customElementCallUrlValidator(url: String?): Boolean {
@@ -286,3 +302,13 @@ private fun customElementCallUrlValidator(url: String?): Boolean {
         if (parsedUrl.host.isNullOrBlank()) error("Missing host")
     }.isSuccess
 }
+
+private val TraceLogPack.sortOrder: Int
+    get() = when (this) {
+        TraceLogPack.EVENT_CACHE -> 0
+        TraceLogPack.LATEST_EVENTS -> 1
+        TraceLogPack.NOTIFICATION_CLIENT -> 2
+        TraceLogPack.SEND_QUEUE -> 3
+        TraceLogPack.SYNC_PROFILING -> 4
+        TraceLogPack.TIMELINE -> 5
+    }

@@ -12,10 +12,20 @@ import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeBatteryOptimization(
     var isIgnoringBatteryOptimizationsResult: Boolean = false,
+    var shouldDisplayBannerWithoutPreviousPushFailureResult: Boolean = false,
+    var shouldDismissBannerAfterSuccessfulRequestResult: Boolean = false,
     private val requestDisablingBatteryOptimizationResult: () -> Boolean = { lambdaError() }
 ) : BatteryOptimization {
     override fun isIgnoringBatteryOptimizations(): Boolean {
         return isIgnoringBatteryOptimizationsResult
+    }
+
+    override fun shouldDisplayBannerWithoutPreviousPushFailure(): Boolean {
+        return shouldDisplayBannerWithoutPreviousPushFailureResult
+    }
+
+    override fun shouldDismissBannerAfterSuccessfulRequest(): Boolean {
+        return shouldDismissBannerAfterSuccessfulRequestResult
     }
 
     override fun requestDisablingBatteryOptimization(): Boolean {

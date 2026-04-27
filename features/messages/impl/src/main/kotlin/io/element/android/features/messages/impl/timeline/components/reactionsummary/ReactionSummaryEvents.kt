@@ -11,7 +11,12 @@ package io.element.android.features.messages.impl.timeline.components.reactionsu
 import io.element.android.features.messages.impl.timeline.model.AggregatedReaction
 import io.element.android.libraries.matrix.api.core.EventId
 
+/**
+ * reaction summary 底部弹层可能触发的事件。
+ */
 sealed interface ReactionSummaryEvents {
+    /** 清空当前展示目标并关闭弹层。 */
     data object Clear : ReactionSummaryEvents
+    /** 展示指定事件和 reaction key 的汇总详情。 */
     data class ShowReactionSummary(val eventId: EventId, val reactions: List<AggregatedReaction>, val selectedKey: String) : ReactionSummaryEvents
 }

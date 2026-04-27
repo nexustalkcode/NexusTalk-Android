@@ -50,6 +50,15 @@ import io.element.android.libraries.designsystem.theme.components.TopAppBar
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染首页房间搜索浮层。
+ *
+ * @param state 搜索页展示状态。
+ * @param hideInvitesAvatars 是否隐藏邀请头像。
+ * @param eventSink 透传给房间列表的事件分发函数。
+ * @param onRoomClick 点击房间后的回调。
+ * @param modifier 应用于根节点的修饰符。
+ */
 @Composable
 internal fun RoomListSearchView(
     state: RoomListSearchState,
@@ -79,6 +88,7 @@ internal fun RoomListSearchView(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+/** 渲染房间搜索的主体内容。 */
 @Composable
 private fun RoomListSearchContent(
     state: RoomListSearchState,
@@ -177,6 +187,7 @@ private fun RoomListSearchContent(
 
 @PreviewsDayNight
 @Composable
+/** 房间搜索内容预览。 */
 internal fun RoomListSearchContentPreview(@PreviewParameter(RoomListSearchStateProvider::class) state: RoomListSearchState) = ElementPreview {
     RoomListSearchContent(
         state = state,

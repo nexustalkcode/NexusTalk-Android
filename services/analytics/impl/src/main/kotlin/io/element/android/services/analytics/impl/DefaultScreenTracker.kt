@@ -9,21 +9,23 @@
 package io.element.android.services.analytics.impl
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
-import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import dev.zacsweers.metro.Inject
 import im.vector.app.features.analytics.plan.MobileScreen
-import io.element.android.libraries.designsystem.utils.OnLifecycleEvent
 import io.element.android.services.analytics.api.AnalyticsService
 import io.element.android.services.analytics.api.ScreenTracker
 import io.element.android.services.toolbox.api.systemclock.SystemClock
 
-@ContributesBinding(AppScope::class)
-class DefaultScreenTracker(
+class DefaultScreenTracker @Inject constructor(
     private val analyticsService: AnalyticsService,
     private val systemClock: SystemClock,
 ) : ScreenTracker {
@@ -45,6 +47,24 @@ class DefaultScreenTracker(
                 )
                 else -> Unit
             }
+        }
+    }
+}
+
+@Composable
+private fun OnLifecycleEvent(onEvent: (owner: LifecycleOwner, event: Lifecycle.Event) -> Unit) {
+    val eventHandler = rememberUpdatedState(onEvent)
+    val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+
+    DisposableEffect(lifecycleOwner.value) {
+        val lifecycle = lifecycleOwner.value.lifecycle
+        val observer = LifecycleEventObserver { owner, event ->
+            eventHandler.value(owner, event)
+        }
+
+        lifecycle.addObserver(observer)
+        onDispose {
+            lifecycle.removeObserver(observer)
         }
     }
 }

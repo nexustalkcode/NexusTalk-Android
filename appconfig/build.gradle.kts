@@ -63,5 +63,5 @@ android {
 
 dependencies {
     implementation(libs.androidx.annotationjvm)
-    implementation(projects.libraries.matrix.api)
+    implementation(libs.androidx.corektx)
 }

@@ -32,6 +32,9 @@ import io.element.android.features.messages.impl.typing.TypingNotificationView
 import timber.log.Timber
 
 @Composable
+/**
+ * 渲染时间线中的虚拟项。
+ */
 fun TimelineItemVirtualRow(
     virtual: TimelineItem.Virtual,
     timelineRoomInfo: TimelineRoomInfo,

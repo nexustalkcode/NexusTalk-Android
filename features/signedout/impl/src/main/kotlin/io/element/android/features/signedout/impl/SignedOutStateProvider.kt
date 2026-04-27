@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.sessionstorage.api.LoginType
 import io.element.android.libraries.sessionstorage.api.SessionData
 
+/**
+ * 为已登出页面预览提供样例状态。
+ */
 open class SignedOutStateProvider : PreviewParameterProvider<SignedOutState> {
     override val values: Sequence<SignedOutState>
         get() = sequenceOf(
@@ -20,12 +23,18 @@ open class SignedOutStateProvider : PreviewParameterProvider<SignedOutState> {
         )
 }
 
+/**
+ * 构造一份已登出页面样例状态。
+ */
 private fun aSignedOutState() = SignedOutState(
     appName = "AppName",
     signedOutSession = aSessionData(),
     eventSink = {},
 )
 
+/**
+ * 构造一份会话数据样例。
+ */
 private fun aSessionData(
     sessionId: String = "@alice:server.org",
     isTokenValid: Boolean = false,

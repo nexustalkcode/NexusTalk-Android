@@ -9,6 +9,7 @@
 package io.element.android.libraries.dateformatter.impl
 
 import dev.zacsweers.metro.Inject
+import io.element.android.libraries.dateformatter.R
 import io.element.android.services.toolbox.api.strings.StringProvider
 
 @Inject

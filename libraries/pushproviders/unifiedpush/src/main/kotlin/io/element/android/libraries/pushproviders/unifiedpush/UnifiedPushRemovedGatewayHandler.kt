@@ -17,8 +17,8 @@ import io.element.android.libraries.core.log.logger.LoggerTag
 import io.element.android.libraries.di.annotations.AppCoroutineScope
 import io.element.android.libraries.matrix.api.MatrixClient
 import io.element.android.libraries.matrix.api.MatrixClientProvider
-import io.element.android.libraries.push.api.PushService
 import io.element.android.libraries.pushstore.api.clientsecret.PushClientSecret
+import io.element.android.libraries.pushproviders.api.PushRegistrationService
 import kotlinx.coroutines.CoroutineScope
 import timber.log.Timber
 
@@ -52,7 +52,7 @@ class DefaultUnifiedPushRemovedGatewayHandler(
     private val unregisterUnifiedPushUseCase: UnregisterUnifiedPushUseCase,
     private val pushClientSecret: PushClientSecret,
     private val matrixClientProvider: MatrixClientProvider,
-    private val pushService: PushService,
+    private val pushRegistrationService: PushRegistrationService,
     private val unifiedPushRemovedGatewayThrottler: UnifiedPushRemovedGatewayThrottler,
 ) : UnifiedPushRemovedGatewayHandler {
     /**
@@ -78,7 +78,7 @@ class DefaultUnifiedPushRemovedGatewayHandler(
                     .onFailure {
                         Timber.tag(loggerTag.value).w(it, "Issue during pusher unregistration / re registration")
                         // Let the user know
-                        pushService.onServiceUnregistered(sessionId)
+                        pushRegistrationService.onServiceUnregistered(sessionId)
                     }
             }
     }
@@ -105,10 +105,10 @@ class DefaultUnifiedPushRemovedGatewayHandler(
      */
     private suspend fun MatrixClient.registerAgain(): Result<Unit> {
         return if (unifiedPushRemovedGatewayThrottler.canRegisterAgain()) {
-            val pushProvider = pushService.getCurrentPushProvider(sessionId)
+            val pushProvider = pushRegistrationService.getCurrentPushProvider(sessionId)
             val distributor = pushProvider?.getCurrentDistributor(sessionId)
             if (pushProvider != null && distributor != null) {
-                pushService.registerWith(
+                pushRegistrationService.registerWith(
                     matrixClient = this,
                     pushProvider = pushProvider,
                     distributor = distributor,

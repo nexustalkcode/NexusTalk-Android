@@ -282,7 +282,8 @@ class WebViewAudioManager(
 
                     hasRegisteredCallbacks = true
                 }
-            }
+            },
+            getRingtonePlaybackConfig = ::getRingtonePlaybackConfigJson,
         )
         Timber.d("Setting androidNativeBridge javascript interface in webview")
         webView.addJavascriptInterface(webViewAudioDeviceSelectedCallback, "androidNativeBridge")
@@ -298,6 +299,34 @@ class WebViewAudioManager(
         webView.evaluateJavascript("controls.onAudioPlaybackStarted = () => { androidNativeBridge.onTrackReady(); };", null)
         Timber.d("Adding callback in controls.onOutputDeviceSelect")
         webView.evaluateJavascript("controls.onOutputDeviceSelect = (id) => { androidNativeBridge.setOutputDevice(id); };", null)
+        Timber.d("Adding callback in controls.getNativeRingtonePlaybackConfig")
+        webView.evaluateJavascript(
+            "controls.getNativeRingtonePlaybackConfig = () => JSON.parse(androidNativeBridge.getRingtonePlaybackConfig());",
+            null
+        )
+    }
+
+    /**
+     * 把系统当前的响铃模式与铃声音量折算成网页侧可直接消费的 JSON。
+     *
+     * Element Call 网页里的 ringtone.ogg 是由 Web Audio 播放的，不会天然遵守 Android 的铃声模式，
+     * 因此宿主需要显式把“当前是否允许播放”和“当前铃声音量比例”同步给网页侧。
+     */
+    private fun getRingtonePlaybackConfigJson(): String {
+        val ringVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING)
+        val maxRingVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING)
+        val normalizedVolume = if (maxRingVolume > 0) {
+            ringVolume.toDouble() / maxRingVolume.toDouble()
+        } else {
+            0.0
+        }
+        val shouldPlay = audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL && ringVolume > 0
+        return json.encodeToString(
+            SerializableRingtonePlaybackConfig(
+                shouldPlay = shouldPlay,
+                volume = normalizedVolume,
+            )
+        )
     }
 
     /**
@@ -453,6 +482,7 @@ class WebViewAudioManager(
 private class AndroidWebViewAudioBridge(
     private val onAudioDeviceSelected: (String) -> Unit,
     private val onAudioPlaybackStarted: () -> Unit,
+    private val getRingtonePlaybackConfig: () -> String,
 ) {
     @JavascriptInterface
     fun setOutputDevice(id: String) {
@@ -467,6 +497,11 @@ private class AndroidWebViewAudioBridge(
         Timber.d("Audio track is ready")
 
         onAudioPlaybackStarted()
+    }
+
+    @JavascriptInterface
+    fun getRingtonePlaybackConfig(): String {
+        return getRingtonePlaybackConfig.invoke()
     }
 }
 
@@ -532,3 +567,9 @@ internal data class SerializableAudioDevice(
         }
     }
 }
+
+@Serializable
+private data class SerializableRingtonePlaybackConfig(
+    val shouldPlay: Boolean,
+    val volume: Double,
+)

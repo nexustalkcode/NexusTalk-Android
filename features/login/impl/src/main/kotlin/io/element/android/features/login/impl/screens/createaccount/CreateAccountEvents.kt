@@ -8,7 +8,13 @@
 
 package io.element.android.features.login.impl.screens.createaccount
 
+/**
+ * 创建账号页面可能触发的事件。
+ */
 sealed interface CreateAccountEvents {
+    /** 更新当前 WebView 的页面加载进度。 */
     data class SetPageProgress(val progress: Int) : CreateAccountEvents
+
+    /** 收到注册页通过消息通道发送的结果消息。 */
     data class OnMessageReceived(val message: String) : CreateAccountEvents
 }

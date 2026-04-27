@@ -23,11 +23,19 @@ import io.element.android.libraries.matrix.api.core.SessionId
 
 @ContributesNode(AppScope::class)
 @AssistedInject
+/**
+ * 已登出页面节点。
+ *
+ * 负责根据会话 ID 创建 Presenter 并渲染已登出页面。
+ */
 class SignedOutNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     presenterFactory: SignedOutPresenter.Factory,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 节点输入。
+     */
     data class Inputs(
         val sessionId: SessionId,
     ) : NodeInputs
@@ -35,6 +43,9 @@ class SignedOutNode(
     private val inputs: Inputs = inputs()
     private val presenter = presenterFactory.create(inputs.sessionId)
 
+    /**
+     * 渲染已登出页面。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

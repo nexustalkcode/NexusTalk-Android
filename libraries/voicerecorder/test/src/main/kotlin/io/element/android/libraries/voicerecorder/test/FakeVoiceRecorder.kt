@@ -8,7 +8,6 @@
 
 package io.element.android.libraries.voicerecorder.test
 
-import com.google.common.truth.Truth.assertThat
 import io.element.android.libraries.core.mimetype.MimeTypes
 import io.element.android.libraries.voicerecorder.api.VoiceRecorder
 import io.element.android.libraries.voicerecorder.api.VoiceRecorderState
@@ -90,9 +89,9 @@ class FakeVoiceRecorder(
         stopped: Int = 0,
         deleted: Int = 0,
     ) {
-        assertThat(startedCount).isEqualTo(started)
-        assertThat(stoppedCount).isEqualTo(stopped)
-        assertThat(deletedCount).isEqualTo(deleted)
+        check(startedCount == started) { "Expected startedCount=$started but was $startedCount" }
+        check(stoppedCount == stopped) { "Expected stoppedCount=$stopped but was $stoppedCount" }
+        check(deletedCount == deleted) { "Expected deletedCount=$deleted but was $deletedCount" }
     }
 
     fun givenThrowsSecurityException(exception: SecurityException) {

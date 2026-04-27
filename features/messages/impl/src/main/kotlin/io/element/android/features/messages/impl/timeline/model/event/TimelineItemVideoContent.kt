@@ -11,6 +11,9 @@ package io.element.android.features.messages.impl.timeline.model.event
 import io.element.android.libraries.matrix.api.media.MediaSource
 import kotlin.time.Duration
 
+/**
+ * 视频消息的 UI 内容模型。
+ */
 data class TimelineItemVideoContent(
     override val filename: String,
     override val fileSize: Long?,
@@ -32,5 +35,8 @@ data class TimelineItemVideoContent(
 ) : TimelineItemEventContentWithAttachment {
     override val type: String = "TimelineItemImageContent"
 
+    /**
+     * 当前视频是否附带说明文案。
+     */
     val showCaption = caption != null
 }

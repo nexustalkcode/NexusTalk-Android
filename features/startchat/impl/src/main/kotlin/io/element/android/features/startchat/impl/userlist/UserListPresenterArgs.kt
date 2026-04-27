@@ -8,11 +8,17 @@
 
 package io.element.android.features.startchat.impl.userlist
 
+/**
+ * 用户列表 Presenter 输入参数。
+ */
 data class UserListPresenterArgs(
     val selectionMode: SelectionMode,
     val initialQuery: String? = null,
 )
 
+/**
+ * 用户列表选择模式。
+ */
 enum class SelectionMode {
     Single,
     Multiple,

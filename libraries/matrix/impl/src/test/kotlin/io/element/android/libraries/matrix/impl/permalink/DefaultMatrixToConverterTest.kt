@@ -41,6 +41,13 @@ class DefaultMatrixToConverterTest {
     }
 
     @Test
+    fun `converting a branded web room url returns a matrix-to url`() {
+        val url = Uri.parse("https://nexustalk.space/#/room/!qfIMRIxfbHSHUfnsxe:nexustalk.space?via=nexustalk.space")
+        assertThat(DefaultMatrixToConverter().convert(url))
+            .isEqualTo(Uri.parse("https://matrix.to/#/!qfIMRIxfbHSHUfnsxe:nexustalk.space?via=nexustalk.space"))
+    }
+
+    @Test
     fun `converting an unsupported url returns null`() {
         val url = Uri.parse("https://element.io/")
         assertThat(DefaultMatrixToConverter().convert(url)).isNull()
@@ -48,13 +55,27 @@ class DefaultMatrixToConverterTest {
 
     @Test
     fun `converting url coming from the matrix-to website returns a matrix-to url for room case`() {
-        val url = Uri.parse("element://room/#element-android:matrix.org")
+        val url = Uri.parse("nexustalk://room/#element-android:matrix.org")
         assertThat(DefaultMatrixToConverter().convert(url)).isEqualTo(Uri.parse("https://matrix.to/#/#element-android:matrix.org"))
     }
 
     @Test
+    fun `converting custom scheme room id url with via returns a matrix-to url`() {
+        val url = Uri.parse("nexustalk://room/!qfIMRIxfbHSHUfnsxe:nexustalk.space?via=nexustalk.space")
+        assertThat(DefaultMatrixToConverter().convert(url))
+            .isEqualTo(Uri.parse("https://matrix.to/#/!qfIMRIxfbHSHUfnsxe:nexustalk.space?via=nexustalk.space"))
+    }
+
+    @Test
     fun `converting url coming from the matrix-to website returns a matrix-to url for user case`() {
-        val url = Uri.parse("element://user/@alice:matrix.org")
+        val url = Uri.parse("nexustalk://user/@alice:matrix.org")
         assertThat(DefaultMatrixToConverter().convert(url)).isEqualTo(Uri.parse("https://matrix.to/#/@alice:matrix.org"))
+    }
+
+    @Test
+    fun `converting custom scheme user url returns a matrix-to url`() {
+        val url = Uri.parse("nexustalk://user/@maomaoaiai:nexustalk.space")
+        assertThat(DefaultMatrixToConverter().convert(url))
+            .isEqualTo(Uri.parse("https://matrix.to/#/@maomaoaiai:nexustalk.space"))
     }
 }

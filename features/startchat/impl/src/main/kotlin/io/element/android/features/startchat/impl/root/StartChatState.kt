@@ -12,6 +12,9 @@ import io.element.android.features.startchat.impl.userlist.UserListState
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.core.RoomId
 
+/**
+ * 开始聊天主页展示状态。
+ */
 data class StartChatState(
     val applicationName: String,
     val userListState: UserListState,

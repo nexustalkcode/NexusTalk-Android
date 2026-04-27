@@ -11,6 +11,7 @@ package io.element.android.features.messages.impl
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.longClick
@@ -52,7 +53,9 @@ import io.element.android.features.messages.impl.timeline.components.reactionsum
 import io.element.android.features.messages.impl.timeline.components.receipt.aReadReceiptData
 import io.element.android.features.messages.impl.timeline.components.receipt.bottomsheet.ReadReceiptBottomSheetEvents
 import io.element.android.features.messages.impl.timeline.model.TimelineItem
+import io.element.android.features.messages.impl.timeline.model.event.TimelineItemRtcNotificationContent
 import io.element.android.features.messages.impl.timeline.model.event.aTimelineItemTextContent
+import io.element.android.features.roomcall.api.anOngoingCallState
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.core.UserId
 import io.element.android.libraries.matrix.api.room.tombstone.SuccessorRoom
@@ -117,7 +120,7 @@ class MessagesViewTest {
     }
 
     @Test
-    fun `clicking on join call invoke expected callback`() {
+    fun `clicking on start video call invoke expected callback`() {
         val eventsRecorder = EventsRecorder<MessagesEvents>(expectEvents = false)
         val state = aMessagesState(
             eventSink = eventsRecorder
@@ -125,10 +128,64 @@ class MessagesViewTest {
         ensureCalledOnce { callback ->
             rule.setMessagesView(
                 state = state,
+                onStartVideoCallClick = callback,
+            )
+            val joinCallContentDescription = rule.activity.getString(CommonStrings.a11y_start_video_call)
+            rule.onNodeWithContentDescription(joinCallContentDescription).performClick()
+        }
+    }
+
+    @Test
+    fun `clicking on start voice call invoke expected callback`() {
+        val eventsRecorder = EventsRecorder<MessagesEvents>(expectEvents = false)
+        val state = aMessagesState(
+            eventSink = eventsRecorder
+        )
+        ensureCalledOnce { callback ->
+            rule.setMessagesView(
+                state = state,
+                onStartVoiceCallClick = callback,
+            )
+            val voiceCallContentDescription = rule.activity.getString(CommonStrings.a11y_start_voice_call)
+            rule.onNodeWithContentDescription(voiceCallContentDescription).performClick()
+        }
+    }
+
+    @Test
+    fun `ongoing call shows one join callback instead of start call callbacks`() {
+        val eventsRecorder = EventsRecorder<MessagesEvents>(expectEvents = false)
+        val state = aMessagesState(
+            roomCallState = anOngoingCallState(),
+            eventSink = eventsRecorder
+        )
+        ensureCalledOnce { callback ->
+            rule.setMessagesView(
+                state = state,
                 onJoinCallClick = callback,
             )
-            val joinCallContentDescription = rule.activity.getString(CommonStrings.a11y_start_call)
-            rule.onNodeWithContentDescription(joinCallContentDescription).performClick()
+            val voiceCallContentDescription = rule.activity.getString(CommonStrings.a11y_start_voice_call)
+            val videoCallContentDescription = rule.activity.getString(CommonStrings.a11y_start_video_call)
+            rule.onAllNodesWithContentDescription(voiceCallContentDescription).assertCountEquals(0)
+            rule.onAllNodesWithContentDescription(videoCallContentDescription).assertCountEquals(0)
+            rule.onNodeWithText(rule.activity.getString(CommonStrings.action_join)).performClick()
+        }
+    }
+
+    @Test
+    fun `clicking on ended call item invoke start video callback`() {
+        val eventsRecorder = EventsRecorder<MessagesEvents>(expectEvents = false)
+        val state = aMessagesState(
+            timelineState = aTimelineState(
+                timelineItems = aTimelineItemList(TimelineItemRtcNotificationContent()),
+            ),
+            eventSink = eventsRecorder
+        )
+        ensureCalledOnce { callback ->
+            rule.setMessagesView(
+                state = state,
+                onStartVideoCallClick = callback,
+            )
+            rule.onAllNodesWithText(rule.activity.getString(CommonStrings.common_call_ended)).onFirst().performClick()
         }
     }
 
@@ -610,6 +667,8 @@ private fun <R : TestRule> AndroidComposeTestRule<R, ComponentActivity>.setMessa
     onSendLocationClick: () -> Unit = EnsureNeverCalled(),
     onCreatePollClick: () -> Unit = EnsureNeverCalled(),
     onJoinCallClick: () -> Unit = EnsureNeverCalled(),
+    onStartVoiceCallClick: () -> Unit = EnsureNeverCalled(),
+    onStartVideoCallClick: () -> Unit = EnsureNeverCalled(),
     onViewAllPinnedMessagesClick: () -> Unit = EnsureNeverCalled(),
 ) {
     setSafeContent {
@@ -625,6 +684,8 @@ private fun <R : TestRule> AndroidComposeTestRule<R, ComponentActivity>.setMessa
                 onSendLocationClick = onSendLocationClick,
                 onCreatePollClick = onCreatePollClick,
                 onJoinCallClick = onJoinCallClick,
+                onStartVoiceCallClick = onStartVoiceCallClick,
+                onStartVideoCallClick = onStartVideoCallClick,
                 onViewAllPinnedMessagesClick = onViewAllPinnedMessagesClick,
                 knockRequestsBannerView = {},
             )

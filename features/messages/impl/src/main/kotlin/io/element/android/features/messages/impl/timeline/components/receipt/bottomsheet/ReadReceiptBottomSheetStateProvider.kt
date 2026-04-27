@@ -15,6 +15,9 @@ import io.element.android.features.messages.impl.timeline.model.TimelineItemRead
 import io.element.android.libraries.matrix.api.timeline.item.event.LocalEventSendState
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为已读回执底部弹窗预览提供样例状态。
+ */
 class ReadReceiptBottomSheetStateProvider : PreviewParameterProvider<ReadReceiptBottomSheetState> {
     // Reuse the provider ReadReceiptViewStateProvider
     private val readReceiptViewStateProvider = ReadReceiptViewStateProvider()

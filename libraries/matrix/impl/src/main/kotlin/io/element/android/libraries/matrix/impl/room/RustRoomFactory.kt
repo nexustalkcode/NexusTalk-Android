@@ -19,6 +19,7 @@ import io.element.android.libraries.matrix.api.notificationsettings.Notification
 import io.element.android.libraries.matrix.api.room.BaseRoom
 import io.element.android.libraries.matrix.api.room.JoinedRoom
 import io.element.android.libraries.matrix.api.room.RoomMembershipObserver
+import io.element.android.libraries.matrix.api.room.StateEventType
 import io.element.android.libraries.matrix.api.roomlist.RoomListService
 import io.element.android.libraries.matrix.api.roomlist.awaitLoaded
 import io.element.android.libraries.matrix.impl.room.preview.RoomPreviewInfoMapper
@@ -67,7 +68,28 @@ class RustRoomFactory(
     private val mutex = Mutex()
     private val isDestroyed: AtomicBoolean = AtomicBoolean(false)
 
-    private val eventFilters = TimelineConfig.excludedEvents
+    /**
+     * 这些状态事件更偏底层协议噪音，不适合作为时间线主内容展示。
+     * 把它们留在 matrix impl 内部，可以避免 appconfig 反向依赖 matrix 类型。
+     */
+    private val excludedStateEvents = listOf(
+        StateEventType.CallMember,
+        StateEventType.RoomAliases,
+        StateEventType.RoomCanonicalAlias,
+        StateEventType.RoomGuestAccess,
+        StateEventType.RoomHistoryVisibility,
+        StateEventType.RoomJoinRules,
+        StateEventType.RoomPowerLevels,
+        StateEventType.RoomServerAcl,
+        StateEventType.RoomTombstone,
+        StateEventType.SpaceChild,
+        StateEventType.SpaceParent,
+        StateEventType.PolicyRuleRoom,
+        StateEventType.PolicyRuleServer,
+        StateEventType.PolicyRuleUser,
+    )
+
+    private val eventFilters = excludedStateEvents
         .takeIf { it.isNotEmpty() }
         ?.let { listStateEventType ->
             timelineEventTypeFilterFactory.create(listStateEventType)

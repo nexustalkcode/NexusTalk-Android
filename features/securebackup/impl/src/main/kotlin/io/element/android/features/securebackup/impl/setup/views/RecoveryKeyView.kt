@@ -56,6 +56,9 @@ import io.element.android.libraries.testtags.TestTags
 import io.element.android.libraries.testtags.testTag
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染恢复密钥视图。
+ */
 @Composable
 internal fun RecoveryKeyView(
     state: RecoveryKeyViewState,
@@ -78,6 +81,9 @@ internal fun RecoveryKeyView(
     }
 }
 
+/**
+ * 根据用户故事分发恢复密钥内容区域。
+ */
 @Composable
 private fun RecoveryKeyContent(
     state: RecoveryKeyViewState,
@@ -98,6 +104,9 @@ private fun RecoveryKeyContent(
     }
 }
 
+/**
+ * 渲染静态恢复密钥内容。
+ */
 @Composable
 private fun RecoveryKeyStaticContent(
     state: RecoveryKeyViewState,
@@ -155,6 +164,9 @@ private fun RecoveryKeyStaticContent(
     }
 }
 
+/**
+ * 渲染带复制图标的恢复密钥文本。
+ */
 @Composable
 private fun RecoveryKeyWithCopy(
     recoveryKey: String,
@@ -180,6 +192,9 @@ private fun RecoveryKeyWithCopy(
     }
 }
 
+/**
+ * 渲染可输入的恢复密钥表单。
+ */
 @Composable
 private fun RecoveryKeyFormContent(
     state: RecoveryKeyViewState,
@@ -237,6 +252,9 @@ private fun RecoveryKeyFormContent(
     )
 }
 
+/**
+ * 渲染恢复密钥视图底部说明文案。
+ */
 @Composable
 private fun RecoveryKeyFooter(state: RecoveryKeyViewState) {
     when (state.recoveryKeyUserStory) {

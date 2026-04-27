@@ -33,6 +33,12 @@ import timber.log.Timber
 
 @ContributesNode(SpaceFlowScope::class)
 @AssistedInject
+/**
+ * Space 主页节点。
+ *
+ * 负责连接 [SpacePresenter] 与 [SpaceView]，并把分享、进入房间、打开设置、
+ * 查看成员和离开空间等操作桥接给上层流程。
+ */
 class SpaceNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -41,6 +47,9 @@ class SpaceNode(
     private val spaceRoomList: SpaceRoomList,
     private val acceptDeclineInviteView: AcceptDeclineInviteView,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * Space 页面向上抛出的导航回调。
+     */
     interface Callback : Plugin {
         fun navigateToRoom(roomId: RoomId, viaParameters: List<String>)
         fun navigateToSpaceSettings()
@@ -51,6 +60,11 @@ class SpaceNode(
 
     private val callback: Callback = callback()
 
+    /**
+     * 分享当前 Space 的 permalink。
+     *
+     * @param context 当前上下文，用于拉起系统分享面板。
+     */
     private fun onShareRoom(context: Context) = lifecycleScope.launch {
         matrixClient.getRoom(spaceRoomList.roomId)?.use { room ->
             room.getPermalink()
@@ -68,6 +82,11 @@ class SpaceNode(
         }
     }
 
+    /**
+     * 渲染 Space 主页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

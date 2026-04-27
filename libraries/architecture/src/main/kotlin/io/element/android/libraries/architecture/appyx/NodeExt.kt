@@ -22,6 +22,9 @@ import com.bumble.appyx.core.node.Node
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * 在节点生命周期作用域中启动 Molecule，并返回状态流。
+ */
 fun <State> Node.launchMolecule(body: @Composable () -> State): StateFlow<State> {
     val scope = CoroutineScope(lifecycleScope.coroutineContext + AndroidUiDispatcher.Main)
     return scope.launchMolecule(mode = RecompositionMode.ContextClock) {

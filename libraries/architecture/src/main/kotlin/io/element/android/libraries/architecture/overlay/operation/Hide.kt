@@ -15,6 +15,9 @@ import io.element.android.libraries.architecture.overlay.Overlay
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+/**
+ * 隐藏当前 overlay 元素的操作。
+ */
 class Hide<T : Any> : OverlayOperation<T> {
     override fun isApplicable(elements: BackStackElements<T>): Boolean =
         elements.any { it.targetState == BackStack.State.ACTIVE }
@@ -40,6 +43,9 @@ class Hide<T : Any> : OverlayOperation<T> {
     override fun hashCode(): Int = this.javaClass.hashCode()
 }
 
+/**
+ * 扩展函数：隐藏当前 overlay。
+ */
 fun <T : Any> Overlay<T>.hide() {
     accept(Hide())
 }

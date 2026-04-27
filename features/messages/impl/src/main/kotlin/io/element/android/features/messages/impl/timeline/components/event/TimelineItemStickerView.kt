@@ -40,6 +40,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 
 private const val STICKER_SIZE_IN_DP = 128
 
+/**
+ * 渲染贴纸消息条目视图。
+ */
 @Composable
 fun TimelineItemStickerView(
     content: TimelineItemStickerContent,

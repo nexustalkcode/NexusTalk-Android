@@ -31,6 +31,12 @@ import io.element.android.services.analytics.api.AnalyticsService
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 用户资料主页节点。
+ *
+ * 负责把资料页 Presenter 的状态渲染到共享的 [UserProfileView]，
+ * 并将分享、发私聊、发起通话、查看头像和验证等动作桥接给上层流程。
+ */
 class UserProfileNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -38,6 +44,11 @@ class UserProfileNode(
     private val permalinkBuilder: PermalinkBuilder,
     presenterFactory: UserProfilePresenter.Factory,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 用户资料页所需的节点输入。
+     *
+     * @property userId 当前需要展示的目标用户 ID。
+     */
     data class UserProfileInputs(
         val userId: UserId
     ) : NodeInputs
@@ -55,6 +66,11 @@ class UserProfileNode(
         )
     }
 
+    /**
+     * 渲染用户资料主页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val context = LocalContext.current

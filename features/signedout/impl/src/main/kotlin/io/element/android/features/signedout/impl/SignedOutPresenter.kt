@@ -24,16 +24,27 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @AssistedInject
+/**
+ * 已登出页面 Presenter。
+ *
+ * 负责监听目标会话数据，并在用户选择“重新登录”时移除该会话。
+ */
 class SignedOutPresenter(
     @Assisted private val sessionId: SessionId,
     private val sessionStore: SessionStore,
     private val buildMeta: BuildMeta,
 ) : Presenter<SignedOutState> {
+    /**
+     * 创建 Presenter 的 Assisted 工厂。
+     */
     @AssistedFactory
     fun interface Factory {
         fun create(sessionId: SessionId): SignedOutPresenter
     }
 
+    /**
+     * 生成已登出页面状态并处理事件。
+     */
     @Composable
     override fun present(): SignedOutState {
         val signedOutSession by remember {

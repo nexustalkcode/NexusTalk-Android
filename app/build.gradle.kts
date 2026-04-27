@@ -251,21 +251,19 @@ dependencies {
         allEnterpriseImpl(project)
         implementation(projects.appicon.enterprise)
     } else {
-        implementation(projects.features.enterprise.implFoss)
+        implementation(project(":features:enterprise"))
         implementation(projects.appicon.element)
     }
     allFeaturesImpl(project)
-    implementation(projects.features.migration.api)
+    implementation(project(":features:migration"))
     implementation(projects.appnav)
     implementation(projects.appconfig)
     implementation(projects.libraries.uiStrings)
-    implementation(projects.services.analytics.compose)
-
     if (ModulesConfig.pushProvidersConfig.includeFirebase) {
-        "gplayImplementation"(projects.libraries.pushproviders.firebase)
+        "gplayImplementation"(project(":libraries:pushproviders"))
     }
     if (ModulesConfig.pushProvidersConfig.includeUnifiedPush) {
-        implementation(projects.libraries.pushproviders.unifiedpush)
+        implementation(project(":libraries:pushproviders"))
     }
 
     implementation(libs.appyx.core)
@@ -285,8 +283,8 @@ dependencies {
 
     implementation(libs.matrix.emojibase.bindings)
 
-    testImplementation(projects.libraries.matrix.test)
-    testImplementation(projects.services.toolbox.test)
+    testImplementation(project(":libraries:matrix:test"))
+    testImplementation(project(":services:toolbox"))
 
     koverDependencies()
 }

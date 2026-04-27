@@ -9,11 +9,18 @@ package io.element.android.features.roommembermoderation.api
 
 import io.element.android.libraries.matrix.api.room.powerlevels.RoomPermissions
 
+/**
+ * 房间成员管理能力集合。
+ */
 data class RoomMemberModerationPermissions(
     val canKick: Boolean,
     val canBan: Boolean,
 ) {
-    // Unban requires both kick and ban permission instead of a dedicated unban permission
+    /**
+     * 是否允许解封用户。
+     *
+     * 由于没有独立的 unban 权限，这里要求同时具备 kick 和 ban 权限。
+     */
     val canUnban = canBan && canKick
 
     companion object {
@@ -24,6 +31,9 @@ data class RoomMemberModerationPermissions(
     }
 }
 
+/**
+ * 从房间权级中计算成员管理能力。
+ */
 fun RoomPermissions.roomMemberModerationPermissions(): RoomMemberModerationPermissions {
     return RoomMemberModerationPermissions(
         canKick = canOwnUserKick(),

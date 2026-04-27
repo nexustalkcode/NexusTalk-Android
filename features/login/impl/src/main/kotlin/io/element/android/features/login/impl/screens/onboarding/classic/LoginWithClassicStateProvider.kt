@@ -9,6 +9,9 @@ package io.element.android.features.login.impl.screens.onboarding.classic
 
 import io.element.android.libraries.architecture.AsyncAction
 
+/**
+ * 构造“使用 Element Classic 登录”页面样例状态。
+ */
 fun aLoginWithClassicState(
     canLoginWithClassic: Boolean = false,
     loginWithClassicAction: AsyncAction<Unit> = AsyncAction.Uninitialized,

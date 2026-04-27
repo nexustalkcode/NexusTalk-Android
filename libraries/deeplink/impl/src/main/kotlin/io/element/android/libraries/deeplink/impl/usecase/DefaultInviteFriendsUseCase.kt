@@ -22,12 +22,18 @@ import timber.log.Timber
 import io.element.android.libraries.androidutils.R as AndroidUtilsR
 
 @ContributesBinding(SessionScope::class)
+/**
+ * 默认的邀请好友用例实现。
+ */
 class DefaultInviteFriendsUseCase(
     private val stringProvider: StringProvider,
     private val matrixClient: MatrixClient,
     private val buildMeta: BuildMeta,
     private val permalinkBuilder: PermalinkBuilder,
 ) : InviteFriendsUseCase {
+    /**
+     * 构建当前用户 permalink 并拉起系统分享面板。
+     */
     override fun execute(activity: Activity) {
         val permalinkResult = permalinkBuilder.permalinkForUser(matrixClient.sessionId)
         permalinkResult.fold(

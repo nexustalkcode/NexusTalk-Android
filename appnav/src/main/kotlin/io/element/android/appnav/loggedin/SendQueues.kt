@@ -29,13 +29,17 @@ const val SEND_QUEUES_RETRY_DELAY_MILLIS = 500L
 
 @SingleIn(SessionScope::class)
 @Inject
+/**
+ * 发送队列重试协调器。
+ */
 class SendQueues(
     private val matrixClient: MatrixClient,
     private val syncService: SyncService,
 ) {
     /**
-     * Launches the send queues retry mechanism in the given [coroutineScope].
-     * Makes sure to re-enable all send queues when the network status is [NetworkStatus.Connected].
+     * 在指定协程作用域中启动发送队列重试机制。
+     *
+     * 当同步恢复运行后，会重新启用所有发送队列。
      */
     @OptIn(FlowPreview::class)
     fun launchIn(coroutineScope: CoroutineScope) {

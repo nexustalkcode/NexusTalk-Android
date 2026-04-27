@@ -16,6 +16,9 @@ import com.bumble.appyx.navmodel.backstack.BackStack
 import com.bumble.appyx.navmodel.backstack.transitionhandler.rememberBackstackSlider
 
 @Composable
+/**
+ * 创建默认的 back stack 滑动转场处理器。
+ */
 fun <NavTarget> rememberDefaultTransitionHandler(): ModifierTransitionHandler<NavTarget, BackStack.State> {
     return rememberBackstackSlider(
         transitionSpec = { spring(stiffness = Spring.StiffnessMediumLow) },

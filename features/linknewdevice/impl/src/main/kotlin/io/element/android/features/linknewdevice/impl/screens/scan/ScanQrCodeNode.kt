@@ -20,24 +20,37 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 扫描二维码页面节点。
+ *
+ * 负责连接 [ScanQrCodePresenter] 与页面视图，并把返回动作回传给外层流程。
+ */
 class ScanQrCodeNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: ScanQrCodePresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 扫描二维码页面向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun cancel()
     }
 
     private val callback: Callback = callback()
 
+    /**
+     * 渲染扫描二维码页面。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()
         ScanQrCodeView(
             state = state,
             onBackClick = callback::cancel,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }

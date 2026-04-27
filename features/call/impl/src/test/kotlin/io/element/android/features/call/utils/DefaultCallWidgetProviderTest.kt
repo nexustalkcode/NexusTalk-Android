@@ -11,6 +11,7 @@ package io.element.android.features.call.utils
 import com.google.common.truth.Truth.assertThat
 import io.element.android.features.call.impl.utils.DefaultCallWidgetProvider
 import io.element.android.libraries.matrix.api.MatrixClientProvider
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.matrix.api.widget.CallWidgetSettingsProvider
 import io.element.android.libraries.matrix.test.A_ROOM_ID
 import io.element.android.libraries.matrix.test.A_SESSION_ID
@@ -125,6 +126,26 @@ class DefaultCallWidgetProviderTest {
         provider.getWidget(A_SESSION_ID, A_ROOM_ID, "clientId", "languageTag", "theme")
 
         assertThat(settingsProvider.providedBaseUrls).containsExactly("https://custom.element.io")
+    }
+
+    @Test
+    fun `getWidget - forwards the requested call mode to the widget settings provider`() = runTest {
+        val room = FakeJoinedRoom(
+            generateWidgetWebViewUrlResult = { _, _, _, _ -> Result.success("url") },
+            getWidgetDriverResult = { Result.success(FakeMatrixWidgetDriver()) },
+        )
+        val client = FakeMatrixClient().apply {
+            givenGetRoomResult(A_ROOM_ID, room)
+        }
+        val settingsProvider = FakeCallWidgetSettingsProvider()
+        val provider = createProvider(
+            matrixClientProvider = FakeMatrixClientProvider { Result.success(client) },
+            callWidgetSettingsProvider = settingsProvider,
+        )
+
+        provider.getWidget(A_SESSION_ID, A_ROOM_ID, "clientId", "languageTag", "theme", CallWidgetMode.Audio)
+
+        assertThat(settingsProvider.providedCallModes).containsExactly(CallWidgetMode.Audio)
     }
 
     private fun createProvider(

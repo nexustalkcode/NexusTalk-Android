@@ -20,6 +20,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import com.freeletics.flowredux.dsl.State as MachineState
 
 @Inject
+/**
+ * 传入验证流程状态机。
+ *
+ * 负责把用户在“接受请求、比对表情、确认或拒绝”等步骤中的动作，
+ * 映射为底层验证服务调用和可观察的 UI 状态迁移。
+ */
 class IncomingVerificationStateMachine(
     private val sessionVerificationService: SessionVerificationService,
 ) : FlowReduxStateMachine<IncomingVerificationStateMachine.State, IncomingVerificationStateMachine.Event>(
@@ -100,66 +106,75 @@ class IncomingVerificationStateMachine(
         }
     }
 
+    /**
+     * 传入验证流程的状态集合。
+     */
     sealed interface State {
-        /** The initial state, before verification started. */
+        /** 初始状态，验证尚未开始。 */
         data class Initial(val isCancelled: Boolean) : State
 
-        /** User is accepting the incoming verification. */
+        /** 正在接受传入的验证请求。 */
         data object AcceptingIncomingVerification : State
 
-        /** User is rejecting the incoming verification. */
+        /** 正在拒绝传入的验证请求。 */
         data object RejectingIncomingVerification : State
 
-        /** Verification accepted and emojis received. */
+        /** 已收到验证 challenge，可供用户比对表情。 */
         data class ChallengeReceived(val data: SessionVerificationData) : State
 
-        /** Accepting the verification challenge. */
+        /** 正在确认 challenge 一致。 */
         data class AcceptingChallenge(val data: SessionVerificationData) : State
 
-        /** Rejecting the verification challenge. */
+        /** 正在拒绝当前 challenge。 */
         data class RejectingChallenge(val data: SessionVerificationData) : State
 
-        /** The verification is being canceled. */
+        /** 正在取消验证。 */
         data object Canceling : State
 
-        /** The verification has been canceled, remotely or locally. */
+        /** 验证已被本地或远端取消。 */
         data object Canceled : State
 
-        /** Verification successful. */
+        /** 验证成功完成。 */
         data object Completed : State
 
-        /** Verification failure. */
+        /** 验证失败。 */
         data object Failure : State
 
+        /**
+         * 判断当前状态是否仍处于等待用户决策或结果返回的处理中阶段。
+         */
         fun isPending(): Boolean = when (this) {
             AcceptingIncomingVerification, RejectingIncomingVerification, Failure, is ChallengeReceived, is AcceptingChallenge, is RejectingChallenge -> true
             is Initial, Canceling, Canceled, Completed -> false
         }
     }
 
+    /**
+     * 传入验证流程中会收到的事件集合。
+     */
     sealed interface Event {
-        /** User accepts the incoming request. */
+        /** 用户接受传入的验证请求。 */
         data object AcceptIncomingRequest : Event
 
-        /** Has received data. */
+        /** 已收到比对所需的 challenge 数据。 */
         data class DidReceiveChallenge(val data: SessionVerificationData) : Event
 
-        /** Emojis match. */
+        /** 用户确认表情一致。 */
         data object AcceptChallenge : Event
 
-        /** Emojis do not match. */
+        /** 用户确认表情不一致。 */
         data object DeclineChallenge : Event
 
-        /** Remote accepted challenge. */
+        /** 远端已确认 challenge。 */
         data object DidAcceptChallenge : Event
 
-        /** Request cancellation. */
+        /** 请求取消当前验证。 */
         data object Cancel : Event
 
-        /** Verification cancelled. */
+        /** 验证已被取消。 */
         data object DidCancel : Event
 
-        /** Request failed. */
+        /** 当前验证流程失败。 */
         data object DidFail : Event
     }
 }

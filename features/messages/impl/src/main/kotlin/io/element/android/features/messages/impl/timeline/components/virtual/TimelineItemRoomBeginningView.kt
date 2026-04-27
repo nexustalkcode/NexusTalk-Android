@@ -31,6 +31,9 @@ import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.room.tombstone.PredecessorRoom
 
 @Composable
+/**
+ * 渲染“房间开始”虚拟项。
+ */
 fun TimelineItemRoomBeginningView(
     roomName: String?,
     predecessorRoom: PredecessorRoom?,

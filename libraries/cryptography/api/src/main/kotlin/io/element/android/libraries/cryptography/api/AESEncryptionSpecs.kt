@@ -10,6 +10,9 @@ package io.element.android.libraries.cryptography.api
 
 import android.security.keystore.KeyProperties
 
+/**
+ * Android Keystore AES 加密参数集合。
+ */
 object AESEncryptionSpecs {
     const val BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM
     const val PADDINGS = KeyProperties.ENCRYPTION_PADDING_NONE

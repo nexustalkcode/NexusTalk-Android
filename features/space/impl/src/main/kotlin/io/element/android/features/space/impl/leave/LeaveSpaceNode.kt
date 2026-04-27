@@ -24,6 +24,11 @@ import io.element.android.libraries.matrix.api.room.JoinedRoom
 
 @ContributesNode(SpaceFlowScope::class)
 @AssistedInject
+/**
+ * 离开 Space 流程节点。
+ *
+ * 负责持有 [LeaveSpaceHandle] 的生命周期，并把 Presenter 状态渲染到离开页面。
+ */
 class LeaveSpaceNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -31,6 +36,9 @@ class LeaveSpaceNode(
     room: JoinedRoom,
     presenterFactory: LeaveSpacePresenter.Factory,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 离开 Space 页面向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun closeLeaveSpaceFlow()
         fun navigateToRolesAndPermissions()
@@ -41,6 +49,9 @@ class LeaveSpaceNode(
 
     private val callback: Callback = callback()
 
+    /**
+     * 在节点销毁时关闭 [leaveSpaceHandle]，避免继续占用底层资源。
+     */
     override fun onBuilt() {
         super.onBuilt()
         lifecycle.subscribe(
@@ -50,6 +61,11 @@ class LeaveSpaceNode(
         )
     }
 
+    /**
+     * 渲染离开 Space 页面。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

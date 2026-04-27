@@ -10,30 +10,25 @@ package io.element.android.features.preferences.impl.root
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
-import io.element.android.features.preferences.impl.R
 import io.element.android.features.preferences.impl.user.UserPreferences
 import io.element.android.libraries.architecture.coverage.ExcludeFromCoverage
 import io.element.android.libraries.designsystem.components.avatar.AvatarSize
@@ -44,13 +39,9 @@ import io.element.android.libraries.designsystem.preview.ElementPreviewDark
 import io.element.android.libraries.designsystem.preview.ElementPreviewLight
 import io.element.android.libraries.designsystem.preview.PreviewWithLargeHeight
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
-import androidx.compose.material3.LocalContentColor
-import io.element.android.libraries.designsystem.atomic.atoms.RedIndicatorAtom
 import io.element.android.libraries.designsystem.theme.components.HorizontalDivider
-import io.element.android.libraries.designsystem.theme.components.Icon
 import io.element.android.libraries.designsystem.theme.components.IconSource
 import io.element.android.libraries.designsystem.theme.components.ListItem
-import io.element.android.libraries.designsystem.theme.components.ListItemStyle
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.designsystem.utils.snackbar.SnackbarHost
 import io.element.android.libraries.designsystem.utils.snackbar.rememberSnackbarHostState
@@ -59,8 +50,16 @@ import io.element.android.libraries.matrix.api.user.MatrixUser
 import io.element.android.libraries.matrix.ui.components.MatrixUserProvider
 import io.element.android.libraries.matrix.ui.components.MatrixUserRow
 import io.element.android.libraries.matrix.ui.components.aMatrixUserList
+import io.element.android.libraries.ui.common.settings.SettingsContent
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染设置主页。
+ *
+ * @param state 页面展示状态。
+ * @param onBackClick 返回动作。
+ * @param modifier 应用于页面根节点的修饰符。
+ */
 @Composable
 fun PreferencesRootView(
     state: PreferencesRootState,
@@ -86,10 +85,10 @@ fun PreferencesRootView(
 ) {
     val snackbarHostState = rememberSnackbarHostState(snackbarMessage = state.snackbarMessage)
 
-    // Include pref from other modules
     PreferencePage(
         modifier = modifier,
         onBackClick = onBackClick,
+        handleSystemBack = true,
         title = stringResource(id = CommonStrings.common_settings),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBarBackgroundColor = ElementTheme.colors.bgSubtleSecondary,
@@ -99,179 +98,51 @@ fun PreferencesRootView(
                 .fillMaxSize()
                 .background(color = ElementTheme.colors.bgSubtleSecondary)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
-            ) {
-                UserPreferences(
-                    modifier = Modifier.clickable {
-                        onOpenUserProfile(state.myUser)
-                    },
-                    user = state.myUser,
-                    onQrCodeClick = if (state.myUser != null) {
-                        { onOpenUserQrCode(state.myUser) }
-                    } else null,
-                    showChevron = true,
-                    avatarSize = 60.dp,
-                )
-            }
-
-            if (state.isMultiAccountEnabled) {
-                Spacer(modifier = Modifier.height(16.dp))
-                MultiAccountSection(
-                    state = state,
-                    onAddAccountClick = onAddAccountClick,
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
-            ) {
-                ListItem(
-                    headlineContent = { Text(stringResource(id = R.string.screen_notification_settings_title)) },
-                    leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Notifications()), tintColor = ElementTheme.colors.iconPrimary),
-                    trailingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
-                    onClick = onOpenNotificationSettings,
-                )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-                ListItem(
-                    headlineContent = { Text(stringResource(id = CommonStrings.common_screen_lock)) },
-                    leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Lock()), tintColor = ElementTheme.colors.iconPrimary),
-                    trailingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
-                    onClick = onOpenLockScreenSettings,
-                )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-                if (state.showSecureBackup) {
-                    ListItem(
-                        headlineContent = { Text(stringResource(id = CommonStrings.common_encryption)) },
-                        leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Key()), tintColor = ElementTheme.colors.iconPrimary),
-                        trailingContent = ListItemContent.Custom { _ ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                if (state.showSecureBackupBadge) {
-                                    Box(
-                                        modifier = Modifier.size(24.dp),
-                                        contentAlignment = Alignment.Center,
-                                    ) {
-                                        RedIndicatorAtom()
-                                    }
-                                }
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    imageVector = CompoundIcons.ChevronRight(),
-                                    contentDescription = null,
-                                    tint = LocalContentColor.current,
-                                )
-                            }
-                        },
-                        onClick = onSecureBackupClick,
-                    )
-                    HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (state.accountManagementUrl.isNullOrEmpty().not() || state.devicesManagementUrl.isNullOrEmpty() || state.showLinkNewDevice || state.showBlockedUsersItem) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
-                ) {
-                    state.accountManagementUrl?.let { url ->
-                        ListItem(
-                            headlineContent = { Text(stringResource(id = CommonStrings.action_manage_account)) },
-                            leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.UserProfile()), tintColor = ElementTheme.colors.iconPrimary),
-                            trailingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
-                            onClick = { onManageAccountClick(url) },
-                        )
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-                    }
-
-                    state.devicesManagementUrl?.let { url ->
-                        ListItem(
-                            headlineContent = { Text(stringResource(id = CommonStrings.action_manage_devices)) },
-                            leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Devices()), tintColor = ElementTheme.colors.iconPrimary),
-                            trailingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
-                            onClick = { onManageAccountClick(url) },
+            SettingsContent(
+                onOpenNotificationSettings = onOpenNotificationSettings,
+                onOpenLockScreenSettings = onOpenLockScreenSettings,
+                onOpenAdvancedSettings = onOpenAdvancedSettings,
+                onOpenAbout = onOpenAbout,
+                onSignOutClick = onSignOutClick,
+                showSecureBackup = state.showSecureBackup,
+                showSecureBackupBadge = state.showSecureBackupBadge,
+                onSetUpRecoveryClick = onSecureBackupClick,
+                onManageAccountClick = state.accountManagementUrl?.let { url -> { onManageAccountClick(url) } },
+                onManageDevicesClick = state.devicesManagementUrl?.let { url -> { onManageAccountClick(url) } },
+                onLinkNewDeviceClick = onLinkNewDeviceClick.takeIf { state.showLinkNewDevice },
+                onOpenBlockedUsers = onOpenBlockedUsers.takeIf { state.showBlockedUsersItem },
+                headerContent = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
+                    ) {
+                        UserPreferences(
+                            modifier = Modifier.clickable {
+                                onOpenUserProfile(state.myUser)
+                            },
+                            user = state.myUser,
+                            onQrCodeClick = if (state.myUser != null) {
+                                { onOpenUserQrCode(state.myUser) }
+                            } else {
+                                null
+                            },
+                            showChevron = true,
+                            avatarSize = 60.dp,
                         )
                     }
 
-                    if (state.showLinkNewDevice) {
-                        ListItem(
-                            headlineContent = { Text(stringResource(id = CommonStrings.common_link_new_device)) },
-                            leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Devices()), tintColor = ElementTheme.colors.iconPrimary),
-                            trailingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
-                            onClick = onLinkNewDeviceClick,
-                        )
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-                    }
-
-                    if (state.showBlockedUsersItem) {
-                        ListItem(
-                            headlineContent = { Text(stringResource(id = CommonStrings.common_blocked_users)) },
-                            leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Block()), tintColor = ElementTheme.colors.iconPrimary),
-                            trailingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
-                            onClick = onOpenBlockedUsers,
+                    if (state.isMultiAccountEnabled) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        MultiAccountSection(
+                            state = state,
+                            onAddAccountClick = onAddAccountClick,
                         )
                     }
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
-            ) {
-                ListItem(
-                    headlineContent = { Text(stringResource(id = CommonStrings.common_advanced_settings)) },
-                    leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Settings()), tintColor = ElementTheme.colors.iconPrimary),
-                    trailingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
-                    onClick = onOpenAdvancedSettings,
-                )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
-            ) {
-                ListItem(
-                    headlineContent = { Text(stringResource(id = CommonStrings.common_about)) },
-                    leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.Info())),
-                    trailingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.ChevronRight())),
-                    onClick = onOpenAbout,
-                )
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-            }
+                },
+            )
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .background(ElementTheme.colors.bgCanvasDefault, RoundedCornerShape(10.dp))
-            ) {
-                ListItem(
-                    headlineContent = { Text(stringResource(id = CommonStrings.action_signout)) },
-                    leadingContent = ListItemContent.Icon(IconSource.Vector(CompoundIcons.SignOut())),
-                    style = ListItemStyle.Destructive,
-                    onClick = onSignOutClick,
-                )
-            }
             if (state.showDeveloperSettings) {
                 Spacer(modifier = Modifier.height(16.dp))
                 DeveloperPreferencesView(onOpenDeveloperSettings)
@@ -282,12 +153,14 @@ fun PreferencesRootView(
     }
 }
 
+/**
+ * 渲染多账号区域。
+ */
 @Composable
 private fun ColumnScope.MultiAccountSection(
     state: PreferencesRootState,
     onAddAccountClick: () -> Unit,
 ) {
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -315,6 +188,9 @@ private fun ColumnScope.MultiAccountSection(
     }
 }
 
+/**
+ * 渲染设置页底部信息区。
+ */
 @Composable
 private fun ColumnScope.Footer(
     version: String,
@@ -343,6 +219,9 @@ private fun ColumnScope.Footer(
     )
 }
 
+/**
+ * 渲染开发者选项入口区块。
+ */
 @Composable
 private fun DeveloperPreferencesView(onOpenDeveloperSettings: () -> Unit) {
     Column(
@@ -371,6 +250,9 @@ internal fun PreferencesRootViewDarkPreview(@PreviewParameter(MatrixUserProvider
     ElementPreviewDark { ContentToPreview(matrixUser) }
 
 @ExcludeFromCoverage
+/**
+ * 供预览复用的设置主页内容。
+ */
 @Composable
 private fun ContentToPreview(matrixUser: MatrixUser) {
     PreferencesRootView(
@@ -397,6 +279,9 @@ private fun ContentToPreview(matrixUser: MatrixUser) {
 }
 
 @PreviewsDayNight
+/**
+ * 多账号区块预览。
+ */
 @Composable
 internal fun MultiAccountSectionPreview() = ElementPreview {
     Column {

@@ -10,6 +10,9 @@ package io.element.android.features.messages.impl.timeline.model.event
 
 import io.element.android.libraries.matrix.api.timeline.item.event.UnableToDecryptContent
 
+/**
+ * 无法解密消息的 UI 内容模型。
+ */
 data class TimelineItemEncryptedContent(
     val data: UnableToDecryptContent.Data
 ) : TimelineItemEventContent {

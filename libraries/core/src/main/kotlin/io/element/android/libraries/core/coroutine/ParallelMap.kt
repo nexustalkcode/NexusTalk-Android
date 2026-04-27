@@ -13,6 +13,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 // https://jivimberg.io/blog/2018/05/04/parallel-map-in-kotlin/
+/**
+ * 并发执行 map 转换并保持结果顺序。
+ */
 suspend fun <A, B> Iterable<A>.parallelMap(f: suspend (A) -> B): List<B> = coroutineScope {
     map { async { f(it) } }.awaitAll()
 }

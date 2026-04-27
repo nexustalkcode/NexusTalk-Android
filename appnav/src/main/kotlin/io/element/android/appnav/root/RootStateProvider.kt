@@ -14,6 +14,9 @@ import io.element.android.features.rageshake.api.detection.aRageshakeDetectionSt
 import io.element.android.services.apperror.api.AppErrorState
 import io.element.android.services.apperror.api.aAppErrorState
 
+/**
+ * 为应用根页面预览提供样例状态。
+ */
 open class RootStateProvider : PreviewParameterProvider<RootState> {
     override val values: Sequence<RootState>
         get() = sequenceOf(
@@ -31,6 +34,9 @@ open class RootStateProvider : PreviewParameterProvider<RootState> {
         )
 }
 
+/**
+ * 构造一份应用根页面样例状态。
+ */
 fun aRootState() = RootState(
     rageshakeDetectionState = aRageshakeDetectionState(),
     crashDetectionState = aCrashDetectionState(),

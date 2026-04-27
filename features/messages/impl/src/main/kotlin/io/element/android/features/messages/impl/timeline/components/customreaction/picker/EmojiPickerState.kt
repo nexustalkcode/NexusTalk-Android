@@ -17,16 +17,15 @@ import io.element.android.libraries.designsystem.theme.components.SearchBarResul
 import kotlinx.collections.immutable.ImmutableList
 
 /**
- * 表情选择器状态数据类
+ * emoji picker 展示状态。
  *
- * @property categories 表情类别列表
- * @property allEmojis 所有表情列表
- * @property searchQuery 搜索查询的文本字段状态
- * @property isSearchActive 搜索是否处于活动状态
- * @property searchResults 搜索结果状态
- * @property eventSink 事件处理函数
+ * @property categories emoji 分类列表。
+ * @property allEmojis 全量 emoji 列表。
+ * @property searchQuery 搜索输入框状态。
+ * @property isSearchActive 当前是否处于搜索模式。
+ * @property searchResults 搜索结果状态。
+ * @property eventSink 页面事件分发函数。
  */
-// Emoji is unstable (because from an external library?), so we annotate with @Immutable
 @Immutable
 data class EmojiPickerState(
     val categories: ImmutableList<EmojiCategory>,
@@ -38,7 +37,11 @@ data class EmojiPickerState(
 )
 
 /**
- * Represents a category of emojis with a title id, icon, and the list of associated emojis.
+ * 单个 emoji 分类。
+ *
+ * @property titleId 分类标题资源。
+ * @property icon 分类图标。
+ * @property emojis 该分类下的 emoji 列表。
  */
 data class EmojiCategory(
     @StringRes val titleId: Int,

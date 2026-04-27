@@ -31,6 +31,12 @@ import io.element.android.libraries.usersearch.api.UserRepository
 import kotlinx.coroutines.launch
 
 @Inject
+/**
+ * 开始聊天主页 Presenter。
+ *
+ * 负责组合用户搜索列表、发起私聊动作和功能开关状态，
+ * 生成主页所需的完整展示状态。
+ */
 class StartChatPresenter(
     private val presenterFactory: UserListPresenter.Factory,
     private val userRepository: UserRepository,
@@ -39,6 +45,9 @@ class StartChatPresenter(
     private val buildMeta: BuildMeta,
     private val featureFlagService: FeatureFlagService,
 ) : Presenter<StartChatState> {
+    /**
+     * 生成开始聊天主页状态并处理页面事件。
+     */
     @Composable
     override fun present(): StartChatState {
         val dataStoreInitialQuery by userListDataStore.initialQuery.collectAsState(initial = null)

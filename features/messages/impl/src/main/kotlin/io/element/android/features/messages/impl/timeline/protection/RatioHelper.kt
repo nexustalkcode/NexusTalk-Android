@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.protection
 
+/**
+ * 当媒体内容被隐藏时，对宽高比做安全收敛。
+ */
 fun coerceRatioWhenHidingContent(aspectRatio: Float?, hideContent: Boolean): Float? {
     return if (hideContent) {
         aspectRatio?.coerceIn(

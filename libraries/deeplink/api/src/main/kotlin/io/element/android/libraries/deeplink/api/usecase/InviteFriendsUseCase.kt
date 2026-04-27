@@ -10,6 +10,12 @@ package io.element.android.libraries.deeplink.api.usecase
 
 import android.app.Activity
 
+/**
+ * 邀请好友使用应用的用例接口。
+ */
 fun interface InviteFriendsUseCase {
+    /**
+     * 通过宿主 Activity 拉起系统分享。
+     */
     fun execute(activity: Activity)
 }

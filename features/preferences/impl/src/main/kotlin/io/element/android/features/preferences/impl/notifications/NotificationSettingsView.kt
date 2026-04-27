@@ -69,6 +69,7 @@ fun NotificationSettingsView(
     }
     PreferencePage(
         modifier = modifier,
+        handleSystemBack = true,
         onBackClick = onBackClick,
         title = stringResource(id = R.string.screen_notification_settings_title),
         topBarBackgroundColor = ElementTheme.colors.bgSubtleSecondary,

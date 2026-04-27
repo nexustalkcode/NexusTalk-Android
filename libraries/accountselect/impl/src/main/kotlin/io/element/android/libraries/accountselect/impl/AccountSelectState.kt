@@ -11,6 +11,9 @@ package io.element.android.libraries.accountselect.impl
 import io.element.android.libraries.matrix.api.user.MatrixUser
 import kotlinx.collections.immutable.ImmutableList
 
+/**
+ * 账号选择页展示状态。
+ */
 data class AccountSelectState(
     val accounts: ImmutableList<MatrixUser>,
 )

@@ -13,6 +13,9 @@ import io.element.android.libraries.core.mimetype.MimeTypes
 import io.element.android.libraries.matrix.api.media.MediaSource
 import kotlin.time.Duration.Companion.milliseconds
 
+/**
+ * 为音频消息内容预览提供样例数据。
+ */
 open class TimelineItemAudioContentProvider : PreviewParameterProvider<TimelineItemAudioContent> {
     override val values: Sequence<TimelineItemAudioContent>
         get() = sequenceOf(
@@ -24,6 +27,9 @@ open class TimelineItemAudioContentProvider : PreviewParameterProvider<TimelineI
         )
 }
 
+/**
+ * 构造一份音频消息内容样例。
+ */
 fun aTimelineItemAudioContent(
     fileName: String = "A sound.mp3",
     caption: String? = null,

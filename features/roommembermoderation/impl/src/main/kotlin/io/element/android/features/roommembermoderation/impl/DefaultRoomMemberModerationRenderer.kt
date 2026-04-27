@@ -20,8 +20,14 @@ import io.element.android.libraries.matrix.api.user.MatrixUser
 import timber.log.Timber
 
 @ContributesBinding(RoomScope::class)
+/**
+ * 默认的房间成员管理渲染器。
+ */
 class DefaultRoomMemberModerationRenderer : RoomMemberModerationRenderer {
     @Composable
+    /**
+     * 渲染房间成员管理视图；仅支持内部实现状态。
+     */
     override fun Render(
         state: RoomMemberModerationState,
         onSelectAction: (ModerationAction, MatrixUser) -> Unit,

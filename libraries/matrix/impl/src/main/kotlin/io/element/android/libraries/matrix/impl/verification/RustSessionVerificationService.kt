@@ -49,6 +49,8 @@ import kotlin.time.Duration.Companion.seconds
 import org.matrix.rustcomponents.sdk.SessionVerificationData as RustSessionVerificationData
 import org.matrix.rustcomponents.sdk.SessionVerificationRequestDetails as RustSessionVerificationRequestDetails
 
+private const val resetIdentityTraceTag = "ResetIdentityTrace"
+
 class RustSessionVerificationService(
     private val client: Client,
     isSyncServiceReady: Flow<Boolean>,
@@ -72,6 +74,12 @@ class RustSessionVerificationService(
     // Listen for changes in verification status and update accordingly
     private val verificationStateListenerTaskHandle = encryptionService.verificationStateListener(object : VerificationStateListener {
         override fun onUpdate(status: VerificationState) {
+            Timber.tag(resetIdentityTraceTag).i(
+                "RustSessionVerificationService.verificationStateListener status=%s isInitialized=%s currentSessionStatus=%s",
+                status,
+                isInitialized.get(),
+                _sessionVerifiedStatus.value,
+            )
             // If the status is verified, just use it. It can't be a false positive like unknown or unverified
             if (!isInitialized.get() && status != VerificationState.VERIFIED) {
                 Timber.d("Discarding new verifications state: $status. E2EE is not initialised yet")
@@ -80,6 +88,10 @@ class RustSessionVerificationService(
 
             Timber.d("New verification state: $status")
             _sessionVerifiedStatus.value = status.map()
+            Timber.tag(resetIdentityTraceTag).i(
+                "RustSessionVerificationService.verificationStateListener mappedSessionStatus=%s",
+                _sessionVerifiedStatus.value,
+            )
         }
     })
 
@@ -188,11 +200,22 @@ class RustSessionVerificationService(
     }
 
     override fun didFail() {
+        Timber.tag(resetIdentityTraceTag).i(
+            "RustSessionVerificationService.didFail currentSessionStatus=%s currentFlowState=%s currentRequest=%s",
+            _sessionVerifiedStatus.value,
+            _verificationFlowState.value,
+            currentVerificationRequest,
+        )
         Timber.e("Session verification failed with an unknown error")
         _verificationFlowState.value = VerificationFlowState.DidFail
     }
 
     override fun didFinish() {
+        Timber.tag(resetIdentityTraceTag).i(
+            "RustSessionVerificationService.didFinish begin currentSessionStatus=%s currentRequest=%s",
+            _sessionVerifiedStatus.value,
+            currentVerificationRequest,
+        )
         sessionCoroutineScope.launch {
             // Ideally this should be `verificationController?.isVerified().orFalse()` but for some reason it returns false if run immediately
             // It also sometimes unexpectedly fails to report the session as verified, so we have to handle that possibility and fail if needed
@@ -203,6 +226,11 @@ class RustSessionVerificationService(
                 }
             }
                 .onSuccess {
+                    Timber.tag(resetIdentityTraceTag).i(
+                        "RustSessionVerificationService.didFinish observed Verified currentRequest=%s recoveryState=%s",
+                        currentVerificationRequest,
+                        recoveryState.value,
+                    )
                     if (currentVerificationRequest is VerificationRequest.Outgoing.CurrentSession) {
                         // Try waiting for the final recovery state for better UX, but don't block the verification state on it
                         tryOrNull {
@@ -214,9 +242,15 @@ class RustSessionVerificationService(
                     }
 
                     _verificationFlowState.value = VerificationFlowState.DidFinish
+                    Timber.tag(resetIdentityTraceTag).i("RustSessionVerificationService.didFinish set flowState=DidFinish")
                     updateVerificationStatus()
                 }
                 .onFailure {
+                    Timber.tag(resetIdentityTraceTag).e(
+                        it,
+                        "RustSessionVerificationService.didFinish failed to observe Verified within timeout currentSessionStatus=%s",
+                        _sessionVerifiedStatus.value,
+                    )
                     Timber.e(it, "Verification finished, but the Rust SDK still reports the session as unverified.")
                     didFail()
                 }
@@ -253,9 +287,19 @@ class RustSessionVerificationService(
     }
 
     private fun updateVerificationStatus() {
+        Timber.tag(resetIdentityTraceTag).i(
+            "RustSessionVerificationService.updateVerificationStatus begin previousSessionStatus=%s",
+            _sessionVerifiedStatus.value,
+        )
         runCatchingExceptions {
             _sessionVerifiedStatus.value = encryptionService.verificationState().map()
             Timber.d("New verification status: ${_sessionVerifiedStatus.value}")
+            Timber.tag(resetIdentityTraceTag).i(
+                "RustSessionVerificationService.updateVerificationStatus end newSessionStatus=%s",
+                _sessionVerifiedStatus.value,
+            )
+        }.onFailure { failure ->
+            Timber.tag(resetIdentityTraceTag).e(failure, "RustSessionVerificationService.updateVerificationStatus failed")
         }
     }
 

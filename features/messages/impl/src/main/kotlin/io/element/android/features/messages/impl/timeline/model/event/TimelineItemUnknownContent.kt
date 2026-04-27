@@ -8,6 +8,9 @@
 
 package io.element.android.features.messages.impl.timeline.model.event
 
+/**
+ * 未知事件类型的 UI 内容模型。
+ */
 object TimelineItemUnknownContent : TimelineItemEventContent {
     override val type: String = "TimelineItemUnknownContent"
 }

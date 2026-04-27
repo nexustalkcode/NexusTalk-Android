@@ -58,6 +58,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 
+/**
+ * 为消息页预览提供样例状态。
+ */
 open class MessagesStateProvider : PreviewParameterProvider<MessagesState> {
     override val values: Sequence<MessagesState>
         get() = sequenceOf(
@@ -104,6 +107,9 @@ open class MessagesStateProvider : PreviewParameterProvider<MessagesState> {
         )
 }
 
+/**
+ * 构造一份消息页样例状态。
+ */
 fun aMessagesState(
     roomName: String? = "Room name",
     roomAvatar: AvatarData = AvatarData("!id:domain", "Room name", size = AvatarSize.TimelineRoom),
@@ -164,6 +170,9 @@ fun aMessagesState(
     eventSink = eventSink,
 )
 
+/**
+ * 构造一份房间成员管理能力样例状态。
+ */
 fun aRoomMemberModerationState(
     permissions: RoomMemberModerationPermissions = RoomMemberModerationPermissions.DEFAULT,
 ) = object : RoomMemberModerationState {
@@ -171,6 +180,9 @@ fun aRoomMemberModerationState(
     override val eventSink: (RoomMemberModerationEvents) -> Unit = {}
 }
 
+/**
+ * 构造一份用户事件权限样例。
+ */
 fun aUserEventPermissions(
     canRedactOwn: Boolean = false,
     canRedactOther: Boolean = false,
@@ -185,6 +197,9 @@ fun aUserEventPermissions(
     canPinUnpin = canPinUnpin,
 )
 
+/**
+ * 构造一份 reaction summary 样例状态。
+ */
 fun aReactionSummaryState(
     target: ReactionSummaryState.Summary? = null,
     eventSink: (ReactionSummaryEvents) -> Unit = {}
@@ -193,6 +208,9 @@ fun aReactionSummaryState(
     eventSink = eventSink,
 )
 
+/**
+ * 构造一份自定义 reaction 样例状态。
+ */
 fun aCustomReactionState(
     target: CustomReactionState.Target = CustomReactionState.Target.None,
     recentEmojis: ImmutableList<String> = persistentListOf(),
@@ -204,6 +222,9 @@ fun aCustomReactionState(
     eventSink = eventSink,
 )
 
+/**
+ * 构造一份已读回执底部弹窗样例状态。
+ */
 fun aReadReceiptBottomSheetState(
     selectedEvent: TimelineItem.Event? = null,
     eventSink: (ReadReceiptBottomSheetEvents) -> Unit = {},

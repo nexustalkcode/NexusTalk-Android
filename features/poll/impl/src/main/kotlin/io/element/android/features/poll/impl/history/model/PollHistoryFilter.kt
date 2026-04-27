@@ -8,7 +8,7 @@
 
 package io.element.android.features.poll.impl.history.model
 
-import io.element.android.features.poll.impl.R
+import io.element.android.features.poll.api.R
 
 /**
  * 投票历史过滤器枚举

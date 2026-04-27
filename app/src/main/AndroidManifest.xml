@@ -25,9 +25,9 @@
         android:theme="@style/Theme.ElementX"
         tools:targetApi="33">
 
-        <!--        <meta-data-->
-        <!--            android:name="com.google.android.gms.car.application"-->
-        <!--            android:resource="@xml/automotive_app_desc" />-->
+<!--        <meta-data-->
+<!--            android:name="com.google.android.gms.car.application"-->
+<!--            android:resource="@xml/automotive_app_desc" />-->
 
         <provider
             android:name="androidx.startup.InitializationProvider"
@@ -69,7 +69,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data
                     android:host="open"
-                    android:scheme="elementx" />
+                    android:scheme="nexustalk" />
             </intent-filter>
             <!--
               Oidc redirection
@@ -149,7 +149,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="element" />
+                <data android:scheme="nexustalk" />
                 <data android:host="user" />
                 <data android:host="room" />
             </intent-filter>

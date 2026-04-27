@@ -106,7 +106,7 @@ class NotificationBroadcastReceiverHandler(
     @Suppress("unused")
     private fun handleMarkAsRead(sessionId: SessionId, roomId: RoomId, threadId: ThreadId?) = appCoroutineScope.launch {
         val client = matrixClientProvider.getOrRestore(sessionId).getOrNull() ?: return@launch
-        val isSendPublicReadReceiptsEnabled = sessionPreferencesStore.get(sessionId, this).isSendPublicReadReceiptsEnabled().first()
+        val isSendPublicReadReceiptsEnabled = sessionPreferencesStore.get(sessionId.value, this).isSendPublicReadReceiptsEnabled().first()
         val receiptType = if (isSendPublicReadReceiptsEnabled) {
             ReceiptType.READ
         } else {

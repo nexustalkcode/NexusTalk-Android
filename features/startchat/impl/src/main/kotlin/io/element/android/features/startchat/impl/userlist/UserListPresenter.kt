@@ -11,7 +11,13 @@ package io.element.android.features.startchat.impl.userlist
 import io.element.android.libraries.architecture.Presenter
 import io.element.android.libraries.usersearch.api.UserRepository
 
+/**
+ * 用户列表 Presenter 接口。
+ */
 interface UserListPresenter : Presenter<UserListState> {
+    /**
+     * 创建用户列表 Presenter 的工厂接口。
+     */
     interface Factory {
         fun create(
             args: UserListPresenterArgs,

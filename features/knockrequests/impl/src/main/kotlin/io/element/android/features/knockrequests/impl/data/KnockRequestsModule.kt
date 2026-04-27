@@ -22,9 +22,15 @@ import io.element.android.libraries.matrix.api.room.powerlevels.permissionsFlow
 
 @BindingContainer
 @ContributesTo(RoomScope::class)
+/**
+ * 敲门请求功能的 Room 级依赖提供模块。
+ */
 object KnockRequestsModule {
     @Provides
     @SingleIn(RoomScope::class)
+    /**
+     * 为当前房间创建 [KnockRequestsService]。
+     */
     fun knockRequestsService(room: JoinedRoom, featureFlagService: FeatureFlagService): KnockRequestsService {
         return KnockRequestsService(
             knockRequestsFlow = room.knockRequestsFlow,

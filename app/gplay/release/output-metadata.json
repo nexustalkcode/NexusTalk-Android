@@ -11,22 +11,9 @@
       "type": "UNIVERSAL",
       "filters": [],
       "attributes": [],
-      "versionCode": 20260325,
-      "versionName": "26.03.25",
+      "versionCode": 20260331,
+      "versionName": "26.03.31",
       "outputFile": "app-gplay-universal-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "arm64-v8a"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 20260325,
-      "versionName": "26.03.25",
-      "outputFile": "app-gplay-arm64-v8a-release.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -37,9 +24,22 @@
         }
       ],
       "attributes": [],
-      "versionCode": 20260325,
-      "versionName": "26.03.25",
+      "versionCode": 20260331,
+      "versionName": "26.03.31",
       "outputFile": "app-gplay-armeabi-v7a-release.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 20260331,
+      "versionName": "26.03.31",
+      "outputFile": "app-gplay-arm64-v8a-release.apk"
     }
   ],
   "elementType": "File",
@@ -49,8 +49,8 @@
       "maxApi": 30,
       "baselineProfiles": [
         "baselineProfiles/1/app-gplay-universal-release.dm",
-        "baselineProfiles/1/app-gplay-arm64-v8a-release.dm",
-        "baselineProfiles/1/app-gplay-armeabi-v7a-release.dm"
+        "baselineProfiles/1/app-gplay-armeabi-v7a-release.dm",
+        "baselineProfiles/1/app-gplay-arm64-v8a-release.dm"
       ]
     },
     {
@@ -58,8 +58,8 @@
       "maxApi": 2147483647,
       "baselineProfiles": [
         "baselineProfiles/0/app-gplay-universal-release.dm",
-        "baselineProfiles/0/app-gplay-arm64-v8a-release.dm",
-        "baselineProfiles/0/app-gplay-armeabi-v7a-release.dm"
+        "baselineProfiles/0/app-gplay-armeabi-v7a-release.dm",
+        "baselineProfiles/0/app-gplay-arm64-v8a-release.dm"
       ]
     }
   ],

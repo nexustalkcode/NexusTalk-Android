@@ -41,6 +41,12 @@ import kotlinx.parcelize.Parcelize
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 开始聊天总流程节点。
+ *
+ * 负责协调主页面、创建房间、按地址加入和扫码加人等子流程，
+ * 并通过 overlay 展示需要临时覆盖在主页面上的子页面。
+ */
 class StartChatFlowNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -54,6 +60,9 @@ class StartChatFlowNode(
     buildContext = buildContext,
     plugins = plugins
 ) {
+    /**
+     * 开始聊天流程中的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         @Parcelize
         data object Root : NavTarget
@@ -76,6 +85,12 @@ class StartChatFlowNode(
         openRoomDirectory = callback::navigateToRoomDirectory,
     )
 
+    /**
+     * 根据导航目标创建对应子节点。
+     *
+     * @param navTarget 当前需要解析的导航目标。
+     * @param buildContext 子节点构建上下文。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             NavTarget.Root -> {
@@ -118,6 +133,11 @@ class StartChatFlowNode(
         }
     }
 
+    /**
+     * 渲染主 back stack 与 overlay。
+     *
+     * @param modifier 应用于根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         Box(modifier = modifier) {

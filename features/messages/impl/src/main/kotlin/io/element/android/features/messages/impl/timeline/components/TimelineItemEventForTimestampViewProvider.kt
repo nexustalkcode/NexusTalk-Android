@@ -16,6 +16,9 @@ import io.element.android.features.messages.impl.timeline.model.event.aTimelineI
 import io.element.android.libraries.matrix.api.timeline.item.event.LocalEventSendState
 import io.element.android.libraries.matrix.api.timeline.item.event.MessageShield
 
+/**
+ * 为时间戳视图预览提供事件样例。
+ */
 class TimelineItemEventForTimestampViewProvider : PreviewParameterProvider<TimelineItem.Event> {
     override val values: Sequence<TimelineItem.Event>
         get() = sequenceOf(

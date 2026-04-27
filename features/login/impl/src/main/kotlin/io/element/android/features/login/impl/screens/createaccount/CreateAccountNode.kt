@@ -26,21 +26,40 @@ import io.element.android.libraries.architecture.inputs
 
 @ContributesNode(AppScope::class)
 @AssistedInject
+/**
+ * 创建账号页面节点。
+ *
+ * 负责连接 [CreateAccountPresenter] 与 [CreateAccountView]，
+ * 并统一处理需要跳转到外部浏览器的链接。
+ */
 class CreateAccountNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     presenterFactory: CreateAccountPresenter.Factory,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 创建账号页面输入。
+     *
+     * @property url 需要打开的注册页面地址。
+     */
     data class Inputs(
         val url: String,
     ) : NodeInputs
 
     private val presenter = presenterFactory.create(inputs<Inputs>().url)
 
+    /**
+     * 使用 Chrome Custom Tab 打开外部链接。
+     */
     private fun onOpenExternalUrl(activity: Activity, darkTheme: Boolean, url: String) {
         activity.openUrlInChromeCustomTab(null, darkTheme, url)
     }
 
+    /**
+     * 渲染创建账号页面。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val activity = requireNotNull(LocalActivity.current)

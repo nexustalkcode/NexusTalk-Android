@@ -15,6 +15,9 @@ import dev.zacsweers.metro.ContributesBinding
 import io.element.android.libraries.di.annotations.ApplicationContext
 import timber.log.Timber
 
+/**
+ * 删除临时 Uri 的接口。
+ */
 interface TemporaryUriDeleter {
     /**
      * Delete the Uri only if it is a temporary one.
@@ -23,11 +26,17 @@ interface TemporaryUriDeleter {
 }
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的临时 Uri 删除器。
+ */
 class DefaultTemporaryUriDeleter(
     @ApplicationContext private val context: Context,
 ) : TemporaryUriDeleter {
     private val baseCacheUri = "content://${context.packageName}.fileprovider/cache"
 
+    /**
+     * 仅删除位于应用缓存 FileProvider 范围内的 Uri。
+     */
     override fun delete(uri: Uri?) {
         uri ?: return
         if (uri.toString().startsWith(baseCacheUri)) {

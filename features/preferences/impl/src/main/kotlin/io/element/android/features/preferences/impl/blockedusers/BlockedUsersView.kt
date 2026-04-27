@@ -38,6 +38,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+/**
+ * 渲染已屏蔽用户列表页面。
+ */
 fun BlockedUsersView(
     state: BlockedUsersState,
     onBackClick: () -> Unit,
@@ -104,6 +107,9 @@ fun BlockedUsersView(
 }
 
 @Composable
+/**
+ * 渲染单个已屏蔽用户条目。
+ */
 private fun BlockedUserItem(
     matrixUser: MatrixUser,
     onClick: (UserId) -> Unit,

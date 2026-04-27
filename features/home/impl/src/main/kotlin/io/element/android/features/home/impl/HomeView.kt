@@ -21,13 +21,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -72,6 +75,9 @@ import io.element.android.libraries.designsystem.utils.snackbar.rememberSnackbar
 import io.element.android.libraries.matrix.api.core.RoomId
 import io.element.android.libraries.matrix.api.user.MatrixUser
 import kotlinx.coroutines.launch
+import timber.log.Timber
+
+private const val startupTraceTag = "StartupTrace"
 
 /**
  * 首页视图
@@ -128,6 +134,23 @@ fun HomeView(
     val groupListState: GroupListState = homeState.groupListState
     val coroutineScope = rememberCoroutineScope()
     val firstThrottler = remember { FirstThrottler(300, coroutineScope) }
+
+    // 这是确认 Home 组合树已经真正开始渲染的第一处日志锚点。
+    LaunchedEffect(
+        homeState.currentHomeNavigationBarItem,
+        state.contentState,
+        groupListState.contentState,
+        state.searchState.isSearchActive,
+    ) {
+        Timber.tag(startupTraceTag).i(
+            "HomeView composed navItem=%s roomList=%s groupList=%s searchActive=%s",
+            homeState.currentHomeNavigationBarItem,
+            state.contentState.javaClass.simpleName,
+            groupListState.contentState.javaClass.simpleName,
+            state.searchState.isSearchActive,
+        )
+    }
+
     Box(modifier) {
         if (state.contextMenu is RoomListState.ContextMenu.Shown) {
             RoomListContextMenu(
@@ -230,6 +253,31 @@ private fun HomeScaffold(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(appBarState)
     val snackbarHostState = rememberSnackbarHostState(snackbarMessage = state.snackbarMessage)
     val roomListState: RoomListState = state.roomListState
+    // 仅在 Home 的设置页切换 Scaffold 背景色，让状态栏占位区域与设置页内容背景保持一致，
+    // 同时避免改动全局系统栏主题，影响其他页面的顶部颜色表现。
+    val scaffoldContainerColor = if (state.currentHomeNavigationBarItem == HomeNavigationBarItem.Settings) {
+        ElementTheme.colors.bgSubtleSecondary
+    } else {
+        ElementTheme.colors.bgCanvasDefault
+    }
+
+    // 这里用于确认 Scaffold 最终选择了哪个 tab 分支和哪种内容状态，排查“进入 Home 但主内容没出”的情况。
+    LaunchedEffect(
+        state.currentHomeNavigationBarItem,
+        roomListState.contentState,
+        state.groupListState.contentState,
+        state.showNavigationBar,
+        state.displayActions,
+    ) {
+        Timber.tag(startupTraceTag).i(
+            "HomeScaffold render navItem=%s roomList=%s groupList=%s showNavigationBar=%s displayActions=%s",
+            state.currentHomeNavigationBarItem,
+            roomListState.contentState.javaClass.simpleName,
+            state.groupListState.contentState.javaClass.simpleName,
+            state.showNavigationBar,
+            state.displayActions,
+        )
+    }
 
     BackHandler(
         enabled = state.currentHomeNavigationBarItem != HomeNavigationBarItem.Community,
@@ -245,6 +293,7 @@ private fun HomeScaffold(
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = scaffoldContainerColor,
         topBar = {
             if (state.currentHomeNavigationBarItem != HomeNavigationBarItem.Settings) {
                 HomeTopBar(
@@ -421,13 +470,22 @@ private fun HomeScaffold(
             if (state.displayActions) {
                 GradientIconButton(
                     onClick = onStartChatClick,
-                    modifier = Modifier.size(82.dp)
+                    modifier = Modifier
+                        .size(72.dp)
+                        // 为图标本体增加轻量投影，clip=false 可避免阴影被 35dp 图标边界裁掉。
+                        .shadow(
+                            elevation = 6.dp,
+                            shape = CircleShape,
+                            clip = false,
+                            ambientColor = Color(0x80000000),
+                        )
                 ) {
                     Icon(
                         painter = painterResource(CompoundIcons.Call()),
                         contentDescription = stringResource(id = R.string.screen_roomlist_a11y_create_message),
                         tint = Color.Unspecified,
-                        modifier = Modifier.size(45.dp)
+                        modifier = Modifier
+                            .size(35.dp)
                     )
                 }
             }

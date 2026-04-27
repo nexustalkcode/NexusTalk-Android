@@ -10,11 +10,14 @@ package io.element.android.libraries.push.test.test
 
 import io.element.android.libraries.pushproviders.api.PushData
 import io.element.android.libraries.pushproviders.api.PushHandler
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakePushHandler(
-    private val handleResult: (PushData, String) -> Unit = { _, _ -> lambdaError() },
-    private val handleInvalidResult: (String, String) -> Unit = { _, _ -> lambdaError() },
+    private val handleResult: (PushData, String) -> Unit = { _, _ ->
+        error("handleResult should be provided in tests")
+    },
+    private val handleInvalidResult: (String, String) -> Unit = { _, _ ->
+        error("handleInvalidResult should be provided in tests")
+    },
 ) : PushHandler {
     override suspend fun handle(pushData: PushData, providerInfo: String) {
         handleResult(pushData, providerInfo)

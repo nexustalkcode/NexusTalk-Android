@@ -48,6 +48,11 @@ import timber.log.Timber
 private val pusherTag = LoggerTag("Pusher", LoggerTag.PushLoggerTag)
 
 @Inject
+/**
+ * 已登录根页面 Presenter。
+ *
+ * 负责同步 pusher 注册状态、同步指示器和强制 Sliding Sync 迁移状态。
+ */
 class LoggedInPresenter(
     private val matrixClient: MatrixClient,
     private val syncService: SyncService,
@@ -58,6 +63,9 @@ class LoggedInPresenter(
     private val buildMeta: BuildMeta,
 ) : Presenter<LoggedInState> {
     @Composable
+    /**
+     * 生成已登录根页面状态并处理事件。
+     */
     override fun present(): LoggedInState {
         val coroutineScope = rememberCoroutineScope()
         val ignoreRegistrationError by remember {

@@ -16,7 +16,13 @@ import io.element.android.libraries.accountselect.api.AccountSelectEntryPoint
 import io.element.android.libraries.architecture.createNode
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的账号选择页入口实现。
+ */
 class DefaultAccountSelectEntryPoint : AccountSelectEntryPoint {
+    /**
+     * 创建账号选择页节点。
+     */
     override fun createNode(
         parentNode: Node,
         buildContext: BuildContext,

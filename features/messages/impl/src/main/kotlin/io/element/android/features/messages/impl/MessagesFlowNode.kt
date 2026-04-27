@@ -78,6 +78,7 @@ import io.element.android.libraries.matrix.api.room.joinedRoomMembers
 import io.element.android.libraries.matrix.api.roomlist.RoomListService
 import io.element.android.libraries.matrix.api.timeline.Timeline
 import io.element.android.libraries.matrix.api.timeline.item.TimelineItemDebugInfo
+import io.element.android.libraries.matrix.api.widget.CallWidgetMode
 import io.element.android.libraries.matrix.ui.messages.RoomMemberProfilesCache
 import io.element.android.libraries.matrix.ui.messages.RoomNamesCache
 import io.element.android.libraries.mediaviewer.api.MediaInfo
@@ -375,10 +376,11 @@ class MessagesFlowNode(
                         backstack.push(NavTarget.EditPoll(Timeline.Mode.Live, eventId))
                     }
 
-                    override fun navigateToRoomCall(roomId: RoomId) {
+                    override fun navigateToRoomCall(roomId: RoomId, callMode: CallWidgetMode) {
                         val callType = CallType.RoomCall(
                             sessionId = sessionId,
                             roomId = roomId,
+                            mode = callMode,
                         )
                         analyticsService.captureInteraction(Interaction.Name.MobileRoomCallButton)
                         elementCallEntryPoint.startCall(callType)
@@ -591,10 +593,11 @@ class MessagesFlowNode(
                         backstack.push(NavTarget.EditPoll(Timeline.Mode.Thread(navTarget.threadRootId), eventId))
                     }
 
-                    override fun navigateToRoomCall(roomId: RoomId) {
+                    override fun navigateToRoomCall(roomId: RoomId, callMode: CallWidgetMode) {
                         val callType = CallType.RoomCall(
                             sessionId = sessionId,
                             roomId = roomId,
+                            mode = callMode,
                         )
                         analyticsService.captureInteraction(Interaction.Name.MobileRoomCallButton)
                         elementCallEntryPoint.startCall(callType)

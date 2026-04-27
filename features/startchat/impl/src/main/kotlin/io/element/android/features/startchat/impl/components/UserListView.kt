@@ -53,6 +53,11 @@ import io.element.android.libraries.matrix.ui.model.getBestName
 import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
+/**
+ * 渲染用户列表区域。
+ *
+ * 根据是否在搜索模式，展示搜索栏或最近私聊建议。
+ */
 fun UserListView(
     state: UserListState,
     onSelectUser: (MatrixUser) -> Unit,

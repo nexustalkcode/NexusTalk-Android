@@ -14,6 +14,9 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.getSystemService
 
+/**
+ * 触发一次短震动。
+ */
 fun Context.vibrate(durationMillis: Long = 100) {
     val vibrator = getSystemService<Vibrator>() ?: return
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

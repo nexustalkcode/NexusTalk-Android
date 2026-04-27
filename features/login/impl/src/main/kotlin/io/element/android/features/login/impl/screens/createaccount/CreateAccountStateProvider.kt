@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.architecture.AsyncAction
 import io.element.android.libraries.matrix.api.core.SessionId
 
+/**
+ * 为创建账号页面预览提供样例状态。
+ */
 open class CreateAccountStateProvider : PreviewParameterProvider<CreateAccountState> {
     override val values: Sequence<CreateAccountState>
         get() = sequenceOf(
@@ -22,6 +25,9 @@ open class CreateAccountStateProvider : PreviewParameterProvider<CreateAccountSt
         )
 }
 
+/**
+ * 构造一份创建账号页面样例状态。
+ */
 private fun aCreateAccountState(
     pageProgress: Int = 100,
     createAction: AsyncAction<SessionId> = AsyncAction.Uninitialized,

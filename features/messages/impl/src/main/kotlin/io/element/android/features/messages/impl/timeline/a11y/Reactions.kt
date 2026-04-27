@@ -17,6 +17,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 
 @Composable
 @ReadOnlyComposable
+/**
+ * 生成 reaction 操作按钮的无障碍描述。
+ */
 fun a11yReactionAction(
     emoji: String,
     userAlreadyReacted: Boolean,
@@ -30,6 +33,9 @@ fun a11yReactionAction(
 
 @Composable
 @ReadOnlyComposable
+/**
+ * 生成 reaction 详情项的无障碍描述。
+ */
 fun a11yReactionDetails(
     emoji: String,
     userAlreadyReacted: Boolean,

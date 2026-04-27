@@ -37,6 +37,9 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
+/**
+ * 渲染状态事件消息行。
+ */
 fun TimelineItemStateEventRow(
     event: TimelineItem.Event,
     renderReadReceipts: Boolean,

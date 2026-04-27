@@ -46,7 +46,7 @@ class SyncNotificationWorkManagerRequest(
                             setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                         }
                     }
-                    .setTraceTag(workManagerTag(sessionId, WorkManagerRequestType.NOTIFICATION_SYNC))
+                    .setTraceTag(workManagerTag(sessionId.value, WorkManagerRequestType.NOTIFICATION_SYNC))
                     // TODO investigate using this instead of the resolver queue
                     // .setInputMerger()
                     .build()

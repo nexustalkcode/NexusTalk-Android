@@ -10,6 +10,9 @@ package io.element.android.features.messages.impl.timeline.protection
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 
+/**
+ * 为受保护媒体宽高比预览提供样例数据。
+ */
 class AspectRatioProvider : PreviewParameterProvider<Float?> {
     override val values: Sequence<Float?> = sequenceOf(
         null,

@@ -18,6 +18,9 @@ import io.element.android.libraries.designsystem.preview.ElementPreview
 import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染已被撤回/移除消息的提示视图。
+ */
 @Composable
 fun TimelineItemRedactedView(
     @Suppress("UNUSED_PARAMETER") content: TimelineItemRedactedContent,

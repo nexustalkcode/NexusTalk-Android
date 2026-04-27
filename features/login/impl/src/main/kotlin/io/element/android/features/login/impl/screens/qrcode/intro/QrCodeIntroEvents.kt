@@ -8,6 +8,10 @@
 
 package io.element.android.features.login.impl.screens.qrcode.intro
 
+/**
+ * 二维码登录引导页可能触发的事件。
+ */
 sealed interface QrCodeIntroEvents {
+    /** 请求继续到扫码步骤。 */
     data object Continue : QrCodeIntroEvents
 }

@@ -57,6 +57,12 @@ private val tag = LoggerTag("LinkNewDeviceFlowNode", LoggerTags.linkNewDevice)
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 新设备关联总流程节点。
+ *
+ * 该节点统一编排“关联移动端”和“关联桌面端”两套子流程，
+ * 并负责把底层 handler 的步骤状态映射为 Appyx back stack 上的具体页面。
+ */
 class LinkNewDeviceFlowNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -76,6 +82,9 @@ class LinkNewDeviceFlowNode(
     private var activity: Activity? = null
     private var darkTheme: Boolean = false
 
+    /**
+     * 在节点构建完成后建立对移动端和桌面端 handler 的状态订阅。
+     */
     override fun onBuilt() {
         super.onBuilt()
         // 保存协程 Job，便于生命周期结束时取消
@@ -102,6 +111,9 @@ class LinkNewDeviceFlowNode(
         )
     }
 
+    /**
+     * 流程中会出现的导航目标。
+     */
     sealed interface NavTarget : Parcelable {
         // 根节点：显示设备类型选择或不支持提示
         @Parcelize
@@ -132,6 +144,9 @@ class LinkNewDeviceFlowNode(
         ) : NavTarget
     }
 
+    /**
+     * 监听移动端关联流程的状态变化，并驱动页面跳转。
+     */
     private fun observeLinkNewMobileHandler(): Job {
         Timber.tag(tag.value).d("startObservingLinkNewMobileHandler")
         return linkNewMobileHandler.stepFlow
@@ -171,6 +186,9 @@ class LinkNewDeviceFlowNode(
             .launchIn(sessionCoroutineScope)
     }
 
+    /**
+     * 监听桌面端关联流程的状态变化，并驱动页面跳转。
+     */
     private fun observeLinkNewDesktopHandler(): Job {
         Timber.tag(tag.value).d("startObservingLinkNewDesktopHandler")
         return linkNewDesktopHandler.stepFlow.onEach { linkDesktopStep ->
@@ -197,6 +215,11 @@ class LinkNewDeviceFlowNode(
             .launchIn(sessionCoroutineScope)
     }
 
+    /**
+     * 把底层 SDK 的错误类型映射为 UI 层使用的错误页类型。
+     *
+     * @param errorType SDK 返回的错误类型。
+     */
     private fun navigateToError(errorType: ErrorType) {
         // 将底层错误映射到 UI 错误页类型
         // TODO Update this mapping
@@ -213,6 +236,12 @@ class LinkNewDeviceFlowNode(
         backstack.push(NavTarget.Error(error))
     }
 
+    /**
+     * 根据导航目标创建对应子节点。
+     *
+     * @param navTarget 当前需要解析的导航目标。
+     * @param buildContext 子节点的构建上下文。
+     */
     override fun resolve(navTarget: NavTarget, buildContext: BuildContext): Node {
         return when (navTarget) {
             NavTarget.Root -> {
@@ -294,11 +323,21 @@ class LinkNewDeviceFlowNode(
         }
     }
 
+    /**
+     * 在浏览器中打开关联流程要求访问的授权链接。
+     *
+     * @param url 需要打开的授权地址。
+     */
     private fun navigateToBrowser(url: String) {
         // 使用自定义标签页打开验证链接
         activity?.openUrlInChromeCustomTab(null, darkTheme, url)
     }
 
+    /**
+     * 渲染当前流程的 back stack。
+     *
+     * @param modifier 应用于根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         // 记录 Activity 引用和当前主题，用于打开浏览器

@@ -10,7 +10,12 @@ package io.element.android.features.messages.impl.timeline.components.receipt.bo
 
 import io.element.android.features.messages.impl.timeline.model.TimelineItem
 
+/**
+ * 已读回执底部弹窗可能触发的事件。
+ */
 sealed interface ReadReceiptBottomSheetEvents {
+    /** 选中某条时间线事件并展示其已读回执。 */
     data class EventSelected(val event: TimelineItem.Event) : ReadReceiptBottomSheetEvents
+    /** 关闭当前底部弹窗。 */
     data object Dismiss : ReadReceiptBottomSheetEvents
 }

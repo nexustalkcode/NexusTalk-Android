@@ -34,6 +34,9 @@ import io.element.android.libraries.matrix.ui.room.LoadingRoomState
 import io.element.android.libraries.matrix.ui.room.LoadingRoomStateProvider
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 渲染房间加载中的占位页面。
+ */
 @Composable
 fun LoadingRoomNodeView(
     state: LoadingRoomState,
@@ -73,6 +76,9 @@ fun LoadingRoomNodeView(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染加载页顶栏。
+ */
 @Composable
 private fun LoadingRoomTopBar(
     onBackClick: () -> Unit,

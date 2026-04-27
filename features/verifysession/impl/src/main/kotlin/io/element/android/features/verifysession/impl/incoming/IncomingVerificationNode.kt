@@ -23,6 +23,11 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 传入验证页面节点。
+ *
+ * 负责根据入口参数创建 Presenter，并在验证流程结束后把完成事件回传给上层。
+ */
 class IncomingVerificationNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
@@ -35,10 +40,18 @@ class IncomingVerificationNode(
         navigator = this,
     )
 
+    /**
+     * 验证流程结束时通知上层回调。
+     */
     override fun onFinish() {
         callback.onDone()
     }
 
+    /**
+     * 渲染传入验证页面。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         val state = presenter.present()

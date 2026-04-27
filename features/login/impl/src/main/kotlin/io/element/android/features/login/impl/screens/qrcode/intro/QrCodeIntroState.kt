@@ -10,6 +10,15 @@ package io.element.android.features.login.impl.screens.qrcode.intro
 
 import io.element.android.libraries.permissions.api.PermissionsState
 
+/**
+ * 二维码登录引导页展示状态。
+ *
+ * @property appName 当前应用名。
+ * @property desktopAppName 桌面端应用名。
+ * @property cameraPermissionState 相机权限状态。
+ * @property canContinue 当前是否可以继续到扫码页。
+ * @property eventSink 页面事件分发函数。
+ */
 data class QrCodeIntroState(
     val appName: String,
     val desktopAppName: String,

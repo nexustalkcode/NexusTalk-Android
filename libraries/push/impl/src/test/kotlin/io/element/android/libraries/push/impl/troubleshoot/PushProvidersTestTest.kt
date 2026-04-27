@@ -11,7 +11,6 @@ package io.element.android.libraries.push.impl.troubleshoot
 import com.google.common.truth.Truth.assertThat
 import io.element.android.libraries.pushproviders.test.FakePushProvider
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
-import io.element.android.libraries.troubleshoot.test.runAndTestState
 import io.element.android.services.toolbox.test.strings.FakeStringProvider
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

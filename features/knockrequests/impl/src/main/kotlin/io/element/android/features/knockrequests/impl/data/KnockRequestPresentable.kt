@@ -15,6 +15,9 @@ import io.element.android.libraries.matrix.api.core.EventId
 import io.element.android.libraries.matrix.api.core.UserId
 
 @Immutable
+/**
+ * 供 UI 展示的敲门请求抽象。
+ */
 interface KnockRequestPresentable {
     val eventId: EventId
     val userId: UserId
@@ -23,6 +26,9 @@ interface KnockRequestPresentable {
     val reason: String?
     val formattedDate: String?
 
+    /**
+     * 构造当前敲门请求的头像数据。
+     */
     fun getAvatarData(size: AvatarSize) = AvatarData(
         id = userId.value,
         name = displayName,
@@ -30,6 +36,9 @@ interface KnockRequestPresentable {
         size = size,
     )
 
+    /**
+     * 返回优先用于展示的人类可读名称。
+     */
     fun getBestName(): String {
         return displayName?.takeIf { it.isNotEmpty() } ?: userId.value
     }

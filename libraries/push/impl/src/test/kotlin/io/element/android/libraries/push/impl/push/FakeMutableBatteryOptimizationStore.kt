@@ -11,12 +11,12 @@ package io.element.android.libraries.push.impl.push
 import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeMutableBatteryOptimizationStore(
-    private val showBatteryOptimizationBannerResult: () -> Unit = { lambdaError() },
+    private val showBatteryOptimizationBannerResult: (String) -> Unit = { lambdaError() },
     private val onOptimizationBannerDismissedResult: () -> Unit = { lambdaError() },
     private val resetResult: () -> Unit = { lambdaError() },
 ) : MutableBatteryOptimizationStore {
-    override suspend fun showBatteryOptimizationBanner() {
-        showBatteryOptimizationBannerResult()
+    override suspend fun showBatteryOptimizationBanner(reason: String) {
+        showBatteryOptimizationBannerResult(reason)
     }
 
     override suspend fun onOptimizationBannerDismissed() {

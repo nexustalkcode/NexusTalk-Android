@@ -43,6 +43,9 @@ import io.element.android.libraries.ui.strings.CommonStrings
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
+/**
+ * 渲染角色与权限主页。
+ */
 fun RolesAndPermissionsView(
     state: RolesAndPermissionsState,
     rolesAndPermissionsNavigator: RolesAndPermissionsNavigator,
@@ -135,6 +138,9 @@ fun RolesAndPermissionsView(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染“修改自己角色”底部弹窗。
+ */
 @Composable
 private fun ChangeOwnRoleBottomSheet(
     availableDemoteActions: ImmutableList<SelfDemoteAction>,

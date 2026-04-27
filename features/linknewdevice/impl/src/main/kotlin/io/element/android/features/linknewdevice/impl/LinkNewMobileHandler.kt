@@ -28,6 +28,12 @@ private val loggerTag = LoggerTag("LinkNewMobileHandler", LoggerTags.linkNewDevi
 
 @Inject
 @SingleIn(SessionScope::class)
+/**
+ * 管理“把当前会话关联到移动端设备”的底层流程。
+ *
+ * 该处理器封装 Matrix SDK 的 mobile linking handler，
+ * 并负责把底层步骤转发给 UI 层订阅。
+ */
 class LinkNewMobileHandler(
     private val matrixClient: MatrixClient,
 ) {
@@ -42,6 +48,9 @@ class LinkNewMobileHandler(
     val stepFlow: StateFlow<LinkMobileStep>
         get() = linkMobileStepFlow.asStateFlow()
 
+    /**
+     * 创建并启动一套新的移动端关联流程。
+     */
     fun createAndStartNewHandler() {
         Timber.tag(loggerTag.value).d("createAndStartNewHandler()")
         // 启动新的 handler 前先取消旧任务
@@ -61,6 +70,9 @@ class LinkNewMobileHandler(
         }
     }
 
+    /**
+     * 取消当前流程并恢复到未初始化状态。
+     */
     fun reset() {
         // 取消任务并重置流程状态
         currentJob?.cancel()

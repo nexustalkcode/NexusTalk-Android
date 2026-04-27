@@ -21,7 +21,13 @@ import io.element.android.libraries.matrix.api.core.SessionId
 import io.element.android.libraries.matrix.api.core.ThreadId
 
 @ContributesBinding(AppScope::class)
+/**
+ * 默认的应用内部 deeplink 解析器。
+ */
 class DefaultDeeplinkParser : DeeplinkParser {
+    /**
+     * 从 Intent 中提取 deeplink 数据。
+     */
     override fun getFromIntent(intent: Intent): DeeplinkData? {
         return intent
             .takeIf { it.action == Intent.ACTION_VIEW }
@@ -29,6 +35,9 @@ class DefaultDeeplinkParser : DeeplinkParser {
             ?.toDeeplinkData()
     }
 
+    /**
+     * 将 Uri 转换为 deeplink 数据。
+     */
     private fun Uri.toDeeplinkData(): DeeplinkData? {
         if (scheme != SCHEME) return null
         if (host != HOST) return null

@@ -12,6 +12,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import io.element.android.libraries.matrix.api.timeline.item.event.UnableToDecryptContent
 import io.element.android.libraries.matrix.api.timeline.item.event.UtdCause
 
+/**
+ * 为无法解密消息内容预览提供样例数据。
+ */
 open class TimelineItemEncryptedContentProvider : PreviewParameterProvider<TimelineItemEncryptedContent> {
     override val values: Sequence<TimelineItemEncryptedContent>
         get() = sequenceOf(
@@ -67,6 +70,9 @@ open class TimelineItemEncryptedContentProvider : PreviewParameterProvider<Timel
         )
 }
 
+/**
+ * 构造一份无法解密消息内容样例。
+ */
 private fun aTimelineItemEncryptedContent(
     data: UnableToDecryptContent.Data = UnableToDecryptContent.Data.Unknown
 ) = TimelineItemEncryptedContent(

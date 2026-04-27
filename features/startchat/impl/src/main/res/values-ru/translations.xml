@@ -8,7 +8,7 @@
   <string name="screen_start_chat_join_room_by_address_placeholder">"Ввести…"</string>
   <string name="screen_start_chat_join_room_by_address_room_found">"Соответствующая комната найдена"</string>
   <string name="screen_start_chat_join_room_by_address_room_not_found">"Комната не найдена"</string>
-  <string name="screen_start_chat_join_room_by_address_supporting_text">"прим. #room-name:matrix.org"</string>
+  <string name="screen_start_chat_join_room_by_address_supporting_text">"прим. #room-name:nexustalk.space"</string>
   <string name="screen_scan_user_qr_code_title">"Сканировать QR-код"</string>
   <string name="screen_scan_user_qr_code_subtitle">"Отсканируйте QR-код, чтобы добавить контакт"</string>
   <string name="screen_scan_user_qr_code_success">"QR-код успешно отсканирован"</string>

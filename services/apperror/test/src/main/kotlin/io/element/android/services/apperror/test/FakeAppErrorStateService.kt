@@ -10,15 +10,18 @@ package io.element.android.services.apperror.test
 
 import io.element.android.services.apperror.api.AppErrorState
 import io.element.android.services.apperror.api.AppErrorStateService
-import io.element.android.tests.testutils.lambda.lambdaError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class FakeAppErrorStateService(
     initialState: AppErrorState = AppErrorState.NoError,
-    private val showErrorResult: (String, String) -> Unit = { _, _ -> lambdaError() },
-    private val showErrorResResult: (Int, Int) -> Unit = { _, _ -> lambdaError() }
+    private val showErrorResult: (String, String) -> Unit = { _, _ ->
+        error("showErrorResult should be provided in tests")
+    },
+    private val showErrorResResult: (Int, Int) -> Unit = { _, _ ->
+        error("showErrorResResult should be provided in tests")
+    }
 ) : AppErrorStateService {
     private val mutableAppErrorStateFlow = MutableStateFlow(initialState)
     override val appErrorStateFlow: StateFlow<AppErrorState> = mutableAppErrorStateFlow.asStateFlow()

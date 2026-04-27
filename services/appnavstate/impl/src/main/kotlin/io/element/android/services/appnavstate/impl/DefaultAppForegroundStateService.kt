@@ -13,6 +13,9 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
 import io.element.android.services.appnavstate.api.AppForegroundStateService
 import kotlinx.coroutines.flow.MutableStateFlow
+import timber.log.Timber
+
+private const val incomingCallTraceTag = "IncomingCallTrace"
 
 class DefaultAppForegroundStateService : AppForegroundStateService {
     override val isInForeground = MutableStateFlow(false)
@@ -23,22 +26,44 @@ class DefaultAppForegroundStateService : AppForegroundStateService {
     private val appLifecycle: Lifecycle by lazy { ProcessLifecycleOwner.get().lifecycle }
 
     override fun startObservingForeground() {
+        Timber.tag(incomingCallTraceTag).i(
+            "AppForegroundStateService.startObservingForeground currentLifecycle=%s currentForeground=%s",
+            appLifecycle.currentState,
+            getCurrentState(),
+        )
         appLifecycle.addObserver(lifecycleObserver)
     }
 
     override fun updateIsInCallState(isInCall: Boolean) {
+        Timber.tag(incomingCallTraceTag).i("AppForegroundStateService.updateIsInCallState %s -> %s", this.isInCall.value, isInCall)
         this.isInCall.value = isInCall
     }
 
     override fun updateHasRingingCall(hasRingingCall: Boolean) {
+        Timber.tag(incomingCallTraceTag).i("AppForegroundStateService.updateHasRingingCall %s -> %s", this.hasRingingCall.value, hasRingingCall)
         this.hasRingingCall.value = hasRingingCall
     }
 
     override fun updateIsSyncingNotificationEvent(isSyncingNotificationEvent: Boolean) {
+        Timber.tag(incomingCallTraceTag).i(
+            "AppForegroundStateService.updateIsSyncingNotificationEvent %s -> %s",
+            this.isSyncingNotificationEvent.value,
+            isSyncingNotificationEvent,
+        )
         this.isSyncingNotificationEvent.value = isSyncingNotificationEvent
     }
 
-    private val lifecycleObserver = LifecycleEventObserver { _, _ -> isInForeground.value = getCurrentState() }
+    private val lifecycleObserver = LifecycleEventObserver { _, event ->
+        val newValue = getCurrentState()
+        Timber.tag(incomingCallTraceTag).i(
+            "AppForegroundStateService.lifecycle event=%s foreground %s -> %s lifecycle=%s",
+            event,
+            isInForeground.value,
+            newValue,
+            appLifecycle.currentState,
+        )
+        isInForeground.value = newValue
+    }
 
     private fun getCurrentState(): Boolean = appLifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
 }

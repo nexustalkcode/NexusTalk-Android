@@ -2,9 +2,16 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="screen_edit_room_address_room_address_section_footer">"É necessário um endereço para tornar a sala visível no diretório público."</string>
   <string name="screen_edit_room_address_title">"Editar endereço"</string>
+  <string name="screen_manage_authorized_spaces_header">"Espaços onde os membros podem entrar na sala sem convite."</string>
+  <string name="screen_manage_authorized_spaces_title">"Gerenciar espaços"</string>
+  <string name="screen_manage_authorized_spaces_unknown_space">"(Espaço desconhecido)"</string>
+  <string name="screen_manage_authorized_spaces_unknown_spaces_section_title">"Outros espaços dos quais você não é membro"</string>
+  <string name="screen_manage_authorized_spaces_your_spaces_section_title">"Seus espaços"</string>
   <string name="screen_security_and_privacy_add_room_address_action">"Adicionar endereço"</string>
+  <string name="screen_security_and_privacy_ask_to_join_multiple_spaces_members_option_description">"Qualquer pessoa em espaços autorizados pode participar, mas todos os demais devem solicitar acesso."</string>
   <string name="screen_security_and_privacy_ask_to_join_option_description">"Todos precisam de pedir acesso."</string>
   <string name="screen_security_and_privacy_ask_to_join_option_title">"Pedir para entrar"</string>
+  <string name="screen_security_and_privacy_ask_to_join_single_space_members_option_description">"Qualquer pessoa em %1$s pode participar, mas todos os demais deverão solicitar acesso."</string>
   <string name="screen_security_and_privacy_enable_encryption_alert_confirm_button_title">"Sim, ativar cifragem"</string>
   <string name="screen_security_and_privacy_enable_encryption_alert_description">"Uma vez ativada, a cifragem não pode ser desativada. O histórico de mensagens só será visível a membros a partir do momento em que foram convidados ou que entraram na sala.
 Ninguém além dos membros poderão ler quaisquer mensagens. Isto pode impedir que robôs (\"bots\") e pontes (\"bridges\") funcionem devidamente.
@@ -15,22 +22,29 @@ Não recomendamos ativar a cifragem em salas que qualquer pessoa possa encontrar
   <string name="screen_security_and_privacy_encryption_toggle_title">"Ativar cifragem ponta-a-ponta"</string>
   <string name="screen_security_and_privacy_room_access_anyone_option_description">"Qualquer pessoa pode entrar."</string>
   <string name="screen_security_and_privacy_room_access_anyone_option_title">"Qualquer pessoa"</string>
+  <string name="screen_security_and_privacy_room_access_footer">"Escolha quais membros dos espaços podem entrar nesta sala sem convite. %1$s"</string>
+  <string name="screen_security_and_privacy_room_access_footer_manage_spaces_action">"Gerenciar espaços"</string>
   <string name="screen_security_and_privacy_room_access_invite_only_option_description">"Apenas pessoas convidadas podem entrar."</string>
   <string name="screen_security_and_privacy_room_access_invite_only_option_title">"Apenas por convite"</string>
   <string name="screen_security_and_privacy_room_access_section_header">"Acesso"</string>
+  <string name="screen_security_and_privacy_room_access_space_members_option_multiple_parents_description">"Qualquer pessoa em espaços autorizados pode participar."</string>
+  <string name="screen_security_and_privacy_room_access_space_members_option_single_parent_description">"Qualquer pessoa em %1$s pode participar."</string>
   <string name="screen_security_and_privacy_room_access_space_members_option_title">"Membros do espaço"</string>
   <string name="screen_security_and_privacy_room_access_space_members_option_unavailable_description">"Os espaços ainda não estão implementados"</string>
   <string name="screen_security_and_privacy_room_address_section_footer">"É necessário um endereço para tornar a sala visível no diretório público."</string>
   <string name="screen_security_and_privacy_room_address_section_header">"Endereço"</string>
   <string name="screen_security_and_privacy_room_directory_visibility_section_footer">"Permite que esta sala seja encontrada através do diretório público do %1$s."</string>
+  <string name="screen_security_and_privacy_room_directory_visibility_toggle_description">"Permita ser encontrado pesquisando no diretório público."</string>
   <string name="screen_security_and_privacy_room_directory_visibility_toggle_title">"Visível no diretório público"</string>
   <string name="screen_security_and_privacy_room_history_anyone_option_title">"Qualquer pessoa (histórico público)"</string>
+  <string name="screen_security_and_privacy_room_history_section_footer">"As alterações não afetarão as mensagens anteriores, apenas as novas. %1$s"</string>
   <string name="screen_security_and_privacy_room_history_section_header">"Quem pode ler o histórico de mensagens"</string>
   <string name="screen_security_and_privacy_room_history_since_invite_option_title">"Membros, desde que foram convidados"</string>
   <string name="screen_security_and_privacy_room_history_since_selecting_option_title">"Membros (histórico completo)"</string>
   <string name="screen_security_and_privacy_room_publishing_section_footer">"Estes endereços permitem encontrar e aceder a sala, bem como a sua fácil partilha com outros.
 Podes escolher publicar a sala no diretório público do teu servidor."</string>
   <string name="screen_security_and_privacy_room_publishing_section_header">"Publicar sala"</string>
+  <string name="screen_security_and_privacy_room_visibility_section_footer">"Os endereços são uma forma de encontrar e aceder a salas e espaços. Isto também garante que os podes partilhar facilmente com outras pessoas."</string>
   <string name="screen_security_and_privacy_room_visibility_section_header">"Visibilidade"</string>
   <string name="screen_security_and_privacy_title">"Segurança e privacidade"</string>
 </resources>

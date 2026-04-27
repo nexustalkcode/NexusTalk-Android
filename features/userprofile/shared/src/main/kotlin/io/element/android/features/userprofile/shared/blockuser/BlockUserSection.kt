@@ -33,6 +33,9 @@ import io.element.android.libraries.designsystem.theme.components.ListItemStyle
 import io.element.android.libraries.designsystem.theme.components.Text
 import io.element.android.libraries.ui.strings.CommonStrings
 
+/**
+ * 用户资料页中的拉黑/取消拉黑设置区块。
+ */
 @Composable
 fun BlockUserSection(
     state: UserProfileState,
@@ -67,6 +70,9 @@ fun BlockUserSection(
     }
 }
 
+/**
+ * 根据当前拉黑状态渲染单个设置项。
+ */
 @Composable
 private fun PreferenceBlockUser(
     isBlocked: Boolean?,

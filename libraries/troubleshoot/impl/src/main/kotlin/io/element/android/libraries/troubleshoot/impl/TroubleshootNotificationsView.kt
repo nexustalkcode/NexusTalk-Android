@@ -21,6 +21,7 @@ import androidx.lifecycle.Lifecycle
 import io.element.android.compound.theme.ElementTheme
 import io.element.android.compound.tokens.generated.CompoundIcons
 import io.element.android.libraries.architecture.AsyncAction
+import io.element.android.libraries.troubleshoot.R
 import io.element.android.libraries.designsystem.components.list.ListItemContent
 import io.element.android.libraries.designsystem.components.preferences.PreferencePage
 import io.element.android.libraries.designsystem.preview.ElementPreview

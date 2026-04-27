@@ -24,6 +24,13 @@ import io.element.android.libraries.designsystem.theme.components.hide
 import io.element.android.libraries.matrix.api.timeline.item.event.EventOrTransactionId
 
 @OptIn(ExperimentalMaterial3Api::class)
+/**
+ * 渲染自定义 reaction 选择底部弹层。
+ *
+ * @param state 自定义 reaction 展示状态。
+ * @param onSelectEmoji 选中 emoji 后的回调。
+ * @param modifier 应用于弹层根节点的修饰符。
+ */
 @Composable
 fun CustomReactionBottomSheet(
     state: CustomReactionState,

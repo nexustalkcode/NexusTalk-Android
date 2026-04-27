@@ -48,10 +48,14 @@ internal object IntentProvider {
      * @param callType 通话类型
      * @return PendingIntent 待处理意图
      */
-    fun getPendingIntent(context: Context, callType: CallType): PendingIntent {
+    fun getPendingIntent(
+        context: Context,
+        callType: CallType,
+        requestCode: Int = DefaultElementCallEntryPoint.REQUEST_CODE,
+    ): PendingIntent {
         return PendingIntentCompat.getActivity(
             context,
-            DefaultElementCallEntryPoint.REQUEST_CODE,
+            requestCode,
             createIntent(context, callType),
             PendingIntent.FLAG_CANCEL_CURRENT,
             false

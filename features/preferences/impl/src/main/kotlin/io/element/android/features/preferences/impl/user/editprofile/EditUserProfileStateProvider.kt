@@ -16,6 +16,9 @@ import io.element.android.libraries.permissions.api.PermissionsState
 import io.element.android.libraries.permissions.api.aPermissionsState
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为编辑用户资料页面预览提供样例状态。
+ */
 open class EditUserProfileStateProvider : PreviewParameterProvider<EditUserProfileState> {
     override val values: Sequence<EditUserProfileState>
         get() = sequenceOf(
@@ -25,6 +28,9 @@ open class EditUserProfileStateProvider : PreviewParameterProvider<EditUserProfi
         )
 }
 
+/**
+ * 构造一份编辑用户资料页面样例状态。
+ */
 fun aEditUserProfileState(
     userId: UserId = UserId("@john.doe:matrix.org"),
     displayName: String = "John Doe",

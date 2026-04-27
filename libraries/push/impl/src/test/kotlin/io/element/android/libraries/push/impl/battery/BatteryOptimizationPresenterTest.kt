@@ -80,6 +80,23 @@ class BatteryOptimizationPresenterTest {
     }
 
     @Test
+    fun `present - should proactively display banner on Xiaomi like devices`() = runTest {
+        val presenter = createPresenter(
+            pushDataStore = InMemoryPushDataStore(
+                initialShouldDisplayBatteryOptimizationBanner = false,
+            ),
+            batteryOptimization = FakeBatteryOptimization(
+                isIgnoringBatteryOptimizationsResult = false,
+                shouldDisplayBannerWithoutPreviousPushFailureResult = true,
+            ),
+        )
+        presenter.testWithLifecycleOwner {
+            val initialState = awaitItem()
+            assertThat(initialState.shouldDisplayBanner).isTrue()
+        }
+    }
+
+    @Test
     fun `present - should display banner, user dismisses`() = runTest {
         val onOptimizationBannerDismissedResult = lambdaRecorder<Unit> { }
         val presenter = createPresenter(
@@ -159,6 +176,34 @@ class BatteryOptimizationPresenterTest {
         }
     }
 
+    @Test
+    fun `present - should dismiss banner after successful launch on Honor or Huawei like devices`() = runTest {
+        val onOptimizationBannerDismissedResult = lambdaRecorder<Unit> { }
+        val requestDisablingBatteryOptimizationResult = lambdaRecorder<Boolean> { true }
+        val presenter = createPresenter(
+            pushDataStore = InMemoryPushDataStore(
+                initialShouldDisplayBatteryOptimizationBanner = true,
+            ),
+            batteryOptimization = FakeBatteryOptimization(
+                isIgnoringBatteryOptimizationsResult = false,
+                shouldDismissBannerAfterSuccessfulRequestResult = true,
+                requestDisablingBatteryOptimizationResult = requestDisablingBatteryOptimizationResult,
+            ),
+            mutableBatteryOptimizationStore = FakeMutableBatteryOptimizationStore(
+                onOptimizationBannerDismissedResult = onOptimizationBannerDismissedResult,
+            ),
+        )
+        presenter.testWithLifecycleOwner {
+            val initialState = awaitItem()
+            assertThat(initialState.shouldDisplayBanner).isFalse()
+            val displayedItem = awaitItem()
+            assertThat(displayedItem.shouldDisplayBanner).isTrue()
+            displayedItem.eventSink(BatteryOptimizationEvents.RequestDisableOptimizations)
+            requestDisablingBatteryOptimizationResult.assertions().isCalledOnce()
+            onOptimizationBannerDismissedResult.assertions().isCalledOnce()
+        }
+    }
+
     private fun createPresenter(
         pushDataStore: PushDataStore = InMemoryPushDataStore(),
         mutableBatteryOptimizationStore: MutableBatteryOptimizationStore = FakeMutableBatteryOptimizationStore(),
@@ -166,6 +211,6 @@ class BatteryOptimizationPresenterTest {
     ) = BatteryOptimizationPresenter(
         pushDataStore = pushDataStore,
         mutableBatteryOptimizationStore = mutableBatteryOptimizationStore,
-        batteryOptimization = batteryOptimization
+        batteryOptimization = batteryOptimization,
     )
 }

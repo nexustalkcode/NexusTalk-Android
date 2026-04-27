@@ -8,6 +8,7 @@
 
 package io.element.android.features.home.impl.components
 
+import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -19,6 +20,10 @@ import io.element.android.libraries.designsystem.preview.PreviewsDayNight
 import io.element.android.libraries.push.api.battery.BatteryOptimizationEvents
 import io.element.android.libraries.push.api.battery.BatteryOptimizationState
 import io.element.android.libraries.push.api.battery.aBatteryOptimizationState
+import timber.log.Timber
+import java.util.Locale
+
+private const val batteryOptimizationDebugTag = "BatteryOptimizationDebug"
 
 /**
  * 电池优化横幅
@@ -35,13 +40,34 @@ internal fun BatteryOptimizationBanner(
     onDismissClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isHonorOrHuaweiDevice = rememberIsHonorOrHuaweiDevice()
+    val description = if (isHonorOrHuaweiDevice) {
+        stringResource(
+            R.string.screen_roomlist_battery_optimization_honor_huawei_content,
+            stringResource(io.element.android.appconfig.R.string.app_name),
+        )
+    } else {
+        stringResource(
+            R.string.screen_roomlist_battery_optimization_explicit_content,
+            stringResource(io.element.android.appconfig.R.string.app_name),
+        )
+    }
+    val actionText = if (isHonorOrHuaweiDevice) {
+        stringResource(R.string.screen_roomlist_battery_optimization_honor_huawei_action)
+    } else {
+        stringResource(io.element.android.libraries.ui.strings.CommonStrings.action_go_to_settings)
+    }
+
     Announcement(
         modifier = modifier.roomListBannerPadding(),
         title = stringResource(R.string.banner_battery_optimization_title_android),
-        description = stringResource(R.string.banner_battery_optimization_content_android),
+        description = description,
         type = AnnouncementType.Actionable(
-            actionText = stringResource(R.string.banner_battery_optimization_submit_android),
-            onActionClick = { state.eventSink(BatteryOptimizationEvents.RequestDisableOptimizations) },
+            actionText = actionText,
+            onActionClick = {
+                Timber.tag(batteryOptimizationDebugTag).i("BatteryOptimizationBanner.click_go_to_settings")
+                state.eventSink(BatteryOptimizationEvents.RequestDisableOptimizations)
+            },
             onDismissClick = onDismissClick,
         ),
     )
@@ -54,4 +80,14 @@ internal fun BatteryOptimizationBannerPreview() = ElementPreview {
         state = aBatteryOptimizationState(),
         onDismissClick = {},
     )
+}
+
+@Composable
+private fun rememberIsHonorOrHuaweiDevice(): Boolean {
+    val normalizedManufacturer = Build.MANUFACTURER.orEmpty().lowercase(Locale.ROOT)
+    val normalizedBrand = Build.BRAND.orEmpty().lowercase(Locale.ROOT)
+    return normalizedManufacturer.contains("honor") ||
+        normalizedBrand.contains("honor") ||
+        normalizedManufacturer.contains("huawei") ||
+        normalizedBrand.contains("huawei")
 }

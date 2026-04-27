@@ -20,11 +20,19 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 桌面端关联说明页节点。
+ *
+ * 负责展示开始扫码前的提示说明，并把继续/返回动作回传给流程节点。
+ */
 class DesktopNoticeNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
     private val presenter: DesktopNoticePresenter,
 ) : Node(buildContext, plugins = plugins) {
+    /**
+     * 桌面端说明页回调。
+     */
     interface Callback : Plugin {
         // 返回上一页
         fun navigateBack()
@@ -34,6 +42,11 @@ class DesktopNoticeNode(
 
     private val callback: Callback = callback()
 
+    /**
+     * 渲染桌面端关联说明页。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         // 生成状态并渲染提示页

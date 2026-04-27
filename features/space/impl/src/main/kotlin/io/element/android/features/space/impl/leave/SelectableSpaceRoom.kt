@@ -10,6 +10,9 @@ package io.element.android.features.space.impl.leave
 
 import io.element.android.libraries.matrix.api.spaces.SpaceRoom
 
+/**
+ * 离开 Space 页面中的可选房间展示模型。
+ */
 data class SelectableSpaceRoom(
     val spaceRoom: SpaceRoom,
     val isLastAdmin: Boolean,

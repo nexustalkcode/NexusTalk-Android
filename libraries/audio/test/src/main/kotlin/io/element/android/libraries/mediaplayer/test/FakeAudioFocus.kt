@@ -10,11 +10,14 @@ package io.element.android.libraries.mediaplayer.test
 
 import io.element.android.libraries.audio.api.AudioFocus
 import io.element.android.libraries.audio.api.AudioFocusRequester
-import io.element.android.tests.testutils.lambda.lambdaError
 
 class FakeAudioFocus(
-    private val requestAudioFocusResult: (AudioFocusRequester, () -> Unit) -> Unit = { _, _ -> lambdaError() },
-    private val releaseAudioFocusResult: () -> Unit = { lambdaError() },
+    private val requestAudioFocusResult: (AudioFocusRequester, () -> Unit) -> Unit = { _, _ ->
+        error("requestAudioFocusResult should be provided in tests")
+    },
+    private val releaseAudioFocusResult: () -> Unit = {
+        error("releaseAudioFocusResult should be provided in tests")
+    },
 ) : AudioFocus {
     override fun requestAudioFocus(
         requester: AudioFocusRequester,

@@ -25,6 +25,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
+/**
+ * 为修改成员角色页面预览提供样例状态。
+ */
 class ChangeRolesStateProvider : PreviewParameterProvider<ChangeRolesState> {
     override val values: Sequence<ChangeRolesState>
         get() = sequenceOf(
@@ -60,6 +63,9 @@ class ChangeRolesStateProvider : PreviewParameterProvider<ChangeRolesState> {
         )
 }
 
+/**
+ * 构造一份修改成员角色页面样例状态。
+ */
 internal fun aChangeRolesState(
     role: RoomMember.Role = RoomMember.Role.Admin,
     searchQuery: String = "",
@@ -82,6 +88,9 @@ internal fun aChangeRolesState(
     eventSink = eventSink,
 )
 
+/**
+ * 构造一份带已选成员的页面样例状态。
+ */
 internal fun aChangeRolesStateWithSelectedUsers() = aChangeRolesState(
     selectedUsers = aMatrixUserList().toImmutableList(),
     searchResults = SearchBarResultState.Results(
@@ -100,6 +109,9 @@ internal fun aChangeRolesStateWithSelectedUsers() = aChangeRolesState(
     canRemoveMember = { it != UserId("@alice:server.org") },
 )
 
+/**
+ * 构造一份包含 owner/admin 成员的页面样例状态。
+ */
 internal fun aChangeRolesStateWithOwners(
     role: RoomMember.Role = RoomMember.Role.Admin,
     selectedUsers: List<MatrixUser> = listOf(

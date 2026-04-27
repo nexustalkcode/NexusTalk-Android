@@ -22,24 +22,39 @@ import io.element.android.libraries.di.SessionScope
 
 @ContributesNode(SessionScope::class)
 @AssistedInject
+/**
+ * 展示二维码页面节点。
+ *
+ * 负责读取二维码内容输入，并把返回动作回传给外层流程。
+ */
 class ShowQrCodeNode(
     @Assisted buildContext: BuildContext,
     @Assisted plugins: List<Plugin>,
 ) : Node(buildContext, plugins = plugins) {
-    // 页面输入参数：二维码内容
+    /**
+     * 展示二维码页面输入。
+     *
+     * @property data 需要编码展示的二维码内容。
+     */
     class Inputs(
         val data: String,
     ) : NodeInputs
 
-    // 页面回调：返回上一层
+    /**
+     * 展示二维码页面向上抛出的回调。
+     */
     interface Callback : Plugin {
         fun navigateBack()
     }
 
-    // 读取构建时传入的输入与回调
     private val inputs: Inputs = inputs<Inputs>()
     private val callback: Callback = callback()
 
+    /**
+     * 渲染展示二维码页面。
+     *
+     * @param modifier 应用于页面根节点的修饰符。
+     */
     @Composable
     override fun View(modifier: Modifier) {
         ShowQrCodeView(

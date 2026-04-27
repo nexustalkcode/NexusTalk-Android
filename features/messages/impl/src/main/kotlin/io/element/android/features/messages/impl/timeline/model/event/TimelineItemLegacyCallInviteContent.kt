@@ -10,6 +10,9 @@ package io.element.android.features.messages.impl.timeline.model.event
 
 import io.element.android.libraries.matrix.api.timeline.item.event.EventType
 
+/**
+ * 旧版通话邀请事件的 UI 内容模型。
+ */
 data object TimelineItemLegacyCallInviteContent : TimelineItemEventContent {
     override val type: String
         get() = EventType.CALL_INVITE

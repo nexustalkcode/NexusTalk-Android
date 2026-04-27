@@ -20,7 +20,6 @@ import io.element.android.libraries.pushproviders.unifiedpush.matrixDiscoveryRes
 import io.element.android.libraries.pushproviders.unifiedpush.network.DiscoveryResponse
 import io.element.android.libraries.troubleshoot.api.test.NotificationTroubleshootTestState
 import io.element.android.libraries.troubleshoot.api.test.TestFilterData
-import io.element.android.libraries.troubleshoot.test.runAndTestState
 import io.element.android.tests.testutils.testCoroutineDispatchers
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest

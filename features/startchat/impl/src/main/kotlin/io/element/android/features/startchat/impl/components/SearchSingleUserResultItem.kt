@@ -23,6 +23,9 @@ import io.element.android.libraries.matrix.ui.model.getAvatarData
 import io.element.android.libraries.usersearch.api.UserSearchResult
 
 @Composable
+/**
+ * 渲染单选模式下的用户搜索结果项。
+ */
 fun SearchSingleUserResultItem(
     searchResult: UserSearchResult,
     onClick: () -> Unit,
